@@ -5,10 +5,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import ozmar.features.ChannelNotificationOnGiftSubscription;
-import ozmar.features.ChannelNotificationOnSubscription;
+import ozmar.features.OnCommandReceived;
+import ozmar.features.WriteChannelChatToConsole;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Bot {
@@ -29,15 +32,21 @@ public class Bot {
 
         clientBuilder = clientBuilder
                 .withChatAccount(credential)
-                .withEnableChat(true);
-
-        clientBuilder = clientBuilder
+                .withEnableChat(true)
                 .withClientId(configuration.getApi().get("twitch_client_id"))
                 .withClientSecret(configuration.getApi().get("twitch_client_secret"))
                 .withEnableHelix(true)
                 .withEnableGraphQL(true)
                 .withEnableKraken(true);
 
+        //TODO: Make list available to other files
+        List<String> commandTriggerList = new ArrayList<>(
+                Arrays.asList("!dice", "!hello")
+        );
+
+        for(String command : commandTriggerList) {
+            clientBuilder = clientBuilder.withCommandTrigger(command);
+        }
 
         twitchClient = clientBuilder.build();
         twitchClient.getEventManager().registerListener(this);
@@ -45,10 +54,11 @@ public class Bot {
 
 
     public void registerFeatures() {
-//        twitchClient.getEventManager().registerListener(new WriteChannelChatToConsole());
+        twitchClient.getEventManager().registerListener(new WriteChannelChatToConsole());
+        twitchClient.getEventManager().registerListener(new OnCommandReceived());
 //        twitchClient.getEventManager().registerListener(new ChannelNotificationOnFollow());
-        twitchClient.getEventManager().registerListener(new ChannelNotificationOnSubscription());
-        twitchClient.getEventManager().registerListener(new ChannelNotificationOnGiftSubscription());
+//        twitchClient.getEventManager().registerListener(new ChannelNotificationOnSubscription());
+//        twitchClient.getEventManager().registerListener(new ChannelNotificationOnGiftSubscription());
 //        twitchClient.getEventManager().registerListener(new ChannelNotificationOnDonation());
     }
 
@@ -68,7 +78,8 @@ public class Bot {
 
     public void start() {
         for(String channel : configuration.getChannels()) {
-            twitchClient.getChat().joinChannel(channel);
+            twitchClient.getChat().joinChannel(channel.toLowerCase());
+            //twitchClient.getChat().sendMessage(channel.toLowerCase(), "Bot Joined");
         }
     }
 }
