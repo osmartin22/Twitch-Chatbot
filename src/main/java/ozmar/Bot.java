@@ -5,13 +5,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import ozmar.commands.CommandList;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 public class Bot {
@@ -39,12 +37,8 @@ public class Bot {
                 .withEnableGraphQL(true)
                 .withEnableKraken(true);
 
-        //TODO: Make list available to other files
-        List<String> commandTriggerList = new ArrayList<>(
-                Arrays.asList("!dice", "!hello")
-        );
-
-        for(String command : commandTriggerList) {
+        // Add commands to clientBuilder
+        for(String command : CommandList.getCommandTriggerList()) {
             clientBuilder = clientBuilder.withCommandTrigger(command);
         }
 
