@@ -10,11 +10,10 @@ public class OnCommandReceived {
 
         String output = CommandList.decideCommand(event);
 
-        if(!output.isEmpty()) {
+        if (!output.isEmpty()) {
             event.respondToUser(output);
         }
 
-        System.out.println("GOT A COMMAND");
         System.out.println(event);
     }
 }

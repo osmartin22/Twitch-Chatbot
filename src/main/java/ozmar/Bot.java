@@ -8,6 +8,7 @@ import com.github.twitch4j.TwitchClientBuilder;
 import ozmar.commands.CommandList;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
+import ozmar.helix.HelixCommands;
 
 import java.io.InputStream;
 
@@ -38,7 +39,7 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        for(String command : CommandList.getCommandTriggerList()) {
+        for (String command : CommandList.getCommandTriggerList()) {
             clientBuilder = clientBuilder.withCommandTrigger(command);
         }
 
@@ -71,9 +72,11 @@ public class Bot {
     }
 
     public void start() {
-        for(String channel : configuration.getChannels()) {
+        for (String channel : configuration.getChannels()) {
             twitchClient.getChat().joinChannel(channel.toLowerCase());
             //twitchClient.getChat().sendMessage(channel.toLowerCase(), "Bot Joined");
         }
+
+        HelixCommands.setTwitchClient(twitchClient);
     }
 }
