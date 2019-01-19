@@ -11,7 +11,7 @@ import java.util.*;
 
 public class CommandList {
 
-    // TODO: Redo the commands and place them in a better place with permissions for each command
+    // TODO: REPLACE WITH COMMANDS FROM DATABASE
     private static List<String> commandTriggerList = new ArrayList<>(
             Arrays.asList("!dice", "!hello", "!count", "!uptime")
     );

@@ -6,6 +6,7 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import ozmar.commands.CommandList;
+import ozmar.database.DatabaseHelper;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
 import ozmar.helix.HelixCommands;
@@ -19,6 +20,7 @@ public class Bot {
     private TwitchClient twitchClient;
 
     public Bot() {
+        connectDatabase();
         loadConfiguration();
 
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
@@ -69,6 +71,13 @@ public class Bot {
             System.out.println("Unable to load Configuration ... Exiting.");
             System.exit(1);
         }
+    }
+
+    private void connectDatabase() {
+        DatabaseHelper databaseHelper = new DatabaseHelper();
+        databaseHelper.open();
+        databaseHelper.initializeDb();
+//        databaseHelper.close();
     }
 
     public void start() {
