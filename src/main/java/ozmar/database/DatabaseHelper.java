@@ -1,5 +1,6 @@
 package ozmar.database;
 
+import javafx.util.Pair;
 import ozmar.Command;
 
 import javax.annotation.Nonnull;
@@ -69,10 +70,15 @@ public class DatabaseHelper {
 
     // Should only run when the Table for commands is empty
     private void initializeCommands() {
-        addCommand("!dice", "1111111111");
-        addCommand("!hello", "1111111111");
-        addCommand("!count", "1111111111");
-        addCommand("!uptime", "1111111111");
+        List<Pair<String, String>> commandPairs = new ArrayList<>();
+        commandPairs.add(new Pair<>("!dice", "1111111111"));        //  0
+        commandPairs.add(new Pair<>("!hello", "1111111111"));
+        commandPairs.add(new Pair<>("!count", "1111111111"));
+        commandPairs.add(new Pair<>("!uptime", "1111111111"));
+        commandPairs.add(new Pair<>("!calc", "1111111111"));        // 4
+        commandPairs.add(new Pair<>("!followage", "1111111111"));
+
+        addCommandsList(commandPairs);
     }
 
     public List<Command> queryCommands() {
@@ -100,14 +106,25 @@ public class DatabaseHelper {
         addCommand(command.getCommand(), command.convertPermissionsToString());
     }
 
+    private void addCommandsList(List<Pair<String, String>> commandPairs) {
+        String sqlStatement = "INSERT INTO " + TABLE_COMMANDS + " (" + COLUMN_COMMAND_NAME + ", "
+                + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES( ";
+
+        for (Pair<String, String> pair : commandPairs) {
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(sqlStatement + "'" + pair.getKey() + "'" + ", " + pair.getValue() + ");");
+            } catch (SQLException e) {
+                System.out.println("Query failed " + e.getMessage());
+            }
+        }
+    }
+
     private void addCommand(@Nonnull String command, @Nonnull String commandPermissions) {
         String sqlStatement = "INSERT INTO " + TABLE_COMMANDS + " (" + COLUMN_COMMAND_NAME + ", "
                 + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES( ";
 
         try (Statement statement = connection.createStatement()) {
-
             statement.execute(sqlStatement + "'" + command + "'" + ", " + commandPermissions + ");");
-
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
         }

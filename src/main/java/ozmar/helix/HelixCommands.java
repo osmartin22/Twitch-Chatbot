@@ -1,6 +1,7 @@
 package ozmar.helix;
 
 import com.github.twitch4j.TwitchClient;
+import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 public class HelixCommands {
 
+    //TODO: MOVE THIS TO ANOTHER FILE TO KEEP STATIC METHODS ONLY
     private static TwitchClient twitchClient;
 
     private HelixCommands() {
@@ -52,4 +54,7 @@ public class HelixCommands {
 
     }
 
+    public static FollowList getFollowers(String fromId, String toId, String after, Integer limit) {
+        return twitchClient.getHelix().getFollowers(fromId, toId, after, limit).execute();
+    }
 }

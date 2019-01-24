@@ -1,8 +1,13 @@
 package ozmar.commands;
 
 import com.github.twitch4j.chat.events.CommandEvent;
+import com.github.twitch4j.common.enums.CommandPermission;
+import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
+import ozmar.Bot;
+import ozmar.Command;
+import ozmar.Utils.RandomHelper;
 import ozmar.Utils.TimeHelper;
 import ozmar.helix.HelixCommands;
 
@@ -11,19 +16,10 @@ import java.util.*;
 
 public class CommandList {
 
-    // TODO: REPLACE WITH COMMANDS FROM DATABASE
-    private static List<String> commandTriggerList = new ArrayList<>(
-            Arrays.asList("!dice", "!hello", "!count", "!uptime")
-    );
-
-    private static int count = 0;
+//    private static int count = 0;
 
     private CommandList() {
 
-    }
-
-    public static List<String> getCommandTriggerList() {
-        return commandTriggerList;
     }
 
 
@@ -38,21 +34,37 @@ public class CommandList {
      */
     public static String decideCommand(CommandEvent event) {
         String preCommand = event.getCommandPrefix();
+
         String result = "";
 
-        if (preCommand.equals(commandTriggerList.get(0))) {
+        List<Command> commandsList = Bot.databaseHelper.queryCommands();
+
+        if (preCommand.equals(commandsList.get(0).getCommand())) {
             result = diceRollCommand(event);
 
-        } else if (preCommand.equals(commandTriggerList.get(1))) {
+        } else if (preCommand.equals(commandsList.get(1).getCommand())) {
             result = helloCommand(event);
 
-        } else if (preCommand.equals(commandTriggerList.get(2))) {
-            ++count;
-            System.out.println(count);
+        } else if (preCommand.equals(commandsList.get(2).getCommand())) {
+//            countCommand();
+//            System.out.println(count);
 
-        } else if (preCommand.equals(commandTriggerList.get(3))) {
+        } else if (preCommand.equals(commandsList.get(3).getCommand())) {
             result = uptimeCommand(event);
+
+        } else if (preCommand.equals(commandsList.get(4).getCommand())) {
+            result = calcCommand(event);
+        } else if (preCommand.equals(commandsList.get(5).getCommand())) {
+            result = followageCommand(event);
         }
+
+        return result;
+    }
+
+    private static boolean checkPermissions(Set<CommandPermission> commandPermissions,
+                                            Set<CommandPermission> userPermissions) {
+        boolean result = false;
+
 
         return result;
     }
@@ -71,7 +83,7 @@ public class CommandList {
 
         String command = event.getCommand();
         if (command.isEmpty()) {
-            return output + getRandomNumber(num);
+            return output + RandomHelper.getRandomNumber(num);
         }
 
         char temp = command.charAt(0);
@@ -90,33 +102,10 @@ public class CommandList {
                 // variable already has a predefined value that is used when this error occurs
             }
 
-            return output + getRandomNumber(num);
+            return output + RandomHelper.getRandomNumber(num);
         }
 
         return "";
-    }
-
-
-    /**
-     * Returns a random number from 0 to given number (inclusive)
-     * Allows for negative random numbers
-     *
-     * @param num range of random number (inclusive)
-     * @return int
-     */
-    private static int getRandomNumber(int num) {
-        Random random = new Random();
-        int roll;
-
-        if (num < 0) {
-            num *= -1;
-            roll = random.nextInt(num - 1) * -1;
-
-        } else {
-            roll = random.nextInt(num + 1);
-        }
-
-        return roll;
     }
 
 
@@ -137,6 +126,10 @@ public class CommandList {
         return "";
     }
 
+    private static void countCommand() {
+
+    }
+
 
     /**
      * Gets the uptime of a stream and returns it in DD:HH:MM:SS format
@@ -146,8 +139,8 @@ public class CommandList {
      */
     private static String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
-
         UserList userList = HelixCommands.getUsersList(null, null, Arrays.asList(channelName));
+
         String channelId = userList.getUsers().get(0).getId();
         StreamList streamList = HelixCommands.getStreams(null, null, null, null,
                 null, null, Arrays.asList(channelId), null);
@@ -160,7 +153,72 @@ public class CommandList {
 
             output = channelName + " has been live for " + TimeHelper.getTimeDiff(startTime, currentTime);
         } else {
-            output = channelName + " is not streaming right now";
+            output = channelName + " is offline";
+        }
+
+        return output;
+    }
+
+
+    /**
+     * Calculates user operation input
+     * returns empty string if input is invalid
+     *
+     * @param event User info and command data
+     * @return String
+     */
+    private static String calcCommand(@Nonnull CommandEvent event) {
+        Double result = new Calculator(event.getCommand()).compute();
+        return (result == null) ? "" : result.toString();
+    }
+
+
+    /**
+     * Gets follow length between user and channel message was sent from
+     * Optional username can be entered to get the follow length between
+     * the optional username and current channel.
+     * <p>
+     * returns empty string if username was not found
+     *
+     * @param event USer info and command data
+     * @return String
+     */
+    private static String followageCommand(@Nonnull CommandEvent event) {
+        String followedChannel = event.getSourceId();
+        boolean emptyCommand = event.getCommand().isEmpty();
+
+        List<String> userChannelNameList = new ArrayList<>();
+        userChannelNameList.add(followedChannel);
+        if (!emptyCommand) {
+            userChannelNameList.add(event.getCommand().trim());
+        }
+
+        UserList userList = HelixCommands.getUsersList(null, null, userChannelNameList);
+
+        String userFollowingId;
+        if (emptyCommand) {
+            userFollowingId = event.getUser().getId().toString();
+
+            // Check that user input username was found
+        } else if (userList.getUsers().size() == 2) {
+            userFollowingId = userList.getUsers().get(1).getId();
+
+            // User input username was not found
+        } else {
+            return "";
+        }
+
+        String followedChannelId = userList.getUsers().get(0).getId();
+        FollowList followList = HelixCommands.getFollowers(userFollowingId, followedChannelId, null, 1);
+        String userFollowingName = (emptyCommand) ? event.getUser().getName() :
+                userList.getUsers().get(1).getDisplayName();
+
+        String output;
+        if (!followList.getFollows().isEmpty()) {
+            output = userFollowingName + " has been following since "
+                    + followList.getFollows().get(0).getFollowedAt();
+        } else {
+            output = userFollowingName + " is not following " + followedChannel;
         }
 
         return output;

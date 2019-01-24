@@ -5,16 +5,20 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import ozmar.commands.CommandList;
 import ozmar.database.DatabaseHelper;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
 import ozmar.helix.HelixCommands;
 
 import java.io.InputStream;
+import java.util.List;
+
+// Ideas
 
 
 public class Bot {
+
+    public static DatabaseHelper databaseHelper;
 
     private Configuration configuration;
     private TwitchClient twitchClient;
@@ -41,8 +45,9 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        for (String command : CommandList.getCommandTriggerList()) {
-            clientBuilder = clientBuilder.withCommandTrigger(command);
+        List<Command> commandsList = databaseHelper.queryCommands();
+        for (Command command : commandsList) {
+            clientBuilder = clientBuilder.withCommandTrigger(command.getCommand());
         }
 
         twitchClient = clientBuilder.build();
@@ -74,7 +79,7 @@ public class Bot {
     }
 
     private void connectDatabase() {
-        DatabaseHelper databaseHelper = new DatabaseHelper();
+        databaseHelper = new DatabaseHelper();
         databaseHelper.open();
         databaseHelper.initializeDb();
 //        databaseHelper.close();
