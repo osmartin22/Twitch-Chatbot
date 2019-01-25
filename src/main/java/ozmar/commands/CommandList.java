@@ -40,22 +40,29 @@ public class CommandList {
         List<Command> commandsList = Bot.databaseHelper.queryCommands();
 
         if (preCommand.equals(commandsList.get(0).getCommand())) {
-            result = diceRollCommand(event);
+//            result = diceRollCommand(event);
+            System.out.println(diceRollCommand(event));
 
         } else if (preCommand.equals(commandsList.get(1).getCommand())) {
-            result = helloCommand(event);
+//            result = helloCommand(event);
+            System.out.println(helloCommand(event));
 
         } else if (preCommand.equals(commandsList.get(2).getCommand())) {
+//            System.out.println(Bot.wordCount);
+            wordCountCommand();
 //            countCommand();
 //            System.out.println(count);
 
         } else if (preCommand.equals(commandsList.get(3).getCommand())) {
-            result = uptimeCommand(event);
+//            result = uptimeCommand(event);
+            System.out.println(uptimeCommand(event));
 
         } else if (preCommand.equals(commandsList.get(4).getCommand())) {
-            result = calcCommand(event);
+//            result = calcCommand(event);
+            System.out.println(calcCommand(event));
         } else if (preCommand.equals(commandsList.get(5).getCommand())) {
-            result = followageCommand(event);
+//            result = followageCommand(event);
+            System.out.println(followageCommand(event));
         }
 
         return result;
@@ -168,8 +175,8 @@ public class CommandList {
      * @return String
      */
     private static String calcCommand(@Nonnull CommandEvent event) {
-        Double result = new Calculator(event.getCommand()).compute();
-        return (result == null) ? "" : result.toString();
+        String result = new Calculator(event.getCommand()).compute();
+        return (result == null) ? "" : result;
     }
 
 
@@ -223,4 +230,38 @@ public class CommandList {
 
         return output;
     }
+
+    private static String wordCountCommand() {
+        Map<String, Integer> countMaxMap = new HashMap<>(10);
+
+
+        int count = 0;
+        for (Map.Entry<String, Integer> entry : Bot.wordCount.entrySet()) {
+
+            // Store first 10 pairs from map
+            if (count < 10) {
+                countMaxMap.put(entry.getKey(), entry.getValue());
+                count++;
+
+            } else {
+                Integer min = countMaxMap.values().stream().min(Integer::compare).orElse(null);
+                if (min != null && min < entry.getValue()) {
+
+                    // remove first entry with the min value even if other entries have the same value
+                    for (Map.Entry<String, Integer> countEntry : countMaxMap.entrySet()) {
+                        if (countEntry.getValue().equals(min)) {
+                            countMaxMap.remove(countEntry.getKey());
+                            break;
+                        }
+                    }
+
+                    countMaxMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        System.out.println(countMaxMap);
+        return null;
+    }
+
 }

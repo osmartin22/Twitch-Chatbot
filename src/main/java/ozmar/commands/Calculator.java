@@ -31,7 +31,7 @@ public class Calculator {
         parenCount = 0;
     }
 
-    public Double compute() {
+    public String compute() {
 
         if (operation.isEmpty()) {
             return null;
@@ -76,7 +76,7 @@ public class Calculator {
             return null;
         }
 
-        return (numberStack.isEmpty() ? null : roundResult(numberStack.pop()));
+        return (numberStack.isEmpty() ? null : checkIfInt(roundResult(numberStack.pop())));
     }
 
     private Integer preOpParse() {
@@ -313,6 +313,16 @@ public class Calculator {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(ROUND_VALUE, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    // Check if the number is #.0 and turn it to # instead
+    private String checkIfInt(Double num) {
+        String result = num.toString();
+        if (num == Math.floor(num) && !Double.isInfinite(num)) {
+            result = result.substring(0, result.length() - 2);
+        }
+
+        return result;
     }
 
     private class NumHelper {

@@ -11,6 +11,7 @@ import ozmar.features.WriteChannelChatToConsole;
 import ozmar.helix.HelixCommands;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 // Ideas
@@ -19,6 +20,9 @@ import java.util.List;
 public class Bot {
 
     public static DatabaseHelper databaseHelper;
+
+    // Temp
+    public static HashMap<String, Integer> wordCount = new HashMap<>();
 
     private Configuration configuration;
     private TwitchClient twitchClient;
