@@ -37,7 +37,7 @@ public class CommandList {
 
         String result = "";
 
-        List<Command> commandsList = Bot.databaseHelper.queryCommands();
+        List<Command> commandsList = Bot.databaseHelper.commandsTable.queryCommands();
 
         if (preCommand.equals(commandsList.get(0).getCommand())) {
 //            result = diceRollCommand(event);

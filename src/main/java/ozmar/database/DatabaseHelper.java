@@ -1,40 +1,30 @@
 package ozmar.database;
 
-import javafx.util.Pair;
-import ozmar.Command;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import javax.annotation.Nonnull;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
+// TODO: do PreparedStatements to prevent SQL injection
 public class DatabaseHelper {
 
     private static final String DATABASE_NAME = "TwitchBot.db";
     private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\" + DATABASE_NAME;
 
-    private static final String TABLE_COMMANDS = "commandsTable";
-    private static final String COLUMN_COMMAND_ID = "id";
-    private static final String COLUMN_COMMAND_NAME = "commandName";
-    private static final String COLUMN_COMMAND_PERMISSIONS = "commandPermissions";
-    private static final int INDEX_COMMAND_ID = 1;
-    private static final int INDEX_COMMAND_NAME = 2;
-    private static final int INDEX_COMMAND_PERMISSIONS = 3;
-
-    private static final String CREATE_TABLE_COMMANDS = "CREATE TABLE IF NOT EXISTS "
-            + TABLE_COMMANDS + " ("
-            + COLUMN_COMMAND_ID + " INTEGER PRIMARY KEY, "
-            + COLUMN_COMMAND_NAME + " TEXT, "
-            + COLUMN_COMMAND_PERMISSIONS + " TEXT)";
-
     private Connection connection;
 
+    public CommandsTable commandsTable;
+    public WordCountTable wordCountTable;
+
     public DatabaseHelper() {
+
     }
 
     public boolean open() {
         try {
             connection = DriverManager.getConnection(DB_URL);
+            commandsTable = new CommandsTable(connection);
+            wordCountTable = new WordCountTable(connection);
             return true;
 
         } catch (SQLException e) {
@@ -57,82 +47,16 @@ public class DatabaseHelper {
     public void initializeDb() {
         try (Statement statement = connection.createStatement()) {
 
-            statement.execute(CREATE_TABLE_COMMANDS);
-            if (queryCommands().isEmpty()) {
-                initializeCommands();
+            statement.execute(wordCountTable.getCREATE_WORD_COUNT_TABLE());
+            statement.execute(commandsTable.getCREATE_COMMANDS_TABLE());
+            if (commandsTable.queryCommands().isEmpty()) {
+                commandsTable.initializeCommands();
             }
 
         } catch (SQLException e) {
-            System.out.println("Failed to create table " + e.getMessage());
+            System.out.println("Failed to create connection " + e.getMessage());
         }
 
     }
 
-    // Should only run when the Table for commands is empty
-    private void initializeCommands() {
-        List<Pair<String, String>> commandPairs = new ArrayList<>();
-        commandPairs.add(new Pair<>("!dice", "1111111111"));        //  0
-        commandPairs.add(new Pair<>("!hello", "1111111111"));
-        commandPairs.add(new Pair<>("!count", "1111111111"));
-        commandPairs.add(new Pair<>("!uptime", "1111111111"));
-        commandPairs.add(new Pair<>("!calc", "1111111111"));        // 4
-        commandPairs.add(new Pair<>("!followage", "1111111111"));
-        commandPairs.add(new Pair<>("!hugme", "1111111111"));
-        commandPairs.add(new Pair<>("!wordcount", "1111111111"));
-
-        addCommandsList(commandPairs);
-    }
-
-    public List<Command> queryCommands() {
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_COMMANDS)) {
-
-            List<Command> commandsList = new ArrayList<>();
-            while (resultSet.next()) {
-                int commandId = resultSet.getInt(INDEX_COMMAND_ID);
-                String commandName = resultSet.getString(INDEX_COMMAND_NAME);
-                String commandPermissions = resultSet.getString(INDEX_COMMAND_PERMISSIONS);
-
-                commandsList.add(new Command(commandId, commandName, commandPermissions));
-            }
-
-            return commandsList;
-
-        } catch (SQLException e) {
-            System.out.println("Query failed " + e.getMessage());
-            return null;
-        }
-    }
-
-    public void addCommand(@Nonnull Command command) {
-        addCommand(command.getCommand(), command.convertPermissionsToString());
-    }
-
-    private void addCommandsList(List<Pair<String, String>> commandPairs) {
-        String sqlStatement = "INSERT INTO " + TABLE_COMMANDS + " (" + COLUMN_COMMAND_NAME + ", "
-                + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES( ";
-
-        for (Pair<String, String> pair : commandPairs) {
-            try (Statement statement = connection.createStatement()) {
-                statement.execute(sqlStatement + "'" + pair.getKey() + "'" + ", " + pair.getValue() + ");");
-            } catch (SQLException e) {
-                System.out.println("Query failed " + e.getMessage());
-            }
-        }
-    }
-
-    private void addCommand(@Nonnull String command, @Nonnull String commandPermissions) {
-        String sqlStatement = "INSERT INTO " + TABLE_COMMANDS + " (" + COLUMN_COMMAND_NAME + ", "
-                + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES( ";
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(sqlStatement + "'" + command + "'" + ", " + commandPermissions + ");");
-        } catch (SQLException e) {
-            System.out.println("Query failed " + e.getMessage());
-        }
-    }
-
-    public void storeCommands(List<Command> commandsList) {
-
-    }
 }
