@@ -51,8 +51,8 @@ public class CommandsTable {
         commandPairs.add(new Pair<>("!uptime", "1111111111"));
         commandPairs.add(new Pair<>("!calc", "1111111111"));        // 4
         commandPairs.add(new Pair<>("!followage", "1111111111"));
-        commandPairs.add(new Pair<>("!hugme", "1111111111"));
         commandPairs.add(new Pair<>("!wordcount", "1111111111"));
+        commandPairs.add(new Pair<>("!hugme", "1111111111"));
 
         addCommandsList(commandPairs);
     }

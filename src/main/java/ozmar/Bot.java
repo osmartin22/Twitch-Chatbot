@@ -12,7 +12,7 @@ import ozmar.helix.HelixCommands;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 // Ideas
 
@@ -21,8 +21,11 @@ public class Bot {
 
     public static DatabaseHandler databaseHelper;
 
-    // Temp
-    public static HashMap<String, Integer> wordCount = new HashMap<>();
+
+    public static boolean currentWordCountMap = true;   // true = wordCountMap1 false = wordCountMap2
+    public static Map<String, Integer> wordCountMap1 = new HashMap<>();
+    public static Map<String, Integer> wordCountMap2 = new HashMap<>();
+
 
     private Configuration configuration;
     private TwitchClient twitchClient;
@@ -49,8 +52,7 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        List<Command> commandsList = databaseHelper.getCommands();
-        for (Command command : commandsList) {
+        for (Command command : databaseHelper.getCommands()) {
             clientBuilder = clientBuilder.withCommandTrigger(command.getCommand());
         }
 
@@ -90,6 +92,11 @@ public class Bot {
     }
 
     public void start() {
+        WordCountTimer test = new WordCountTimer();
+        test.startTimer();
+
+        System.out.println("Start: " + Thread.currentThread().getName());
+
         for (String channel : configuration.getChannels()) {
             twitchClient.getChat().joinChannel(channel.toLowerCase());
             //twitchClient.getChat().sendMessage(channel.toLowerCase(), "Bot Joined");

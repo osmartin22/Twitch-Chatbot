@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseHandler {
 
@@ -16,8 +17,8 @@ public class DatabaseHandler {
 
     private Connection connection;
 
-    public CommandsTable commandsTable;
-    public WordCountTable wordCountTable;
+    private CommandsTable commandsTable;
+    private WordCountTable wordCountTable;
 
     public DatabaseHandler() {
 
@@ -73,5 +74,17 @@ public class DatabaseHandler {
         commandsTable.addCommand(command);
     }
 
+
+    public Map<String, Integer> getWordCount() {
+        return wordCountTable.queryWordCount();
+    }
+
+    public void updateOrInsertWordCount(Map<String, Integer> map) {
+        wordCountTable.updateOrInsert(map);
+    }
+
+    public void clearWordCount() {
+        wordCountTable.clearTable();
+    }
 
 }

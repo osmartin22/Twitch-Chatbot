@@ -1,5 +1,6 @@
 package ozmar.database;
 
+import javax.annotation.Nonnull;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,8 +71,7 @@ public class WordCountTable {
 
     // TODO: check resultset to lower firing trigger of sql statements
 
-    public void updateOrInsert(Map<String, Integer> map) {
-
+    public void updateOrInsert(@Nonnull Map<String, Integer> map) {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             int returnValue = 0;
 

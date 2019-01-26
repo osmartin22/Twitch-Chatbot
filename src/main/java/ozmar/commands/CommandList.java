@@ -13,6 +13,7 @@ import ozmar.helix.HelixCommands;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
@@ -38,7 +39,7 @@ public class CommandList {
 
         String result = "";
 
-        List<Command> commandsList = Bot.databaseHelper.commandsTable.queryCommands();
+        List<Command> commandsList = Bot.databaseHelper.getCommands();
 
         if (preCommand.equals(commandsList.get(0).getCommand())) {
 //            result = diceRollCommand(event);
@@ -49,8 +50,6 @@ public class CommandList {
             System.out.println(helloCommand(event));
 
         } else if (preCommand.equals(commandsList.get(2).getCommand())) {
-//            System.out.println(Bot.wordCount);
-            wordCountCommand();
 //            countCommand();
 //            System.out.println(count);
 
@@ -64,6 +63,9 @@ public class CommandList {
         } else if (preCommand.equals(commandsList.get(5).getCommand())) {
 //            result = followageCommand(event);
             System.out.println(followageCommand(event));
+        } else if (preCommand.equals(commandsList.get(6).getCommand())) {
+//            result = wordCountCommand();
+            System.out.println(wordCountCommand());
         }
 
         return result;
@@ -147,11 +149,11 @@ public class CommandList {
      */
     private static String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
-        UserList userList = HelixCommands.getUsersList(null, null, Arrays.asList(channelName));
+        UserList userList = HelixCommands.getUsersList(null, null, Collections.singletonList(channelName));
 
         String channelId = userList.getUsers().get(0).getId();
         StreamList streamList = HelixCommands.getStreams(null, null, null, null,
-                null, null, Arrays.asList(channelId), null);
+                null, null, Collections.singletonList(channelId), null);
 
         String output;
         if (!streamList.getStreams().isEmpty()) {
@@ -235,9 +237,8 @@ public class CommandList {
     private static String wordCountCommand() {
         Map<String, Integer> wordCountMap = new HashMap<>(10);
 
-
         int count = 0;
-        for (Map.Entry<String, Integer> entry : Bot.wordCount.entrySet()) {
+        for (Map.Entry<String, Integer> entry : Bot.wordCountMap1.entrySet()) {
 
             // Store first 10 pairs from map
             if (count < 10) {
@@ -261,18 +262,23 @@ public class CommandList {
             }
         }
 
-        System.out.println(sortMapByValue(wordCountMap));
-        return null;
+        return "The top words were " + getMapInString(sortMapByValue(wordCountMap));
     }
 
 
     // TODO: MOVE OUTSIDE CLASS
-    private static Map<String, Integer> sortMapByValue(Map<String, Integer> map) {
-        return map
-                .entrySet()
+    private static Map<String, Integer> sortMapByValue(@Nonnull Map<String, Integer> map) {
+        return map.entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+    }
+
+    private static String getMapInString(@Nonnull Map<String, Integer> map) {
+        return map.entrySet()
+                .stream()
+                .map(e -> e.getKey() + ": " + e.getValue())
+                .collect(Collectors.joining(", "));
     }
 
 }
