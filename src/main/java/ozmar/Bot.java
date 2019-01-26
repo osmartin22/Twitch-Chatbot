@@ -14,8 +14,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-// Ideas
-
 
 public class Bot {
 
@@ -29,6 +27,7 @@ public class Bot {
 
     private Configuration configuration;
     private TwitchClient twitchClient;
+    private WordCountTimer wordCountTimer;
 
     public Bot() {
         connectDatabase();
@@ -84,18 +83,21 @@ public class Bot {
         }
     }
 
-    private void connectDatabase() {
+    private boolean connectDatabase() {
         databaseHelper = new DatabaseHandler();
-        databaseHelper.open();
+        boolean dbOpened = databaseHelper.open();
         databaseHelper.initializeDb();
 //        databaseHelper.close();
+        return dbOpened;
+    }
+
+    private void startTimer() {
+        wordCountTimer = new WordCountTimer();
+        wordCountTimer.startTimer();
     }
 
     public void start() {
-        WordCountTimer test = new WordCountTimer();
-        test.startTimer();
-
-        System.out.println("Start: " + Thread.currentThread().getName());
+        startTimer();
 
         for (String channel : configuration.getChannels()) {
             twitchClient.getChat().joinChannel(channel.toLowerCase());
