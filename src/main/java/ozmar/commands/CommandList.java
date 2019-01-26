@@ -14,9 +14,10 @@ import ozmar.helix.HelixCommands;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class CommandList {
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.toMap;
 
-//    private static int count = 0;
+public class CommandList {
 
     private CommandList() {
 
@@ -232,7 +233,7 @@ public class CommandList {
     }
 
     private static String wordCountCommand() {
-        Map<String, Integer> countMaxMap = new HashMap<>(10);
+        Map<String, Integer> wordCountMap = new HashMap<>(10);
 
 
         int count = 0;
@@ -240,28 +241,38 @@ public class CommandList {
 
             // Store first 10 pairs from map
             if (count < 10) {
-                countMaxMap.put(entry.getKey(), entry.getValue());
+                wordCountMap.put(entry.getKey(), entry.getValue());
                 count++;
 
             } else {
-                Integer min = countMaxMap.values().stream().min(Integer::compare).orElse(null);
+                Integer min = wordCountMap.values().stream().min(Integer::compare).orElse(null);
                 if (min != null && min < entry.getValue()) {
 
                     // remove first entry with the min value even if other entries have the same value
-                    for (Map.Entry<String, Integer> countEntry : countMaxMap.entrySet()) {
+                    for (Map.Entry<String, Integer> countEntry : wordCountMap.entrySet()) {
                         if (countEntry.getValue().equals(min)) {
-                            countMaxMap.remove(countEntry.getKey());
+                            wordCountMap.remove(countEntry.getKey());
                             break;
                         }
                     }
 
-                    countMaxMap.put(entry.getKey(), entry.getValue());
+                    wordCountMap.put(entry.getKey(), entry.getValue());
                 }
             }
         }
 
-        System.out.println(countMaxMap);
+        System.out.println(sortMapByValue(wordCountMap));
         return null;
+    }
+
+
+    // TODO: MOVE OUTSIDE CLASS
+    private static Map<String, Integer> sortMapByValue(Map<String, Integer> map) {
+        return map
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
     }
 
 }

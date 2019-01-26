@@ -4,10 +4,7 @@ import javafx.util.Pair;
 import ozmar.Command;
 
 import javax.annotation.Nonnull;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +18,20 @@ public class CommandsTable {
     private final static int INDEX_COMMAND_NAME = 2;
     private final static int INDEX_COMMAND_PERMISSIONS = 3;
 
-    private final String CREATE_COMMANDS_TABLE = "CREATE TABLE IF NOT EXISTS "
+    private final static String CREATE_COMMANDS_TABLE = "CREATE TABLE IF NOT EXISTS "
             + COMMANDS_TABLE + " ("
             + COLUMN_COMMAND_ID + " INTEGER PRIMARY KEY, "
             + COLUMN_COMMAND_NAME + " TEXT, "
             + COLUMN_COMMAND_PERMISSIONS + " TEXT)";
 
+    private final static String addCommandStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
+            + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES(?, ?)";
+
     private Connection connection;
 
     public CommandsTable(Connection connection) {
         this.connection = connection;
+
     }
 
     public String getCOMMANDS_TABLE() {
@@ -40,6 +41,7 @@ public class CommandsTable {
     public String getCREATE_COMMANDS_TABLE() {
         return CREATE_COMMANDS_TABLE;
     }
+
 
     public void initializeCommands() {
         List<Pair<String, String>> commandPairs = new ArrayList<>();
@@ -81,26 +83,26 @@ public class CommandsTable {
     }
 
     private void addCommandsList(List<Pair<String, String>> commandPairs) {
-        String sqlStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
-                + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES( ";
-
         for (Pair<String, String> pair : commandPairs) {
-            try (Statement statement = connection.createStatement()) {
-                statement.execute(sqlStatement + "'" + pair.getKey() + "'" + ", " + pair.getValue() + ");");
+            try (PreparedStatement preparedStatement = connection.prepareStatement(addCommandStatement)) {
+                preparedStatement.setString(1, pair.getKey());
+                preparedStatement.setString(2, pair.getValue());
+                preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                System.out.println("Query failed " + e.getMessage());
+                System.out.println("Adding command failed " + e.getMessage());
             }
         }
     }
 
     private void addCommand(@Nonnull String command, @Nonnull String commandPermissions) {
-        String sqlStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
-                + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES( ";
 
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(sqlStatement + "'" + command + "'" + ", " + commandPermissions + ");");
+        try (PreparedStatement preparedStatement = connection.prepareStatement(addCommandStatement)) {
+            preparedStatement.setString(1, command);
+            preparedStatement.setString(2, commandPermissions);
+            preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
-            System.out.println("Query failed " + e.getMessage());
+            System.out.println("Adding command failed " + e.getMessage());
         }
     }
 

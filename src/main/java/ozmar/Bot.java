@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import ozmar.database.DatabaseHelper;
+import ozmar.database.DatabaseHandler;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
 import ozmar.helix.HelixCommands;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Bot {
 
-    public static DatabaseHelper databaseHelper;
+    public static DatabaseHandler databaseHelper;
 
     // Temp
     public static HashMap<String, Integer> wordCount = new HashMap<>();
@@ -49,7 +49,7 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        List<Command> commandsList = databaseHelper.queryCommands();
+        List<Command> commandsList = databaseHelper.getCommands();
         for (Command command : commandsList) {
             clientBuilder = clientBuilder.withCommandTrigger(command.getCommand());
         }
@@ -83,7 +83,7 @@ public class Bot {
     }
 
     private void connectDatabase() {
-        databaseHelper = new DatabaseHelper();
+        databaseHelper = new DatabaseHandler();
         databaseHelper.open();
         databaseHelper.initializeDb();
 //        databaseHelper.close();

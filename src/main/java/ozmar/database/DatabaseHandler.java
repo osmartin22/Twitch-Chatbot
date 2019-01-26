@@ -1,12 +1,15 @@
 package ozmar.database;
 
+import ozmar.Command;
+
+import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
-// TODO: do PreparedStatements to prevent SQL injection
-public class DatabaseHelper {
+public class DatabaseHandler {
 
     private static final String DATABASE_NAME = "TwitchBot.db";
     private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\" + DATABASE_NAME;
@@ -16,7 +19,7 @@ public class DatabaseHelper {
     public CommandsTable commandsTable;
     public WordCountTable wordCountTable;
 
-    public DatabaseHelper() {
+    public DatabaseHandler() {
 
     }
 
@@ -46,17 +49,29 @@ public class DatabaseHelper {
 
     public void initializeDb() {
         try (Statement statement = connection.createStatement()) {
-
             statement.execute(wordCountTable.getCREATE_WORD_COUNT_TABLE());
             statement.execute(commandsTable.getCREATE_COMMANDS_TABLE());
-            if (commandsTable.queryCommands().isEmpty()) {
-                commandsTable.initializeCommands();
+
+            if (getCommands().isEmpty()) {
+                initializeCommandsTable();
             }
 
         } catch (SQLException e) {
             System.out.println("Failed to create connection " + e.getMessage());
         }
-
     }
+
+    private void initializeCommandsTable() {
+        commandsTable.initializeCommands();
+    }
+
+    public List<Command> getCommands() {
+        return commandsTable.queryCommands();
+    }
+
+    public void addCommand(@Nonnull Command command) {
+        commandsTable.addCommand(command);
+    }
+
 
 }
