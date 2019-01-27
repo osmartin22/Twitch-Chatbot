@@ -93,7 +93,7 @@ public class CommandList {
      * @return String
      */
     private static String diceRollCommand(@Nonnull CommandEvent event) {
-        String output = "You rolled a ";
+        String output = event.getUser().getName() + " rolled a ";
         int num = 20;
 
         String command = event.getCommand();

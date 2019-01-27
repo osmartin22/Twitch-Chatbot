@@ -9,70 +9,71 @@ import java.util.Map;
 public class WordCountTable {
 
     private static final String WORD_COUNT_TABLE = "wordCountTable";
-    private final static String COLUMN_ID = "id";
-    private final static String COLUMN_WORD = "word";
-    private final static String COLUMN_COUNT = "count";
-    private final static int INDEX_COLUMN_ID = 1;
-    private final static int INDEX_COLUMN_WORD = 2;
-    private final static int INDEX_COLUMN_COUNT = 3;
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_WORD = "word";
+    private static final String COLUMN_COUNT = "count";
+    private static final int INDEX_COLUMN_ID = 1;
+    private static final int INDEX_COLUMN_WORD = 2;
+    private static final int INDEX_COLUMN_COUNT = 3;
 
-    private final static String CREATE_WORD_COUNT_TABLE = "CREATE TABLE IF NOT EXISTS "
+    private static final String CREATE_WORD_COUNT_TABLE = "CREATE TABLE IF NOT EXISTS "
             + WORD_COUNT_TABLE + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY, "
             + COLUMN_WORD + " TEXT, "
             + COLUMN_COUNT + " INTEGER, UNIQUE ("
             + COLUMN_WORD + "))";
 
-    private final String updateCountStatement = "UPDATE "
+    private static final String updateCountStatement = "UPDATE "
             + WORD_COUNT_TABLE + " SET "
             + COLUMN_COUNT + " = "
             + COLUMN_COUNT + " + ? WHERE "
             + COLUMN_WORD + " = ?";
 
-    private final String insertStatement = "INSERT OR IGNORE INTO "
+    private static final String insertStatement = "INSERT OR IGNORE INTO "
             + WORD_COUNT_TABLE + " ("
             + COLUMN_WORD + ", "
             + COLUMN_COUNT + ") VALUES (?,  ? )";
 
 
-    private Connection connection;
+    private WordCountTable() {
 
-    public WordCountTable(Connection connection) {
-        this.connection = connection;
     }
 
-    public static String getWordCountTable() {
+    public static String getTableName() {
         return WORD_COUNT_TABLE;
     }
 
-    public String getCREATE_WORD_COUNT_TABLE() {
+    public static String getCreateTableSql() {
         return CREATE_WORD_COUNT_TABLE;
     }
 
-    public Map<String, Integer> queryWordCount() {
+    public static Map<String, Integer> queryWordCount() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE;
+        Connection connection = DatabaseHandler.openConnection();
+        Map<String, Integer> map = null;
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
-            Map<String, Integer> map = new HashMap<>();
+            map = new HashMap<>();
             while (resultSet.next()) {
                 String word = resultSet.getString(INDEX_COLUMN_WORD);
                 int count = resultSet.getInt(INDEX_COLUMN_COUNT);
                 map.put(word, count);
             }
 
-            return map;
-
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
-            return null;
         }
+
+        DatabaseHandler.closeConnection(connection);
+        return map;
     }
 
-    public Map<String, Integer> getTop10Words() {
+    public static Map<String, Integer> getTop10Words() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
         Map<String, Integer> map = new LinkedHashMap<>();
+        Connection connection = DatabaseHandler.openConnection();
 
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
@@ -86,11 +87,14 @@ public class WordCountTable {
             System.out.println("Query failed " + e.getMessage());
         }
 
+        DatabaseHandler.closeConnection(connection);
         return map;
     }
 
 
-    public void updateOrInsert(@Nonnull Map<String, Integer> map) {
+    public static void updateOrInsert(@Nonnull Map<String, Integer> map) {
+        Connection connection = DatabaseHandler.openConnection();
+
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             int returnValue = 0;
 
@@ -114,15 +118,21 @@ public class WordCountTable {
                 }
             }
         }
+
+        DatabaseHandler.closeConnection(connection);
     }
 
-    public void clearTable() {
+    public static void clearTable() {
         String sql = "DELETE FROM " + WORD_COUNT_TABLE;
+        Connection connection = DatabaseHandler.openConnection();
+
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             System.out.println("Failed to create connection " + e.getMessage());
         }
+
+        DatabaseHandler.closeConnection(connection);
     }
 
 }

@@ -15,29 +15,23 @@ public class DatabaseHandler {
     private static final String DATABASE_NAME = "TwitchBot.db";
     private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\" + DATABASE_NAME;
 
-    private Connection connection;
-
-    private CommandsTable commandsTable;
-    private WordCountTable wordCountTable;
-
     public DatabaseHandler() {
-
+        initializeDb();
     }
 
-    public boolean open() {
+    public static Connection openConnection() {
+        Connection connection = null;
         try {
             connection = DriverManager.getConnection(DB_URL);
-            commandsTable = new CommandsTable(connection);
-            wordCountTable = new WordCountTable(connection);
-            return true;
 
         } catch (SQLException e) {
             System.out.println("Couldn't connect to database " + e.getMessage());
-            return false;
         }
+
+        return connection;
     }
 
-    public void close() {
+    public static void closeConnection(Connection connection) {
         try {
             if (connection != null) {
                 connection.close();
@@ -48,10 +42,12 @@ public class DatabaseHandler {
         }
     }
 
-    public void initializeDb() {
+    private void initializeDb() {
+        Connection connection = openConnection();
+
         try (Statement statement = connection.createStatement()) {
-            statement.execute(wordCountTable.getCREATE_WORD_COUNT_TABLE());
-            statement.execute(commandsTable.getCREATE_COMMANDS_TABLE());
+            statement.execute(WordCountTable.getCreateTableSql());
+            statement.execute(CommandsTable.getCreateTableSql());
 
             if (getCommands().isEmpty()) {
                 initializeCommandsTable();
@@ -60,35 +56,40 @@ public class DatabaseHandler {
         } catch (SQLException e) {
             System.out.println("Failed to create connection " + e.getMessage());
         }
+
+        closeConnection(connection);
     }
 
+
+    // CommandsTable
     private void initializeCommandsTable() {
-        commandsTable.initializeCommands();
+        CommandsTable.initializeCommands();
     }
 
     public List<Command> getCommands() {
-        return commandsTable.queryCommands();
+        return CommandsTable.queryCommands();
     }
 
     public void addCommand(@Nonnull Command command) {
-        commandsTable.addCommand(command);
+        CommandsTable.addCommand(command);
     }
 
 
+    // WordCountTable
     public Map<String, Integer> getWordCount() {
-        return wordCountTable.queryWordCount();
+        return WordCountTable.queryWordCount();
     }
 
     public Map<String, Integer> getTop10Words() {
-        return wordCountTable.getTop10Words();
+        return WordCountTable.getTop10Words();
     }
 
     public void updateOrInsertWordCount(Map<String, Integer> map) {
-        wordCountTable.updateOrInsert(map);
+        WordCountTable.updateOrInsert(map);
     }
 
     public void clearWordCount() {
-        wordCountTable.clearTable();
+        WordCountTable.clearTable();
     }
 
 }

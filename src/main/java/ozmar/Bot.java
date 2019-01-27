@@ -31,7 +31,7 @@ public class Bot {
     private WordCountTimer wordCountTimer;
 
     public Bot() {
-        connectDatabase();
+        getDatabase();
         loadConfiguration();
 
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
@@ -84,12 +84,8 @@ public class Bot {
         }
     }
 
-    private boolean connectDatabase() {
+    private void getDatabase() {
         databaseHelper = new DatabaseHandler();
-        boolean dbOpened = databaseHelper.open();
-        databaseHelper.initializeDb();
-//        databaseHelper.close();
-        return dbOpened;
     }
 
     private void startTimer() {
@@ -106,5 +102,6 @@ public class Bot {
         }
 
         HelixCommands.setTwitchClient(twitchClient);
+        RequestChat requestChat = new RequestChat();
     }
 }
