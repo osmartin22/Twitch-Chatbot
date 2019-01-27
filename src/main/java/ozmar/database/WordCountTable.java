@@ -3,6 +3,7 @@ package ozmar.database;
 import javax.annotation.Nonnull;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class WordCountTable {
@@ -69,7 +70,25 @@ public class WordCountTable {
         }
     }
 
-    // TODO: check resultset to lower firing trigger of sql statements
+    public Map<String, Integer> getTop10Words() {
+        String sql = "SELECT * FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
+        Map<String, Integer> map = new LinkedHashMap<>();
+
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String word = resultSet.getString(INDEX_COLUMN_WORD);
+                int count = resultSet.getInt(INDEX_COLUMN_COUNT);
+                map.put(word, count);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Query failed " + e.getMessage());
+        }
+
+        return map;
+    }
+
 
     public void updateOrInsert(@Nonnull Map<String, Integer> map) {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {

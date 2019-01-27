@@ -9,6 +9,7 @@ import ozmar.database.DatabaseHandler;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
 import ozmar.helix.HelixCommands;
+import ozmar.timers.WordCountTimer;
 
 import java.io.InputStream;
 import java.util.HashMap;

@@ -24,7 +24,6 @@ public class CommandList {
 
     }
 
-
     // TODO: CHECK FOR PERMISSIONS
 
     /**
@@ -60,12 +59,18 @@ public class CommandList {
         } else if (preCommand.equals(commandsList.get(4).getCommand())) {
 //            result = calcCommand(event);
             System.out.println(calcCommand(event));
+
         } else if (preCommand.equals(commandsList.get(5).getCommand())) {
 //            result = followageCommand(event);
             System.out.println(followageCommand(event));
+
         } else if (preCommand.equals(commandsList.get(6).getCommand())) {
 //            result = wordCountCommand();
             System.out.println(wordCountCommand());
+
+        } else if (preCommand.equals(commandsList.get(7).getCommand())) {
+            clearWordCountCommand();
+            System.out.println("Cleared wordCountTable");
         }
 
         return result;
@@ -235,34 +240,7 @@ public class CommandList {
     }
 
     private static String wordCountCommand() {
-        Map<String, Integer> wordCountMap = new HashMap<>(10);
-
-        int count = 0;
-        for (Map.Entry<String, Integer> entry : Bot.wordCountMap1.entrySet()) {
-
-            // Store first 10 pairs from map
-            if (count < 10) {
-                wordCountMap.put(entry.getKey(), entry.getValue());
-                count++;
-
-            } else {
-                Integer min = wordCountMap.values().stream().min(Integer::compare).orElse(null);
-                if (min != null && min < entry.getValue()) {
-
-                    // remove first entry with the min value even if other entries have the same value
-                    for (Map.Entry<String, Integer> countEntry : wordCountMap.entrySet()) {
-                        if (countEntry.getValue().equals(min)) {
-                            wordCountMap.remove(countEntry.getKey());
-                            break;
-                        }
-                    }
-
-                    wordCountMap.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-
-        return "The top words were " + getMapInString(sortMapByValue(wordCountMap));
+        return "The top words are " + getMapInString(Bot.databaseHelper.getTop10Words());
     }
 
 
@@ -279,6 +257,10 @@ public class CommandList {
                 .stream()
                 .map(e -> e.getKey() + ": " + e.getValue())
                 .collect(Collectors.joining(", "));
+    }
+
+    private static void clearWordCountCommand() {
+        Bot.databaseHelper.clearWordCount();
     }
 
 }

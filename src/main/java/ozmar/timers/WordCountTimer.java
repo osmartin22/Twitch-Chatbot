@@ -1,4 +1,6 @@
-package ozmar;
+package ozmar.timers;
+
+import ozmar.Bot;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

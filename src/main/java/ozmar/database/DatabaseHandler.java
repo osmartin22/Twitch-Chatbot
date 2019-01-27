@@ -79,6 +79,10 @@ public class DatabaseHandler {
         return wordCountTable.queryWordCount();
     }
 
+    public Map<String, Integer> getTop10Words() {
+        return wordCountTable.getTop10Words();
+    }
+
     public void updateOrInsertWordCount(Map<String, Integer> map) {
         wordCountTable.updateOrInsert(map);
     }
