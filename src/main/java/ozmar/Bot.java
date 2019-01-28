@@ -9,6 +9,7 @@ import ozmar.database.DatabaseHandler;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
 import ozmar.helix.HelixCommands;
+import ozmar.timers.ChatListTimer;
 import ozmar.timers.WordCountTimer;
 
 import java.io.InputStream;
@@ -29,13 +30,13 @@ public class Bot {
     private Configuration configuration;
     private TwitchClient twitchClient;
     private WordCountTimer wordCountTimer;
+    private ChatListTimer chatListTimer;
 
     public Bot() {
         getDatabase();
         loadConfiguration();
 
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
-
 
         OAuth2Credential credential = new OAuth2Credential(
                 "twitch",
@@ -91,6 +92,9 @@ public class Bot {
     private void startTimer() {
         wordCountTimer = new WordCountTimer();
         wordCountTimer.startTimer();
+
+        chatListTimer = new ChatListTimer();
+        chatListTimer.startTimer();
     }
 
     public void start() {
@@ -102,6 +106,5 @@ public class Bot {
         }
 
         HelixCommands.setTwitchClient(twitchClient);
-        RequestChat requestChat = new RequestChat();
     }
 }
