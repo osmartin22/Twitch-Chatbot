@@ -13,7 +13,12 @@ public class ChatListTimer {
 
     public void startTimer() {
         final Runnable beeper = () -> {
-            RequestChat.queryChatList("");
+            RequestChat requestChat = new RequestChat("moonmoon_ow");
+            requestChat.queryChatList();
+
+            // queryChatList should return a list
+            // store the list into the database
+
         };
 
         final ScheduledFuture<?> fixedRateTimer =

@@ -20,64 +20,67 @@ import static java.util.stream.Collectors.toMap;
 
 public class CommandList {
 
-    private CommandList() {
+    private CommandEvent commandEvent;
 
+    public CommandList(@Nonnull CommandEvent commandEvent) {
+        this.commandEvent = commandEvent;
     }
 
     // TODO: CHECK FOR PERMISSIONS
 
     /**
-     * Receives command to process and calls the method associated with it
-     * returns a String that will be output to chat if it is not empty
+     * Receives command to process and calls the method associated with the command
      *
-     * @param event User info and command data
      * @return String
      */
-    public static String decideCommand(CommandEvent event) {
-        String preCommand = event.getCommandPrefix();
+    public String decideCommand() {
+        String preCommand = commandEvent.getCommandPrefix();
 
         String result = "";
 
         List<Command> commandsList = Bot.databaseHelper.getCommands();
 
         if (preCommand.equals(commandsList.get(0).getCommand())) {
-//            result = diceRollCommand(event);
-            System.out.println(diceRollCommand(event));
+            result = diceRollCommand(commandEvent);
+//            System.out.println(diceRollCommand(event));
 
         } else if (preCommand.equals(commandsList.get(1).getCommand())) {
-//            result = helloCommand(event);
-            System.out.println(helloCommand(event));
+            result = helloCommand(commandEvent);
+//            System.out.println(helloCommand(event));
 
         } else if (preCommand.equals(commandsList.get(2).getCommand())) {
 //            countCommand();
 //            System.out.println(count);
 
         } else if (preCommand.equals(commandsList.get(3).getCommand())) {
-//            result = uptimeCommand(event);
-            System.out.println(uptimeCommand(event));
+            result = uptimeCommand(commandEvent);
+//            System.out.println(uptimeCommand(event));
 
         } else if (preCommand.equals(commandsList.get(4).getCommand())) {
-//            result = calcCommand(event);
-            System.out.println(calcCommand(event));
+            result = calcCommand(commandEvent);
+//            System.out.println(calcCommand(event));
 
         } else if (preCommand.equals(commandsList.get(5).getCommand())) {
-//            result = followageCommand(event);
-            System.out.println(followageCommand(event));
+            result = followageCommand(commandEvent);
+//            System.out.println(followageCommand(event));
 
         } else if (preCommand.equals(commandsList.get(6).getCommand())) {
-//            result = wordCountCommand();
-            System.out.println(wordCountCommand());
+            result = wordCountCommand();
+//            System.out.println(wordCountCommand());
 
         } else if (preCommand.equals(commandsList.get(7).getCommand())) {
             clearWordCountCommand();
             System.out.println("Cleared wordCountTable");
+
+        } else if (preCommand.equals(commandsList.get(8).getCommand())) {
+            result = "31's next album does not have a release date";
         }
 
         return result;
     }
 
-    private static boolean checkPermissions(Set<CommandPermission> commandPermissions,
-                                            Set<CommandPermission> userPermissions) {
+    private boolean checkPermissions(Set<CommandPermission> commandPermissions,
+                                     Set<CommandPermission> userPermissions) {
         boolean result = false;
 
 
@@ -92,7 +95,7 @@ public class CommandList {
      * @param event User info and command data
      * @return String
      */
-    private static String diceRollCommand(@Nonnull CommandEvent event) {
+    private String diceRollCommand(@Nonnull CommandEvent event) {
         String output = event.getUser().getName() + " rolled a ";
         int num = 20;
 
@@ -131,7 +134,7 @@ public class CommandList {
      * @param event User info and command data
      * @return String
      */
-    private static String helloCommand(@Nonnull CommandEvent event) {
+    private String helloCommand(@Nonnull CommandEvent event) {
         String command = event.getCommand();
 
         if (command.isEmpty() || command.charAt(0) == ' ') {
@@ -141,7 +144,7 @@ public class CommandList {
         return "";
     }
 
-    private static void countCommand() {
+    private void countCommand() {
 
     }
 
@@ -152,7 +155,7 @@ public class CommandList {
      * @param event User info and command data
      * @return String
      */
-    private static String uptimeCommand(@Nonnull CommandEvent event) {
+    private String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
         UserList userList = HelixCommands.getUsersList(null, null, Collections.singletonList(channelName));
 
@@ -182,7 +185,7 @@ public class CommandList {
      * @param event User info and command data
      * @return String
      */
-    private static String calcCommand(@Nonnull CommandEvent event) {
+    private String calcCommand(@Nonnull CommandEvent event) {
         String result = new Calculator(event.getCommand()).compute();
         return (result == null) ? "" : result;
     }
@@ -198,7 +201,7 @@ public class CommandList {
      * @param event USer info and command data
      * @return String
      */
-    private static String followageCommand(@Nonnull CommandEvent event) {
+    private String followageCommand(@Nonnull CommandEvent event) {
         String followedChannel = event.getSourceId();
         boolean emptyCommand = event.getCommand().isEmpty();
 
@@ -239,27 +242,27 @@ public class CommandList {
         return output;
     }
 
-    private static String wordCountCommand() {
+    private String wordCountCommand() {
         return "The top words are " + getMapInString(Bot.databaseHelper.getTop10Words());
     }
 
 
     // TODO: MOVE OUTSIDE CLASS
-    private static Map<String, Integer> sortMapByValue(@Nonnull Map<String, Integer> map) {
+    private Map<String, Integer> sortMapByValue(@Nonnull Map<String, Integer> map) {
         return map.entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(comparingByValue()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
     }
 
-    private static String getMapInString(@Nonnull Map<String, Integer> map) {
+    private String getMapInString(@Nonnull Map<String, Integer> map) {
         return map.entrySet()
                 .stream()
                 .map(e -> e.getKey() + ": " + e.getValue())
                 .collect(Collectors.joining(", "));
     }
 
-    private static void clearWordCountCommand() {
+    private void clearWordCountCommand() {
         Bot.databaseHelper.clearWordCount();
     }
 

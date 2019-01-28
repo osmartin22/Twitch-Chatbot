@@ -2,7 +2,7 @@ package ozmar.database;
 
 public class ChatTable {
 
-    private static final String CHAT_TABLE = "wordCountTable";
+    private static final String CHAT_TABLE = "chatTable";
     private final static String COLUMN_ID = "id";
     private final static String COLUMN_USER_ID = "userId";
     private final static String COLUMN_USER_NAME = "userName";
@@ -27,15 +27,15 @@ public class ChatTable {
             + COLUMN_ID + " INTEGER PRIMARY KEY, "
             + COLUMN_USER_ID + " INTEGER, "
             + COLUMN_USER_NAME + " TEXT, "
-            + COLUMN_MESSAGE_COUNT + " INTEGER,"
-            + COLUMN_MOD_STATUS + " INTEGER,"
-            + COLUMN_VIP_STATUS + " INTEGER,"
-            + COLUMN_MESSAGE_COUNT + " INTEGER,"
-            + COLUMN_POINTS + " INTEGER,"
+            + COLUMN_MOD_STATUS + " INTEGER, "
+            + COLUMN_VIP_STATUS + " INTEGER, "
+            + COLUMN_MESSAGE_COUNT + " INTEGER, "
+            + COLUMN_POINTS + " INTEGER, "
             + COLUMN_SUB_STATUS + " INTEGER )";
 
 
     private ChatTable() {
+
     }
 
     public static String getCreateTableSql() {

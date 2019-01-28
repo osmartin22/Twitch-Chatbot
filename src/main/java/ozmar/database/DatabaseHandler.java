@@ -48,6 +48,7 @@ public class DatabaseHandler {
         try (Statement statement = connection.createStatement()) {
             statement.execute(WordCountTable.getCreateTableSql());
             statement.execute(CommandsTable.getCreateTableSql());
+            statement.execute(ChatTable.getCreateTableSql());
 
             if (getCommands().isEmpty()) {
                 initializeCommandsTable();
@@ -91,5 +92,4 @@ public class DatabaseHandler {
     public void clearWordCount() {
         WordCountTable.clearTable();
     }
-
 }

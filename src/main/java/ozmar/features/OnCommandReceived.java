@@ -7,8 +7,8 @@ import ozmar.commands.CommandList;
 public class OnCommandReceived {
     @EventSubscriber
     public void onCommand(CommandEvent event) {
-
-        String output = CommandList.decideCommand(event);
+        CommandList commandList = new CommandList(event);
+        String output = commandList.decideCommand();
 
         if (!output.isEmpty()) {
             event.respondToUser(output);

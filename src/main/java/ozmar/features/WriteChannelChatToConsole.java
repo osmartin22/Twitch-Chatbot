@@ -5,7 +5,6 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import ozmar.Bot;
 
 //TODO: Maybe remove punctuation so that "hey" and "hey," are the same word
-// Maybe remove @ so that "username" and "@username" are the same
 public class WriteChannelChatToConsole {
     @EventSubscriber
     public void onChannelMessage(ChannelMessageEvent event) {
@@ -13,10 +12,17 @@ public class WriteChannelChatToConsole {
 
         for (String s : message.split(" ")) {
 
-            // Ignore urls
+            // Ignore urls from being stored and wasting space since it is unlikely the same url is
+            // more than a couple of times unless chat spams it
             if (s.startsWith("http")) {
                 break;
             }
+
+            // Remove @ symbol so that @username and username are registered as the same
+            if (s.length() > 1 && s.startsWith("@")) {
+                s = s.substring(1);
+            }
+
 
             if (Bot.currentWordCountMap) {
                 int count = Bot.wordCountMap1.getOrDefault(s, 0) + 1;

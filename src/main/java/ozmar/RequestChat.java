@@ -22,31 +22,30 @@ import java.net.URL;
 // While users chat, store their ids in the database and increment counter for chat messages
 // Save if sub or not by looking at permissions
 
-
-// TODO: Set timer to run every couple of minutes
-
 public class RequestChat {
 
     // tmi.twitch.tv/group/user/channel_name/chatters
     private static final String url = "https://tmi.twitch.tv/group/user/";
 
-    private RequestChat() {
-        queryChatList("moonmoon_ow");
+    private String channelName;
+
+    public RequestChat(String channelName) {
+        this.channelName = channelName;
     }
 
 
-    public static void queryChatList(String channelName) {
+    public void queryChatList() {
         try {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
-            parseJson(parser);
+            parseEntireJson(parser);
 
         } catch (IOException e) {
             System.out.println("Failed to query the chat list " + e.getMessage());
         }
     }
 
-    private static void parseJson(JsonParser jsonParser) {
+    private void parseEntireJson(JsonParser jsonParser) {
         try {
             while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
                 String name = jsonParser.getCurrentName();

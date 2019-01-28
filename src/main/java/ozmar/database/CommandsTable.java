@@ -50,7 +50,8 @@ public class CommandsTable {
         commandPairs.add(new Pair<>("!followage", "1111111111"));
         commandPairs.add(new Pair<>("!wordcount", "1111111111"));
         commandPairs.add(new Pair<>("!clearwordcount", "1111111111"));  // TEMP, CHANGE PERMISSIONS
-        commandPairs.add(new Pair<>("!hugme", "1111111111"));
+        commandPairs.add(new Pair<>("!31", "1111111111"));
+        commandPairs.add(new Pair<>("!hugme", "1111111111"));       // 9
 
         addCommandsList(commandPairs);
     }
