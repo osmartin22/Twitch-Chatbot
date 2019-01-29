@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 // Launch at start of app
 // Store usernames into database IF NOT EXISTS USER
@@ -29,79 +32,84 @@ public class RequestChat {
 
     private String channelName;
 
-    public RequestChat(String channelName) {
+    public RequestChat(@Nonnull String channelName) {
         this.channelName = channelName;
     }
 
 
-    public void queryChatList() {
+    public List<ChatUser> queryChatList() {
+        List<ChatUser> chatUserList = null;
+
         try {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
-            parseEntireJson(parser);
+            chatUserList = parseChatUsers(parser);
 
         } catch (IOException e) {
             System.out.println("Failed to query the chat list " + e.getMessage());
         }
+
+        return chatUserList;
     }
 
-    private void parseEntireJson(JsonParser jsonParser) {
+
+    private List<ChatUser> parseChatUsers(JsonParser jsonParser) {
+
+        List<ChatUser> chatUserList = new ArrayList<>();
+
         try {
             while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
                 String name = jsonParser.getCurrentName();
                 if ("_links".equals(name)) {
                     jsonParser.nextToken();
                     while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-                        System.out.println("Links: " + jsonParser.getText());
+                        jsonParser.nextToken();
                     }
 
                 } else if ("chatter_count".equals(name)) {
                     jsonParser.nextToken();
-                    System.out.println("Chatter count: " + jsonParser.getIntValue());
 
                 } else if ("chatters".equals(name)) {
                     jsonParser.nextToken();
-                    System.out.println("Chatters");
 
                 } else if ("vips".equals(name)) {
-                    jsonParser.nextToken();
-                    while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                        System.out.println("VIP: " + jsonParser.getText());
-                    }
+                    parserHelper(jsonParser, chatUserList);
 
                 } else if ("moderators".equals(name)) {
-                    jsonParser.nextToken();
-                    while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                        System.out.println("Mods: " + jsonParser.getText());
-                    }
+                    parserHelper(jsonParser, chatUserList);
 
                 } else if ("staff".equals(name)) {
-                    jsonParser.nextToken();
-                    while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                        System.out.println("Staff: " + jsonParser.getText());
-                    }
+                    parserHelper(jsonParser, chatUserList);
 
                 } else if ("admins".equals(name)) {
-                    jsonParser.nextToken();
-                    while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                        System.out.println("Admin: " + jsonParser.getText());
-                    }
+                    parserHelper(jsonParser, chatUserList);
 
                 } else if ("global_mods".equals(name)) {
-                    jsonParser.nextToken();
-                    while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                        System.out.println("Global Mod: " + jsonParser.getText());
-                    }
+                    parserHelper(jsonParser, chatUserList);
 
                 } else if ("viewers".equals(name)) {
-                    jsonParser.nextToken();
-                    while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                        System.out.println("Viewer: " + jsonParser.getText());
-                    }
+                    parserHelper(jsonParser, chatUserList);
                 }
             }
 
         } catch (Exception e) {
+            System.out.println("Failed to parse " + e.getMessage());
+        }
+
+        for (ChatUser user : chatUserList) {
+            System.out.println("Chatter: " + user.getUserName());
+        }
+
+        return chatUserList;
+    }
+
+    private void parserHelper(@Nonnull JsonParser jsonParser, @Nonnull List<ChatUser> list) {
+        try {
+            jsonParser.nextToken();
+            while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
+                list.add(new ChatUser(jsonParser.getText()));
+            }
+        } catch (IOException e) {
             System.out.println("Failed to parse " + e.getMessage());
         }
     }

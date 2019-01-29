@@ -1,7 +1,7 @@
 package ozmar.database;
 
-import javafx.util.Pair;
 import ozmar.Command;
+import ozmar.enums.CommandNumPermission;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
@@ -13,7 +13,7 @@ public class CommandsTable {
     private static final String COMMANDS_TABLE = "commandsTable";
     private static final String COLUMN_COMMAND_ID = "id";
     private static final String COLUMN_COMMAND_NAME = "commandName";
-    private static final String COLUMN_COMMAND_PERMISSIONS = "commandPermissions";
+    private static final String COLUMN_COMMAND_PERMISSION = "commandPermission";
     private static final int INDEX_COMMAND_ID = 1;
     private static final int INDEX_COMMAND_NAME = 2;
     private static final int INDEX_COMMAND_PERMISSIONS = 3;
@@ -22,41 +22,42 @@ public class CommandsTable {
             + COMMANDS_TABLE + " ("
             + COLUMN_COMMAND_ID + " INTEGER PRIMARY KEY, "
             + COLUMN_COMMAND_NAME + " TEXT, "
-            + COLUMN_COMMAND_PERMISSIONS + " TEXT)";
+            + COLUMN_COMMAND_PERMISSION + " INTEGER)";
 
     private final static String addCommandStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
-            + COLUMN_COMMAND_PERMISSIONS + ")" + " VALUES(?, ?)";
+            + COLUMN_COMMAND_PERMISSION + ")" + " VALUES(?, ?)";
 
-    private CommandsTable() {
+    public CommandsTable() {
 
     }
 
-    public static String getTableName() {
+    public String getTableName() {
         return COMMANDS_TABLE;
     }
 
-    public static String getCreateTableSql() {
+    public String getCreateTableSql() {
         return CREATE_COMMANDS_TABLE;
     }
 
+    public void initializeCommands() {
+        List<Command> commandList = new ArrayList<>();
+        commandList.add(new Command("!dice", CommandNumPermission.EVERYONE));           // 0
+        commandList.add(new Command("!hello", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!count", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!uptime", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!calc", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!followage", CommandNumPermission.EVERYONE));      // 5
+        commandList.add(new Command("!wordCount", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!clearWordCount", CommandNumPermission.OWNER)); // CHANGE PERMISSION
+        commandList.add(new Command("!31", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!hugme", CommandNumPermission.EVERYONE));
+//        commandList.add(new Command("!", CommandNumPermission.EVERYONE));                     // 10
+//        commandList.add(new Command("!", CommandNumPermission.EVERYONE));
 
-    public static void initializeCommands() {
-        List<Pair<String, String>> commandPairs = new ArrayList<>();
-        commandPairs.add(new Pair<>("!dice", "1111111111"));        //  0
-        commandPairs.add(new Pair<>("!hello", "1111111111"));
-        commandPairs.add(new Pair<>("!count", "1111111111"));
-        commandPairs.add(new Pair<>("!uptime", "1111111111"));
-        commandPairs.add(new Pair<>("!calc", "1111111111"));        // 4
-        commandPairs.add(new Pair<>("!followage", "1111111111"));
-        commandPairs.add(new Pair<>("!wordcount", "1111111111"));
-        commandPairs.add(new Pair<>("!clearwordcount", "1111111111"));  // TEMP, CHANGE PERMISSIONS
-        commandPairs.add(new Pair<>("!31", "1111111111"));
-        commandPairs.add(new Pair<>("!hugme", "1111111111"));       // 9
-
-        addCommandsList(commandPairs);
+        addCommandsList(commandList);
     }
 
-    public static List<Command> queryCommands() {
+    public List<Command> queryCommands() {
         Connection connection = DatabaseHandler.openConnection();
 
         List<Command> commandList = null;
@@ -67,9 +68,10 @@ public class CommandsTable {
             while (resultSet.next()) {
                 int commandId = resultSet.getInt(INDEX_COMMAND_ID);
                 String commandName = resultSet.getString(INDEX_COMMAND_NAME);
-                String commandPermissions = resultSet.getString(INDEX_COMMAND_PERMISSIONS);
+                int commandPermissions = resultSet.getInt(INDEX_COMMAND_PERMISSIONS);
 
-                commandList.add(new Command(commandId, commandName, commandPermissions));
+                // TODO: Change enum.values()[] to something more efficient
+                commandList.add(new Command(commandId, commandName, CommandNumPermission.values()[commandPermissions]));
             }
 
         } catch (SQLException e) {
@@ -80,38 +82,45 @@ public class CommandsTable {
         return commandList;
     }
 
-    private static void addCommandsList(List<Pair<String, String>> commandPairs) {
+    private void addCommandsList(@Nonnull List<Command> commandList) {
         Connection connection = DatabaseHandler.openConnection();
 
-        for (Pair<String, String> pair : commandPairs) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(addCommandStatement)) {
-                preparedStatement.setString(1, pair.getKey());
-                preparedStatement.setString(2, pair.getValue());
+        PreparedStatement preparedStatement = preparedStatementHelper(connection, addCommandStatement);
+        for (Command command : commandList) {
+            try {
+                preparedStatement.setString(1, command.getCommand());
+                preparedStatement.setInt(2, command.getPermission().getCommandLevel());
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Adding command failed " + e.getMessage());
             }
+
         }
 
         DatabaseHandler.closeConnection(connection);
     }
 
-    public static void addCommand(@Nonnull Command command) {
-        addCommand(command.getCommand(), command.convertPermissionsToString());
-    }
-
-    private static void addCommand(@Nonnull String command, @Nonnull String commandPermissions) {
+    public void addCommand(@Nonnull Command command) {
         Connection connection = DatabaseHandler.openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(addCommandStatement)) {
-            preparedStatement.setString(1, command);
-            preparedStatement.setString(2, commandPermissions);
+            preparedStatement.setString(1, command.getCommand());
+            preparedStatement.setInt(2, command.getPermission().getCommandLevel());
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             System.out.println("Adding command failed " + e.getMessage());
         }
 
         DatabaseHandler.closeConnection(connection);
+    }
+
+    private PreparedStatement preparedStatementHelper(Connection connection, String statement) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(statement);
+        } catch (SQLException e) {
+            System.out.println("Failed to prepare statement " + e.getMessage());
+        }
+        return preparedStatement;
     }
 }

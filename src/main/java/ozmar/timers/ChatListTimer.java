@@ -1,7 +1,9 @@
 package ozmar.timers;
 
+import ozmar.ChatUser;
 import ozmar.RequestChat;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -14,7 +16,7 @@ public class ChatListTimer {
     public void startTimer() {
         final Runnable beeper = () -> {
             RequestChat requestChat = new RequestChat("moonmoon_ow");
-            requestChat.queryChatList();
+            List<ChatUser> chatUserList = requestChat.queryChatList();
 
             // queryChatList should return a list
             // store the list into the database

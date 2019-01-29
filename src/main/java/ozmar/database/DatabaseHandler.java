@@ -15,7 +15,15 @@ public class DatabaseHandler {
     private static final String DATABASE_NAME = "TwitchBot.db";
     private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\" + DATABASE_NAME;
 
+    private CommandsTable commandsTable;
+    private WordCountTable wordCountTable;
+    private ChatTable chatTable;
+
     public DatabaseHandler() {
+        commandsTable = new CommandsTable();
+        wordCountTable = new WordCountTable();
+        chatTable = new ChatTable();
+
         initializeDb();
     }
 
@@ -46,9 +54,9 @@ public class DatabaseHandler {
         Connection connection = openConnection();
 
         try (Statement statement = connection.createStatement()) {
-            statement.execute(WordCountTable.getCreateTableSql());
-            statement.execute(CommandsTable.getCreateTableSql());
-            statement.execute(ChatTable.getCreateTableSql());
+            statement.execute(commandsTable.getCreateTableSql());
+            statement.execute(wordCountTable.getCreateTableSql());
+            statement.execute(chatTable.getCreateTableSql());
 
             if (getCommands().isEmpty()) {
                 initializeCommandsTable();
@@ -64,32 +72,32 @@ public class DatabaseHandler {
 
     // CommandsTable
     private void initializeCommandsTable() {
-        CommandsTable.initializeCommands();
+        commandsTable.initializeCommands();
     }
 
     public List<Command> getCommands() {
-        return CommandsTable.queryCommands();
+        return commandsTable.queryCommands();
     }
 
     public void addCommand(@Nonnull Command command) {
-        CommandsTable.addCommand(command);
+        commandsTable.addCommand(command);
     }
 
 
     // WordCountTable
     public Map<String, Integer> getWordCount() {
-        return WordCountTable.queryWordCount();
+        return wordCountTable.queryWordCount();
     }
 
     public Map<String, Integer> getTop10Words() {
-        return WordCountTable.getTop10Words();
+        return wordCountTable.getTop10Words();
     }
 
     public void updateOrInsertWordCount(Map<String, Integer> map) {
-        WordCountTable.updateOrInsert(map);
+        wordCountTable.updateOrInsert(map);
     }
 
     public void clearWordCount() {
-        WordCountTable.clearTable();
+        wordCountTable.clearTable();
     }
 }

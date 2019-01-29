@@ -1,22 +1,19 @@
 package ozmar.commands;
 
 import com.github.twitch4j.chat.events.CommandEvent;
-import com.github.twitch4j.common.enums.CommandPermission;
 import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 import ozmar.Bot;
 import ozmar.Command;
-import ozmar.Utils.RandomHelper;
-import ozmar.Utils.TimeHelper;
+import ozmar.enums.CommandNumPermission;
 import ozmar.helix.HelixCommands;
+import ozmar.utils.RandomHelper;
+import ozmar.utils.TimeHelper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Map.Entry.comparingByValue;
-import static java.util.stream.Collectors.toMap;
 
 public class CommandList {
 
@@ -35,56 +32,63 @@ public class CommandList {
      */
     public String decideCommand() {
         String preCommand = commandEvent.getCommandPrefix();
+        CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
 
         String result = "";
-
         List<Command> commandsList = Bot.databaseHelper.getCommands();
 
-        if (preCommand.equals(commandsList.get(0).getCommand())) {
+        if (preCommand.equals(commandsList.get(0).getCommand()) &&
+                hasPermission(commandsList.get(0).getPermission(), userPermission)) {
             result = diceRollCommand(commandEvent);
-//            System.out.println(diceRollCommand(event));
 
-        } else if (preCommand.equals(commandsList.get(1).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(1).getCommand()) &&
+                hasPermission(commandsList.get(1).getPermission(), userPermission)) {
             result = helloCommand(commandEvent);
-//            System.out.println(helloCommand(event));
 
-        } else if (preCommand.equals(commandsList.get(2).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(2).getCommand()) &&
+                hasPermission(commandsList.get(2).getPermission(), userPermission)) {
 //            countCommand();
-//            System.out.println(count);
 
-        } else if (preCommand.equals(commandsList.get(3).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(3).getCommand()) &&
+                hasPermission(commandsList.get(3).getPermission(), userPermission)) {
             result = uptimeCommand(commandEvent);
-//            System.out.println(uptimeCommand(event));
 
-        } else if (preCommand.equals(commandsList.get(4).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(4).getCommand()) &&
+                hasPermission(commandsList.get(4).getPermission(), userPermission)) {
             result = calcCommand(commandEvent);
-//            System.out.println(calcCommand(event));
 
-        } else if (preCommand.equals(commandsList.get(5).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(5).getCommand()) &&
+                hasPermission(commandsList.get(5).getPermission(), userPermission)) {
             result = followageCommand(commandEvent);
-//            System.out.println(followageCommand(event));
 
-        } else if (preCommand.equals(commandsList.get(6).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(6).getCommand()) &&
+                hasPermission(commandsList.get(6).getPermission(), userPermission)) {
             result = wordCountCommand();
-//            System.out.println(wordCountCommand());
 
-        } else if (preCommand.equals(commandsList.get(7).getCommand())) {
+        } else if (preCommand.equals(commandsList.get(7).getCommand()) &&
+                hasPermission(commandsList.get(7).getPermission(), userPermission)) {
             clearWordCountCommand();
             System.out.println("Cleared wordCountTable");
 
-        } else if (preCommand.equals(commandsList.get(8).getCommand())) {
-            result = "31's next album does not have a release date";
+        } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
+                hasPermission(commandsList.get(8).getPermission(), userPermission)) {
+            result = "31's next release is on ...";
         }
 
+        System.out.println(result);
+        result = "";
         return result;
     }
 
-    private boolean checkPermissions(Set<CommandPermission> commandPermissions,
-                                     Set<CommandPermission> userPermissions) {
-        boolean result = false;
-
-
-        return result;
+    /**
+     * Checks if the user has permission to use the command
+     *
+     * @param commandLevel permisison level of the command
+     * @param userLevel    permission level of user
+     * @return boolean
+     */
+    private boolean hasPermission(CommandNumPermission commandLevel, CommandNumPermission userLevel) {
+        return userLevel.getCommandLevel() >= commandLevel.getCommandLevel();
     }
 
 
@@ -143,6 +147,7 @@ public class CommandList {
 
         return "";
     }
+
 
     private void countCommand() {
 
@@ -242,28 +247,35 @@ public class CommandList {
         return output;
     }
 
+
+    /**
+     * Gets the top 10 words used  during the stream
+     *
+     * @return String
+     */
     private String wordCountCommand() {
-        return "The top words are " + getMapInString(Bot.databaseHelper.getTop10Words());
+        return "The top words for the stream are " + getMapInString(Bot.databaseHelper.getTop10Words());
     }
 
 
-    // TODO: MOVE OUTSIDE CLASS
-    private Map<String, Integer> sortMapByValue(@Nonnull Map<String, Integer> map) {
-        return map.entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(comparingByValue()))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
-    }
-
+    /**
+     * Converts a map into a string
+     *
+     * @param map map to convert to string
+     * @return String
+     */
     private String getMapInString(@Nonnull Map<String, Integer> map) {
         return map.entrySet()
                 .stream()
-                .map(e -> e.getKey() + ": " + e.getValue())
+                .map(e -> e.getKey() + " :" + e.getValue())
                 .collect(Collectors.joining(", "));
     }
 
+
+    /**
+     * Clears the table containing the count of words used in the database
+     */
     private void clearWordCountCommand() {
         Bot.databaseHelper.clearWordCount();
     }
-
 }

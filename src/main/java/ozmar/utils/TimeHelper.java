@@ -1,4 +1,4 @@
-package ozmar.Utils;
+package ozmar.utils;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;

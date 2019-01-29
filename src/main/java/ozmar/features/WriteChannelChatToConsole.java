@@ -34,6 +34,7 @@ public class WriteChannelChatToConsole {
 
         }
 
+        System.out.println(event.getPermissions());
         System.out.printf(
                 "Channel [%s] - User[%s] - Message [%s]%n",
                 event.getChannel().getName(),

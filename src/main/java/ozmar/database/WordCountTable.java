@@ -35,19 +35,19 @@ public class WordCountTable {
             + COLUMN_COUNT + ") VALUES (?,  ? )";
 
 
-    private WordCountTable() {
+    public WordCountTable() {
 
     }
 
-    public static String getTableName() {
+    public String getTableName() {
         return WORD_COUNT_TABLE;
     }
 
-    public static String getCreateTableSql() {
+    public String getCreateTableSql() {
         return CREATE_WORD_COUNT_TABLE;
     }
 
-    public static Map<String, Integer> queryWordCount() {
+    public Map<String, Integer> queryWordCount() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE;
         Connection connection = DatabaseHandler.openConnection();
         Map<String, Integer> map = null;
@@ -70,7 +70,7 @@ public class WordCountTable {
         return map;
     }
 
-    public static Map<String, Integer> getTop10Words() {
+    public Map<String, Integer> getTop10Words() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
         Map<String, Integer> map = new LinkedHashMap<>();
         Connection connection = DatabaseHandler.openConnection();
@@ -92,29 +92,33 @@ public class WordCountTable {
     }
 
 
-    public static void updateOrInsert(@Nonnull Map<String, Integer> map) {
+    public void updateOrInsert(@Nonnull Map<String, Integer> map) {
         Connection connection = DatabaseHandler.openConnection();
+        PreparedStatement preparedStatementUpdate = preparedStatementHelper(connection, updateCountStatement);
+        PreparedStatement preparedStatementInsert = preparedStatementHelper(connection, insertStatement);
 
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            int returnValue = 0;
+        if (preparedStatementUpdate != null && preparedStatementInsert != null) {
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                int returnValue = 0;
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(updateCountStatement)) {
-                preparedStatement.setInt(1, entry.getValue());
-                preparedStatement.setString(2, entry.getKey());
-                returnValue = preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("Update failed" + e.getMessage());
-            }
-
-            // Only execute insert if update did not update a row (i.e. row word did not exist)
-            if (returnValue == 0) {
-                try (PreparedStatement preparedStatement = connection.prepareStatement(insertStatement)) {
-                    preparedStatement.setString(1, entry.getKey());
-                    preparedStatement.setInt(2, entry.getValue());
-                    preparedStatement.executeUpdate();
-
+                try {
+                    preparedStatementUpdate.setInt(1, entry.getValue());
+                    preparedStatementUpdate.setString(2, entry.getKey());
+                    returnValue = preparedStatementUpdate.executeUpdate();
                 } catch (SQLException e) {
-                    System.out.println("Insert failed " + e.getMessage());
+                    System.out.println("Update failed" + e.getMessage());
+                }
+
+                // Only execute insert if update did not update a row (i.e. row word did not exist)
+                if (returnValue == 0) {
+                    try {
+                        preparedStatementInsert.setString(1, entry.getKey());
+                        preparedStatementInsert.setInt(2, entry.getValue());
+                        preparedStatementInsert.executeUpdate();
+
+                    } catch (SQLException e) {
+                        System.out.println("Insert failed " + e.getMessage());
+                    }
                 }
             }
         }
@@ -122,7 +126,7 @@ public class WordCountTable {
         DatabaseHandler.closeConnection(connection);
     }
 
-    public static void clearTable() {
+    public void clearTable() {
         String sql = "DELETE FROM " + WORD_COUNT_TABLE;
         Connection connection = DatabaseHandler.openConnection();
 
@@ -133,6 +137,16 @@ public class WordCountTable {
         }
 
         DatabaseHandler.closeConnection(connection);
+    }
+
+    private PreparedStatement preparedStatementHelper(Connection connection, String statement) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(statement);
+        } catch (SQLException e) {
+            System.out.println("Failed to prepare statement " + e.getMessage());
+        }
+        return preparedStatement;
     }
 
 }
