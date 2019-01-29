@@ -45,6 +45,9 @@ public class RequestChat {
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
             chatUserList = parseChatUsers(parser);
 
+            Bot.databaseHelper.insertUser(chatUserList);
+
+
         } catch (IOException e) {
             System.out.println("Failed to query the chat list " + e.getMessage());
         }
@@ -96,9 +99,9 @@ public class RequestChat {
             System.out.println("Failed to parse " + e.getMessage());
         }
 
-        for (ChatUser user : chatUserList) {
-            System.out.println("Chatter: " + user.getUserName());
-        }
+//        for (ChatUser user : chatUserList) {
+//            System.out.println("Chatter: " + user.getUserName());
+//        }
 
         return chatUserList;
     }

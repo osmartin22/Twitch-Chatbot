@@ -91,11 +91,12 @@ public class WordCountTable {
         return map;
     }
 
-
     public void updateOrInsert(@Nonnull Map<String, Integer> map) {
         Connection connection = DatabaseHandler.openConnection();
-        PreparedStatement preparedStatementUpdate = preparedStatementHelper(connection, updateCountStatement);
-        PreparedStatement preparedStatementInsert = preparedStatementHelper(connection, insertStatement);
+        DatabaseHandler.turnOffAutoCommit(connection);
+
+        PreparedStatement preparedStatementUpdate = DatabaseHandler.prepareStatement(connection, updateCountStatement);
+        PreparedStatement preparedStatementInsert = DatabaseHandler.prepareStatement(connection, insertStatement);
 
         if (preparedStatementUpdate != null && preparedStatementInsert != null) {
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
@@ -123,6 +124,7 @@ public class WordCountTable {
             }
         }
 
+        DatabaseHandler.turnOnAutoCommit(connection);
         DatabaseHandler.closeConnection(connection);
     }
 
@@ -138,15 +140,4 @@ public class WordCountTable {
 
         DatabaseHandler.closeConnection(connection);
     }
-
-    private PreparedStatement preparedStatementHelper(Connection connection, String statement) {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(statement);
-        } catch (SQLException e) {
-            System.out.println("Failed to prepare statement " + e.getMessage());
-        }
-        return preparedStatement;
-    }
-
 }

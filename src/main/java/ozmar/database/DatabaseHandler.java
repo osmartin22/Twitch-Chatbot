@@ -1,12 +1,10 @@
 package ozmar.database;
 
+import ozmar.ChatUser;
 import ozmar.Command;
 
 import javax.annotation.Nonnull;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +37,46 @@ public class DatabaseHandler {
         return connection;
     }
 
-    public static void closeConnection(Connection connection) {
+    public static void closeConnection(@Nonnull Connection connection) {
         try {
-            if (connection != null) {
-                connection.close();
-            }
-
+            connection.close();
         } catch (SQLException e) {
             System.out.println("Couldn't close connection " + e.getMessage());
         }
+    }
+
+    public static void turnOffAutoCommit(@Nonnull Connection connection) {
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            System.out.println("Failed to turn off auto commit " + e.getMessage());
+        }
+    }
+
+    public static void turnOnAutoCommit(@Nonnull Connection connection) {
+        try {
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            System.out.println("Failed to turn on auto commit " + e.getMessage());
+        }
+    }
+
+    public static void rollBack(@Nonnull Connection connection) {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            System.out.println("Failed to roll back " + e.getMessage());
+        }
+    }
+
+    public static PreparedStatement prepareStatement(@Nonnull Connection connection, @Nonnull String statement) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(statement);
+        } catch (SQLException e) {
+            System.out.println("Failed to prepare statement " + e.getMessage());
+        }
+        return preparedStatement;
     }
 
     private void initializeDb() {
@@ -79,8 +108,8 @@ public class DatabaseHandler {
         return commandsTable.queryCommands();
     }
 
-    public void addCommand(@Nonnull Command command) {
-        commandsTable.addCommand(command);
+    public void insertCommand(@Nonnull Command command) {
+        commandsTable.insertCommand(command);
     }
 
 
@@ -99,5 +128,9 @@ public class DatabaseHandler {
 
     public void clearWordCount() {
         wordCountTable.clearTable();
+    }
+
+    public void insertUser(List<ChatUser> list) {
+        chatTable.insertUserNames(list);
     }
 }

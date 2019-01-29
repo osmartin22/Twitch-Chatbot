@@ -24,7 +24,7 @@ public class CommandsTable {
             + COLUMN_COMMAND_NAME + " TEXT, "
             + COLUMN_COMMAND_PERMISSION + " INTEGER)";
 
-    private final static String addCommandStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
+    private final static String insertCommandStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
             + COLUMN_COMMAND_PERMISSION + ")" + " VALUES(?, ?)";
 
     public CommandsTable() {
@@ -54,7 +54,7 @@ public class CommandsTable {
 //        commandList.add(new Command("!", CommandNumPermission.EVERYONE));                     // 10
 //        commandList.add(new Command("!", CommandNumPermission.EVERYONE));
 
-        addCommandsList(commandList);
+        insertCommandsList(commandList);
     }
 
     public List<Command> queryCommands() {
@@ -82,28 +82,33 @@ public class CommandsTable {
         return commandList;
     }
 
-    private void addCommandsList(@Nonnull List<Command> commandList) {
+    private void insertCommandsList(@Nonnull List<Command> commandList) {
         Connection connection = DatabaseHandler.openConnection();
 
-        PreparedStatement preparedStatement = preparedStatementHelper(connection, addCommandStatement);
+        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertCommandStatement);
         for (Command command : commandList) {
             try {
                 preparedStatement.setString(1, command.getCommand());
                 preparedStatement.setInt(2, command.getPermission().getCommandLevel());
-                preparedStatement.executeUpdate();
+                preparedStatement.addBatch();
             } catch (SQLException e) {
-                System.out.println("Adding command failed " + e.getMessage());
+                System.out.println("Adding command to batch failed " + e.getMessage());
             }
+        }
 
+        try {
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            System.out.println("Failed to execute batch " + e.getMessage());
         }
 
         DatabaseHandler.closeConnection(connection);
     }
 
-    public void addCommand(@Nonnull Command command) {
+    public void insertCommand(@Nonnull Command command) {
         Connection connection = DatabaseHandler.openConnection();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(addCommandStatement)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertCommandStatement)) {
             preparedStatement.setString(1, command.getCommand());
             preparedStatement.setInt(2, command.getPermission().getCommandLevel());
             preparedStatement.executeUpdate();
@@ -112,15 +117,5 @@ public class CommandsTable {
         }
 
         DatabaseHandler.closeConnection(connection);
-    }
-
-    private PreparedStatement preparedStatementHelper(Connection connection, String statement) {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(statement);
-        } catch (SQLException e) {
-            System.out.println("Failed to prepare statement " + e.getMessage());
-        }
-        return preparedStatement;
     }
 }

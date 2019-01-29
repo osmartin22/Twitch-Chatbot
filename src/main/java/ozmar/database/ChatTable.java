@@ -5,6 +5,7 @@ import ozmar.ChatUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 
 public class ChatTable {
@@ -36,11 +37,10 @@ public class ChatTable {
 
     private static final String insertUserStatement = "INSERT OR IGNORE INTO "
             + CHAT_TABLE + " ("
-            + COLUMN_USER_ID + ", "
             + COLUMN_USER_NAME + ", "
             + COLUMN_MESSAGE_COUNT + ", "
             + COLUMN_POINTS + ", "
-            + COLUMN_SUB_STATUS + ") VALUES (?, ?, ?, ?, ?)";
+            + COLUMN_SUB_STATUS + ") VALUES (?, ?, ?, ?)";
 
 
     public ChatTable() {
@@ -53,41 +53,31 @@ public class ChatTable {
 
     public void insertUserNames(List<ChatUser> chatUserList) {
         Connection connection = DatabaseHandler.openConnection();
-        PreparedStatement preparedStatement = preparedStatementHelper(connection, insertUserStatement);
-        int returnValue = 0;
+        DatabaseHandler.turnOffAutoCommit(connection);
+        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertUserStatement);
 
-        int count = 0;
-        while (count < chatUserList.size()) {
-            ChatUser chatUser = chatUserList.get(count);
+
+        for (Iterator<ChatUser> iterator = chatUserList.iterator(); iterator.hasNext(); ) {
+            ChatUser chatUser = iterator.next();
             try {
                 preparedStatement.setString(1, chatUser.getUserName());
                 preparedStatement.setInt(2, chatUser.getMessageCount());
                 preparedStatement.setInt(3, chatUser.getPoints());
                 preparedStatement.setInt(4, chatUser.getSubStatus());
 
+                // Remove usernames already in the table from the list to get a list of usernames that
+                // are new to the table at the end off the loop
+                if (preparedStatement.executeUpdate() == 0) {
+                    iterator.remove();
+                }
+
             } catch (SQLException e) {
-                //
+                System.out.println("Failed to insert " + e.getMessage());
+                DatabaseHandler.rollBack(connection);
             }
-
-
-            count++;
         }
 
-        try {
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            System.out.println("Failed to insert " + e.getMessage());
-        }
-    }
-
-    private PreparedStatement preparedStatementHelper(Connection connection, String statement) {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(statement);
-        } catch (SQLException e) {
-            System.out.println("Failed to prepare statement " + e.getMessage());
-        }
-        return preparedStatement;
+        DatabaseHandler.turnOnAutoCommit(connection);
+        DatabaseHandler.closeConnection(connection);
     }
 }
