@@ -168,7 +168,7 @@ public class CommandList {
      */
     private String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
-        UserList userList = Bot.helixCommands.getUsersList(null, null, Collections.singletonList(channelName));
+        UserList userList = Bot.helixCommands.getUsersList(null, Collections.singletonList(channelName));
 
         String channelId = userList.getUsers().get(0).getId();
         StreamList streamList = Bot.helixCommands.getStreams(null, null, null, null,
@@ -222,7 +222,7 @@ public class CommandList {
             userChannelNameList.add(event.getCommand().trim());
         }
 
-        UserList userList = Bot.helixCommands.getUsersList(null, null, userChannelNameList);
+        UserList userList = Bot.helixCommands.getUsersList(null, userChannelNameList);
 
         String userFollowingId;
         if (emptyCommand) {

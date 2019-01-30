@@ -1,6 +1,6 @@
 package ozmar.database;
 
-import ozmar.ChatUser;
+import com.github.twitch4j.helix.domain.User;
 import ozmar.Command;
 
 import javax.annotation.Nonnull;
@@ -130,7 +130,14 @@ public class DatabaseHandler {
         wordCountTable.clearTable();
     }
 
-    public void insertChatUserList(List<ChatUser> list) {
+    public void insertChatUserList(List<String> list) {
         chatTable.insertUserNames(list);
+    }
+
+
+    // ChatTable
+
+    public void addChatDataToTable(List<User> userList) {
+        chatTable.addChatDataToTable(userList);
     }
 }

@@ -49,7 +49,6 @@ public class Bot {
                 .withEnableChat(true)
                 .withClientId(configuration.getApi().get("twitch_client_id"))
                 .withClientSecret(configuration.getApi().get("twitch_client_secret"))
-                .withEnableHelix(true)
                 .withEnableGraphQL(true)
                 .withEnableKraken(true);
 
@@ -67,7 +66,7 @@ public class Bot {
                 .withClientSecret(configuration.getApi().get("twitch_client_secret"))
                 .build();
 
-        helixCommands = new HelixCommands(twitchHelixClient);
+        helixCommands = new HelixCommands(twitchHelixClient, credential.getAccessToken());
     }
 
 

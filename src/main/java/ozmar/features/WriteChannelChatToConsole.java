@@ -36,9 +36,10 @@ public class WriteChannelChatToConsole {
         }
 
         System.out.printf(
-                "Channel [%s] - User[%s] - Message [%s]%n",
+                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
                 event.getChannel().getName(),
                 event.getUser().getName(),
+                event.getUser().getId(),
                 event.getMessage()
         );
     }

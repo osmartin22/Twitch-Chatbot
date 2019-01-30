@@ -3,21 +3,35 @@ package ozmar;
 public class ChatUser {
 
     private int id;
-    private int userId;
+    private long userId;
     private String userName;
     private int messageCount = 0;
     private int points = 0;
-    private int subStatus = 0;
 
     public ChatUser(String userName) {
         this.userName = userName;
+    }
+
+    public ChatUser(long userId, String userName, int messageCount, int points) {
+        this.userId = userId;
+        this.userName = userName;
+        this.messageCount = messageCount;
+        this.points = points;
+    }
+
+    public ChatUser(int id, long userId, String userName, int messageCount, int points) {
+        this.id = id;
+        this.userId = userId;
+        this.userName = userName;
+        this.messageCount = messageCount;
+        this.points = points;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
@@ -32,9 +46,4 @@ public class ChatUser {
     public int getPoints() {
         return points;
     }
-
-    public int getSubStatus() {
-        return subStatus;
-    }
-
 }

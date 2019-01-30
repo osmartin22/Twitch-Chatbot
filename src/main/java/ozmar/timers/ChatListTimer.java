@@ -1,7 +1,10 @@
 package ozmar.timers;
 
-import ozmar.ChatUser;
+import com.github.twitch4j.helix.domain.UserList;
+import org.apache.commons.collections4.ListUtils;
+import ozmar.Bot;
 import ozmar.RequestChat;
+import ozmar.database.DatabaseHandler;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -12,14 +15,25 @@ import java.util.concurrent.TimeUnit;
 public class ChatListTimer {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final DatabaseHandler db;
+
+    public ChatListTimer() {
+        db = new DatabaseHandler();
+    }
 
     public void startTimer() {
         final Runnable beeper = () -> {
             RequestChat requestChat = new RequestChat("moonmoon_ow");
-            List<ChatUser> chatUserList = requestChat.queryChatList();
 
-            // queryChatList should return a list
-            // store the list into the database
+            List<String> userNameList = requestChat.queryChatList();
+            List<List<String>> partition = ListUtils.partition(userNameList, 100);
+
+
+            // TODO: Temp setup
+            for (List<String> list : partition) {
+                UserList userList = Bot.helixCommands.getUsersList(null, list);
+                db.addChatDataToTable(userList.getUsers());
+            }
 
         };
 

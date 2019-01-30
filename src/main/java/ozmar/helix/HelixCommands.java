@@ -11,21 +11,22 @@ import java.util.UUID;
 public class HelixCommands {
 
     private final TwitchHelix twitchHelix;
+    private final String oAuthToken;
 
 
-    public HelixCommands(TwitchHelix twitchHelix) {
+    public HelixCommands(TwitchHelix twitchHelix, String oAuthToken) {
         this.twitchHelix = twitchHelix;
+        this.oAuthToken = oAuthToken;
     }
 
     /**
      * Returns information about the requested users
      *
-     * @param oAuthToken token authorization
      * @param userIds    user Id
      * @param userNames  user login name
      * @return UserLIst
      */
-    public UserList getUsersList(String oAuthToken, List<String> userIds, List<String> userNames) {
+    public UserList getUsersList(List<String> userIds, List<String> userNames) {
         return twitchHelix.getUsers(oAuthToken, userIds, userNames).execute();
     }
 

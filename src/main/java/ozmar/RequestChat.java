@@ -40,16 +40,14 @@ public class RequestChat {
     }
 
 
-    public List<ChatUser> queryChatList() {
-        List<ChatUser> chatUserList = null;
+    public List<String> queryChatList() {
+        List<String> chatUserList = null;
 
         try {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
             chatUserList = parseChatUsers(parser);
-
             db.insertChatUserList(chatUserList);
-
 
         } catch (IOException e) {
             System.out.println("Failed to query the chat list " + e.getMessage());
@@ -59,9 +57,9 @@ public class RequestChat {
     }
 
 
-    private List<ChatUser> parseChatUsers(JsonParser jsonParser) {
+    private List<String> parseChatUsers(JsonParser jsonParser) {
 
-        List<ChatUser> chatUserList = new ArrayList<>();
+        List<String> chatUserList = new ArrayList<>();
 
         try {
             while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
@@ -102,18 +100,14 @@ public class RequestChat {
             System.out.println("Failed to parse " + e.getMessage());
         }
 
-//        for (ChatUser user : chatUserList) {
-//            System.out.println("Chatter: " + user.getUserName());
-//        }
-
         return chatUserList;
     }
 
-    private void parserHelper(@Nonnull JsonParser jsonParser, @Nonnull List<ChatUser> list) {
+    private void parserHelper(@Nonnull JsonParser jsonParser, @Nonnull List<String> list) {
         try {
             jsonParser.nextToken();
             while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-                list.add(new ChatUser(jsonParser.getText()));
+                list.add(jsonParser.getText());
             }
         } catch (IOException e) {
             System.out.println("Failed to parse " + e.getMessage());
