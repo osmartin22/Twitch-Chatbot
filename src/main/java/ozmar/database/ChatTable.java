@@ -27,46 +27,58 @@ public class ChatTable {
     private static final int INDEX_COLUMN_POINTS = 5;
 
 
-    private static final String CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS "
-            + CHAT_TABLE + " ("
-            + COLUMN_ID + " INTEGER PRIMARY KEY, "
-            + COLUMN_USER_ID + " INTEGER UNIQUE, "
-            + COLUMN_USER_NAME + " TEXT UNIQUE, "
-            + COLUMN_MESSAGE_COUNT + " INTEGER, "
-            + COLUMN_POINTS + " INTEGER)";
+    private static final String CREATE_CHAT_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_USER_ID + " INTEGER UNIQUE, " +
+                    COLUMN_USER_NAME + " TEXT UNIQUE, " +
+                    COLUMN_MESSAGE_COUNT + " INTEGER, " +
+                    COLUMN_POINTS + " INTEGER)";
 
-    private static final String getUserIdStatement = "SELECT * FROM "
-            + CHAT_TABLE + " WHERE "
-            + COLUMN_USER_ID + " = ?";
+    private static final String getUserIdStatement =
+            "SELECT * FROM " + CHAT_TABLE +
+                    " WHERE " +
+                    COLUMN_USER_ID + " = ?";
 
+    private static final String updateUserStatement =
+            "UPDATE " + CHAT_TABLE +
+                    " SET " +
+                    COLUMN_USER_ID + " = ?, " +
+                    COLUMN_MESSAGE_COUNT + " = " + COLUMN_MESSAGE_COUNT + " + ?, " +
+                    COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
+                    " WHERE " +
+                    COLUMN_USER_NAME + " = ?";
 
-    private static final String updateUserStatement = "UPDATE "
-            + CHAT_TABLE + " SET "
-            + COLUMN_USER_ID + " = ?,"
-            + COLUMN_MESSAGE_COUNT + " = " + COLUMN_MESSAGE_COUNT + " + ?,"
-            + COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? WHERE "
-            + COLUMN_USER_NAME + " = ?";
+    private static final String updateTemp =
+            "UPDATE " + CHAT_TABLE +
+                    " SET " +
+                    COLUMN_USER_ID + " = ? " +
+                    "WHERE " +
+                    COLUMN_USER_NAME + " = ?";
 
-    private static final String updateTemp = "UPDATE "
-            + CHAT_TABLE + " SET "
-            + COLUMN_USER_ID + " = ? WHERE "
-            + COLUMN_USER_NAME + " = ?";
+    private static final String insertUserStatement =
+            "INSERT OR IGNORE INTO " + CHAT_TABLE + " ( " +
+                    COLUMN_USER_NAME + ", " +
+                    COLUMN_MESSAGE_COUNT + ", " +
+                    COLUMN_POINTS + " ) " +
+                    " VALUES (?, ?, ?)";
 
-    private static final String insertUserStatement = "INSERT OR IGNORE INTO "
-            + CHAT_TABLE + " ("
-            + COLUMN_USER_NAME + ", "
-            + COLUMN_MESSAGE_COUNT + ", "
-            + COLUMN_POINTS + ") VALUES (?, ?, ?)";
-
-    private static final String deleteIfIdStatement = "DELETE FROM "
-            + CHAT_TABLE + " WHERE "
-            + COLUMN_USER_ID + " = ?";
+    private static final String deleteIfIdStatement =
+            "DELETE FROM " + CHAT_TABLE +
+                    " WHERE "
+                    + COLUMN_USER_ID + " = ?";
 
 
     public ChatTable() {
 
     }
 
+
+    /**
+     * get the name of the table
+     *
+     * @return String
+     */
     public String getCreateTableSql() {
         return CREATE_CHAT_TABLE;
     }
@@ -90,7 +102,7 @@ public class ChatTable {
                 preparedStatement.setInt(2, 0);
                 preparedStatement.setInt(3, 0);
 
-                // Remove usernames already in the table from the list to get a list of usernames that
+                // Remove userNames already in the table from the list to get a list of userNames that
                 // are new to the table at the end off the loop
                 if (preparedStatement.executeUpdate() == 0) {
                     iterator.remove();

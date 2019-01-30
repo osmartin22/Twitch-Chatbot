@@ -18,14 +18,17 @@ public class CommandsTable {
     private static final int INDEX_COMMAND_NAME = 2;
     private static final int INDEX_COMMAND_PERMISSIONS = 3;
 
-    private static final String CREATE_COMMANDS_TABLE = "CREATE TABLE IF NOT EXISTS "
-            + COMMANDS_TABLE + " ("
-            + COLUMN_COMMAND_ID + " INTEGER PRIMARY KEY, "
-            + COLUMN_COMMAND_NAME + " TEXT, "
-            + COLUMN_COMMAND_PERMISSION + " INTEGER)";
+    private static final String CREATE_COMMANDS_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + COMMANDS_TABLE + " ( " +
+                    COLUMN_COMMAND_ID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_COMMAND_NAME + " TEXT, " +
+                    COLUMN_COMMAND_PERMISSION + " INTEGER)";
 
-    private final static String insertCommandStatement = "INSERT INTO " + COMMANDS_TABLE + " (" + COLUMN_COMMAND_NAME + ", "
-            + COLUMN_COMMAND_PERMISSION + ")" + " VALUES(?, ?)";
+    private final static String insertCommandStatement =
+            "INSERT INTO " + COMMANDS_TABLE + " ( " +
+                    COLUMN_COMMAND_NAME + " , " +
+                    COLUMN_COMMAND_PERMISSION + " ) " +
+                    " VALUES(?, ?)";
 
     public CommandsTable() {
 

@@ -16,23 +16,26 @@ public class WordCountTable {
     private static final int INDEX_COLUMN_WORD = 2;
     private static final int INDEX_COLUMN_COUNT = 3;
 
-    private static final String CREATE_WORD_COUNT_TABLE = "CREATE TABLE IF NOT EXISTS "
-            + WORD_COUNT_TABLE + " ("
-            + COLUMN_ID + " INTEGER PRIMARY KEY, "
-            + COLUMN_WORD + " TEXT, "
-            + COLUMN_COUNT + " INTEGER, UNIQUE ("
-            + COLUMN_WORD + "))";
+    private static final String CREATE_WORD_COUNT_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + WORD_COUNT_TABLE + " ( " +
+                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_WORD + " TEXT, " +
+                    COLUMN_COUNT + " INTEGER, UNIQUE ( " +
+                    COLUMN_WORD + " ))";
 
-    private static final String updateCountStatement = "UPDATE "
-            + WORD_COUNT_TABLE + " SET "
-            + COLUMN_COUNT + " = "
-            + COLUMN_COUNT + " + ? WHERE "
-            + COLUMN_WORD + " = ?";
+    private static final String updateCountStatement =
+            "UPDATE " + WORD_COUNT_TABLE +
+                    " SET " +
+                    COLUMN_COUNT + " = " +
+                    COLUMN_COUNT + " + ? " +
+                    " WHERE " +
+                    COLUMN_WORD + " = ?";
 
-    private static final String insertStatement = "INSERT OR IGNORE INTO "
-            + WORD_COUNT_TABLE + " ("
-            + COLUMN_WORD + ", "
-            + COLUMN_COUNT + ") VALUES (?,  ? )";
+    private static final String insertStatement =
+            "INSERT OR IGNORE INTO " + WORD_COUNT_TABLE + " ( " +
+                    COLUMN_WORD + ", " +
+                    COLUMN_COUNT + ") " +
+                    " VALUES (?,  ? )";
 
 
     public WordCountTable() {
