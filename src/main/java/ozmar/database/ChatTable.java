@@ -11,9 +11,9 @@ import java.util.List;
 public class ChatTable {
 
     private static final String CHAT_TABLE = "chatTable";
-    private final static String COLUMN_ID = "id";
-    private final static String COLUMN_USER_ID = "userId";
-    private final static String COLUMN_USER_NAME = "userName";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_USER_ID = "userId";
+    private static final String COLUMN_USER_NAME = "userName";
     private static final String COLUMN_MESSAGE_COUNT = "messageCount";
     private static final String COLUMN_POINTS = "points";
     private static final String COLUMN_SUB_STATUS = "subStatus";
@@ -26,7 +26,7 @@ public class ChatTable {
     private static final int INDEX_COLUMN_SUB_STATUS = 6;
 
 
-    private final static String CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS "
+    private static final String CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS "
             + CHAT_TABLE + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY, "
             + COLUMN_USER_ID + " INTEGER UNIQUE, "

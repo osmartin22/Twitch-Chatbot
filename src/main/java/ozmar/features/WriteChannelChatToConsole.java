@@ -4,7 +4,8 @@ import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import ozmar.Bot;
 
-//TODO: Maybe remove punctuation so that "hey" and "hey," are the same word
+// TODO: Maybe remove punctuation so that "hey" and "hey," are the same word
+// TODO: Move parsing of chat message to another method/class
 public class WriteChannelChatToConsole {
     @EventSubscriber
     public void onChannelMessage(ChannelMessageEvent event) {
@@ -34,7 +35,6 @@ public class WriteChannelChatToConsole {
 
         }
 
-        System.out.println(event.getPermissions());
         System.out.printf(
                 "Channel [%s] - User[%s] - Message [%s]%n",
                 event.getChannel().getName(),

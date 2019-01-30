@@ -3,6 +3,7 @@ package ozmar;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import ozmar.database.DatabaseHandler;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -31,9 +32,11 @@ public class RequestChat {
     private static final String url = "https://tmi.twitch.tv/group/user/";
 
     private String channelName;
+    private final DatabaseHandler db;
 
     public RequestChat(@Nonnull String channelName) {
         this.channelName = channelName;
+        this.db = new DatabaseHandler();
     }
 
 
@@ -45,7 +48,7 @@ public class RequestChat {
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
             chatUserList = parseChatUsers(parser);
 
-            Bot.databaseHelper.insertUser(chatUserList);
+            db.insertChatUserList(chatUserList);
 
 
         } catch (IOException e) {

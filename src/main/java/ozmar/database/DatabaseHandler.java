@@ -130,7 +130,7 @@ public class DatabaseHandler {
         wordCountTable.clearTable();
     }
 
-    public void insertUser(List<ChatUser> list) {
+    public void insertChatUserList(List<ChatUser> list) {
         chatTable.insertUserNames(list);
     }
 }

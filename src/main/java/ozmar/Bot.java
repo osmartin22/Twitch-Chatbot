@@ -5,6 +5,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.helix.TwitchHelix;
+import com.github.twitch4j.helix.TwitchHelixBuilder;
 import ozmar.database.DatabaseHandler;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
@@ -19,21 +21,20 @@ import java.util.Map;
 
 public class Bot {
 
-    public static DatabaseHandler databaseHelper;
-
-
     public static boolean currentWordCountMap = true;   // true = wordCountMap1 false = wordCountMap2
     public static Map<String, Integer> wordCountMap1 = new HashMap<>();
     public static Map<String, Integer> wordCountMap2 = new HashMap<>();
 
+    public static HelixCommands helixCommands;
 
     private Configuration configuration;
     private TwitchClient twitchClient;
     private WordCountTimer wordCountTimer;
     private ChatListTimer chatListTimer;
 
+
     public Bot() {
-        getDatabase();
+
         loadConfiguration();
 
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
@@ -53,12 +54,20 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        for (Command command : databaseHelper.getCommands()) {
+        final DatabaseHandler db = new DatabaseHandler();
+        for (Command command : db.getCommands()) {
             clientBuilder = clientBuilder.withCommandTrigger(command.getCommand());
         }
 
         twitchClient = clientBuilder.build();
         twitchClient.getEventManager().registerListener(this);
+
+        TwitchHelix twitchHelixClient = TwitchHelixBuilder.builder()
+                .withClientId(configuration.getApi().get("twitch_client_id"))
+                .withClientSecret(configuration.getApi().get("twitch_client_secret"))
+                .build();
+
+        helixCommands = new HelixCommands(twitchHelixClient);
     }
 
 
@@ -85,10 +94,6 @@ public class Bot {
         }
     }
 
-    private void getDatabase() {
-        databaseHelper = new DatabaseHandler();
-    }
-
     private void startTimer() {
         wordCountTimer = new WordCountTimer();
         wordCountTimer.startTimer();
@@ -104,7 +109,5 @@ public class Bot {
             twitchClient.getChat().joinChannel(channel.toLowerCase());
             //twitchClient.getChat().sendMessage(channel.toLowerCase(), "Bot Joined");
         }
-
-        HelixCommands.setTwitchClient(twitchClient);
     }
 }

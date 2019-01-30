@@ -6,8 +6,8 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 import ozmar.Bot;
 import ozmar.Command;
+import ozmar.database.DatabaseHandler;
 import ozmar.enums.CommandNumPermission;
-import ozmar.helix.HelixCommands;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
 
@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 
 public class CommandList {
 
-    private CommandEvent commandEvent;
+    private final CommandEvent commandEvent;
+    private final DatabaseHandler db;
 
     public CommandList(@Nonnull CommandEvent commandEvent) {
         this.commandEvent = commandEvent;
+        this.db = new DatabaseHandler();
     }
-
-    // TODO: CHECK FOR PERMISSIONS
 
     /**
      * Receives command to process and calls the method associated with the command
@@ -35,7 +35,7 @@ public class CommandList {
         CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
 
         String result = "";
-        List<Command> commandsList = Bot.databaseHelper.getCommands();
+        List<Command> commandsList = db.getCommands();
 
         if (preCommand.equals(commandsList.get(0).getCommand()) &&
                 hasPermission(commandsList.get(0).getPermission(), userPermission)) {
@@ -73,6 +73,12 @@ public class CommandList {
         } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
                 hasPermission(commandsList.get(8).getPermission(), userPermission)) {
             result = "31's next release is on ...";
+        } else if (preCommand.equals(commandsList.get(10).getCommand()) &&
+                hasPermission(commandsList.get(10).getPermission(), userPermission)) {
+            System.out.println("TESTING HELIX API LIMIT");
+            for (int i = 0; i < 5; i++) {
+                uptimeCommand(commandEvent);
+            }
         }
 
         System.out.println(result);
@@ -162,10 +168,10 @@ public class CommandList {
      */
     private String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
-        UserList userList = HelixCommands.getUsersList(null, null, Collections.singletonList(channelName));
+        UserList userList = Bot.helixCommands.getUsersList(null, null, Collections.singletonList(channelName));
 
         String channelId = userList.getUsers().get(0).getId();
-        StreamList streamList = HelixCommands.getStreams(null, null, null, null,
+        StreamList streamList = Bot.helixCommands.getStreams(null, null, null, null,
                 null, null, Collections.singletonList(channelId), null);
 
         String output;
@@ -216,7 +222,7 @@ public class CommandList {
             userChannelNameList.add(event.getCommand().trim());
         }
 
-        UserList userList = HelixCommands.getUsersList(null, null, userChannelNameList);
+        UserList userList = Bot.helixCommands.getUsersList(null, null, userChannelNameList);
 
         String userFollowingId;
         if (emptyCommand) {
@@ -232,7 +238,7 @@ public class CommandList {
         }
 
         String followedChannelId = userList.getUsers().get(0).getId();
-        FollowList followList = HelixCommands.getFollowers(userFollowingId, followedChannelId, null, 1);
+        FollowList followList = Bot.helixCommands.getFollowers(userFollowingId, followedChannelId, null, 1);
         String userFollowingName = (emptyCommand) ? event.getUser().getName() :
                 userList.getUsers().get(1).getDisplayName();
 
@@ -254,7 +260,7 @@ public class CommandList {
      * @return String
      */
     private String wordCountCommand() {
-        return "The top words for the stream are " + getMapInString(Bot.databaseHelper.getTop10Words());
+        return "The top words for the stream are " + getMapInString(db.getTop10Words());
     }
 
 
@@ -276,6 +282,6 @@ public class CommandList {
      * Clears the table containing the count of words used in the database
      */
     private void clearWordCountCommand() {
-        Bot.databaseHelper.clearWordCount();
+        db.clearWordCount();
     }
 }
