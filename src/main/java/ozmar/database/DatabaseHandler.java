@@ -130,12 +130,11 @@ public class DatabaseHandler {
         wordCountTable.clearTable();
     }
 
-    public void insertChatUserList(List<String> list) {
-        chatTable.insertUserNames(list);
-    }
-
 
     // ChatTable
+    public void insertUserNames(List<String> list) {
+        chatTable.insertUserNames(list);
+    }
 
     public void addChatDataToTable(List<User> userList) {
         chatTable.addChatDataToTable(userList);

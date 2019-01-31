@@ -2,6 +2,7 @@ package ozmar.database;
 
 import com.github.twitch4j.helix.domain.User;
 import ozmar.ChatUser;
+import ozmar.utils.RandomHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +27,7 @@ public class ChatTable {
     private static final int INDEX_COLUMN_MESSAGE_COUNT = 4;
     private static final int INDEX_COLUMN_POINTS = 5;
 
+    private static final int RANDOM_POINTS_INTERVAL = 10;
 
     private static final String CREATE_CHAT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE + " (" +
@@ -49,6 +51,14 @@ public class ChatTable {
                     " WHERE " +
                     COLUMN_USER_NAME + " = ?";
 
+    private static final String updateUserPointsStatement =
+            "UPDATE " + CHAT_TABLE +
+                    " SET " +
+                    COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
+                    " WHERE " +
+                    COLUMN_USER_NAME + " = ?";
+
+    // TODO: CHANGE NAME
     private static final String updateTemp =
             "UPDATE " + CHAT_TABLE +
                     " SET " +
@@ -85,7 +95,8 @@ public class ChatTable {
 
 
     /**
-     * Inserts only unique userNames to the table from the list
+     * Inserts only unique(new) userNames to the table from the list along with random number of points
+     * For names already in the table and in the list, a random number of points is added to them
      *
      * @param chatUserList list of userNames to store in the database
      */
@@ -93,6 +104,7 @@ public class ChatTable {
         Connection connection = DatabaseHandler.openConnection();
         DatabaseHandler.turnOffAutoCommit(connection);
         PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertUserStatement);
+        PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updateUserPointsStatement);
 
 
         for (Iterator<String> iterator = chatUserList.iterator(); iterator.hasNext(); ) {
@@ -100,11 +112,15 @@ public class ChatTable {
             try {
                 preparedStatement.setString(1, userName);
                 preparedStatement.setInt(2, 0);
-                preparedStatement.setInt(3, 0);
+                preparedStatement.setInt(3, RandomHelper.getRandomNumber(RANDOM_POINTS_INTERVAL));
 
+                // Update userNames already in the table with random number of points and remove them from
+                // the list so that at the end of the loop, the list contains only newly inserted userNames
                 // Remove userNames already in the table from the list to get a list of userNames that
-                // are new to the table at the end off the loop
                 if (preparedStatement.executeUpdate() == 0) {
+                    updatePointsStatement.setInt(1, RandomHelper.getRandomNumber(RANDOM_POINTS_INTERVAL));
+                    updatePointsStatement.setString(2, userName);
+                    updatePointsStatement.executeUpdate();
                     iterator.remove();
                 }
 
@@ -148,7 +164,6 @@ public class ChatTable {
 
         DatabaseHandler.turnOnAutoCommit(connection);
         DatabaseHandler.closeConnection(connection);
-
     }
 
 

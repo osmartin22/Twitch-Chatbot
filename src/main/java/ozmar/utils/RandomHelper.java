@@ -4,6 +4,8 @@ import java.util.Random;
 
 public class RandomHelper {
 
+    private static Random random = new Random();
+
     private RandomHelper() {
 
     }
@@ -16,7 +18,6 @@ public class RandomHelper {
      * @return int
      */
     public static int getRandomNumber(int num) {
-        Random random = new Random();
         int roll;
 
         if (num < 0) {

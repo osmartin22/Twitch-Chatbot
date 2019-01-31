@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-
 public class WordCountTimer {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -17,8 +16,6 @@ public class WordCountTimer {
     public WordCountTimer() {
         this.db = new DatabaseHandler();
     }
-
-
 
     public void startTimer() {
         final Runnable beeper = () -> {

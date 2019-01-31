@@ -22,11 +22,12 @@ public class HelixCommands {
     /**
      * Returns information about the requested users
      *
-     * @param userIds    user Id
-     * @param userNames  user login name
+     * @param userIds   user Id
+     * @param userNames user login name
      * @return UserLIst
      */
     public UserList getUsersList(List<String> userIds, List<String> userNames) {
+
         return twitchHelix.getUsers(oAuthToken, userIds, userNames).execute();
     }
 
