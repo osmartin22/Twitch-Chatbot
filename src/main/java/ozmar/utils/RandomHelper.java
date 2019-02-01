@@ -30,4 +30,14 @@ public class RandomHelper {
 
         return roll;
     }
+
+    /**
+     * Returns a random number from 1 to given number (inclusive)
+     *
+     * @param num range of random number (inclusive)
+     * @return int
+     */
+    public static int getRandomNumberNotZero(int num) {
+        return random.nextInt(num + 1) + 1;
+    }
 }

@@ -25,6 +25,11 @@ public class Bot {
     public static Map<String, Integer> wordCountMap1 = new HashMap<>();
     public static Map<String, Integer> wordCountMap2 = new HashMap<>();
 
+    public static boolean currentChatDataMap = true;    // true = chatData1     false = chatData1
+    public static Map<Long, ChatUser> chatData1 = new HashMap<>();
+    public static Map<Long, ChatUser> chatData2 = new HashMap<>();
+
+
     public static HelixCommands helixCommands;
 
     private Configuration configuration;

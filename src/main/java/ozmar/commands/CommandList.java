@@ -15,6 +15,8 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+// TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
 public class CommandList {
 
     private final CommandEvent commandEvent;
@@ -73,12 +75,14 @@ public class CommandList {
         } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
                 hasPermission(commandsList.get(8).getPermission(), userPermission)) {
             result = "31's next release is on ...";
+
+        } else if (preCommand.equals(commandsList.get(9).getCommand()) &&
+                hasPermission(commandsList.get(9).getPermission(), userPermission)) {
+            result = messageCountCommand(commandEvent);
+
         } else if (preCommand.equals(commandsList.get(10).getCommand()) &&
                 hasPermission(commandsList.get(10).getPermission(), userPermission)) {
-            System.out.println("TESTING HELIX API LIMIT");
-            for (int i = 0; i < 5; i++) {
-                uptimeCommand(commandEvent);
-            }
+            result = pointsCommand(commandEvent);
         }
 
         System.out.println(result);
@@ -111,14 +115,13 @@ public class CommandList {
 
         String command = event.getCommand();
         if (command.isEmpty()) {
-            return output + RandomHelper.getRandomNumber(num);
+            return output + diceRollHelperD20();
         }
 
         char temp = command.charAt(0);
         if (Character.isDigit(temp) || temp == ' ') {
 
             command = event.getCommand().trim();
-
             if (command.contains(" ")) {
                 command = command.substring(0, command.indexOf(" "));
             }
@@ -127,13 +130,31 @@ public class CommandList {
                 num = Integer.parseInt(command);
 
             } catch (NumberFormatException e) {
-                // variable already has a predefined value that is used when this error occurs
+                return output + diceRollHelperD20();
             }
 
             return output + RandomHelper.getRandomNumber(num);
         }
 
         return "";
+    }
+
+
+    /**
+     * Return output depending on user roll, should only be used for 20 sided dice roll
+     *
+     * @return String
+     */
+    private String diceRollHelperD20() {
+        int randNum = RandomHelper.getRandomNumber(20);
+        if (randNum == 20) {
+            return "20 POGPLANT";
+
+        } else if (randNum == 1) {
+            return "1 LUL";
+        } else {
+            return String.valueOf(randNum);
+        }
     }
 
 
@@ -148,7 +169,7 @@ public class CommandList {
         String command = event.getCommand();
 
         if (command.isEmpty() || command.charAt(0) == ' ') {
-            return "Hello there " + event.getUser().getName();
+            return "Hey there " + event.getUser().getName() + " peepoWink";
         }
 
         return "";
@@ -283,5 +304,15 @@ public class CommandList {
      */
     private void clearWordCountCommand() {
         db.clearWordCount();
+    }
+
+    private String messageCountCommand(@Nonnull CommandEvent event) {
+        Integer count = db.getMessageCount(event.getUser().getId());
+        return (count != null) ? event.getUser().getName() + " You have sent " + count + " messages" : "";
+    }
+
+    private String pointsCommand(@Nonnull CommandEvent event) {
+        Integer points = db.getPoints(event.getUser().getId());
+        return (points != null) ? event.getUser().getName() + " You have " + points + " points" : "";
     }
 }

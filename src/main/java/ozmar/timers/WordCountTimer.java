@@ -33,6 +33,22 @@ public class WordCountTimer {
                     Bot.wordCountMap2.clear();
                 }
             }
+
+
+            if (Bot.currentChatDataMap) {
+                Bot.currentChatDataMap = false;
+                if (!Bot.chatData1.isEmpty()) {
+                    db.updatePoints(Bot.chatData1);
+                    Bot.chatData1.clear();
+                }
+
+            } else {
+                Bot.currentChatDataMap = true;
+                if (!Bot.chatData2.isEmpty()) {
+                    db.updatePoints(Bot.chatData2);
+                    Bot.chatData2.clear();
+                }
+            }
         };
 
         final ScheduledFuture<?> fixedRateTimer =

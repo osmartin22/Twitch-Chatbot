@@ -14,9 +14,6 @@ public class CommandsTable {
     private static final String COLUMN_COMMAND_ID = "id";
     private static final String COLUMN_COMMAND_NAME = "commandName";
     private static final String COLUMN_COMMAND_PERMISSION = "commandPermission";
-    private static final int INDEX_COMMAND_ID = 1;
-    private static final int INDEX_COMMAND_NAME = 2;
-    private static final int INDEX_COMMAND_PERMISSIONS = 3;
 
     private static final String CREATE_COMMANDS_TABLE =
             "CREATE TABLE IF NOT EXISTS " + COMMANDS_TABLE + " ( " +
@@ -24,7 +21,7 @@ public class CommandsTable {
                     COLUMN_COMMAND_NAME + " TEXT, " +
                     COLUMN_COMMAND_PERMISSION + " INTEGER)";
 
-    private final static String insertCommandStatement =
+    private final static String insertCommandSql =
             "INSERT INTO " + COMMANDS_TABLE + " ( " +
                     COLUMN_COMMAND_NAME + " , " +
                     COLUMN_COMMAND_PERMISSION + " ) " +
@@ -51,12 +48,10 @@ public class CommandsTable {
         commandList.add(new Command("!calc", CommandNumPermission.EVERYONE));
         commandList.add(new Command("!followage", CommandNumPermission.EVERYONE));      // 5
         commandList.add(new Command("!wordCount", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!clearWordCount", CommandNumPermission.OWNER)); // CHANGE PERMISSION
+        commandList.add(new Command("!clearWordCount", CommandNumPermission.MODERATOR));
         commandList.add(new Command("!31", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!hugme", CommandNumPermission.EVERYONE));
-//        commandList.add(new Command("!", CommandNumPermission.EVERYONE));                     // 10
-//        commandList.add(new Command("!", CommandNumPermission.EVERYONE));
-
+        commandList.add(new Command("!messageCount", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!points", CommandNumPermission.EVERYONE));         // 10
         insertCommandsList(commandList);
     }
 
@@ -69,9 +64,9 @@ public class CommandsTable {
 
             commandList = new ArrayList<>();
             while (resultSet.next()) {
-                int commandId = resultSet.getInt(INDEX_COMMAND_ID);
-                String commandName = resultSet.getString(INDEX_COMMAND_NAME);
-                int commandPermissions = resultSet.getInt(INDEX_COMMAND_PERMISSIONS);
+                int commandId = resultSet.getInt(COLUMN_COMMAND_ID);
+                String commandName = resultSet.getString(COLUMN_COMMAND_NAME);
+                int commandPermissions = resultSet.getInt(COLUMN_COMMAND_PERMISSION);
 
                 // TODO: Change enum.values()[] to something more efficient
                 commandList.add(new Command(commandId, commandName, CommandNumPermission.values()[commandPermissions]));
@@ -87,36 +82,34 @@ public class CommandsTable {
 
     private void insertCommandsList(@Nonnull List<Command> commandList) {
         Connection connection = DatabaseHandler.openConnection();
-
-        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertCommandStatement);
-        for (Command command : commandList) {
-            try {
-                preparedStatement.setString(1, command.getCommand());
-                preparedStatement.setInt(2, command.getPermission().getCommandLevel());
-                preparedStatement.addBatch();
-            } catch (SQLException e) {
-                System.out.println("Adding command to batch failed " + e.getMessage());
-            }
-        }
+        DatabaseHandler.turnOffAutoCommit(connection);
+        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertCommandSql);
 
         try {
-            preparedStatement.executeBatch();
-        } catch (SQLException e) {
-            System.out.println("Failed to execute batch " + e.getMessage());
+            for (Command command : commandList) {
+                preparedStatement.setString(1, command.getCommand());
+                preparedStatement.setInt(2, command.getPermission().getCommandLevel());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException | NullPointerException e) {
+            System.out.println("Inserting command list failed: " + e.getMessage());
         }
 
+        DatabaseHandler.closeStatement(preparedStatement);
+        DatabaseHandler.turnOnAutoCommit(connection);
         DatabaseHandler.closeConnection(connection);
     }
 
     public void insertCommand(@Nonnull Command command) {
         Connection connection = DatabaseHandler.openConnection();
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertCommandStatement)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertCommandSql)) {
             preparedStatement.setString(1, command.getCommand());
             preparedStatement.setInt(2, command.getPermission().getCommandLevel());
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
-            System.out.println("Adding command failed " + e.getMessage());
+            System.out.println("Adding command failed: " + e.getMessage());
         }
 
         DatabaseHandler.closeConnection(connection);

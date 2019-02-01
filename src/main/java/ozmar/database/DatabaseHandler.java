@@ -1,6 +1,7 @@
 package ozmar.database;
 
 import com.github.twitch4j.helix.domain.User;
+import ozmar.ChatUser;
 import ozmar.Command;
 
 import javax.annotation.Nonnull;
@@ -79,6 +80,16 @@ public class DatabaseHandler {
         return preparedStatement;
     }
 
+    public static void closeStatement(PreparedStatement preparedStatement) {
+        if (preparedStatement != null) {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                System.out.println("Failed to close statement: " + e.getMessage());
+            }
+        }
+    }
+
     private void initializeDb() {
         Connection connection = openConnection();
 
@@ -139,4 +150,17 @@ public class DatabaseHandler {
     public void addChatDataToTable(List<User> userList) {
         chatTable.addChatDataToTable(userList);
     }
+
+    public void updatePoints(Map<Long, ChatUser> map) {
+        chatTable.updatePoints(map);
+    }
+
+    public Integer getMessageCount(long userId) {
+        return chatTable.getMessageCount(userId);
+    }
+
+    public Integer getPoints(long userId) {
+        return chatTable.getPoints(userId);
+    }
+
 }

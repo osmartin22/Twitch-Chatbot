@@ -46,4 +46,12 @@ public class ChatUser {
     public int getPoints() {
         return points;
     }
+
+    public void incrementMessageCount(int increment) {
+        this.messageCount += increment;
+    }
+
+    public void incrementPoints(int increment) {
+        this.points += increment;
+    }
 }

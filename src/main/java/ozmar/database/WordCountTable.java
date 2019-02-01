@@ -12,9 +12,6 @@ public class WordCountTable {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_WORD = "word";
     private static final String COLUMN_COUNT = "count";
-    private static final int INDEX_COLUMN_ID = 1;
-    private static final int INDEX_COLUMN_WORD = 2;
-    private static final int INDEX_COLUMN_COUNT = 3;
 
     private static final String CREATE_WORD_COUNT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + WORD_COUNT_TABLE + " ( " +
@@ -23,15 +20,14 @@ public class WordCountTable {
                     COLUMN_COUNT + " INTEGER, UNIQUE ( " +
                     COLUMN_WORD + " ))";
 
-    private static final String updateCountStatement =
+    private static final String updateCountSql =
             "UPDATE " + WORD_COUNT_TABLE +
                     " SET " +
-                    COLUMN_COUNT + " = " +
-                    COLUMN_COUNT + " + ? " +
+                    COLUMN_COUNT + " = " + COLUMN_COUNT + " + ? " +
                     " WHERE " +
                     COLUMN_WORD + " = ?";
 
-    private static final String insertStatement =
+    private static final String insertWordAndCountSql =
             "INSERT OR IGNORE INTO " + WORD_COUNT_TABLE + " ( " +
                     COLUMN_WORD + ", " +
                     COLUMN_COUNT + ") " +
@@ -60,8 +56,8 @@ public class WordCountTable {
 
             map = new HashMap<>();
             while (resultSet.next()) {
-                String word = resultSet.getString(INDEX_COLUMN_WORD);
-                int count = resultSet.getInt(INDEX_COLUMN_COUNT);
+                String word = resultSet.getString(COLUMN_WORD);
+                int count = resultSet.getInt(COLUMN_COUNT);
                 map.put(word, count);
             }
 
@@ -81,8 +77,8 @@ public class WordCountTable {
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                String word = resultSet.getString(INDEX_COLUMN_WORD);
-                int count = resultSet.getInt(INDEX_COLUMN_COUNT);
+                String word = resultSet.getString(COLUMN_WORD);
+                int count = resultSet.getInt(COLUMN_COUNT);
                 map.put(word, count);
             }
 
@@ -97,36 +93,28 @@ public class WordCountTable {
     public void updateOrInsert(@Nonnull Map<String, Integer> map) {
         Connection connection = DatabaseHandler.openConnection();
         DatabaseHandler.turnOffAutoCommit(connection);
+        PreparedStatement updatePreparedStatement = DatabaseHandler.prepareStatement(connection, updateCountSql);
+        PreparedStatement insertPreparedStatement = DatabaseHandler.prepareStatement(connection, insertWordAndCountSql);
 
-        PreparedStatement preparedStatementUpdate = DatabaseHandler.prepareStatement(connection, updateCountStatement);
-        PreparedStatement preparedStatementInsert = DatabaseHandler.prepareStatement(connection, insertStatement);
-
-        if (preparedStatementUpdate != null && preparedStatementInsert != null) {
+        try {
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                int returnValue = 0;
-
-                try {
-                    preparedStatementUpdate.setInt(1, entry.getValue());
-                    preparedStatementUpdate.setString(2, entry.getKey());
-                    returnValue = preparedStatementUpdate.executeUpdate();
-                } catch (SQLException e) {
-                    System.out.println("Update failed" + e.getMessage());
-                }
+                updatePreparedStatement.setInt(1, entry.getValue());
+                updatePreparedStatement.setString(2, entry.getKey());
 
                 // Only execute insert if update did not update a row (i.e. row word did not exist)
-                if (returnValue == 0) {
-                    try {
-                        preparedStatementInsert.setString(1, entry.getKey());
-                        preparedStatementInsert.setInt(2, entry.getValue());
-                        preparedStatementInsert.executeUpdate();
-
-                    } catch (SQLException e) {
-                        System.out.println("Insert failed " + e.getMessage());
-                    }
+                if (updatePreparedStatement.executeUpdate() == 0) {
+                    insertPreparedStatement.setString(1, entry.getKey());
+                    insertPreparedStatement.setInt(2, entry.getValue());
+                    insertPreparedStatement.executeUpdate();
                 }
             }
+        } catch (SQLException | NullPointerException e) {
+            System.out.println("Update or insert failed " + e.getMessage());
+            DatabaseHandler.rollBack(connection);
         }
 
+        DatabaseHandler.closeStatement(updatePreparedStatement);
+        DatabaseHandler.closeStatement(insertPreparedStatement);
         DatabaseHandler.turnOnAutoCommit(connection);
         DatabaseHandler.closeConnection(connection);
     }
@@ -138,7 +126,7 @@ public class WordCountTable {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
-            System.out.println("Failed to create connection " + e.getMessage());
+            System.out.println("Failed to create connection: " + e.getMessage());
         }
 
         DatabaseHandler.closeConnection(connection);
