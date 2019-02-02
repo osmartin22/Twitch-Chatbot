@@ -33,19 +33,19 @@ public class WordCountTable {
                     COLUMN_COUNT + ") " +
                     " VALUES (?,  ? )";
 
-
     public WordCountTable() {
 
-    }
-
-    public String getTableName() {
-        return WORD_COUNT_TABLE;
     }
 
     public String getCreateTableSql() {
         return CREATE_WORD_COUNT_TABLE;
     }
 
+    /**
+     * Gets all the data in the table
+     *
+     * @return Map of Strings and Integers
+     */
     public Map<String, Integer> queryWordCount() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE;
         Connection connection = DatabaseHandler.openConnection();
@@ -60,15 +60,20 @@ public class WordCountTable {
                 int count = resultSet.getInt(COLUMN_COUNT);
                 map.put(word, count);
             }
-
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
 
-        DatabaseHandler.closeConnection(connection);
         return map;
     }
 
+    /**
+     * Gets the 10 most used words from the table
+     *
+     * @return Map of Strings and Integers
+     */
     public Map<String, Integer> getTop10Words() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
         Map<String, Integer> map = new LinkedHashMap<>();
@@ -81,18 +86,23 @@ public class WordCountTable {
                 int count = resultSet.getInt(COLUMN_COUNT);
                 map.put(word, count);
             }
-
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
 
-        DatabaseHandler.closeConnection(connection);
         return map;
     }
 
+    /**
+     * Uses the map to update the count for a word if the word is in the table
+     * If it is not, the word and count are inserted as a new row
+     *
+     * @param map map of words and count
+     */
     public void updateOrInsert(@Nonnull Map<String, Integer> map) {
-        Connection connection = DatabaseHandler.openConnection();
-        DatabaseHandler.turnOffAutoCommit(connection);
+        Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement updatePreparedStatement = DatabaseHandler.prepareStatement(connection, updateCountSql);
         PreparedStatement insertPreparedStatement = DatabaseHandler.prepareStatement(connection, insertWordAndCountSql);
 
@@ -111,14 +121,16 @@ public class WordCountTable {
         } catch (SQLException | NullPointerException e) {
             System.out.println("Update or insert failed " + e.getMessage());
             DatabaseHandler.rollBack(connection);
+        } finally {
+            DatabaseHandler.closeStatement(updatePreparedStatement);
+            DatabaseHandler.closeStatement(insertPreparedStatement);
+            DatabaseHandler.closeConnectionCommitOn(connection);
         }
-
-        DatabaseHandler.closeStatement(updatePreparedStatement);
-        DatabaseHandler.closeStatement(insertPreparedStatement);
-        DatabaseHandler.turnOnAutoCommit(connection);
-        DatabaseHandler.closeConnection(connection);
     }
 
+    /**
+     * Clears the entire table
+     */
     public void clearTable() {
         String sql = "DELETE FROM " + WORD_COUNT_TABLE;
         Connection connection = DatabaseHandler.openConnection();
@@ -127,8 +139,8 @@ public class WordCountTable {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             System.out.println("Failed to create connection: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
-
-        DatabaseHandler.closeConnection(connection);
     }
 }

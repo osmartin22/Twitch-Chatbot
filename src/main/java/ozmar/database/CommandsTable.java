@@ -31,14 +31,14 @@ public class CommandsTable {
 
     }
 
-    public String getTableName() {
-        return COMMANDS_TABLE;
-    }
-
     public String getCreateTableSql() {
         return CREATE_COMMANDS_TABLE;
     }
 
+    /**
+     * Meant for first time use only
+     * Creates and inserts a List of Commands to the table
+     */
     public void initializeCommands() {
         List<Command> commandList = new ArrayList<>();
         commandList.add(new Command("!dice", CommandNumPermission.EVERYONE));           // 0
@@ -55,6 +55,11 @@ public class CommandsTable {
         insertCommandsList(commandList);
     }
 
+    /**
+     * Fetches all the commands from the table
+     *
+     * @return List of Commands
+     */
     public List<Command> queryCommands() {
         Connection connection = DatabaseHandler.openConnection();
 
@@ -71,35 +76,43 @@ public class CommandsTable {
                 // TODO: Change enum.values()[] to something more efficient
                 commandList.add(new Command(commandId, commandName, CommandNumPermission.values()[commandPermissions]));
             }
-
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
 
-        DatabaseHandler.closeConnection(connection);
         return commandList;
     }
 
-    private void insertCommandsList(@Nonnull List<Command> commandList) {
-        Connection connection = DatabaseHandler.openConnection();
-        DatabaseHandler.turnOffAutoCommit(connection);
+    /**
+     * Inserts the list of commands into the table
+     *
+     * @param list list of commands
+     */
+    private void insertCommandsList(@Nonnull List<Command> list) {
+        Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertCommandSql);
 
         try {
-            for (Command command : commandList) {
+            for (Command command : list) {
                 preparedStatement.setString(1, command.getCommand());
                 preparedStatement.setInt(2, command.getPermission().getCommandLevel());
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException | NullPointerException e) {
             System.out.println("Inserting command list failed: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeStatement(preparedStatement);
+            DatabaseHandler.closeConnectionCommitOn(connection);
         }
-
-        DatabaseHandler.closeStatement(preparedStatement);
-        DatabaseHandler.turnOnAutoCommit(connection);
-        DatabaseHandler.closeConnection(connection);
     }
 
+    /**
+     * Inserts the command into the table
+     *
+     * @param command Command
+     */
     public void insertCommand(@Nonnull Command command) {
         Connection connection = DatabaseHandler.openConnection();
 
@@ -107,11 +120,10 @@ public class CommandsTable {
             preparedStatement.setString(1, command.getCommand());
             preparedStatement.setInt(2, command.getPermission().getCommandLevel());
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             System.out.println("Adding command failed: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
-
-        DatabaseHandler.closeConnection(connection);
     }
 }

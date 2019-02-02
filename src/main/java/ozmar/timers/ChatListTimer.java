@@ -23,9 +23,12 @@ public class ChatListTimer {
 
     public void startTimer() {
         final Runnable beeper = () -> {
-            RequestChat requestChat = new RequestChat("dreamleague");
+            RequestChat requestChat = new RequestChat("moonmoon_ow");
             List<String> userNameList = requestChat.queryChatList();
             List<List<String>> partition = ListUtils.partition(userNameList, 100);
+
+            // Remove names from the list if they exist in the database
+            db.checkIfNamesExist(userNameList);
 
             for (List<String> list : partition) {
                 UserList userList;
@@ -33,16 +36,16 @@ public class ChatListTimer {
                     userList = Bot.helixCommands.getUsersList(null, list);
 
                     // Try to get the data once more else remove the list and try again the next time
-                    // Temp solution since api prevents extending the Hystrix default timeout
-                    // To solve this I would have to create my own Helix interface and set a timeout
-                    // Response is OK 200 but Hystrix timeouts before some responses occur
+                    // we query the chat list
+                    // Temp solution since it would require rewriting parts of the api I am using
+                    // to extend the timeout
                 } catch (Throwable e) {
                     System.out.println("Timed out, trying again " + e.getMessage());
                     userList = Bot.helixCommands.getUsersList(null, list);
                 }
 
                 if (userList != null) {
-                    db.addChatDataToTable(userList.getUsers());
+                    db.addUserList(userList.getUsers());
                 }
             }
         };

@@ -4,11 +4,11 @@ import com.github.twitch4j.helix.domain.User;
 import ozmar.ChatUser;
 import ozmar.utils.RandomHelper;
 
+import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class ChatTable {
     private static final String COLUMN_MESSAGE_COUNT = "messageCount";
     private static final String COLUMN_POINTS = "points";
 
-    private static final int RANDOM_POINTS_INTERVAL = 5;
+    private static final int RANDOM_POINTS_RANGE = 2;
 
     private static final String CREATE_CHAT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE + " (" +
@@ -32,50 +32,30 @@ public class ChatTable {
                     COLUMN_MESSAGE_COUNT + " INTEGER, " +
                     COLUMN_POINTS + " INTEGER)";
 
-    private static final String getUserIdSql =
+    private static final String getUserSql =
             "SELECT * FROM " + CHAT_TABLE +
                     " WHERE " +
                     COLUMN_USER_ID + " = ?";
 
-    private static final String updateUserIdCountAndPointsSql =
-            "UPDATE " + CHAT_TABLE +
-                    " SET " +
-                    COLUMN_USER_ID + " = ?, " +
-                    COLUMN_MESSAGE_COUNT + " = " + COLUMN_MESSAGE_COUNT + " + ?, " +
-                    COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
-                    " WHERE " +
-                    COLUMN_USER_NAME + " = ?";
-
-    private static final String updateUserPointsUseNameSql =
+    private static final String updatePointsSql =
             "UPDATE " + CHAT_TABLE +
                     " SET " +
                     COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
                     " WHERE " +
                     COLUMN_USER_NAME + " = ?";
-
-    private static final String updateUserIdSql =
-            "UPDATE " + CHAT_TABLE +
-                    " SET " +
-                    COLUMN_USER_ID + " = ? " +
-                    "WHERE " +
-                    COLUMN_USER_NAME + " = ?";
-
-    private static final String insertNameCountAndPointsSql =
-            "INSERT OR IGNORE INTO " + CHAT_TABLE + " ( " +
-                    COLUMN_USER_NAME + ", " +
-                    COLUMN_MESSAGE_COUNT + ", " +
-                    COLUMN_POINTS + " ) " +
-                    " VALUES (?, ?, ?)";
-
-    private static final String deleteIfUserIdSql =
-            "DELETE FROM " + CHAT_TABLE +
-                    " WHERE "
-                    + COLUMN_USER_ID + " = ?";
 
     private static final String updateCountAndPointsSql =
             "UPDATE " + CHAT_TABLE +
                     " SET " +
                     COLUMN_MESSAGE_COUNT + " = " + COLUMN_MESSAGE_COUNT + " + ?, " +
+                    COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
+                    " WHERE "
+                    + COLUMN_USER_ID + " = ?";
+
+    private static final String updateNameAndPointsSql =
+            "UPDATE " + CHAT_TABLE +
+                    " SET " +
+                    COLUMN_USER_NAME + " = ?, " +
                     COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
                     " WHERE "
                     + COLUMN_USER_ID + " = ?";
@@ -98,11 +78,9 @@ public class ChatTable {
                     " WHERE " +
                     COLUMN_USER_ID + " = ?";
 
-
     public ChatTable() {
 
     }
-
 
     /**
      * get the name of the table
@@ -113,201 +91,125 @@ public class ChatTable {
         return CREATE_CHAT_TABLE;
     }
 
-
     /**
-     * Inserts only unique(new) userNames to the table from the list along with random number of points
-     * For names already in the table and in the list, a random number of points is added to them
-     * userNames already in the table are removed from the list after getting points
+     * Checks if a username from the list already exists in the table
+     * If it does, it updates the points and removes the name from the list
      *
-     * @param chatUserList list of userNames to store in the database
+     * @param list list of names to check in the table
      */
-    public void insertUserNames(List<String> chatUserList) {
-        Connection connection = DatabaseHandler.openConnection();
-        DatabaseHandler.turnOffAutoCommit(connection);
-        PreparedStatement insertUserStatement = DatabaseHandler.prepareStatement(connection, insertNameCountAndPointsSql);
-        PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updateUserPointsUseNameSql);
+    public void checkIfNameExists(@Nonnull List<String> list) {
+        Connection connection = DatabaseHandler.openConnectionCommitOff();
+        PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updatePointsSql);
 
         try {
-            for (Iterator<String> iterator = chatUserList.iterator(); iterator.hasNext(); ) {
+            for (Iterator<String> iterator = list.iterator(); iterator.hasNext(); ) {
                 String userName = iterator.next();
-                insertUserStatement.setString(1, userName);
-                insertUserStatement.setInt(2, 0);
-                insertUserStatement.setInt(3, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_INTERVAL));
-
-                // Update userNames already in the table with random number of points and remove them from
-                // the list so that at the end of the loop, the list contains only newly inserted userNames
-                // Remove userNames already in the table from the list to get a list of userNames that
-                if (insertUserStatement.executeUpdate() == 0) {
-                    updatePointsStatement.setInt(1, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_INTERVAL));
-                    updatePointsStatement.setString(2, userName);
-                    updatePointsStatement.executeUpdate();
+                updatePointsStatement.setInt(1, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_RANGE));
+                updatePointsStatement.setString(2, userName);
+                if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
             }
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Failed to insert or delete row: " + e.getMessage());
+            System.out.println("Failed to update points while checking: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
         } finally {
-            DatabaseHandler.closeStatement(insertUserStatement);
             DatabaseHandler.closeStatement(updatePointsStatement);
-            DatabaseHandler.turnOnAutoCommit(connection);
-            DatabaseHandler.closeConnection(connection);
+            DatabaseHandler.closeConnectionCommitOn(connection);
         }
     }
 
-
     /**
-     * Takes a list of Users and
-     * 1) Figures out which ids from the list are already in the table, if the userId is are already in the table
-     * it means the userName has changed and must be updated. The row info is stored in a ChatUser list
-     * and the row is then deleted
-     * NOTE: the passed in User list user is also removed from the list when an id already exists
-     * 2) If the ChatUser list is not empty, it combines the row in the table with the desired userName from
-     * th ChatUSer list
-     * 3) It then updates the userId with the desired name from the User list
-     * <p>
-     * If any of the methods fail, then the database is roll backed and the methods that follow are skipped
-     * <p>
-     * It is ONLY meant to be used after using the Helix API getUsers() and using the returned data
-     * to update the table
+     * Uses the list to add the user to the table if they are not found
+     * Change the userName if the same userId is found with a different userName and update their points
+     * Or
+     * Update the users points if they are in the table
      *
-     * @param userList data containing info to store
+     * @param list list of Users to add/update in the table
      */
-    public void addChatDataToTable(List<User> userList) {
-        Connection connection = DatabaseHandler.openConnection();
-        DatabaseHandler.turnOffAutoCommit(connection);
-
-        List<ChatUser> chatUserList = getIdCollisionRows(userList, connection);
-
-        if (chatUserList == null) {
-            return;
+    public void addUsersToTable(List<User> list) {
+        updateNameAndPointsFromUserId(list);
+        insertUserList(list);
+        if (!list.isEmpty()) {
+            System.out.println("FAILED TO INSERT USERS: " + list.size());
         }
-
-        boolean returnValue = true;
-        if (!chatUserList.isEmpty()) {
-            returnValue = updateUserIdAndRow(chatUserList, connection);
-        }
-
-        if (returnValue) {
-            updateIdWithUserName(userList, connection);
-        }
-
-        DatabaseHandler.turnOnAutoCommit(connection);
-        DatabaseHandler.closeConnection(connection);
     }
 
-
     /**
-     * Takes a list of Users and checks if any of the user's ids are already in the table.
-     * It creates a ChatUser list containing all the data from the rows that have the same id as a User
-     * It then deletes the row containing the data which is safely stored in the ChatUser list
+     * Uses the list to check if any of the ids are contained in the table
+     * If the id is in the table, update the userName and points, and then remove it from the list
      *
-     * @param userList   list of user info (should be the list from twitch api to get chatters)
-     * @param connection connection to database
-     * @return ChatUser
+     * @param list list of users
      */
-    private List<ChatUser> getIdCollisionRows(List<User> userList, Connection connection) {
-        PreparedStatement getUserIdStatement = DatabaseHandler.prepareStatement(connection, ChatTable.getUserIdSql);
-        PreparedStatement deleteRowStatement = DatabaseHandler.prepareStatement(connection, deleteIfUserIdSql);
+    private void updateNameAndPointsFromUserId(@Nonnull List<User> list) {
+        Connection connection = DatabaseHandler.openConnectionCommitOff();
+        PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updateNameAndPointsSql);
 
-        List<ChatUser> chatUserList = new ArrayList<>();
+        User user = null;
         try {
-            for (Iterator<User> iterator = userList.iterator(); iterator.hasNext(); ) {
-                User user = iterator.next();
-                long currentUserId = Long.parseLong(user.getId());
-                getUserIdStatement.setLong(1, currentUserId);
-                ResultSet resultSet = getUserIdStatement.executeQuery();
-
-                if (resultSet.next()) {
-                    do {
-                        int id = resultSet.getInt(COLUMN_ID);
-                        long userId = resultSet.getLong(COLUMN_USER_ID);
-                        int messageCount = resultSet.getInt(COLUMN_MESSAGE_COUNT);
-                        int points = resultSet.getInt(COLUMN_POINTS);
-
-                        chatUserList.add(new ChatUser(id, userId, user.getLogin(), messageCount, points));
-                    } while (resultSet.next());
-
-                    deleteRowStatement.setLong(1, currentUserId);
-                    deleteRowStatement.executeUpdate();
+            for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
+                user = iterator.next();
+                updatePointsStatement.setString(1, user.getLogin());
+                updatePointsStatement.setInt(2, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_RANGE));
+                updatePointsStatement.setLong(3, Long.parseLong(user.getId()));
+                if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
             }
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Failed to query userIds " + e.getMessage());
+            System.out.println("UserName: " + user.getLogin());
+            System.out.println("Failed to update points from userName: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
-            return null;
         } finally {
-            DatabaseHandler.closeStatement(getUserIdStatement);
-            DatabaseHandler.closeStatement(deleteRowStatement);
+            DatabaseHandler.closeStatement(updatePointsStatement);
+            DatabaseHandler.closeConnectionCommitOn(connection);
         }
-
-        return chatUserList;
     }
-
 
     /**
-     * Updates the row with the desired userName using the ChatUser with the same name by adding the
-     * column values which are ints
+     * Inserts users from the list into the table
      *
-     * @param chatUserList list of ChatUsers containing info to store
-     * @param connection   connection to database
+     * @param list list of users to insert into table
      */
-    private boolean updateUserIdAndRow(List<ChatUser> chatUserList, Connection connection) {
-        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, updateUserIdCountAndPointsSql);
+    public void insertUserList(List<User> list) {
+        Connection connection = DatabaseHandler.openConnectionCommitOff();
+        PreparedStatement insertStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
+
         try {
-            for (ChatUser chatUser : chatUserList) {
-                preparedStatement.setLong(1, chatUser.getUserId());
-                preparedStatement.setInt(2, chatUser.getMessageCount());
-                preparedStatement.setInt(3, chatUser.getPoints());
-                preparedStatement.setString(4, chatUser.getUserName());
-                preparedStatement.executeUpdate();
+            for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
+                User user = iterator.next();
+                insertStatement.setLong(1, Long.parseLong(user.getId()));
+                insertStatement.setString(2, user.getLogin());
+                insertStatement.setInt(3, 0);
+                insertStatement.setInt(4, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_RANGE));
+
+                if (insertStatement.executeUpdate() != 0) {
+                    iterator.remove();
+                }
             }
+
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Failed to update user1: " + e.getMessage());
+            System.out.println("Failed to insert new row: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
-            return false;
         } finally {
-            DatabaseHandler.closeStatement(preparedStatement);
+            DatabaseHandler.closeStatement(insertStatement);
+            DatabaseHandler.closeConnectionCommitOn(connection);
         }
-
-        return true;
     }
-
 
     /**
-     * Updates rows with desired userName with the userId from User with the same userName
+     * Updates the users points by searching for the user with data from the map
+     * If the user is not in the table, they are added
      *
-     * @param userList   list of Users containing userIds to store
-     * @param connection connection to database
+     * @param map map of users and their ids
      */
-    private boolean updateIdWithUserName(List<User> userList, Connection connection) {
-        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, updateUserIdSql);
-
-        try {
-            for (User user : userList) {
-                preparedStatement.setLong(1, Long.parseLong(user.getId()));
-                preparedStatement.setString(2, user.getLogin());
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException | NullPointerException e) {
-            System.out.println("Failed to update user2: " + e.getMessage());
-            DatabaseHandler.rollBack(connection);
-            return false;
-        } finally {
-            DatabaseHandler.closeStatement(preparedStatement);
-        }
-
-        return true;
-    }
-
-    public void updatePoints(Map<Long, ChatUser> chatUserMap) {
-        Connection connection = DatabaseHandler.openConnection();
-        DatabaseHandler.turnOffAutoCommit(connection);
+    public void updatePoints(Map<Long, ChatUser> map) {
+        Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement updateStatement = DatabaseHandler.prepareStatement(connection, updateCountAndPointsSql);
         PreparedStatement insertRowStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
+
         try {
-            for (Map.Entry<Long, ChatUser> entry : chatUserMap.entrySet()) {
+            for (Map.Entry<Long, ChatUser> entry : map.entrySet()) {
                 ChatUser user = entry.getValue();
 
                 updateStatement.setInt(1, user.getMessageCount());
@@ -327,19 +229,21 @@ public class ChatTable {
             System.out.println("Failed to update points or insert new row " + e.getMessage());
             DatabaseHandler.rollBack(connection);
         } finally {
-            System.out.println("HI FINALLY");
             DatabaseHandler.closeStatement(updateStatement);
             DatabaseHandler.closeStatement(insertRowStatement);
-            DatabaseHandler.turnOnAutoCommit(connection);
-            DatabaseHandler.closeConnection(connection);
+            DatabaseHandler.closeConnectionCommitOn(connection);
         }
-
-        System.out.println("HI DONE");
     }
 
-    public Integer getMessageCount(long userId) {
+    /**
+     * Gets the message count for the specified user
+     *
+     * @param userId userId to look for in the table
+     * @return int
+     */
+    public int getMessageCount(long userId) {
         Connection connection = DatabaseHandler.openConnection();
-        Integer count = null;
+        int count = -1;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getMessageCountSql)) {
             preparedStatement.setLong(1, userId);
@@ -357,9 +261,15 @@ public class ChatTable {
         return count;
     }
 
-    public Integer getPoints(long userId) {
+    /**
+     * Gets the number of points for the specified user
+     *
+     * @param userId userId to look for in the table
+     * @return int
+     */
+    public int getPoints(long userId) {
         Connection connection = DatabaseHandler.openConnection();
-        Integer points = null;
+        int points = -1;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getPointsSql)) {
             preparedStatement.setLong(1, userId);

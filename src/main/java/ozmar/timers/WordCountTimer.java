@@ -37,7 +37,7 @@ public class WordCountTimer {
         };
 
         final ScheduledFuture<?> fixedRateTimer =
-                scheduler.scheduleAtFixedRate(beeper, 1, 1, TimeUnit.SECONDS);
+                scheduler.scheduleAtFixedRate(beeper, 5, 3, TimeUnit.SECONDS);
     }
 
 }

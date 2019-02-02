@@ -38,6 +38,18 @@ public class DatabaseHandler {
         return connection;
     }
 
+    public static Connection openConnectionCommitOff() {
+        Connection connection = openConnection();
+        turnOffAutoCommit(connection);
+
+        return connection;
+    }
+
+    public static void closeConnectionCommitOn(Connection connection) {
+        turnOnAutoCommit(connection);
+        closeConnection(connection);
+    }
+
     public static void closeConnection(@Nonnull Connection connection) {
         try {
             connection.close();
@@ -145,16 +157,14 @@ public class DatabaseHandler {
 
 
     // ChatTable
-    public void insertUserNames(List<String> list) {
-        if (!list.isEmpty()) {
-            chatTable.insertUserNames(list);
+    public void addUserList(List<User> userList) {
+        if (!userList.isEmpty()) {
+            chatTable.addUsersToTable(userList);
         }
     }
 
-    public void addChatDataToTable(List<User> userList) {
-        if (!userList.isEmpty()) {
-            chatTable.addChatDataToTable(userList);
-        }
+    public void checkIfNamesExist(List<String> list) {
+        chatTable.checkIfNameExists(list);
     }
 
     public void updatePoints(Map<Long, ChatUser> map) {
@@ -163,11 +173,11 @@ public class DatabaseHandler {
         }
     }
 
-    public Integer getMessageCount(long userId) {
+    public int getMessageCount(long userId) {
         return chatTable.getMessageCount(userId);
     }
 
-    public Integer getPoints(long userId) {
+    public int getPoints(long userId) {
         return chatTable.getPoints(userId);
     }
 

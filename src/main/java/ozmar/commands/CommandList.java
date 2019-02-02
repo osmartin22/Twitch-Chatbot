@@ -306,12 +306,12 @@ public class CommandList {
     }
 
     private String messageCountCommand(@Nonnull CommandEvent event) {
-        Integer count = db.getMessageCount(event.getUser().getId());
-        return (count != null) ? event.getUser().getName() + " You have sent " + ++count + " messages" : "";
+        int count = db.getMessageCount(event.getUser().getId());
+        return (count != -1) ? event.getUser().getName() + " has sent " + ++count + " messages" : "";
     }
 
     private String pointsCommand(@Nonnull CommandEvent event) {
-        Integer points = db.getPoints(event.getUser().getId());
-        return (points != null) ? event.getUser().getName() + " You have " + points + " points" : "";
+        int points = db.getPoints(event.getUser().getId());
+        return (points != -1) ? event.getUser().getName() + " has " + points + " points" : "";
     }
 }
