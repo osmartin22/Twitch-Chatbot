@@ -22,7 +22,7 @@ public class ChatTable {
     private static final String COLUMN_MESSAGE_COUNT = "messageCount";
     private static final String COLUMN_POINTS = "points";
 
-    private static final int RANDOM_POINTS_INTERVAL = 10;
+    private static final int RANDOM_POINTS_INTERVAL = 5;
 
     private static final String CREATE_CHAT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE + " (" +
@@ -117,6 +117,7 @@ public class ChatTable {
     /**
      * Inserts only unique(new) userNames to the table from the list along with random number of points
      * For names already in the table and in the list, a random number of points is added to them
+     * userNames already in the table are removed from the list after getting points
      *
      * @param chatUserList list of userNames to store in the database
      */
@@ -146,12 +147,12 @@ public class ChatTable {
         } catch (SQLException | NullPointerException e) {
             System.out.println("Failed to insert or delete row: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
+        } finally {
+            DatabaseHandler.closeStatement(insertUserStatement);
+            DatabaseHandler.closeStatement(updatePointsStatement);
+            DatabaseHandler.turnOnAutoCommit(connection);
+            DatabaseHandler.closeConnection(connection);
         }
-
-        DatabaseHandler.closeStatement(insertUserStatement);
-        DatabaseHandler.closeStatement(updatePointsStatement);
-        DatabaseHandler.turnOnAutoCommit(connection);
-        DatabaseHandler.closeConnection(connection);
     }
 
 
@@ -236,10 +237,11 @@ public class ChatTable {
             System.out.println("Failed to query userIds " + e.getMessage());
             DatabaseHandler.rollBack(connection);
             return null;
+        } finally {
+            DatabaseHandler.closeStatement(getUserIdStatement);
+            DatabaseHandler.closeStatement(deleteRowStatement);
         }
 
-        DatabaseHandler.closeStatement(getUserIdStatement);
-        DatabaseHandler.closeStatement(deleteRowStatement);
         return chatUserList;
     }
 
@@ -262,12 +264,13 @@ public class ChatTable {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Failed to update user: " + e.getMessage());
+            System.out.println("Failed to update user1: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
             return false;
+        } finally {
+            DatabaseHandler.closeStatement(preparedStatement);
         }
 
-        DatabaseHandler.closeStatement(preparedStatement);
         return true;
     }
 
@@ -280,20 +283,21 @@ public class ChatTable {
      */
     private boolean updateIdWithUserName(List<User> userList, Connection connection) {
         PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, updateUserIdSql);
+
         try {
             for (User user : userList) {
                 preparedStatement.setLong(1, Long.parseLong(user.getId()));
                 preparedStatement.setString(2, user.getLogin());
                 preparedStatement.executeUpdate();
-
             }
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Failed to update user: " + e.getMessage());
+            System.out.println("Failed to update user2: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
             return false;
+        } finally {
+            DatabaseHandler.closeStatement(preparedStatement);
         }
 
-        DatabaseHandler.closeStatement(preparedStatement);
         return true;
     }
 
@@ -302,7 +306,6 @@ public class ChatTable {
         DatabaseHandler.turnOffAutoCommit(connection);
         PreparedStatement updateStatement = DatabaseHandler.prepareStatement(connection, updateCountAndPointsSql);
         PreparedStatement insertRowStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
-
         try {
             for (Map.Entry<Long, ChatUser> entry : chatUserMap.entrySet()) {
                 ChatUser user = entry.getValue();
@@ -323,12 +326,15 @@ public class ChatTable {
         } catch (SQLException | NullPointerException e) {
             System.out.println("Failed to update points or insert new row " + e.getMessage());
             DatabaseHandler.rollBack(connection);
+        } finally {
+            System.out.println("HI FINALLY");
+            DatabaseHandler.closeStatement(updateStatement);
+            DatabaseHandler.closeStatement(insertRowStatement);
+            DatabaseHandler.turnOnAutoCommit(connection);
+            DatabaseHandler.closeConnection(connection);
         }
 
-        DatabaseHandler.closeStatement(updateStatement);
-        DatabaseHandler.closeStatement(insertRowStatement);
-        DatabaseHandler.turnOnAutoCommit(connection);
-        DatabaseHandler.closeConnection(connection);
+        System.out.println("HI DONE");
     }
 
     public Integer getMessageCount(long userId) {
@@ -344,6 +350,8 @@ public class ChatTable {
 
         } catch (SQLException e) {
             System.out.println("Failed to get message count: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
 
         return count;
@@ -362,6 +370,8 @@ public class ChatTable {
 
         } catch (SQLException e) {
             System.out.println("Failed to get points: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
         }
 
         return points;

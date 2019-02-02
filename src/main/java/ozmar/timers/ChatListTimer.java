@@ -23,7 +23,7 @@ public class ChatListTimer {
 
     public void startTimer() {
         final Runnable beeper = () -> {
-            RequestChat requestChat = new RequestChat("moonmoon_ow");
+            RequestChat requestChat = new RequestChat("dreamleague");
             List<String> userNameList = requestChat.queryChatList();
             List<List<String>> partition = ListUtils.partition(userNameList, 100);
 

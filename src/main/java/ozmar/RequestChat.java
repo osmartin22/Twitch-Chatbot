@@ -47,6 +47,7 @@ public class RequestChat {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
             chatUserList = parseChatUsers(parser);
+            System.out.println("ChatUserList Size: " + chatUserList.size());
             db.insertUserNames(chatUserList);
 
         } catch (IOException e) {

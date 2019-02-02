@@ -45,7 +45,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(1).getCommand()) &&
                 hasPermission(commandsList.get(1).getPermission(), userPermission)) {
-            result = helloCommand(commandEvent);
+//            result = helloCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(2).getCommand()) &&
                 hasPermission(commandsList.get(2).getPermission(), userPermission)) {
@@ -53,7 +53,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(3).getCommand()) &&
                 hasPermission(commandsList.get(3).getPermission(), userPermission)) {
-            result = uptimeCommand(commandEvent);
+//            result = uptimeCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(4).getCommand()) &&
                 hasPermission(commandsList.get(4).getPermission(), userPermission)) {
@@ -61,7 +61,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(5).getCommand()) &&
                 hasPermission(commandsList.get(5).getPermission(), userPermission)) {
-            result = followageCommand(commandEvent);
+//            result = followageCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(6).getCommand()) &&
                 hasPermission(commandsList.get(6).getPermission(), userPermission)) {
@@ -74,7 +74,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
                 hasPermission(commandsList.get(8).getPermission(), userPermission)) {
-            result = "31's next release is on ...";
+//            result = "31's next release is on ...";
 
         } else if (preCommand.equals(commandsList.get(9).getCommand()) &&
                 hasPermission(commandsList.get(9).getPermission(), userPermission)) {
@@ -85,8 +85,7 @@ public class CommandList {
             result = pointsCommand(commandEvent);
         }
 
-        System.out.println(result);
-        result = "";
+//        result = "";
         return result;
     }
 
@@ -281,7 +280,7 @@ public class CommandList {
      * @return String
      */
     private String wordCountCommand() {
-        return "The top words for the stream are " + getMapInString(db.getTop10Words());
+        return "The top 10 words used so far are " + getMapInString(db.getTop10Words());
     }
 
 
@@ -294,7 +293,7 @@ public class CommandList {
     private String getMapInString(@Nonnull Map<String, Integer> map) {
         return map.entrySet()
                 .stream()
-                .map(e -> e.getKey() + " :" + e.getValue())
+                .map(e -> e.getKey() + " " + e.getValue())
                 .collect(Collectors.joining(", "));
     }
 
@@ -308,7 +307,7 @@ public class CommandList {
 
     private String messageCountCommand(@Nonnull CommandEvent event) {
         Integer count = db.getMessageCount(event.getUser().getId());
-        return (count != null) ? event.getUser().getName() + " You have sent " + count + " messages" : "";
+        return (count != null) ? event.getUser().getName() + " You have sent " + ++count + " messages" : "";
     }
 
     private String pointsCommand(@Nonnull CommandEvent event) {
