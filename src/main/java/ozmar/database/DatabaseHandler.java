@@ -134,7 +134,9 @@ public class DatabaseHandler {
     }
 
     public void updateOrInsertWordCount(Map<String, Integer> map) {
-        wordCountTable.updateOrInsert(map);
+        if (!map.isEmpty()) {
+            wordCountTable.updateOrInsert(map);
+        }
     }
 
     public void clearWordCount() {
@@ -144,15 +146,21 @@ public class DatabaseHandler {
 
     // ChatTable
     public void insertUserNames(List<String> list) {
-        chatTable.insertUserNames(list);
+        if (!list.isEmpty()) {
+            chatTable.insertUserNames(list);
+        }
     }
 
     public void addChatDataToTable(List<User> userList) {
-        chatTable.addChatDataToTable(userList);
+        if (!userList.isEmpty()) {
+            chatTable.addChatDataToTable(userList);
+        }
     }
 
     public void updatePoints(Map<Long, ChatUser> map) {
-        chatTable.updatePoints(map);
+        if (!map.isEmpty()) {
+            chatTable.updatePoints(map);
+        }
     }
 
     public Integer getMessageCount(long userId) {

@@ -2,9 +2,8 @@ package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
-import ozmar.Bot;
-import ozmar.ChatUser;
-import ozmar.utils.RandomHelper;
+import ozmar.buffer.ChatDataBuffer;
+import ozmar.buffer.WordCountBuffer;
 
 import javax.annotation.Nonnull;
 
@@ -27,30 +26,9 @@ public class WriteChannelChatToConsole {
     }
 
     private void handleChatData(ChannelMessageEvent event) {
-
         long userId = event.getUser().getId();
-        if (Bot.currentChatDataMap) {
-            if (Bot.chatData1.containsKey(userId)) {
-                ChatUser user = Bot.chatData1.get(userId);
-                user.incrementMessageCount(1);
-                user.incrementPoints(RandomHelper.getRandomNumber(1));
-            } else {
-                ChatUser user = new ChatUser(userId, event.getUser().getName(),
-                        1, RandomHelper.getRandomNumber(1));
-                Bot.chatData1.put(userId, user);
-            }
-
-        } else {
-            if (Bot.chatData2.containsKey(userId)) {
-                ChatUser user = Bot.chatData2.get(userId);
-                user.incrementMessageCount(1);
-                user.incrementPoints(RandomHelper.getRandomNumber(1));
-            } else {
-                ChatUser user = new ChatUser(userId, event.getUser().getName(),
-                        1, RandomHelper.getRandomNumber(1));
-                Bot.chatData2.put(userId, user);
-            }
-        }
+        ChatDataBuffer chatDataBuffer = new ChatDataBuffer();
+        chatDataBuffer.updateChatUser(userId, event.getUser().getName());
     }
 
     private void handleWordCount(@Nonnull String message) {
@@ -67,13 +45,8 @@ public class WriteChannelChatToConsole {
                 s = s.substring(1);
             }
 
-            if (Bot.currentWordCountMap) {
-                int count = Bot.wordCountMap1.getOrDefault(s, 0) + 1;
-                Bot.wordCountMap1.put(s, count);
-            } else {
-                int count = Bot.wordCountMap2.getOrDefault(s, 0) + 1;
-                Bot.wordCountMap2.put(s, count);
-            }
+            WordCountBuffer wordCountBuffer = new WordCountBuffer();
+            wordCountBuffer.updateWordCount(s);
         }
     }
 }
