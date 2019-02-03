@@ -68,15 +68,25 @@ public class ChatTable {
                     COLUMN_POINTS + " ) " +
                     " VALUES (?, ?, ?, ?)";
 
-    private static final String getMessageCountSql =
+    private static final String getMessageCountByUserIdSql =
             "SELECT " + COLUMN_MESSAGE_COUNT + " FROM " + CHAT_TABLE +
                     " WHERE " +
                     COLUMN_USER_ID + " = ?";
 
-    private static final String getPointsSql =
+    private static final String getMessageCountByUserNameSql =
+            "SELECT " + COLUMN_MESSAGE_COUNT + " FROM " + CHAT_TABLE +
+                    " WHERE " +
+                    COLUMN_USER_NAME + " = ?";
+
+    private static final String getPointsByUserIdSql =
             "SELECT " + COLUMN_POINTS + " FROM " + CHAT_TABLE +
                     " WHERE " +
                     COLUMN_USER_ID + " = ?";
+
+    private static final String getPointsByUserNameSql =
+            "SELECT " + COLUMN_POINTS + " FROM " + CHAT_TABLE +
+                    " WHERE " +
+                    COLUMN_USER_NAME + " = ?";
 
     public ChatTable() {
 
@@ -236,24 +246,23 @@ public class ChatTable {
     }
 
     /**
-     * Gets the message count for the specified user
+     * Gets the message count for the specified user by userId
      *
      * @param userId userId to look for in the table
      * @return int
      */
-    public int getMessageCount(long userId) {
+    public int getMessageCountByUserId(long userId) {
         Connection connection = DatabaseHandler.openConnection();
         int count = -1;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(getMessageCountSql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getMessageCountByUserIdSql)) {
             preparedStatement.setLong(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 count = resultSet.getInt(COLUMN_MESSAGE_COUNT);
             }
-
         } catch (SQLException e) {
-            System.out.println("Failed to get message count: " + e.getMessage());
+            System.out.println("Failed to get message count by userName: " + e.getMessage());
         } finally {
             DatabaseHandler.closeConnection(connection);
         }
@@ -262,24 +271,73 @@ public class ChatTable {
     }
 
     /**
-     * Gets the number of points for the specified user
+     * Gets the message count for the specified user by userName
+     *
+     * @param userName userName to look for in the table
+     * @return int
+     */
+    public int getMessageCountByUserName(String userName) {
+        Connection connection = DatabaseHandler.openConnection();
+        int count = -1;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getMessageCountByUserNameSql)) {
+            preparedStatement.setString(1, userName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt(COLUMN_MESSAGE_COUNT);
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to get message count by userName: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
+        }
+
+        return count;
+    }
+
+    /**
+     * Gets the number of points for the specified user by userId
      *
      * @param userId userId to look for in the table
      * @return int
      */
-    public int getPoints(long userId) {
+    public int getPointsByUserId(long userId) {
         Connection connection = DatabaseHandler.openConnection();
         int points = -1;
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(getPointsSql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getPointsByUserIdSql)) {
             preparedStatement.setLong(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 points = resultSet.getInt(COLUMN_POINTS);
             }
-
         } catch (SQLException e) {
-            System.out.println("Failed to get points: " + e.getMessage());
+            System.out.println("Failed to get points by userId: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
+        }
+
+        return points;
+    }
+
+    /**
+     * Gets the number of points for the specified user by userName
+     *
+     * @param userName userName to look for in the table
+     * @return int
+     */
+    public int getPointsByUserName(String userName) {
+        Connection connection = DatabaseHandler.openConnection();
+        int points = -1;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getPointsByUserNameSql)) {
+            preparedStatement.setString(1, userName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                points = resultSet.getInt(COLUMN_POINTS);
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to get points by userName: " + e.getMessage());
         } finally {
             DatabaseHandler.closeConnection(connection);
         }

@@ -306,12 +306,34 @@ public class CommandList {
     }
 
     private String messageCountCommand(@Nonnull CommandEvent event) {
-        int count = db.getMessageCount(event.getUser().getId());
-        return (count != -1) ? event.getUser().getName() + " has sent " + ++count + " messages" : "";
+        int count;
+        String message = event.getCommand().trim().toLowerCase();
+        String result;
+
+        if (message.isEmpty()) {
+            count = db.getMessageCount(event.getUser().getId()) + 1;
+            result = event.getUser().getName();
+        } else {
+            count = db.getMessageCount(message);
+            result = message;
+        }
+
+        return (count != -1) ? result + " has sent " + count + " messages" : "";
     }
 
     private String pointsCommand(@Nonnull CommandEvent event) {
-        int points = db.getPoints(event.getUser().getId());
-        return (points != -1) ? event.getUser().getName() + " has " + points + " points" : "";
+        int points;
+        String message = event.getCommand().trim().toLowerCase();
+        String result;
+
+        if (message.isEmpty()) {
+            points = db.getPoints(event.getUser().getId());
+            result = event.getUser().getName();
+        } else {
+            points = db.getPoints(message);
+            result = message;
+        }
+
+        return (points != -1) ? result + " has " + points + " points" : "";
     }
 }

@@ -174,11 +174,18 @@ public class DatabaseHandler {
     }
 
     public int getMessageCount(long userId) {
-        return chatTable.getMessageCount(userId);
+        return chatTable.getMessageCountByUserId(userId);
+    }
+
+    public int getMessageCount(String userName) {
+        return chatTable.getMessageCountByUserName(userName);
     }
 
     public int getPoints(long userId) {
-        return chatTable.getPoints(userId);
+        return chatTable.getPointsByUserId(userId);
     }
 
+    public int getPoints(String userName) {
+        return chatTable.getPointsByUserName(userName);
+    }
 }
