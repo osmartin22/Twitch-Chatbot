@@ -24,9 +24,9 @@ public class CommandList {
     private Calculator calculator;
 
 
-    public CommandList(Calculator calculator) {
+    public CommandList(DatabaseHandler db, Calculator calculator) {
         this.calculator = calculator;
-        this.db = new DatabaseHandler();
+        this.db = db;
     }
 
     public void setCommandEvent(CommandEvent commandEvent) {
@@ -106,7 +106,6 @@ public class CommandList {
         return userLevel.getCommandLevel() >= commandLevel.getCommandLevel();
     }
 
-
     /**
      * Returns a random number from user input or uses a predefined random number if none is chosen
      * If an invalid command is passed, an empty string is returned
@@ -144,7 +143,6 @@ public class CommandList {
         return "";
     }
 
-
     /**
      * Return output depending on user roll, should only be used for 20 sided dice roll
      *
@@ -161,7 +159,6 @@ public class CommandList {
             return String.valueOf(randNum);
         }
     }
-
 
     /**
      * Returns message greeting the user
@@ -180,11 +177,9 @@ public class CommandList {
         return "";
     }
 
-
     private void countCommand() {
 
     }
-
 
     /**
      * Gets the uptime of a stream and returns it in DD:HH:MM:SS format
@@ -214,7 +209,6 @@ public class CommandList {
         return output;
     }
 
-
     /**
      * Calculates user operation input
      * returns empty string if input is invalid
@@ -225,10 +219,9 @@ public class CommandList {
     private String calcCommand(@Nonnull CommandEvent event) {
         calculator.setOperation(event.getCommand());
         String result = calculator.compute();
-//        String result = new Calculator(event.getCommand()).compute();
+        calculator.resetCalc();
         return (result == null) ? "" : result;
     }
-
 
     /**
      * Gets follow length between user and channel message was sent from
@@ -281,7 +274,6 @@ public class CommandList {
         return output;
     }
 
-
     /**
      * Gets the top 10 words in the table
      * or the specified count for the given word
@@ -304,7 +296,6 @@ public class CommandList {
 
         return result;
     }
-
 
     /**
      * Converts a map into a string

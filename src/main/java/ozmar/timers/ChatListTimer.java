@@ -17,8 +17,8 @@ public class ChatListTimer {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final DatabaseHandler db;
 
-    public ChatListTimer() {
-        db = new DatabaseHandler();
+    public ChatListTimer(DatabaseHandler db) {
+        this.db = db;
     }
 
     public void startTimer() {

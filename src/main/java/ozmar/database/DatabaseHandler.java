@@ -18,10 +18,11 @@ public class DatabaseHandler {
     private WordCountTable wordCountTable;
     private ChatTable chatTable;
 
-    public DatabaseHandler() {
-        commandsTable = new CommandsTable();
-        wordCountTable = new WordCountTable();
-        chatTable = new ChatTable();
+
+    public DatabaseHandler(CommandsTable commandsTable, WordCountTable wordCountTable, ChatTable chatTable) {
+        this.commandsTable = commandsTable;
+        this.wordCountTable = wordCountTable;
+        this.chatTable = chatTable;
 
         initializeDb();
     }

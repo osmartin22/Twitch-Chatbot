@@ -18,10 +18,10 @@ public class WordCountTimer {
     private final WordCountBuffer wordCountBuffer;
     private final ChatDataBuffer chatDataBuffer;
 
-    public WordCountTimer() {
-        this.db = new DatabaseHandler();
-        this.wordCountBuffer = new WordCountBuffer();
-        this.chatDataBuffer = new ChatDataBuffer();
+    public WordCountTimer(DatabaseHandler db, WordCountBuffer wordCountBuffer, ChatDataBuffer chatDataBuffer) {
+        this.db = db;
+        this.wordCountBuffer = wordCountBuffer;
+        this.chatDataBuffer = chatDataBuffer;
     }
 
     public void startTimer() {

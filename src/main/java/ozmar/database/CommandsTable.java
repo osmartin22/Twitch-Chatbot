@@ -21,7 +21,7 @@ public class CommandsTable {
                     COLUMN_COMMAND_NAME + " TEXT, " +
                     COLUMN_COMMAND_PERMISSION + " INTEGER)";
 
-    private final static String insertCommandSql =
+    private static final String insertCommandSql =
             "INSERT INTO " + COMMANDS_TABLE + " ( " +
                     COLUMN_COMMAND_NAME + " , " +
                     COLUMN_COMMAND_PERMISSION + " ) " +

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatDataBuffer {
-
     private static boolean currentChatDataMap = true;    // true = chatData1     false = chatData1
     private static Map<Long, ChatUser> chatData1 = new HashMap<>();
     private static Map<Long, ChatUser> chatData2 = new HashMap<>();

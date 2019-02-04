@@ -8,7 +8,7 @@ import ozmar.buffer.WordCountBuffer;
 import javax.annotation.Nonnull;
 
 // TODO: Maybe remove punctuation so that "hey" and "hey," are the same word
-public class WriteChannelChatToConsole {
+public class OnChatChannelMessage {
     @EventSubscriber
     public void onChannelMessage(ChannelMessageEvent event) {
         String message = event.getMessage().trim();

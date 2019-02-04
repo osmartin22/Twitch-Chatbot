@@ -1,35 +1,34 @@
 package ozmar.commands;
 
+import ozmar.enums.Operator;
+
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Stack;
 
-
+// TODO: Allow negative numbers
 public class Calculator {
-
-    private enum Operator {
-        ADD, SUBTRACT, MULTIPLY, DIVIDE, OPENPAREN, CLOSEPAREN, BLANK
-    }
 
     private static final int ROUND_VALUE = 5;
 
     private Stack<Double> numberStack;
     private Stack<Operator> operatorStack;
     private String operation;
-    private int parenCount = 0;
+    private int parenCount;
 
 
-    public Calculator() {
-
+    public Calculator(Stack<Double> numberStack, Stack<Operator> operatorStack) {
+        this.numberStack = numberStack;
+        this.operatorStack = operatorStack;
+        parenCount = 0;
     }
 
-
-    // TODO: CHANGE
     public void setOperation(@Nonnull String operation) {
-        numberStack = new Stack<>();
-        operatorStack = new Stack<>();
         this.operation = operation.replaceAll("\\s+", "");
+    }
+
+    public void resetCalc() {
         numberStack.clear();
         operatorStack.clear();
         parenCount = 0;
@@ -135,7 +134,7 @@ public class Calculator {
         StringBuilder sb = new StringBuilder();
 
         while (offset < operation.length() &&
-                (Character.isDigit(operation.charAt(offset)) || operation.charAt(offset) == '.')) {
+                (Character.isDigit(operation.charAt(offset)) || operation.charAt(offset) == '.' || operation.charAt(offset) == '-')) {
             sb.append(operation.charAt(offset));
             offset++;
         }
@@ -203,7 +202,7 @@ public class Calculator {
 
     private boolean collapseTop(Operator futureTop) {
         while (operatorStack.size() >= 1 && numberStack.size() >= 2) {
-            if (operatorPriority(futureTop) <= operatorPriority(operatorStack.peek())) {
+            if (futureTop.getPriority() <= operatorStack.peek().getPriority()) {
                 if (!collapseHelper()) {
                     return false;
                 }
@@ -226,7 +225,7 @@ public class Calculator {
 
         // Collapse even further if operator at the top is "*" or "/", else wrong result
         // is returned due to incorrect collapsing for some inputs
-        if (!operatorStack.isEmpty() && operatorPriority(operatorStack.peek()) == 3) {
+        if (!operatorStack.isEmpty() && operatorStack.peek().getPriority() == 3) {
             return collapseHelper();
         }
 
@@ -289,26 +288,6 @@ public class Calculator {
         } else if (operator == Operator.DIVIDE) {
             return (second == 0) ? null : first / second;
         } else return first;
-    }
-
-    private int operatorPriority(Operator operator) {
-        switch (operator) {
-            case ADD:
-            case SUBTRACT:
-                return 2;
-
-            case MULTIPLY:
-            case DIVIDE:
-                return 3;
-
-            case OPENPAREN:
-            case CLOSEPAREN:
-                return 1;
-
-            case BLANK:
-            default:
-                return 0;
-        }
     }
 
     // Rounding since Double calculations are not exact

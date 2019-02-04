@@ -7,13 +7,9 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import ozmar.database.DatabaseHandler;
-import ozmar.features.OnCommandReceived;
-import ozmar.features.WriteChannelChatToConsole;
+import ozmar.features.*;
 import ozmar.helix.HelixCommands;
-import ozmar.timers.ChatListTimer;
-import ozmar.timers.WordCountTimer;
 
 import java.io.InputStream;
 
@@ -23,21 +19,32 @@ public class Bot {
 
     private Configuration configuration;
     private TwitchClient twitchClient;
-    private WordCountTimer wordCountTimer;
-    private ChatListTimer chatListTimer;
 
-    @Autowired
-    private OnCommandReceived onCommandReceived;
+    private final DatabaseHandler db;
 
-    public Bot() {
-        initialize();
-    }
+    private final ChannelNotificationOnCheer channelNotificationOnCheer;
+    private final ChannelNotificationOnDonation channelNotificationOnDonation;
+    private final ChannelNotificationOnFollow channelNotificationOnFollow;
+    private final ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscription;
+    private final ChannelNotificationOnSubscription channelNotificationOnSubscription;
+    private final OnChatChannelMessage onChatChannelMessage;
+    private final OnCommandReceived onCommandReceived;
 
-    public Bot(OnCommandReceived onCommandReceived) {
+    public Bot(DatabaseHandler db, ChannelNotificationOnCheer channelNotificationOnCheer,
+               ChannelNotificationOnDonation channelNotificationOnDonation,
+               ChannelNotificationOnFollow channelNotificationOnFollow,
+               ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscription,
+               ChannelNotificationOnSubscription channelNotificationOnSubscription,
+               OnChatChannelMessage onChatChannelMessage, OnCommandReceived onCommandReceived) {
+        this.db = db;
+        this.channelNotificationOnCheer = channelNotificationOnCheer;
+        this.channelNotificationOnDonation = channelNotificationOnDonation;
+        this.channelNotificationOnFollow = channelNotificationOnFollow;
+        this.channelNotificationOnGiftSubscription = channelNotificationOnGiftSubscription;
+        this.channelNotificationOnSubscription = channelNotificationOnSubscription;
+        this.onChatChannelMessage = onChatChannelMessage;
         this.onCommandReceived = onCommandReceived;
-        initialize();
     }
-
 
     public void initialize() {
         loadConfiguration();
@@ -58,7 +65,6 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        final DatabaseHandler db = new DatabaseHandler();
         for (Command command : db.getCommands()) {
             clientBuilder = clientBuilder.withCommandTrigger(command.getCommand());
         }
@@ -76,12 +82,13 @@ public class Bot {
 
 
     public void registerFeatures() {
-        twitchClient.getEventManager().registerListener(new WriteChannelChatToConsole());
+//        twitchClient.getEventManager().registerListener(channelNotificationOnCheer);
+//        twitchClient.getEventManager().registerListener(channelNotificationOnDonation);
+//        twitchClient.getEventManager().registerListener(channelNotificationOnFollow);
+//        twitchClient.getEventManager().registerListener(channelNotificationOnGiftSubscription);
+//        twitchClient.getEventManager().registerListener(channelNotificationOnSubscription);
+        twitchClient.getEventManager().registerListener(onChatChannelMessage);
         twitchClient.getEventManager().registerListener(onCommandReceived);
-//        twitchClient.getEventManager().registerListener(new ChannelNotificationOnFollow());
-//        twitchClient.getEventManager().registerListener(new ChannelNotificationOnSubscription());
-//        twitchClient.getEventManager().registerListener(new ChannelNotificationOnGiftSubscription());
-//        twitchClient.getEventManager().registerListener(new ChannelNotificationOnDonation());
     }
 
     private void loadConfiguration() {
@@ -98,20 +105,9 @@ public class Bot {
         }
     }
 
-    private void startTimer() {
-        wordCountTimer = new WordCountTimer();
-        wordCountTimer.startTimer();
-
-        chatListTimer = new ChatListTimer();
-        chatListTimer.startTimer();
-    }
-
     public void start() {
-//        startTimer();
-
         for (String channel : configuration.getChannels()) {
             twitchClient.getChat().joinChannel(channel.toLowerCase());
-            //twitchClient.getChat().sendMessage(channel.toLowerCase(), "Bot Joined");
         }
     }
 }
