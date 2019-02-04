@@ -7,6 +7,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import ozmar.database.DatabaseHandler;
 import ozmar.features.OnCommandReceived;
 import ozmar.features.WriteChannelChatToConsole;
@@ -25,9 +26,20 @@ public class Bot {
     private WordCountTimer wordCountTimer;
     private ChatListTimer chatListTimer;
 
+    @Autowired
+    private OnCommandReceived onCommandReceived;
 
     public Bot() {
+        initialize();
+    }
 
+    public Bot(OnCommandReceived onCommandReceived) {
+        this.onCommandReceived = onCommandReceived;
+        initialize();
+    }
+
+
+    public void initialize() {
         loadConfiguration();
 
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
@@ -65,7 +77,7 @@ public class Bot {
 
     public void registerFeatures() {
         twitchClient.getEventManager().registerListener(new WriteChannelChatToConsole());
-        twitchClient.getEventManager().registerListener(new OnCommandReceived());
+        twitchClient.getEventManager().registerListener(onCommandReceived);
 //        twitchClient.getEventManager().registerListener(new ChannelNotificationOnFollow());
 //        twitchClient.getEventManager().registerListener(new ChannelNotificationOnSubscription());
 //        twitchClient.getEventManager().registerListener(new ChannelNotificationOnGiftSubscription());
@@ -95,7 +107,7 @@ public class Bot {
     }
 
     public void start() {
-        startTimer();
+//        startTimer();
 
         for (String channel : configuration.getChannels()) {
             twitchClient.getChat().joinChannel(channel.toLowerCase());

@@ -47,10 +47,10 @@ public class CommandsTable {
         commandList.add(new Command("!uptime", CommandNumPermission.EVERYONE));
         commandList.add(new Command("!calc", CommandNumPermission.EVERYONE));
         commandList.add(new Command("!followage", CommandNumPermission.EVERYONE));      // 5
-        commandList.add(new Command("!wordCount", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!clearWordCount", CommandNumPermission.MODERATOR));
+        commandList.add(new Command("!wordcount", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!clearWordCount", CommandNumPermission.BROADCASTER));
         commandList.add(new Command("!31", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!messageCount", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!messagesent", CommandNumPermission.EVERYONE));
         commandList.add(new Command("!points", CommandNumPermission.EVERYONE));         // 10
         insertCommandsList(commandList);
     }

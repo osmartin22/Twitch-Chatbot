@@ -32,6 +32,11 @@ public class WordCountTable {
                     COLUMN_WORD + ", " +
                     COLUMN_COUNT + ") " +
                     " VALUES (?,  ? )";
+    private static final String getSpecificWordCountSql =
+            "SELECT " + COLUMN_COUNT +
+                    " FROM " + WORD_COUNT_TABLE +
+                    " WHERE " + COLUMN_WORD + " = ?";
+
 
     public WordCountTable() {
 
@@ -61,7 +66,7 @@ public class WordCountTable {
                 map.put(word, count);
             }
         } catch (SQLException e) {
-            System.out.println("Query failed " + e.getMessage());
+            System.out.println("Failed getting wordCount data: " + e.getMessage());
         } finally {
             DatabaseHandler.closeConnection(connection);
         }
@@ -75,7 +80,8 @@ public class WordCountTable {
      * @return Map of Strings and Integers
      */
     public Map<String, Integer> getTop10Words() {
-        String sql = "SELECT * FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
+        String sql = "SELECT " + COLUMN_WORD + ", " + COLUMN_COUNT +
+                " FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
         Map<String, Integer> map = new LinkedHashMap<>();
         Connection connection = DatabaseHandler.openConnection();
 
@@ -87,12 +93,30 @@ public class WordCountTable {
                 map.put(word, count);
             }
         } catch (SQLException e) {
-            System.out.println("Query failed " + e.getMessage());
+            System.out.println("Failed to get top 10 words: " + e.getMessage());
         } finally {
             DatabaseHandler.closeConnection(connection);
         }
 
         return map;
+    }
+
+    public int getSpecificWordCount(String word) {
+        Connection connection = DatabaseHandler.openConnection();
+        int count = -1;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getSpecificWordCountSql)) {
+            preparedStatement.setString(1, word);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt(COLUMN_COUNT);
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to get a word count: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
+        }
+
+        return count;
     }
 
     /**
@@ -119,7 +143,7 @@ public class WordCountTable {
                 }
             }
         } catch (SQLException | NullPointerException e) {
-            System.out.println("Update or insert failed " + e.getMessage());
+            System.out.println("Update or insert failed: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
         } finally {
             DatabaseHandler.closeStatement(updatePreparedStatement);
@@ -138,7 +162,7 @@ public class WordCountTable {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
-            System.out.println("Failed to create connection: " + e.getMessage());
+            System.out.println("Failed to clear the table: " + e.getMessage());
         } finally {
             DatabaseHandler.closeConnection(connection);
         }

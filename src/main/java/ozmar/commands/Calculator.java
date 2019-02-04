@@ -5,26 +5,30 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Stack;
 
+
 public class Calculator {
 
     private enum Operator {
         ADD, SUBTRACT, MULTIPLY, DIVIDE, OPENPAREN, CLOSEPAREN, BLANK
     }
 
-    private final int ROUND_VALUE = 5;
+    private static final int ROUND_VALUE = 5;
 
     private Stack<Double> numberStack;
     private Stack<Operator> operatorStack;
     private String operation;
     private int parenCount = 0;
 
-    public Calculator(@Nonnull String operation) {
-        this.operation = operation.replaceAll("\\s+", "");
-        numberStack = new Stack<>();
-        operatorStack = new Stack<>();
+
+    public Calculator() {
+
     }
 
+
+    // TODO: CHANGE
     public void setOperation(@Nonnull String operation) {
+        numberStack = new Stack<>();
+        operatorStack = new Stack<>();
         this.operation = operation.replaceAll("\\s+", "");
         numberStack.clear();
         operatorStack.clear();

@@ -19,12 +19,18 @@ import java.util.stream.Collectors;
 // TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
 public class CommandList {
 
-    private final CommandEvent commandEvent;
-    private final DatabaseHandler db;
+    private CommandEvent commandEvent;
+    private DatabaseHandler db;
+    private Calculator calculator;
 
-    public CommandList(@Nonnull CommandEvent commandEvent) {
-        this.commandEvent = commandEvent;
+
+    public CommandList(Calculator calculator) {
+        this.calculator = calculator;
         this.db = new DatabaseHandler();
+    }
+
+    public void setCommandEvent(CommandEvent commandEvent) {
+        this.commandEvent = commandEvent;
     }
 
     /**
@@ -65,7 +71,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(6).getCommand()) &&
                 hasPermission(commandsList.get(6).getPermission(), userPermission)) {
-            result = wordCountCommand();
+            result = wordCountCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(7).getCommand()) &&
                 hasPermission(commandsList.get(7).getPermission(), userPermission)) {
@@ -217,7 +223,9 @@ public class CommandList {
      * @return String
      */
     private String calcCommand(@Nonnull CommandEvent event) {
-        String result = new Calculator(event.getCommand()).compute();
+        calculator.setOperation(event.getCommand());
+        String result = calculator.compute();
+//        String result = new Calculator(event.getCommand()).compute();
         return (result == null) ? "" : result;
     }
 
@@ -275,12 +283,26 @@ public class CommandList {
 
 
     /**
-     * Gets the top 10 words used  during the stream
+     * Gets the top 10 words in the table
+     * or the specified count for the given word
      *
      * @return String
      */
-    private String wordCountCommand() {
-        return "The top 10 words used so far are " + getMapInString(db.getTop10Words());
+    private String wordCountCommand(@Nonnull CommandEvent event) {
+        String word = event.getCommand().trim();
+        String result;
+        if (word.isEmpty()) {
+            result = "The top 10 words used so far are " + turnMapToString(db.getTop10Words());
+        } else {
+            int count = db.getSpecificWordCount(word);
+            if (count == -1) {
+                result = "0";
+            } else {
+                result = "The count for " + word + " is " + count;
+            }
+        }
+
+        return result;
     }
 
 
@@ -290,7 +312,7 @@ public class CommandList {
      * @param map map to convert to string
      * @return String
      */
-    private String getMapInString(@Nonnull Map<String, Integer> map) {
+    private String turnMapToString(@Nonnull Map<String, Integer> map) {
         return map.entrySet()
                 .stream()
                 .map(e -> e.getKey() + " " + e.getValue())

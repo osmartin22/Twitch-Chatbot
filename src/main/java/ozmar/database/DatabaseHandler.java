@@ -145,6 +145,10 @@ public class DatabaseHandler {
         return wordCountTable.getTop10Words();
     }
 
+    public int getSpecificWordCount(String word) {
+        return wordCountTable.getSpecificWordCount(word);
+    }
+
     public void updateOrInsertWordCount(Map<String, Integer> map) {
         if (!map.isEmpty()) {
             wordCountTable.updateOrInsert(map);

@@ -16,13 +16,13 @@ public class WriteChannelChatToConsole {
         handleChatData(event);
         handleWordCount(message);
 
-        System.out.printf(
-                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
-                event.getChannel().getName(),
-                event.getUser().getName(),
-                event.getUser().getId(),
-                event.getMessage()
-        );
+//        System.out.printf(
+//                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
+//                event.getChannel().getName(),
+//                event.getUser().getName(),
+//                event.getUser().getId(),
+//                event.getMessage()
+//        );
     }
 
     private void handleChatData(ChannelMessageEvent event) {
