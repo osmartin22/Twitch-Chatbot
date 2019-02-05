@@ -18,16 +18,5 @@ public class Launcher {
         WordCountTimer wordCountTimer = context.getBean(WordCountTimer.class);
         chatListTimer.startTimer();
         wordCountTimer.startTimer();
-
-
-        // TODO: ALLOW NEG NUMBERS IN CALC
-
-
-        // !SpiritAnimal    You are an eagle
-        // !robDab      "Robdab type of quotes"
-        // !rateme      10 come here billyReady
-
-
-// PepePls  Clap  KKomrade  KKool  gachiBASS lulWut  Clap2  AYAYA  HYPERLUL  billyReady  pepoS  theCHAMP  POGGERS  monkaGIGA monkaSHAKE  TriKool  PepeHands  HYPERLULWUT  BAOMN  RapThis  ppHop  peepoWink  monkaHmm PepoCheer  EZFingerGuns  pepeD  ZOINKS  pepeBASS  pepeJAM  FeelsLateMan  HYPEROMEGAZOINKS  HYPERCLAP nutTasty  OMEGALAUGHING  HACKERMANS  HYPERCLAP2  BLAPBLAP(->)  (<-)BLAAP  HYPEROMEGAPOGGERSCRAZY  POGPLANT  robDab Omegalol  FeelsAyayaMan  PepeSpin  PEEPERS  HYPERROBDAB  RareMoon  peepoT  moon2BASS
     }
 }

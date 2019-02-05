@@ -218,9 +218,17 @@ public class CommandList {
      */
     private String calcCommand(@Nonnull CommandEvent event) {
         calculator.setOperation(event.getCommand());
-        String result = calculator.compute();
-        calculator.resetCalc();
-        return (result == null) ? "" : result;
+        Double result;
+        try {
+            result = calculator.parse();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "";
+        } finally {
+            calculator.resetCalc();
+        }
+
+        return String.valueOf(result);
     }
 
     /**

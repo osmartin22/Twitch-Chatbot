@@ -1,320 +1,141 @@
 package ozmar.commands;
 
-import ozmar.enums.Operator;
 
-import javax.annotation.Nonnull;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Stack;
-
-// TODO: Allow negative numbers
 public class Calculator {
 
-    private static final int ROUND_VALUE = 5;
-
-    private Stack<Double> numberStack;
-    private Stack<Operator> operatorStack;
     private String operation;
-    private int parenCount;
+    private int pos = -1;
+    private int currChar = 0;
 
+    public Calculator() {
 
-    public Calculator(Stack<Double> numberStack, Stack<Operator> operatorStack) {
-        this.numberStack = numberStack;
-        this.operatorStack = operatorStack;
-        parenCount = 0;
     }
 
-    public void setOperation(@Nonnull String operation) {
-        this.operation = operation.replaceAll("\\s+", "");
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     public void resetCalc() {
-        numberStack.clear();
-        operatorStack.clear();
-        parenCount = 0;
+        this.pos = -1;
+        this.currChar = 0;
     }
 
-    public String compute() {
+    public double parse() {
+        nextChar();
+        double x = parseExpression();
+        if (pos < operation.length()) {
+            throw new RuntimeException("Unexpected: " + (char) currChar);
+        }
+        return x;
+    }
 
-        if (operation.isEmpty()) {
-            return null;
+    private void nextChar() {
+        currChar = (++pos < operation.length()) ? operation.charAt(pos) : -1;
+    }
+
+    private boolean eatChar(int charToEat) {
+        while (currChar == ' ') {
+            nextChar();
+        }
+        if (currChar == charToEat) {
+            nextChar();
+            return true;
+        }
+        return false;
+    }
+
+    private double parseExpression() {
+        double x = parseTerm();
+        while (true) {
+            // Addition
+            if (eatChar('+')) {
+                x += parseTerm();
+
+            } // Subtraction
+            else if (eatChar('-')) {
+                x -= parseTerm();
+
+            } else {
+                return x;
+            }
+        }
+    }
+
+    private double parseTerm() {
+        double x = parseFactor();
+        while (true) {
+            // Multiplication
+            if (eatChar('*')) {
+                x *= parseFactor();
+
+            } // Division
+            else if (eatChar('/')) {
+                x /= parseFactor();
+
+            } else {
+                return x;
+            }
+        }
+    }
+
+    private double parseFactor() {
+        // Unary plus, treat +# as #
+        if (eatChar('+')) {
+            return parseFactor();
+
+        } // Unary minus, treat -# as -#
+        if (eatChar('-')) {
+            return -parseFactor();
         }
 
-        Integer preCheckOffset = preOpParse();
-        if (preCheckOffset == null) {
-            return null;
-        }
+        double x;
+        int startPos = this.pos;
 
-        for (Integer offset = preCheckOffset; offset < operation.length(); offset++) {
-            try {
-                NumHelper value = parseNextNum(offset);
-                numberStack.push(value.num);
+        // Parentheses
+        if (eatChar('(')) {
+            x = parseExpression();
+            eatChar(')');
 
-                offset += value.stringNumLength;
-                if (offset >= operation.length()) {
+            // Get next number
+        } else if ((currChar >= '0' && currChar <= '9') || currChar == '.') {
+            while ((currChar >= '0' && currChar <= '9') || currChar == '.') {
+                nextChar();
+            }
+            x = Double.parseDouble(operation.substring(startPos, this.pos));
+
+            // Get next function
+        } else if (currChar >= 'a' && currChar <= 'z') {
+            while (currChar >= 'a' && currChar <= 'z') {
+                nextChar();
+            }
+
+            String func = operation.substring(startPos, this.pos);
+            x = parseFactor();
+            switch (func) {
+                case "sqrt":
+                    x = Math.sqrt(x);
                     break;
-                }
-
-                offset = handleOperatorInput(offset);
-                if (offset == null || parenCount < 0) {
-                    return null;
-                }
-
-            } catch (NumberFormatException e) {
-                return null;
+                case "sin":
+                    x = Math.sin(Math.toRadians(x));
+                    break;
+                case "cos":
+                    x = Math.cos(Math.toRadians(x));
+                    break;
+                case "tan":
+                    x = Math.tan(Math.toRadians(x));
+                    break;
+                default:
+                    throw new RuntimeException("Unknown function: " + func);
             }
-        }
-
-        if (parenCount != 0) {
-            return null;
-        }
-
-        if (!operatorStack.isEmpty() && operatorStack.peek() == Operator.CLOSEPAREN) {
-            if (!collapseParen()) {
-                return null;
-            }
-        }
-
-        if (!collapseTop(Operator.BLANK)) {
-            return null;
-        }
-
-        return (numberStack.isEmpty() ? null : checkIfInt(roundResult(numberStack.pop())));
-    }
-
-    private Integer preOpParse() {
-        int offset = 0;
-        Operator operator = parseNextOp(offset);
-        while (operator == Operator.OPENPAREN) {
-            operatorStack.push(Operator.OPENPAREN);
-            parenCount++;
-            offset++;
-            operator = parseNextOp(offset);
-        }
-
-        // Only "(" is a valid op before any numbers appear
-        return (operator != Operator.BLANK) ? null : offset;
-    }
-
-    private Integer handleOperatorInput(Integer offset) {
-        Operator operator = parseNextOp(offset);
-        if (operator == Operator.OPENPAREN || operator == Operator.CLOSEPAREN) {
-            if (operator == Operator.OPENPAREN) {
-                operatorStack.push(Operator.MULTIPLY);
-                operatorStack.push(Operator.OPENPAREN);
-                parenCount++;
-
-            } else {
-                operatorStack.push(Operator.CLOSEPAREN);
-                if (--parenCount < 0) {
-                    return null;
-                }
-                if (!collapseParen()) {
-                    return null;
-                }
-            }
-
         } else {
-            if (!collapseTop(operator)) {
-                return null;
-            }
-            operatorStack.push(operator);
+            throw new RuntimeException("Unexpected: " + (char) currChar);
         }
 
-        // Check if more ops appear after the one we just read, and handle what to do with it
-        if (offset + 1 < operation.length()) {
-            offset = parseNextOps(operator, offset + 1);
-
+        // Exponent
+        if (eatChar('^')) {
+            x = Math.pow(x, parseFactor());
         }
 
-        return offset;
-    }
-
-    private NumHelper parseNextNum(int offset) {
-        StringBuilder sb = new StringBuilder();
-
-        while (offset < operation.length() &&
-                (Character.isDigit(operation.charAt(offset)) || operation.charAt(offset) == '.' || operation.charAt(offset) == '-')) {
-            sb.append(operation.charAt(offset));
-            offset++;
-        }
-
-        return new NumHelper(Double.parseDouble(sb.toString()), sb.length());
-    }
-
-    private Operator parseNextOp(int offset) {
-        if (offset < operation.length()) {
-            switch (operation.charAt(offset)) {
-                case '+':
-                    return Operator.ADD;
-                case '-':
-                    return Operator.SUBTRACT;
-                case '*':
-                    return Operator.MULTIPLY;
-                case '/':
-                    return Operator.DIVIDE;
-                case '(':
-                    return Operator.OPENPAREN;
-                case ')':
-                    return Operator.CLOSEPAREN;
-            }
-        }
-        return Operator.BLANK;
-    }
-
-    private Integer parseNextOps(Operator prevOp, int offset) {
-        Operator futureOp = parseNextOp(offset);
-        while (futureOp != Operator.BLANK) {
-
-            // Next op after "(" can only be "("
-            if (prevOp == Operator.OPENPAREN) {
-                if (prevOpIsOpenParen(futureOp) == -1) {
-                    return null;
-                }
-
-            } else if (prevOp == Operator.CLOSEPAREN) {
-                if (prevOpIsCloseParen(futureOp) == -1) {
-                    return null;
-                }
-
-
-            } else {
-                if (futureOp == Operator.OPENPAREN) {
-                    parenCount++;
-                    operatorStack.push(futureOp);
-
-                    // Prev op was "+-*/" if next is ")" then it is invalid input
-                } else {
-                    return null;
-                }
-            }
-
-            prevOp = futureOp;
-            futureOp = parseNextOp(++offset);
-        }
-
-        if (prevOp == Operator.CLOSEPAREN && offset < operation.length()) {
-            operatorStack.push(Operator.MULTIPLY);
-        }
-
-        return --offset;
-    }
-
-    private boolean collapseTop(Operator futureTop) {
-        while (operatorStack.size() >= 1 && numberStack.size() >= 2) {
-            if (futureTop.getPriority() <= operatorStack.peek().getPriority()) {
-                if (!collapseHelper()) {
-                    return false;
-                }
-            } else {
-                break;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean collapseParen() {
-        operatorStack.pop();    // Pop ")"
-        while (operatorStack.size() >= 1 && numberStack.size() >= 2 && operatorStack.peek() != Operator.OPENPAREN) {
-            if (!collapseHelper()) {
-                return false;
-            }
-        }
-        operatorStack.pop();    // Pop "("
-
-        // Collapse even further if operator at the top is "*" or "/", else wrong result
-        // is returned due to incorrect collapsing for some inputs
-        if (!operatorStack.isEmpty() && operatorStack.peek().getPriority() == 3) {
-            return collapseHelper();
-        }
-
-        return true;
-    }
-
-    private boolean collapseHelper() {
-        double second = numberStack.pop();
-        double first = numberStack.pop();
-        Operator operator = operatorStack.pop();
-        Double collapsed = applyOp(first, operator, second);
-
-        if (collapsed == null) {
-            return false;
-        }
-
-        numberStack.push(collapsed);
-        return true;
-    }
-
-    private int prevOpIsOpenParen(Operator futureOp) {
-        if (futureOp != Operator.OPENPAREN) {
-            return -1;
-        }
-        operatorStack.push(futureOp);
-        parenCount++;
-        return 0;
-    }
-
-    private int prevOpIsCloseParen(Operator futureOp) {
-        if (futureOp == Operator.OPENPAREN) {
-            operatorStack.push(Operator.MULTIPLY);
-            operatorStack.push(Operator.OPENPAREN);
-            parenCount++;
-
-        } else if (futureOp == Operator.CLOSEPAREN) {
-            if (--parenCount < 0) {
-                return -1;
-            }
-
-            operatorStack.push(Operator.CLOSEPAREN);
-            if (!collapseParen()) {
-                return -1;
-            }
-
-        } else {
-            operatorStack.push(futureOp);
-        }
-
-        return 0;
-    }
-
-    private Double applyOp(double first, Operator operator, double second) {
-        if (operator == Operator.ADD) {
-            return first + second;
-        } else if (operator == Operator.SUBTRACT) {
-            return first - second;
-        } else if (operator == Operator.MULTIPLY) {
-            return first * second;
-        } else if (operator == Operator.DIVIDE) {
-            return (second == 0) ? null : first / second;
-        } else return first;
-    }
-
-    // Rounding since Double calculations are not exact
-    // 2.2*5.5 != 12.1 using double calculations
-    private Double roundResult(Double value) {
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(ROUND_VALUE, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
-
-    // Check if the number is #.0 and turn it to # instead
-    private String checkIfInt(Double num) {
-        String result = num.toString();
-        if (num == Math.floor(num) && !Double.isInfinite(num)) {
-            result = result.substring(0, result.length() - 2);
-        }
-
-        return result;
-    }
-
-    private class NumHelper {
-        private int stringNumLength;
-        private double num;
-
-        private NumHelper(double num, int stringNumLength) {
-            this.num = num;
-            this.stringNumLength = stringNumLength;
-        }
+        return x;
     }
 }
