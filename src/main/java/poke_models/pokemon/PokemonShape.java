@@ -58,16 +58,16 @@ public class PokemonShape extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static PokemonShape getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/pokemon-shape/" + id);
+        return get("https://pokeapi.co/api/v2/pokemon-shape/" + id);
     }
 
     public static PokemonShape getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/pokemon-shape/" + name);
+        return get("https://pokeapi.co/api/v2/pokemon-shape/" + name);
     }
 
     public int getId() {

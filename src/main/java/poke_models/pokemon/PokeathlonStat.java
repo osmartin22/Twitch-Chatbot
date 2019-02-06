@@ -54,16 +54,16 @@ public class PokeathlonStat extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static PokeathlonStat getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/pokeathlon-stat/" + id);
+        return get("https://pokeapi.co/api/v2/pokeathlon-stat/" + id);
     }
 
     public static PokeathlonStat getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/pokeathlon-stat/" + name);
+        return get("https://pokeapi.co/api/v2/pokeathlon-stat/" + name);
     }
 
     public int getId() {

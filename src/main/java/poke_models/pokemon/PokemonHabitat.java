@@ -46,16 +46,16 @@ public class PokemonHabitat extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static PokemonHabitat getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/pokemon-habitat/" + id);
+        return get("https://pokeapi.co/api/v2/pokemon-habitat/" + id);
     }
 
     public static PokemonHabitat getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/pokemon-habitat/" + name);
+        return get("https://pokeapi.co/api/v2/pokemon-habitat/" + name);
     }
 
     public int getId() {

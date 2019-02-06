@@ -45,16 +45,16 @@ public class EncounterCondition extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static EncounterCondition getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/encounter-condition/" + id);
+        return get("https://pokeapi.co/api/v2/encounter-condition/" + id);
     }
 
     public static EncounterCondition getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/encounter-condition/" + name);
+        return get("https://pokeapi.co/api/v2/encounter-condition/" + name);
     }
 
     public int getId() {

@@ -42,16 +42,16 @@ public class EggGroup extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static EggGroup getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/egg-group/" + id);
+        return get("https://pokeapi.co/api/v2/egg-group/" + id);
     }
 
     public static EggGroup getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/egg-group/" + name);
+        return get("https://pokeapi.co/api/v2/egg-group/" + name);
     }
 
     public int getId() {

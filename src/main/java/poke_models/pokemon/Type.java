@@ -109,16 +109,16 @@ public class Type extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static Type getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/type/" + id);
+        return get("https://pokeapi.co/api/v2/type/" + id);
     }
 
     public static Type getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/type/" + name);
+        return get("https://pokeapi.co/api/v2/type/" + name);
     }
 
     public int getId() {

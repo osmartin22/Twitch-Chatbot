@@ -89,16 +89,16 @@ public class Stat extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static Stat getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/stat/" + id);
+        return get("https://pokeapi.co/api/v2/stat/" + id);
     }
 
     public static Stat getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/stat/" + name);
+        return get("https://pokeapi.co/api/v2/stat/" + name);
     }
 
     public int getId() {

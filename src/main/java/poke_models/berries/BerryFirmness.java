@@ -42,16 +42,16 @@ public class BerryFirmness extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static BerryFirmness getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/berry-firmness/" + id);
+        return get("https://pokeapi.co/api/v2/berry-firmness/" + id);
     }
 
     public static BerryFirmness getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/berry-firmness/" + name);
+        return get("https://pokeapi.co/api/v2/berry-firmness/" + name);
     }
 
     public int getId() {

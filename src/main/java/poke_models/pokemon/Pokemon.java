@@ -179,18 +179,18 @@ public class Pokemon extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit="
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit="
                 + Math.abs(limit) + "&offset=" + Math.abs(offset));
 
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static Pokemon getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/pokemon/" + id);
+        return get("https://pokeapi.co/api/v2/pokemon/" + id);
     }
 
     public static Pokemon getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/pokemon/" + name);
+        return get("https://pokeapi.co/api/v2/pokemon/" + name);
     }
 
     public int getId() {

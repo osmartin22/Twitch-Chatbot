@@ -39,16 +39,16 @@ public class EncounterMethod extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static EncounterMethod getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/encounter-method/" + id);
+        return get("https://pokeapi.co/api/v2/encounter-method/" + id);
     }
 
     public static EncounterMethod getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/encounter-method/" + name);
+        return get("https://pokeapi.co/api/v2/encounter-method/" + name);
     }
 
     public int getId() {

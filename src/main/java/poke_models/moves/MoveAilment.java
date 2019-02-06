@@ -42,16 +42,16 @@ public class MoveAilment extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static MoveAilment getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/move-ailment/" + id);
+        return get("https://pokeapi.co/api/v2/move-ailment/" + id);
     }
 
     public static MoveAilment getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/move-ailment/" + name);
+        return get("https://pokeapi.co/api/v2/move-ailment/" + name);
     }
 
     public int getId() {

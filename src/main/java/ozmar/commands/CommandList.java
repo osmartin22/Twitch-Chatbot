@@ -10,6 +10,7 @@ import ozmar.database.DatabaseHandler;
 import ozmar.enums.CommandNumPermission;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
+import poke_models.pokemon.Pokemon;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -89,10 +90,14 @@ public class CommandList {
         } else if (preCommand.equals(commandsList.get(10).getCommand()) &&
                 hasPermission(commandsList.get(10).getPermission(), userPermission)) {
             result = pointsCommand(commandEvent);
+
+        } else if (preCommand.equals(commandsList.get(11).getCommand()) &&
+                hasPermission(commandsList.get(10).getPermission(), userPermission)) {
+
+            result = catchPokeCommand(commandEvent);
         }
 
         System.out.println(result);
-        result = "";
         return result;
     }
 
@@ -357,5 +362,12 @@ public class CommandList {
         }
 
         return (points != -1) ? result + " has " + points + " points" : "";
+    }
+
+    private String catchPokeCommand(@Nonnull CommandEvent event) {
+        int id = RandomHelper.getRandomNumberNotZero(807);
+        Pokemon pokemon = Pokemon.getById(id);
+
+        return event.getUser().getName() + " caught a " + pokemon.getName();
     }
 }

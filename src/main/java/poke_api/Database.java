@@ -2,7 +2,7 @@ package poke_api;
 
 import java.sql.*;
 
-// responsible for cache responses from online API, and therefore helping with speeds and limit poke_api calls (300 per day)
+// responsible for cache responses from online API, and therefore helping with speeds and limit api calls (300 per day)
 class Database {
 
     private static Database db = null;
@@ -23,7 +23,6 @@ class Database {
     }
 
     private void createDatabase() {
-
         try {
             DriverManager.getConnection(DB_NAME);
         } catch (Exception e) {
@@ -49,11 +48,10 @@ class Database {
         }
     }
 
-    private Connection connect() {
+    private Connection getConnection() {
         // SQLite connection string
         Connection conn = null;
         try {
-            Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(DB_NAME);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -65,7 +63,7 @@ class Database {
         url = url.toLowerCase();
         String sql = "INSERT INTO " + TABLE_NAME + "(url,response) VALUES(?,?)";
 
-        try (Connection conn = this.connect();
+        try (Connection conn = this.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, url);
             pstmt.setString(2, response);
@@ -82,9 +80,8 @@ class Database {
         String sql = "SELECT response "
                 + "FROM " + TABLE_NAME + " WHERE url = ?";
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             // set the value
             pstmt.setString(1, url);
 

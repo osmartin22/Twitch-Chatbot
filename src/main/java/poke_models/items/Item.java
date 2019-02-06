@@ -130,16 +130,16 @@ public class Item extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static Item getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/item/" + id);
+        return get("https://pokeapi.co/api/v2/item/" + id);
     }
 
     public static Item getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/item/" + name);
+        return get("https://pokeapi.co/api/v2/item/" + name);
     }
 
     public int getId() {

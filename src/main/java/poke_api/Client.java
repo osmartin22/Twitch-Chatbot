@@ -27,10 +27,10 @@ import poke_models.resource.APIResourceList;
 import poke_models.resource.NamedAPIResourceList;
 import poke_models.utility.Language;
 
-// heart of wrapper, contains all possible poke_api calls
+// heart of wrapper, contains all possible api calls
 public class Client {
 
-    // if true, save poke_api response to local database for speed and poke_api call limit help
+    // if true, save api response to local database for speed and api call limit help
     public static boolean CACHE = true;
 
     // get a Gender instance by the id

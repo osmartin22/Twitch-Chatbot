@@ -43,16 +43,16 @@ public class Gender {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static Gender getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/gender/" + id);
+        return get("https://pokeapi.co/api/v2/gender/" + id);
     }
 
     public static Gender getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/gender/" + name);
+        return get("https://pokeapi.co/api/v2/gender/" + name);
     }
 
     public int getId() {

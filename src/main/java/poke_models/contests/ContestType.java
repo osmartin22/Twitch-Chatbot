@@ -43,16 +43,16 @@ public class ContestType extends NamedAPIResource {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static ContestType getById(int id) {
-        return get("https://pokeapi.co/poke_api/v2/contest-type/" + id);
+        return get("https://pokeapi.co/api/v2/contest-type/" + id);
     }
 
     public static ContestType getByName(String name) {
-        return get("https://pokeapi.co/poke_api/v2/contest-type/" + name);
+        return get("https://pokeapi.co/api/v2/contest-type/" + name);
     }
 
     public int getId() {

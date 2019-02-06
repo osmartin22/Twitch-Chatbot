@@ -36,12 +36,12 @@ public class APIResourceList {
     }
 
     public static NamedAPIResourceList getList(int limit, int offset) {
-        String json = Information.fromInternet("https://pokeapi.co/poke_api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
+        String json = Information.fromInternet("https://pokeapi.co/api/v2/berry/?limit=" + Math.abs(limit) + "&offset=" + Math.abs(offset));
         return (new Gson()).fromJson(json, NamedAPIResourceList.class);
     }
 
     public static APIResourceList getByEndpoint(String endpoint) {
-        return get("https://pokeapi.co/poke_api/v2/" + endpoint);
+        return get("https://pokeapi.co/api/v2/" + endpoint);
     }
 
     public int getCount() {

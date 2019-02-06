@@ -52,6 +52,7 @@ public class CommandsTable {
         commandList.add(new Command("!31", CommandNumPermission.EVERYONE));
         commandList.add(new Command("!messagesent", CommandNumPermission.EVERYONE));
         commandList.add(new Command("!points", CommandNumPermission.EVERYONE));         // 10
+        commandList.add(new Command("!catchpoke", CommandNumPermission.EVERYONE));
         insertCommandsList(commandList);
     }
 
