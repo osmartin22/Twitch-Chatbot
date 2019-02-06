@@ -51,7 +51,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(1).getCommand()) &&
                 hasPermission(commandsList.get(1).getPermission(), userPermission)) {
-//            result = helloCommand(commandEvent);
+            result = helloCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(2).getCommand()) &&
                 hasPermission(commandsList.get(2).getPermission(), userPermission)) {
@@ -59,7 +59,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(3).getCommand()) &&
                 hasPermission(commandsList.get(3).getPermission(), userPermission)) {
-//            result = uptimeCommand(commandEvent);
+            result = uptimeCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(4).getCommand()) &&
                 hasPermission(commandsList.get(4).getPermission(), userPermission)) {
@@ -67,7 +67,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(5).getCommand()) &&
                 hasPermission(commandsList.get(5).getPermission(), userPermission)) {
-//            result = followageCommand(commandEvent);
+            result = followageCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(6).getCommand()) &&
                 hasPermission(commandsList.get(6).getPermission(), userPermission)) {
@@ -80,7 +80,7 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
                 hasPermission(commandsList.get(8).getPermission(), userPermission)) {
-//            result = "31's next release is on ...";
+            result = "31's next release is on ...";
 
         } else if (preCommand.equals(commandsList.get(9).getCommand()) &&
                 hasPermission(commandsList.get(9).getPermission(), userPermission)) {
@@ -91,7 +91,8 @@ public class CommandList {
             result = pointsCommand(commandEvent);
         }
 
-//        result = "";
+        System.out.println(result);
+        result = "";
         return result;
     }
 
