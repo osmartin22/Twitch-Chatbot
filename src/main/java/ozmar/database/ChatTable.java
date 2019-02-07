@@ -114,7 +114,7 @@ public class ChatTable {
         try {
             for (Iterator<String> iterator = list.iterator(); iterator.hasNext(); ) {
                 String userName = iterator.next();
-                updatePointsStatement.setInt(1, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_RANGE));
+                updatePointsStatement.setInt(1, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
                 updatePointsStatement.setString(2, userName);
                 if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
@@ -155,19 +155,17 @@ public class ChatTable {
         Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updateNameAndPointsSql);
 
-        User user = null;
         try {
             for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
-                user = iterator.next();
+                User user = iterator.next();
                 updatePointsStatement.setString(1, user.getLogin());
-                updatePointsStatement.setInt(2, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_RANGE));
+                updatePointsStatement.setInt(2, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
                 updatePointsStatement.setLong(3, Long.parseLong(user.getId()));
                 if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
             }
         } catch (SQLException | NullPointerException e) {
-            System.out.println("UserName: " + user.getLogin());
             System.out.println("Failed to update points from userName: " + e.getMessage());
             DatabaseHandler.rollBack(connection);
         } finally {
@@ -191,7 +189,7 @@ public class ChatTable {
                 insertStatement.setLong(1, Long.parseLong(user.getId()));
                 insertStatement.setString(2, user.getLogin());
                 insertStatement.setInt(3, 0);
-                insertStatement.setInt(4, RandomHelper.getRandomNumberNotZero(RANDOM_POINTS_RANGE));
+                insertStatement.setInt(4, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
 
                 if (insertStatement.executeUpdate() != 0) {
                     iterator.remove();

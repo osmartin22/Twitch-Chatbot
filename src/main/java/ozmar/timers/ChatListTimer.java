@@ -51,6 +51,6 @@ public class ChatListTimer {
         };
 
         final ScheduledFuture<?> fixedRateTimer =
-                scheduler.scheduleAtFixedRate(beeper, 0, 1, TimeUnit.MINUTES);
+                scheduler.scheduleAtFixedRate(beeper, 0, 60, TimeUnit.SECONDS);
     }
 }

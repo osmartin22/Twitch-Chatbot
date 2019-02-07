@@ -2,22 +2,22 @@ package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.CommandEvent;
-import ozmar.commands.CommandList;
+import ozmar.commands.HandleCommand;
 
 public class OnCommandReceived {
 
-    private CommandList commandList;
+    private HandleCommand handleCommand;
 
 
-    public OnCommandReceived(CommandList commandList) {
-        this.commandList = commandList;
+    public OnCommandReceived(HandleCommand handleCommand) {
+        this.handleCommand = handleCommand;
     }
 
     @EventSubscriber
     public void onCommand(CommandEvent event) {
 
-        commandList.setCommandEvent(event);
-        String output = commandList.decideCommand();
+        handleCommand.setCommandEvent(event);
+        String output = handleCommand.decideCommand();
 
         if (!output.isEmpty()) {
             event.respondToUser(output);

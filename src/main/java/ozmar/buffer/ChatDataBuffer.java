@@ -47,13 +47,14 @@ public class ChatDataBuffer {
      * @param userName used only when storing a new ChatUser to the map
      */
     public void updateChatUser(long userId, String userName) {
+        int randPoints = RandomHelper.getRandNumInRange(0, 1);
         Map<Long, ChatUser> currentMap = getCurrentMap();
         if (currentMap.containsKey(userId)) {
             ChatUser chatUser = currentMap.get(userId);
             chatUser.incrementMessageCount(1);
-            chatUser.incrementPoints(RandomHelper.getRandomNumber(1));
+            chatUser.incrementPoints(randPoints);
         } else {
-            ChatUser user = new ChatUser(userId, userName, 1, RandomHelper.getRandomNumber(1));
+            ChatUser user = new ChatUser(userId, userName, 1, randPoints);
             currentMap.put(userId, user);
         }
     }

@@ -26,7 +26,6 @@ public class WordCountTimer {
 
     public void startTimer() {
         final Runnable beeper = () -> {
-
             Map<String, Integer> wordCountMap = wordCountBuffer.getMap();
             db.updateOrInsertWordCount(wordCountMap);
             wordCountBuffer.clearMap();
@@ -39,5 +38,4 @@ public class WordCountTimer {
         final ScheduledFuture<?> fixedRateTimer =
                 scheduler.scheduleAtFixedRate(beeper, 5, 3, TimeUnit.SECONDS);
     }
-
 }

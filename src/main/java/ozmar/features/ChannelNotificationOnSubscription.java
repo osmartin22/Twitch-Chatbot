@@ -40,6 +40,7 @@ public class ChannelNotificationOnSubscription {
         SubPlan plan = SubPlan.getValue(event.getSubscriptionPlan());
         String message2 = message + " SubPlan = " + plan.getSubPlanName();
 
+        System.out.println(event);
         System.out.println(message2);
 
 //        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);

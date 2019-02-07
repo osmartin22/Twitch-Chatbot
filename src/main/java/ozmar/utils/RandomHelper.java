@@ -11,33 +11,20 @@ public class RandomHelper {
     }
 
     /**
-     * Returns a random number from 0 to given number (inclusive)
-     * Allows for negative random numbers
+     * Returns a random number from min to max
      *
-     * @param num range of random number (inclusive)
+     * @param min minimum roll
+     * @param max maximum roll
      * @return int
      */
-    public static int getRandomNumber(int num) {
-        int roll;
-
-        if (num < 0) {
-            num *= -1;
-            roll = random.nextInt(num - 1) * -1;
-
-        } else {
-            roll = random.nextInt(num + 1);
+    public static int getRandNumInRange(int min, int max) {
+        int num = max - min;
+        try {
+            num = Math.addExact(num, 1);
+        } catch (ArithmeticException e) {
+            System.out.println("Using (max-min) since adding will overflow: " + e.getMessage());
         }
 
-        return roll;
-    }
-
-    /**
-     * Returns a random number from 1 to given number (inclusive)
-     *
-     * @param num range of random number (inclusive)
-     * @return int
-     */
-    public static int getRandomNumberNotZero(int num) {
-        return random.nextInt(num + 1) + 1;
+        return random.nextInt(num) + min;
     }
 }

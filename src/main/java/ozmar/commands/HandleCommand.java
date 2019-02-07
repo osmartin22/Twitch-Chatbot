@@ -4,12 +4,14 @@ import com.github.twitch4j.chat.events.CommandEvent;
 import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
+import org.springframework.util.StringUtils;
 import ozmar.Bot;
 import ozmar.Command;
 import ozmar.database.DatabaseHandler;
 import ozmar.enums.CommandNumPermission;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
+import poke_models.pokemon.Nature;
 import poke_models.pokemon.Pokemon;
 
 import javax.annotation.Nonnull;
@@ -18,16 +20,18 @@ import java.util.stream.Collectors;
 
 
 // TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
-public class CommandList {
+public class HandleCommand {
 
     private CommandEvent commandEvent;
-    private DatabaseHandler db;
-    private Calculator calculator;
+    private final DatabaseHandler db;
+    private final Calculator calculator;
+    private final Dice dice;
 
 
-    public CommandList(DatabaseHandler db, Calculator calculator) {
-        this.calculator = calculator;
+    public HandleCommand(DatabaseHandler db, Calculator calculator, Dice dice) {
         this.db = db;
+        this.calculator = calculator;
+        this.dice = dice;
     }
 
     public void setCommandEvent(CommandEvent commandEvent) {
@@ -93,11 +97,11 @@ public class CommandList {
 
         } else if (preCommand.equals(commandsList.get(11).getCommand()) &&
                 hasPermission(commandsList.get(10).getPermission(), userPermission)) {
-
             result = catchPokeCommand(commandEvent);
         }
 
         System.out.println(result);
+        result = "";
         return result;
     }
 
@@ -121,32 +125,42 @@ public class CommandList {
      */
     private String diceRollCommand(@Nonnull CommandEvent event) {
         String output = event.getUser().getName() + " rolled a ";
-        int num = 20;
 
-        String command = event.getCommand();
+        String command = event.getCommand().trim();
         if (command.isEmpty()) {
             return output + diceRollHelperD20();
         }
 
-        char temp = command.charAt(0);
-        if (Character.isDigit(temp) || temp == ' ') {
+        String[] commandArray = command.split(" ", 3);
 
-            command = event.getCommand().trim();
-            if (command.contains(" ")) {
-                command = command.substring(0, command.indexOf(" "));
+        int sides;
+        int dieCount = 1;
+        try {
+            sides = Integer.parseInt(commandArray[0]);
+
+            if (commandArray.length > 1) {
+                dieCount = Integer.parseInt(commandArray[1]);
             }
 
-            try {
-                num = Integer.parseInt(command);
-
-            } catch (NumberFormatException e) {
-                return output + diceRollHelperD20();
-            }
-
-            return output + RandomHelper.getRandomNumber(num);
+        } catch (NumberFormatException e) {
+            System.out.println("Not a number: " + e.getMessage());
+            return "";
         }
 
-        return "";
+        if (sides == 0 || dieCount <= 0) {
+            return "";
+        }
+
+        System.out.println("Sides: " + sides + " Dies: " + dieCount);
+        dice.setSides(sides);
+
+        if (sides == 20 && dieCount == 1) {
+            output += diceRollHelperD20();
+        } else {
+            output += dice.rollNDie(dieCount);
+        }
+
+        return output;
     }
 
     /**
@@ -155,7 +169,7 @@ public class CommandList {
      * @return String
      */
     private String diceRollHelperD20() {
-        int randNum = RandomHelper.getRandomNumber(20);
+        int randNum = RandomHelper.getRandNumInRange(1, 20);
         if (randNum == 20) {
             return "20 POGPLANT";
 
@@ -244,7 +258,7 @@ public class CommandList {
      * <p>
      * returns empty string if username was not found
      *
-     * @param event USer info and command data
+     * @param event User info and command data
      * @return String
      */
     private String followageCommand(@Nonnull CommandEvent event) {
@@ -324,7 +338,6 @@ public class CommandList {
                 .collect(Collectors.joining(", "));
     }
 
-
     /**
      * Clears the table containing the count of words used in the database
      */
@@ -332,6 +345,12 @@ public class CommandList {
         db.clearWordCount();
     }
 
+    /**
+     * Gets the message count of the user that used the command, or the specified user
+     *
+     * @param event User info and command data
+     * @return String
+     */
     private String messageCountCommand(@Nonnull CommandEvent event) {
         int count;
         String message = event.getCommand().trim().toLowerCase();
@@ -348,6 +367,12 @@ public class CommandList {
         return (count != -1) ? result + " has sent " + count + " messages" : "";
     }
 
+    /**
+     * Gets the points of the user that used the command, or the specified user
+     *
+     * @param event User info and command data
+     * @return String
+     */
     private String pointsCommand(@Nonnull CommandEvent event) {
         int points;
         String message = event.getCommand().trim().toLowerCase();
@@ -364,10 +389,34 @@ public class CommandList {
         return (points != -1) ? result + " has " + points + " points" : "";
     }
 
+    /**
+     * Gets a random pokemon nwith a name, nature, and gender
+     *
+     * @param event User info and command data
+     * @return String
+     */
     private String catchPokeCommand(@Nonnull CommandEvent event) {
-        int id = RandomHelper.getRandomNumberNotZero(807);
-        Pokemon pokemon = Pokemon.getById(id);
+        int pokeId = RandomHelper.getRandNumInRange(1, 807);  // Only 807 pokemon exist currently
+        int natureId = RandomHelper.getRandNumInRange(1, 25); // Only 25 natures exist
+        Pokemon pokemon = Pokemon.getById(pokeId);
+        Nature nature = Nature.getById(natureId);
 
-        return event.getUser().getName() + " caught a " + pokemon.getName();
+        String gender;
+        if (RandomHelper.getRandNumInRange(0, 1) == 1) {
+            gender = "male ";
+        } else {
+            gender = "female ";
+        }
+
+        try {
+            String natureName = nature.getName();
+            String pokeName = StringUtils.capitalize(pokemon.getName());
+
+            return event.getUser().getName() + " caught a " + gender + natureName + " " + pokeName;
+        } catch (Exception e) {
+            System.out.println("Failed getting api request " + e.getMessage());
+        }
+
+        return "";
     }
 }
