@@ -13,6 +13,7 @@ import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
 import poke_models.pokemon.Nature;
 import poke_models.pokemon.Pokemon;
+import poke_models.pokemon.PokemonSpecies;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -394,7 +395,7 @@ public class HandleCommand {
     }
 
     /**
-     * Gets a random pokemon nwith a name, nature, and gender
+     * Gets a random pokemon with a name, nature, and gender
      *
      * @param event User info and command data
      * @return String
@@ -402,26 +403,47 @@ public class HandleCommand {
     private String catchPokeCommand(@Nonnull CommandEvent event) {
         int pokeId = RandomHelper.getRandNumInRange(1, 807);  // Only 807 pokemon exist currently
         int natureId = RandomHelper.getRandNumInRange(1, 25); // Only 25 natures exist
-        Pokemon pokemon = Pokemon.getById(pokeId);
-        Nature nature = Nature.getById(natureId);
-
-        String gender;
-        if (RandomHelper.getRandNumInRange(0, 1) == 1) {
-            gender = "male ";
-        } else {
-            gender = "female ";
-        }
 
         try {
-            String natureName = nature.getName();
-            String pokeName = StringUtils.capitalize(pokemon.getName());
+            String pokeGender = pokeGenderHelper(pokeId);
+            if (pokeGender == null) {
+                return "";
+            }
+            String natureName = Nature.getById(natureId).getName();
+            String pokeName = StringUtils.capitalize(Pokemon.getById(pokeId).getName());
 
-            return event.getUser().getName() + " caught a " + gender + natureName + " " + pokeName;
+            return event.getUser().getName() + " caught a " + pokeGender + natureName + " " + pokeName;
         } catch (Exception e) {
             System.out.println("Failed getting api request " + e.getMessage());
         }
 
         return "";
+    }
+
+    private String pokeGenderHelper(int pokeId) {
+        String gender;
+        try {
+            int genderRate = PokemonSpecies.getById(pokeId).getGenderRate();
+            if (genderRate == -1) { // Genderless
+                gender = "";
+            } else if (genderRate == 0) {   // Only males
+                gender = "male ";
+            } else if (genderRate == 8) {   // Only females
+                gender = "female ";
+            } else {
+                int genderChance = RandomHelper.getRandNumInRange(1, 8);    // Gender ratios are done in eighths
+                if (genderRate <= genderChance) {
+                    gender = "female ";
+                } else {
+                    gender = "maale ";
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to get gender: " + e.getMessage());
+            return null;
+        }
+
+        return gender;
     }
 
     private String flipCoinCommand(@Nonnull CommandEvent event) {

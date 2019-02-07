@@ -18,21 +18,6 @@ public class Launcher {
         WordCountTimer wordCountTimer = context.getBean(WordCountTimer.class);
         chatListTimer.startTimer();
         wordCountTimer.startTimer();
-
-//        Pokemon pokemon = Pokemon.getById(RandomHelper.getRandomNumberNotZero(807));
-//        Nature nature = Nature.getById(RandomHelper.getRandomNumberNotZero(25));
-//
-//        String natureName = nature.getName();
-//        String pokeName = StringUtils.capitalize(pokemon.getName());
-//        String gender;
-//        if(RandomHelper.getRandNum(1) == 1) {
-//            gender = " male ";
-//        } else {
-//            gender = " female ";
-//        }
-//
-//        System.out.println("Caught a " + natureName + gender + pokeName);
-
     }
 }
 //    PepePls  Clap  KKomrade  KKool  gachiBASS lulWut  Clap2  AYAYA  HYPERLUL

@@ -29,6 +29,7 @@ public class ChatListTimer {
 
             // Remove names from the list if they exist in the database
             db.checkIfNamesExist(userNameList);
+            System.out.println("Storing " + userNameList.size() + " users in " + partition.size() + " partitions");
 
             for (List<String> list : partition) {
                 UserList userList;
