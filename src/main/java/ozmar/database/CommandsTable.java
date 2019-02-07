@@ -42,18 +42,18 @@ public class CommandsTable {
     public void initializeCommands() {
         List<Command> commandList = new ArrayList<>();
         commandList.add(new Command("!dice", CommandNumPermission.EVERYONE));           // 0
-        commandList.add(new Command("!hello", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!count", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!uptime", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!calc", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!hello", CommandNumPermission.EVERYONE));          // 1
+        commandList.add(new Command("!count", CommandNumPermission.EVERYONE));          // 2
+        commandList.add(new Command("!uptime", CommandNumPermission.EVERYONE));         // 3
+        commandList.add(new Command("!calc", CommandNumPermission.EVERYONE));           // 4
         commandList.add(new Command("!followage", CommandNumPermission.EVERYONE));      // 5
-        commandList.add(new Command("!wordCount", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!clearWordCount", CommandNumPermission.BROADCASTER));
-        commandList.add(new Command("!31", CommandNumPermission.EVERYONE));
-        commandList.add(new Command("!messageSent", CommandNumPermission.EVERYONE));
+        commandList.add(new Command("!wordCount", CommandNumPermission.EVERYONE));      // 6
+        commandList.add(new Command("!clearWordCount", CommandNumPermission.BROADCASTER));  // 7
+        commandList.add(new Command("!31", CommandNumPermission.EVERYONE));             // 8
+        commandList.add(new Command("!messageSent", CommandNumPermission.EVERYONE));    // 9
         commandList.add(new Command("!points", CommandNumPermission.EVERYONE));         // 10
-        commandList.add(new Command("!catchPoke", CommandNumPermission.EVERYONE));
-        // COINFLIP
+        commandList.add(new Command("!catchPoke", CommandNumPermission.EVERYONE));      // 11
+        commandList.add(new Command("!coinFlip", CommandNumPermission.EVERYONE));       // 12
         insertCommandsList(commandList);
     }
 

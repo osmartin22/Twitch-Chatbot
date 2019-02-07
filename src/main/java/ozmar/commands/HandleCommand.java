@@ -96,8 +96,12 @@ public class HandleCommand {
             result = pointsCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(11).getCommand()) &&
-                hasPermission(commandsList.get(10).getPermission(), userPermission)) {
+                hasPermission(commandsList.get(11).getPermission(), userPermission)) {
             result = catchPokeCommand(commandEvent);
+
+        } else if (preCommand.equals(commandsList.get(12).getCommand()) &&
+                hasPermission(commandsList.get(12).getPermission(), userPermission)) {
+            result = flipCoinCommand(commandEvent);
         }
 
         System.out.println(result);
@@ -418,5 +422,17 @@ public class HandleCommand {
         }
 
         return "";
+    }
+
+    private String flipCoinCommand(@Nonnull CommandEvent event) {
+        String output = event.getUser().getName() + " flipped ";
+        if (RandomHelper.getRandNumInRange(0, 1) == 1) {
+            output += "heads";
+
+        } else {
+            output += "tails";
+        }
+
+        return output;
     }
 }
