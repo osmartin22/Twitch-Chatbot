@@ -3,6 +3,7 @@ package ozmar.commands.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.commands.Calculator;
+import ozmar.commands.CatchPoke;
 import ozmar.commands.Dice;
 import ozmar.commands.HandleCommand;
 import ozmar.database.DatabaseHandler;
@@ -11,8 +12,9 @@ import ozmar.database.DatabaseHandler;
 public class HandleCommandConfig {
 
     @Bean
-    public HandleCommand HandleCommandBean(DatabaseHandler databaseHandler, Calculator calculator, Dice dice) {
-        return new HandleCommand(databaseHandler, calculator, dice);
+    public HandleCommand HandleCommandBean(DatabaseHandler databaseHandler, Calculator calculator, Dice dice,
+                                           CatchPoke catchPoke) {
+        return new HandleCommand(databaseHandler, calculator, dice, catchPoke);
     }
 
 }

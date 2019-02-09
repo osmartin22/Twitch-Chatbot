@@ -4,16 +4,12 @@ import com.github.twitch4j.chat.events.CommandEvent;
 import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
-import org.springframework.util.StringUtils;
 import ozmar.Bot;
 import ozmar.Command;
 import ozmar.database.DatabaseHandler;
 import ozmar.enums.CommandNumPermission;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
-import poke_models.pokemon.Nature;
-import poke_models.pokemon.Pokemon;
-import poke_models.pokemon.PokemonSpecies;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -27,12 +23,14 @@ public class HandleCommand {
     private final DatabaseHandler db;
     private final Calculator calculator;
     private final Dice dice;
+    private final CatchPoke catchPoke;
 
 
-    public HandleCommand(DatabaseHandler db, Calculator calculator, Dice dice) {
+    public HandleCommand(DatabaseHandler db, Calculator calculator, Dice dice, CatchPoke catchPoke) {
         this.db = db;
         this.calculator = calculator;
         this.dice = dice;
+        this.catchPoke = catchPoke;
     }
 
     public void setCommandEvent(CommandEvent commandEvent) {
@@ -113,7 +111,7 @@ public class HandleCommand {
     /**
      * Checks if the user has permission to use the command
      *
-     * @param commandLevel permisison level of the command
+     * @param commandLevel permission level of the command
      * @param userLevel    permission level of user
      * @return boolean
      */
@@ -395,57 +393,30 @@ public class HandleCommand {
     }
 
     /**
-     * Gets a random pokemon with a name, nature, and gender
+     * Gets a random pokemon with a name, nature, and gender and decides if it was caught or not
      *
      * @param event User info and command data
      * @return String
      */
     private String catchPokeCommand(@Nonnull CommandEvent event) {
-        int pokeId = RandomHelper.getRandNumInRange(1, 807);  // Only 807 pokemon exist currently
-        int natureId = RandomHelper.getRandNumInRange(1, 25); // Only 25 natures exist
-
-        try {
-            String pokeGender = pokeGenderHelper(pokeId);
-            if (pokeGender == null) {
+        // Only 807 pokemon exist currently
+        if (catchPoke.initialize(RandomHelper.getRandNumInRange(1, 807)) == -1) {
+            return "";
+        } else {
+            String result = catchPoke.attemptCatch();
+            if (result == null) {
                 return "";
             }
-            String natureName = Nature.getById(natureId).getName();
-            String pokeName = StringUtils.capitalize(Pokemon.getById(pokeId).getName());
-
-            return event.getUser().getName() + " caught a " + pokeGender + natureName + " " + pokeName;
-        } catch (Exception e) {
-            System.out.println("Failed getting api request " + e.getMessage());
+            return event.getUser().getName() + result;
         }
-
-        return "";
     }
 
-    private String pokeGenderHelper(int pokeId) {
-        String gender;
-        try {
-            int genderRate = PokemonSpecies.getById(pokeId).getGenderRate();
-            if (genderRate == -1) { // Genderless
-                gender = "";
-            } else if (genderRate == 0) {   // Only males
-                gender = "male ";
-            } else if (genderRate == 8) {   // Only females
-                gender = "female ";
-            } else {
-                int genderChance = RandomHelper.getRandNumInRange(1, 8);    // Gender ratios are done in eighths
-                if (genderRate <= genderChance) {
-                    gender = "female ";
-                } else {
-                    gender = "maale ";
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to get gender: " + e.getMessage());
-            return null;
-        }
-
-        return gender;
-    }
-
+    /**
+     * Flips a coin and returns the result
+     *
+     * @param event User id and info
+     * @return String
+     */
     private String flipCoinCommand(@Nonnull CommandEvent event) {
         String output = event.getUser().getName() + " flipped ";
         if (RandomHelper.getRandNumInRange(0, 1) == 1) {
