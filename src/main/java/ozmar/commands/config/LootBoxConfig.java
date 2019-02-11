@@ -2,13 +2,13 @@ package ozmar.commands.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ozmar.commands.Calculator;
+import ozmar.commands.LootBox;
 
 @Configuration
-public class CalculatorConfig {
+public class LootBoxConfig {
 
     @Bean
-    public Calculator calculatorBean() {
-        return new Calculator();
+    LootBox lootBoxBean() {
+        return new LootBox();
     }
 }

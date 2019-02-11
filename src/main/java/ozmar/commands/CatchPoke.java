@@ -48,7 +48,7 @@ public class CatchPoke {
         String natureName = nature.getName();
         String pokeName = StringUtils.capitalize(pokemon.getName());
 
-        String output = natureName + pokeGender + " " + pokeName;
+        String output = natureName + pokeGender + pokeName;
         if (decideCapture()) {
             output = " caught a " + output;
         } else {
@@ -73,17 +73,17 @@ public class CatchPoke {
         try {
             int genderRate = pokemonSpecies.getGenderRate();
             if (genderRate == -1) { // Genderless
-                gender = "";
+                gender = " ";
             } else if (genderRate == 0) {   // Only males
-                gender = "male ";
+                gender = " male ";
             } else if (genderRate == 8) {   // Only females
-                gender = "female ";
+                gender = " female ";
             } else {
                 int genderChance = RandomHelper.getRandNumInRange(1, 8);    // Gender ratios are done in eighths
                 if (genderRate <= genderChance) {
-                    gender = "female ";
+                    gender = " female ";
                 } else {
-                    gender = "male ";
+                    gender = " male ";
                 }
             }
         } catch (Exception e) {

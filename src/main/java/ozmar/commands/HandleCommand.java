@@ -24,13 +24,16 @@ public class HandleCommand {
     private final Calculator calculator;
     private final Dice dice;
     private final CatchPoke catchPoke;
+    private final LootBox lootBox;
 
 
-    public HandleCommand(DatabaseHandler db, Calculator calculator, Dice dice, CatchPoke catchPoke) {
+    public HandleCommand(DatabaseHandler db, Calculator calculator, Dice dice, CatchPoke catchPoke,
+                         LootBox lootBox) {
         this.db = db;
         this.calculator = calculator;
         this.dice = dice;
         this.catchPoke = catchPoke;
+        this.lootBox = lootBox;
     }
 
     public void setCommandEvent(CommandEvent commandEvent) {
@@ -55,7 +58,7 @@ public class HandleCommand {
 
         } else if (preCommand.equals(commandsList.get(1).getCommand()) &&
                 hasPermission(commandsList.get(1).getPermission(), userPermission)) {
-            result = helloCommand(commandEvent);
+//            result = helloCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(2).getCommand()) &&
                 hasPermission(commandsList.get(2).getPermission(), userPermission)) {
@@ -63,7 +66,7 @@ public class HandleCommand {
 
         } else if (preCommand.equals(commandsList.get(3).getCommand()) &&
                 hasPermission(commandsList.get(3).getPermission(), userPermission)) {
-            result = uptimeCommand(commandEvent);
+//            result = uptimeCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(4).getCommand()) &&
                 hasPermission(commandsList.get(4).getPermission(), userPermission)) {
@@ -71,7 +74,7 @@ public class HandleCommand {
 
         } else if (preCommand.equals(commandsList.get(5).getCommand()) &&
                 hasPermission(commandsList.get(5).getPermission(), userPermission)) {
-            result = followageCommand(commandEvent);
+//            result = followageCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(6).getCommand()) &&
                 hasPermission(commandsList.get(6).getPermission(), userPermission)) {
@@ -84,7 +87,7 @@ public class HandleCommand {
 
         } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
                 hasPermission(commandsList.get(8).getPermission(), userPermission)) {
-            result = "31's next release is on ...";
+//            result = "31's next release is on ...";
 
         } else if (preCommand.equals(commandsList.get(9).getCommand()) &&
                 hasPermission(commandsList.get(9).getPermission(), userPermission)) {
@@ -101,6 +104,10 @@ public class HandleCommand {
         } else if (preCommand.equals(commandsList.get(12).getCommand()) &&
                 hasPermission(commandsList.get(12).getPermission(), userPermission)) {
             result = flipCoinCommand(commandEvent);
+
+        } else if (preCommand.equals(commandsList.get(13).getCommand()) &&
+                hasPermission(commandsList.get(13).getPermission(), userPermission)) {
+            result = openLootCommand(commandEvent);
         }
 
         System.out.println(result);
@@ -174,8 +181,7 @@ public class HandleCommand {
     private String diceRollHelperD20() {
         int randNum = RandomHelper.getRandNumInRange(1, 20);
         if (randNum == 20) {
-            return "20 POGPLANT";
-
+            return "20 HYPEROMEGAPOGGERSCRAZY";
         } else if (randNum == 1) {
             return "1 LUL";
         } else {
@@ -427,5 +433,20 @@ public class HandleCommand {
         }
 
         return output;
+    }
+
+    /**
+     * Gets a random loot
+     *
+     * @param event User info
+     * @return String
+     */
+    private String openLootCommand(@Nonnull CommandEvent event) {
+        String result = lootBox.getLoot();
+        if (result.isEmpty()) {
+            return "";
+        }
+
+        return event.getUser().getName() + " got " + result;
     }
 }

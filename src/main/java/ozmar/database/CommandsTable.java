@@ -4,6 +4,9 @@ import ozmar.Command;
 import ozmar.enums.CommandNumPermission;
 
 import javax.annotation.Nonnull;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +40,21 @@ public class CommandsTable {
 
     /**
      * Meant for first time use only
-     * Creates and inserts a List of Commands to the table
+     * Creates and inserts a List of Commands to the table from the given text file
      */
     public void initializeCommands() {
+        // File is assumed to be in the correct format
         List<Command> commandList = new ArrayList<>();
-        commandList.add(new Command("!dice", CommandNumPermission.EVERYONE));           // 0
-        commandList.add(new Command("!hello", CommandNumPermission.EVERYONE));          // 1
-        commandList.add(new Command("!count", CommandNumPermission.EVERYONE));          // 2
-        commandList.add(new Command("!uptime", CommandNumPermission.EVERYONE));         // 3
-        commandList.add(new Command("!calc", CommandNumPermission.EVERYONE));           // 4
-        commandList.add(new Command("!followage", CommandNumPermission.EVERYONE));      // 5
-        commandList.add(new Command("!wordCount", CommandNumPermission.EVERYONE));      // 6
-        commandList.add(new Command("!clearWordCount", CommandNumPermission.BROADCASTER));  // 7
-        commandList.add(new Command("!31", CommandNumPermission.EVERYONE));             // 8
-        commandList.add(new Command("!messageSent", CommandNumPermission.EVERYONE));    // 9
-        commandList.add(new Command("!points", CommandNumPermission.EVERYONE));         // 10
-        commandList.add(new Command("!catchPoke", CommandNumPermission.EVERYONE));      // 11
-        commandList.add(new Command("!coinFlip", CommandNumPermission.EVERYONE));       // 12
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\\\TwitchBotFiles\\commands.txt"))) {
+            String line = br.readLine();
+            while (line != null) {
+                String[] tokens = line.split("\\s+");
+                commandList.add(new Command(tokens[0], CommandNumPermission.valueOf(tokens[1])));
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Failed opening commands file: " + e.getMessage());
+        }
         insertCommandsList(commandList);
     }
 

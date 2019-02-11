@@ -21,8 +21,12 @@ public class Launcher {
     }
 }
 //    PepePls  Clap  KKomrade  KKool  gachiBASS lulWut  Clap2  AYAYA  HYPERLUL
-//    billyReady  pepoS  theCHAMP  POGGERS  monkaGIGA monkaSHAKE  TriKool  PepeHands
+//    billyReady  pepoS  theCHAMP  monkaGIGA monkaSHAKE  TriKool  PepeHands
 //    HYPERLULWUT  BAOMN  RapThis  ppHop  peepoWink  monkaHmm PepoCheer  EZFingerGuns  pepeD
 //    ZOINKS  pepeBASS  pepeJAM  FeelsLateMan  HYPEROMEGAZOINKS  HYPERCLAP nutTasty  OMEGALAUGHING
-//    HACKERMANS  HYPERCLAP2  BLAPBLAP  BLAAP  HYPEROMEGAPOGGERSCRAZY  POGPLANT  robDab Omegalol  FeelsAyayaMan
+//    HACKERMANS  HYPERCLAP2  BLAPBLAP->  <-BLAAP  HYPEROMEGAPOGGERSCRAZY  robDab Omegalol  FeelsAyayaMan
 //    PepeSpin  PEEPERS  HYPERROBDAB  RareMoon  peepoT  moon2BASS
+
+// peepoWink
+//oO( pepeBASS
+//)

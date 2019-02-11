@@ -29,23 +29,19 @@ public class ChatListTimer {
 
             // Remove names from the list if they exist in the database
             db.checkIfNamesExist(userNameList);
-            System.out.println("Storing " + userNameList.size() + " users in " + partition.size() + " partitions");
+            System.out.println("Fetching " + userNameList.size() + " users in " + partition.size() + " partitions");
 
             for (List<String> list : partition) {
                 UserList userList;
                 try {
                     userList = Bot.helixCommands.getUsersList(null, list);
-
-                    // Try to get the data once more else remove the list and try again the next time
-                    // we query the chat list
-                    // Temp solution since it would require rewriting parts of the api I am using
-                    // to extend the timeout
                 } catch (Throwable e) {
                     System.out.println("Timed out, trying again " + e.getMessage());
-                    userList = Bot.helixCommands.getUsersList(null, list);
+                    continue;   // Skip list, will be called the next time the timer occurs
                 }
 
-                if (userList != null) {
+                if (userList != null && !userList.getUsers().isEmpty()) {
+                    System.out.println("Storing " + userList.getUsers().size() + " users");
                     db.addUserList(userList.getUsers());
                 }
             }
