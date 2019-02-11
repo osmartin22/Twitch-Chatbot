@@ -26,7 +26,7 @@ public class HelixCommands {
      * @param userNames user login name
      * @return UserLIst
      */
-    public UserList getUsersList(List<String> userIds, List<String> userNames) {
+    public UserList getUsersList(List<Long> userIds, List<String> userNames) {
 
         return twitchHelix.getUsers(oAuthToken, userIds, userNames).execute();
     }
@@ -45,14 +45,14 @@ public class HelixCommands {
      */
     public StreamList getStreams(String after, String before, List<UUID> communityId,
                                  Integer first, List<String> gameIds, String language,
-                                 List<String> userIds, List<String> userLogin) {
+                                 List<Long> userIds, List<String> userLogin) {
 
         return twitchHelix.getStreams(after, before, first, communityId, gameIds,
                 language, userIds, userLogin).execute();
 
     }
 
-    public FollowList getFollowers(String fromId, String toId, String after, Integer limit) {
+    public FollowList getFollowers(Long fromId, Long toId, String after, Integer limit) {
         return twitchHelix.getFollowers(fromId, toId, after, limit).execute();
     }
 }

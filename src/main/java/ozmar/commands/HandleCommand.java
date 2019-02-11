@@ -220,7 +220,7 @@ public class HandleCommand {
         String channelName = event.getSourceId();
         UserList userList = Bot.helixCommands.getUsersList(null, Collections.singletonList(channelName));
 
-        String channelId = userList.getUsers().get(0).getId();
+        Long channelId = userList.getUsers().get(0).getId();
         StreamList streamList = Bot.helixCommands.getStreams(null, null, null, null,
                 null, null, Collections.singletonList(channelId), null);
 
@@ -282,9 +282,9 @@ public class HandleCommand {
 
         UserList userList = Bot.helixCommands.getUsersList(null, userChannelNameList);
 
-        String userFollowingId;
+        Long userFollowingId;
         if (emptyCommand) {
-            userFollowingId = event.getUser().getId().toString();
+            userFollowingId = event.getUser().getId();
 
             // Check that user input username was found
         } else if (userList.getUsers().size() == 2) {
@@ -295,7 +295,7 @@ public class HandleCommand {
             return "";
         }
 
-        String followedChannelId = userList.getUsers().get(0).getId();
+        Long followedChannelId = userList.getUsers().get(0).getId();
         FollowList followList = Bot.helixCommands.getFollowers(userFollowingId, followedChannelId, null, 1);
         String userFollowingName = (emptyCommand) ? event.getUser().getName() :
                 userList.getUsers().get(1).getDisplayName();

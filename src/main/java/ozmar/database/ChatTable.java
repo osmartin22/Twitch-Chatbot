@@ -160,7 +160,7 @@ public class ChatTable {
                 User user = iterator.next();
                 updatePointsStatement.setString(1, user.getLogin());
                 updatePointsStatement.setInt(2, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
-                updatePointsStatement.setLong(3, Long.parseLong(user.getId()));
+                updatePointsStatement.setLong(3, user.getId());
                 if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
@@ -186,7 +186,7 @@ public class ChatTable {
         try {
             for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
                 User user = iterator.next();
-                insertStatement.setLong(1, Long.parseLong(user.getId()));
+                insertStatement.setLong(1, user.getId());
                 insertStatement.setString(2, user.getLogin());
                 insertStatement.setInt(3, 0);
                 insertStatement.setInt(4, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
