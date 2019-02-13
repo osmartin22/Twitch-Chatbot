@@ -5,6 +5,7 @@ import ozmar.utils.RandomHelper;
 import poke_models.pokemon.Nature;
 import poke_models.pokemon.Pokemon;
 import poke_models.pokemon.PokemonSpecies;
+import poke_models.pokemon.PokemonSpeciesVariety;
 
 public class CatchPoke {
     private Pokemon pokemon;
@@ -23,10 +24,33 @@ public class CatchPoke {
      * @return int
      */
     public int initialize(int pokeId) {
+        return initialize(pokeId, "");
+    }
+
+    /**
+     * Initializes Pokemon specific objects from the api or cache using the pokemon name
+     * On failure of creating the objects, -1 is returned to inform a failure
+     *
+     * @param pokeName name of pokemon to get
+     * @return int
+     */
+    public int initialize(String pokeName) {
+        return initialize(-1, pokeName);
+    }
+
+    private int initialize(int pokeId, String pokeName) {
         try {
-            pokemon = Pokemon.getById(pokeId);
-            pokemonSpecies = PokemonSpecies.getById(pokeId);
+            pokemonSpecies = (pokeId > 0) ? PokemonSpecies.getById(pokeId) : PokemonSpecies.getByName(pokeName);
+            if (pokemonSpecies == null) {
+                return -1;
+            }
+
+            int pokeVariety = pokemonSpecies.getVarieties().size();
+            int randVariety = RandomHelper.getRandNumInRange(0, pokeVariety - 1);
+            PokemonSpeciesVariety pokemonSpeciesVariety = pokemonSpecies.getVarieties().get(randVariety);
+            pokemon = Pokemon.getByName(pokemonSpeciesVariety.getPokemon().getName());
             nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
+
         } catch (Exception e) {
             System.out.println("Failed to initialize: " + e.getMessage());
             return -1;
@@ -48,7 +72,13 @@ public class CatchPoke {
         String natureName = nature.getName();
         String pokeName = StringUtils.capitalize(pokemon.getName());
 
-        String output = natureName + pokeGender + pokeName;
+        String output = "";
+        boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 5;
+        if (isShiny) {
+            output = "shiny ";
+        }
+
+        output += natureName + pokeGender + pokeName;
         if (decideCapture()) {
             output = " caught a " + output;
         } else {
@@ -72,6 +102,7 @@ public class CatchPoke {
         String gender;
         try {
             int genderRate = pokemonSpecies.getGenderRate();
+            System.out.println("GenderRate: " + genderRate);
             if (genderRate == -1) { // Genderless
                 gender = " ";
             } else if (genderRate == 0) {   // Only males
@@ -80,7 +111,8 @@ public class CatchPoke {
                 gender = " female ";
             } else {
                 int genderChance = RandomHelper.getRandNumInRange(1, 8);    // Gender ratios are done in eighths
-                if (genderRate <= genderChance) {
+                System.out.println("GenderChance: " + genderChance);
+                if (genderChance <= genderRate) {
                     gender = " female ";
                 } else {
                     gender = " male ";
@@ -105,7 +137,7 @@ public class CatchPoke {
 
         // Add status and lower health even more only if pokemon has a low catch rate(usually a legendary)
         double hpCurr = (captureRate == 3) ? hpMax * .1 : hpMax * .25;
-        double status = (captureRate == 3) ? 1.5 : 1;
+        double status = (captureRate == 3) ? 2 : 1;
 
         // Catch rate formula Gen III - IV
         // a = ((3 * HPmax - 2 * HPcurr) * rate * BONUSball * BONUSstate) / (3 * HPmax)

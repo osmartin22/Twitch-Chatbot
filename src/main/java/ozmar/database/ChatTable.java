@@ -22,7 +22,8 @@ public class ChatTable {
     private static final String COLUMN_MESSAGE_COUNT = "messageCount";
     private static final String COLUMN_POINTS = "points";
 
-    private static final int RANDOM_POINTS_RANGE = 2;
+    private static final int RANDOM_POINTS_RANGE_START = 3;
+    private static final int RANDOM_POINTS_RANGE_END = 10;
 
     private static final String CREATE_CHAT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE + " (" +
@@ -114,7 +115,8 @@ public class ChatTable {
         try {
             for (Iterator<String> iterator = list.iterator(); iterator.hasNext(); ) {
                 String userName = iterator.next();
-                updatePointsStatement.setInt(1, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
+                updatePointsStatement.setInt(1,
+                        RandomHelper.getRandNumInRange(RANDOM_POINTS_RANGE_START, RANDOM_POINTS_RANGE_END));
                 updatePointsStatement.setString(2, userName);
                 if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
@@ -159,7 +161,8 @@ public class ChatTable {
             for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
                 User user = iterator.next();
                 updatePointsStatement.setString(1, user.getLogin());
-                updatePointsStatement.setInt(2, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
+                updatePointsStatement.setInt(2,
+                        RandomHelper.getRandNumInRange(RANDOM_POINTS_RANGE_START, RANDOM_POINTS_RANGE_END));
                 updatePointsStatement.setLong(3, user.getId());
                 if (updatePointsStatement.executeUpdate() != 0) {
                     iterator.remove();
@@ -189,7 +192,8 @@ public class ChatTable {
                 insertStatement.setLong(1, user.getId());
                 insertStatement.setString(2, user.getLogin());
                 insertStatement.setInt(3, 0);
-                insertStatement.setInt(4, RandomHelper.getRandNumInRange(0, RANDOM_POINTS_RANGE));
+                insertStatement.setInt(4,
+                        RandomHelper.getRandNumInRange(RANDOM_POINTS_RANGE_START, RANDOM_POINTS_RANGE_END));
 
                 if (insertStatement.executeUpdate() != 0) {
                     iterator.remove();

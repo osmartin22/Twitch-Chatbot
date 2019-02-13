@@ -22,17 +22,31 @@ public class Dice {
         return RandomHelper.getRandNumInRange(sides, -1);
     }
 
-    public int rollNDie(int dieCount) {
+    public Integer rollNDie(int dieCount) {
         int roll = 0;
+
+        if (dieCount > 100) {
+            dieCount = 100;
+        }
 
         if (sides < 0) {
             for (int i = 0; i < dieCount; i++) {
-                roll += rollNegDie();
+                try {
+                    roll = Math.addExact(roll, rollNegDie());
+                } catch (ArithmeticException e) {
+                    System.out.println("Number too small: " + e.getMessage());
+                    return null;
+                }
             }
 
         } else if (sides > 0) {
             for (int i = 0; i < dieCount; i++) {
-                roll += rollPosDie();
+                try {
+                    roll = Math.addExact(roll, rollPosDie());
+                } catch (ArithmeticException e) {
+                    System.out.println("Number too big: " + e.getMessage());
+                    return null;
+                }
             }
 
         } else {

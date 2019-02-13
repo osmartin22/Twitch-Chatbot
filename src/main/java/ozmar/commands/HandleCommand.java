@@ -103,7 +103,7 @@ public class HandleCommand {
 
         } else if (preCommand.equals(commandsList.get(12).getCommand()) &&
                 hasPermission(commandsList.get(12).getPermission(), userPermission)) {
-            result = flipCoinCommand(commandEvent);
+//            result = flipCoinCommand(commandEvent);
 
         } else if (preCommand.equals(commandsList.get(13).getCommand()) &&
                 hasPermission(commandsList.get(13).getPermission(), userPermission)) {
@@ -111,7 +111,6 @@ public class HandleCommand {
         }
 
         System.out.println(result);
-        result = "";
         return result;
     }
 
@@ -167,7 +166,12 @@ public class HandleCommand {
         if (sides == 20 && dieCount == 1) {
             output += diceRollHelperD20();
         } else {
-            output += dice.rollNDie(dieCount);
+            Integer result = dice.rollNDie(dieCount);
+            if (result == null) {
+                return "";
+            }
+
+            output += result;
         }
 
         return output;
@@ -405,16 +409,28 @@ public class HandleCommand {
      * @return String
      */
     private String catchPokeCommand(@Nonnull CommandEvent event) {
-        // Only 807 pokemon exist currently
-        if (catchPoke.initialize(RandomHelper.getRandNumInRange(1, 807)) == -1) {
-            return "";
+        String pokeName = event.getCommand().trim().toLowerCase();
+        if (pokeName.contains(" ")) {
+            pokeName = pokeName.substring(0, pokeName.indexOf(" "));
+        }
+
+        int initializeResult;
+        if (!pokeName.isEmpty()) {
+            initializeResult = catchPoke.initialize(pokeName);
         } else {
+            // Only 807 pokemon exist currently
+            initializeResult = catchPoke.initialize(RandomHelper.getRandNumInRange(1, 807));
+        }
+
+        if (initializeResult != -1) {
             String result = catchPoke.attemptCatch();
             if (result == null) {
                 return "";
             }
             return event.getUser().getName() + result;
         }
+
+        return "";
     }
 
     /**
@@ -447,6 +463,6 @@ public class HandleCommand {
             return "";
         }
 
-        return event.getUser().getName() + " got " + result;
+        return event.getUser().getName() + result;
     }
 }
