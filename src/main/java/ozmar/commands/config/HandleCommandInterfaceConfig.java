@@ -1,0 +1,20 @@
+package ozmar.commands.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import ozmar.commands.HandleCommand;
+import ozmar.commands.interfaces.*;
+import ozmar.database.interfaces.DatabaseHandlerInterface;
+
+@Configuration
+public class HandleCommandInterfaceConfig {
+
+    @Bean
+    public HandleCommandInterface HandleCommandInterfaceBean(DatabaseHandlerInterface databaseHandler,
+                                                             CalculatorInterface calculator,
+                                                             DiceInterface dice,
+                                                             CatchPokeInterface catchPoke,
+                                                             LootBoxInterface lootBox) {
+        return new HandleCommand(databaseHandler, calculator, dice, catchPoke, lootBox);
+    }
+}

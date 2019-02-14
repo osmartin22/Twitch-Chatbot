@@ -13,6 +13,7 @@ public class ChannelNotificationOnCheer {
                 event.getMessage()
         );
 
-        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+        System.out.println("OnCheer: " + message);
+//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

@@ -3,12 +3,13 @@ package ozmar.database.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.database.CommandsTable;
+import ozmar.database.interfaces.CommandsTableInterface;
 
 @Configuration
-public class CommandsTableConfig {
+public class CommandsTableInterfaceConfig {
 
     @Bean
-    CommandsTable commandsTableBean() {
+    CommandsTableInterface commandsTableInterfaceBean() {
         return new CommandsTable();
     }
 }

@@ -2,6 +2,7 @@ package ozmar.database;
 
 import com.github.twitch4j.helix.domain.User;
 import ozmar.ChatUser;
+import ozmar.database.interfaces.ChatTableInterface;
 import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
@@ -13,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ChatTable {
+public class ChatTable implements ChatTableInterface {
 
     private static final String CHAT_TABLE = "chatTable";
     private static final String COLUMN_ID = "id";
@@ -34,11 +35,6 @@ public class ChatTable {
                     COLUMN_MESSAGE_COUNT + " INTEGER, " +
                     COLUMN_POINTS + " INTEGER, " +
                     COLUMN_VALENTINE + " TEXT)";
-
-    private static final String getUserSql =
-            "SELECT * FROM " + CHAT_TABLE +
-                    " WHERE " +
-                    COLUMN_USER_ID + " = ?";
 
     private static final String updatePointsSql =
             "UPDATE " + CHAT_TABLE +
@@ -112,6 +108,8 @@ public class ChatTable {
      *
      * @return String
      */
+    @Nonnull
+    @Override
     public String getCreateTableSql() {
         return CREATE_CHAT_TABLE;
     }
@@ -122,6 +120,7 @@ public class ChatTable {
      *
      * @param list list of names to check in the table
      */
+    @Override
     public void checkIfNameExists(@Nonnull List<String> list) {
         Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updatePointsSql);
@@ -153,7 +152,8 @@ public class ChatTable {
      *
      * @param list list of Users to add/update in the table
      */
-    public void addUsersToTable(List<User> list) {
+    @Override
+    public void addUsersToTable(@Nonnull List<User> list) {
         updateNameAndPointsFromUserId(list);
         insertUserList(list);
         if (!list.isEmpty()) {
@@ -196,7 +196,8 @@ public class ChatTable {
      *
      * @param list list of users to insert into table
      */
-    public void insertUserList(List<User> list) {
+    @Override
+    public void insertUserList(@Nonnull List<User> list) {
         Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement insertStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
 
@@ -229,7 +230,8 @@ public class ChatTable {
      *
      * @param map map of users and their ids
      */
-    public void updatePoints(Map<Long, ChatUser> map) {
+    @Override
+    public void updatePoints(@Nonnull Map<Long, ChatUser> map) {
         Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement updateStatement = DatabaseHandler.prepareStatement(connection, updateCountAndPointsSql);
         PreparedStatement insertRowStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
@@ -267,6 +269,7 @@ public class ChatTable {
      * @param userId userId to look for in the table
      * @return int
      */
+    @Override
     public int getMessageCountByUserId(long userId) {
         Connection connection = DatabaseHandler.openConnection();
         int count = -1;
@@ -292,7 +295,8 @@ public class ChatTable {
      * @param userName userName to look for in the table
      * @return int
      */
-    public int getMessageCountByUserName(String userName) {
+    @Override
+    public int getMessageCountByUserName(@Nonnull String userName) {
         Connection connection = DatabaseHandler.openConnection();
         int count = -1;
 
@@ -317,6 +321,7 @@ public class ChatTable {
      * @param userId userId to look for in the table
      * @return int
      */
+    @Override
     public int getPointsByUserId(long userId) {
         Connection connection = DatabaseHandler.openConnection();
         int points = -1;
@@ -342,7 +347,8 @@ public class ChatTable {
      * @param userName userName to look for in the table
      * @return int
      */
-    public int getPointsByUserName(String userName) {
+    @Override
+    public int getPointsByUserName(@Nonnull String userName) {
         Connection connection = DatabaseHandler.openConnection();
         int points = -1;
 
@@ -361,7 +367,8 @@ public class ChatTable {
         return points;
     }
 
-    public void updateValentine(long userId, String newValentine) {
+    @Override
+    public void updateValentine(long userId, @Nonnull String newValentine) {
         Connection connection = DatabaseHandler.openConnection();
         PreparedStatement updateValentine = DatabaseHandler.prepareStatement(connection, updateValentineSql);
 
@@ -377,6 +384,7 @@ public class ChatTable {
         }
     }
 
+    @Nonnull
     public String getValentineById(long userId) {
         Connection connection = DatabaseHandler.openConnection();
         String valentine = "";

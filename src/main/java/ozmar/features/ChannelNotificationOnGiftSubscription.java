@@ -10,15 +10,13 @@ public class ChannelNotificationOnGiftSubscription {
 
         SubPlan plan = SubPlan.getValue(event.getSubscriptionPlan());
         String message = String.format(
-              "%s has donated %s %s sub(s)",
+                "%s has donated %s %s sub(s)",
                 event.getUser(),
                 event.getCount(),
                 plan.getSubPlanName()
         );
 
-        System.out.println(message);
+        System.out.println("OnGiftSub: " + message);
+//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
-
-
-
 }

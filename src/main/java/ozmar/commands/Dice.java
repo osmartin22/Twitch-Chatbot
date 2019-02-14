@@ -1,8 +1,9 @@
 package ozmar.commands;
 
+import ozmar.commands.interfaces.DiceInterface;
 import ozmar.utils.RandomHelper;
 
-public class Dice {
+public class Dice implements DiceInterface {
 
     private int sides;
 
@@ -10,10 +11,12 @@ public class Dice {
 
     }
 
+    @Override
     public void setSides(int sides) {
         this.sides = sides;
     }
 
+    @Override
     public int rollPosDie() {
         if (sides == 0) {
             return 0;
@@ -21,6 +24,7 @@ public class Dice {
         return RandomHelper.getRandNumInRange(1, sides);
     }
 
+    @Override
     public int rollNegDie() {
         if (sides == 0) {
             return 0;
@@ -28,6 +32,7 @@ public class Dice {
         return RandomHelper.getRandNumInRange(sides, -1);
     }
 
+    @Override
     public Integer rollNDie(int dieCount) {
         int roll = 0;
 

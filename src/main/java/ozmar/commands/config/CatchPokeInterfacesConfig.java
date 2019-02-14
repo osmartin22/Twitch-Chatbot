@@ -3,12 +3,13 @@ package ozmar.commands.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.commands.CatchPoke;
+import ozmar.commands.interfaces.CatchPokeInterface;
 
 @Configuration
-public class CatchPokeConfig {
+public class CatchPokeInterfacesConfig {
 
     @Bean
-    CatchPoke catchPokeBean() {
+    CatchPokeInterface catchPokeInterfaceBean() {
         return new CatchPoke();
     }
 }

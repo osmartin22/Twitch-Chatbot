@@ -3,23 +3,28 @@ package ozmar.database;
 import com.github.twitch4j.helix.domain.User;
 import ozmar.ChatUser;
 import ozmar.Command;
+import ozmar.database.interfaces.ChatTableInterface;
+import ozmar.database.interfaces.CommandsTableInterface;
+import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.interfaces.WordCountTableInterface;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
-public class DatabaseHandler {
+public class DatabaseHandler implements DatabaseHandlerInterface {
 
     private static final String DATABASE_NAME = "TwitchBot.db";
     private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\" + DATABASE_NAME;
 
-    private CommandsTable commandsTable;
-    private WordCountTable wordCountTable;
-    private ChatTable chatTable;
+    private CommandsTableInterface commandsTable;
+    private WordCountTableInterface wordCountTable;
+    private ChatTableInterface chatTable;
 
 
-    public DatabaseHandler(CommandsTable commandsTable, WordCountTable wordCountTable, ChatTable chatTable) {
+    public DatabaseHandler(CommandsTableInterface commandsTable, WordCountTableInterface wordCountTable,
+                           ChatTableInterface chatTable) {
         this.commandsTable = commandsTable;
         this.wordCountTable = wordCountTable;
         this.chatTable = chatTable;
@@ -128,77 +133,94 @@ public class DatabaseHandler {
         commandsTable.initializeCommands();
     }
 
+    @Override
     public List<Command> getCommands() {
         return commandsTable.queryCommands();
     }
 
+    @Override
     public void insertCommand(@Nonnull Command command) {
         commandsTable.insertCommand(command);
     }
 
 
     // WordCountTable
+    @Override
     public Map<String, Integer> getWordCount() {
         return wordCountTable.queryWordCount();
     }
 
+    @Override
     public Map<String, Integer> getTop10Words() {
         return wordCountTable.getTop10Words();
     }
 
-    public int getSpecificWordCount(String word) {
+    @Override
+    public int getSpecificWordCount(@Nonnull String word) {
         return wordCountTable.getSpecificWordCount(word);
     }
 
-    public void updateOrInsertWordCount(Map<String, Integer> map) {
+    @Override
+    public void updateOrInsertWordCount(@Nonnull Map<String, Integer> map) {
         if (!map.isEmpty()) {
             wordCountTable.updateOrInsert(map);
         }
     }
 
+    @Override
     public void clearWordCount() {
         wordCountTable.clearTable();
     }
 
 
     // ChatTable
-    public void addUserList(List<User> userList) {
+    @Override
+    public void addUserList(@Nonnull List<User> userList) {
         if (!userList.isEmpty()) {
             chatTable.addUsersToTable(userList);
         }
     }
 
-    public void checkIfNamesExist(List<String> list) {
+    @Override
+    public void checkIfNamesExist(@Nonnull List<String> list) {
         chatTable.checkIfNameExists(list);
     }
 
-    public void updatePoints(Map<Long, ChatUser> map) {
+    @Override
+    public void updatePoints(@Nonnull Map<Long, ChatUser> map) {
         if (!map.isEmpty()) {
             chatTable.updatePoints(map);
         }
     }
 
+    @Override
     public int getMessageCount(long userId) {
         return chatTable.getMessageCountByUserId(userId);
     }
 
-    public int getMessageCount(String userName) {
+    @Override
+    public int getMessageCount(@Nonnull String userName) {
         return chatTable.getMessageCountByUserName(userName);
     }
 
+    @Override
     public int getPoints(long userId) {
         return chatTable.getPointsByUserId(userId);
     }
 
-    public int getPoints(String userName) {
+    @Override
+    public int getPoints(@Nonnull String userName) {
         return chatTable.getPointsByUserName(userName);
     }
 
+    @Nonnull
+    @Override
     public String getValentine(long userId) {
         return chatTable.getValentineById(userId);
     }
 
-    public void updateValentine(long userId, String newValentine) {
+    @Override
+    public void updateValentine(long userId, @Nonnull String newValentine) {
         chatTable.updateValentine(userId, newValentine);
     }
 }

@@ -1,6 +1,7 @@
 package ozmar.commands;
 
 import org.springframework.util.StringUtils;
+import ozmar.commands.interfaces.CatchPokeInterface;
 import ozmar.utils.RandomHelper;
 import poke_models.pokemon.Nature;
 import poke_models.pokemon.Pokemon;
@@ -10,7 +11,7 @@ import poke_models.pokemon.PokemonSpeciesVariety;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CatchPoke {
+public class CatchPoke implements CatchPokeInterface {
     private Pokemon pokemon;
     private PokemonSpecies pokemonSpecies;
     private Nature nature;
@@ -26,6 +27,7 @@ public class CatchPoke {
      * @param pokeId id of pokemon to get
      * @return int
      */
+    @Override
     public int initialize(int pokeId) {
         return initialize(pokeId, "");
     }
@@ -37,6 +39,7 @@ public class CatchPoke {
      * @param pokeName name of pokemon to get
      * @return int
      */
+    @Override
     public int initialize(@Nonnull String pokeName) {
         return initialize(-1, pokeName);
     }
@@ -73,6 +76,7 @@ public class CatchPoke {
      * @return String
      */
     @Nonnull
+    @Override
     public String attemptCatch() {
         String pokeGender = getPokeGender();
         if (pokeGender == null) {

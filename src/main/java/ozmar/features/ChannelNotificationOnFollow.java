@@ -12,6 +12,7 @@ public class ChannelNotificationOnFollow {
                 event.getChannel().getName()
         );
 
-        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+        System.out.println("OnFollow: " + message);
+//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

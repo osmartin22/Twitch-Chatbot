@@ -4,7 +4,7 @@ import com.github.twitch4j.helix.domain.UserList;
 import org.apache.commons.collections4.ListUtils;
 import ozmar.Bot;
 import ozmar.RequestChat;
-import ozmar.database.DatabaseHandler;
+import ozmar.database.interfaces.DatabaseHandlerInterface;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 public class ChatListTimer {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final DatabaseHandler db;
+    private final DatabaseHandlerInterface db;
 
-    public ChatListTimer(DatabaseHandler db) {
+    public ChatListTimer(DatabaseHandlerInterface db) {
         this.db = db;
     }
 

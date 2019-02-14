@@ -3,12 +3,12 @@ package ozmar.commands.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.commands.Calculator;
+import ozmar.commands.interfaces.CalculatorInterface;
 
 @Configuration
-public class CalculatorConfig {
-
+public class CalculatorInterfaceConfig {
     @Bean
-    public Calculator calculatorBean() {
+    public CalculatorInterface calculatorInterfaceBean() {
         return new Calculator();
     }
 }

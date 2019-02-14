@@ -1,13 +1,15 @@
 package ozmar.commands;
 
+import ozmar.commands.interfaces.LootBoxInterface;
 import ozmar.enums.Rarity;
 import ozmar.utils.RandomHelper;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class LootBox {
+public class LootBox implements LootBoxInterface {
 
     // Legendary    5%      1-5
     // Epic         10%     6-15
@@ -22,6 +24,8 @@ public class LootBox {
      *
      * @return String
      */
+    @Nonnull
+    @Override
     public String getLoot() {
         String result = "";
         Rarity rarity = getRarity();
@@ -44,7 +48,8 @@ public class LootBox {
      * @param file desired file to read from
      * @return String
      */
-    private String readFile(String file) {
+    @Nonnull
+    private String readFile(@Nonnull String file) {
         String line;
         String path = "C:\\TwitchBotFiles\\Lootbox\\" + file;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -71,15 +76,16 @@ public class LootBox {
      *
      * @return Rarity
      */
+    @Nonnull
     private Rarity getRarity() {
         int rand = RandomHelper.getRandNumInRange(1, 100);
-        if (rand > 40) {
+        if (rand > 30) {
             return Rarity.COMMON;
         }
-        if (rand > 15) {
+        if (rand > 20) {
             return Rarity.RARE;
         }
-        if (rand > 5) {
+        if (rand > 10) {
             return Rarity.EPIC;
         }
         return Rarity.LEGENDARY;

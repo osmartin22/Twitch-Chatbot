@@ -7,7 +7,8 @@ import com.github.twitch4j.helix.domain.UserList;
 import ozmar.Bot;
 import ozmar.Command;
 import ozmar.RequestChat;
-import ozmar.database.DatabaseHandler;
+import ozmar.commands.interfaces.*;
+import ozmar.database.interfaces.DatabaseHandlerInterface;
 import ozmar.enums.CommandNumPermission;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
@@ -19,19 +20,21 @@ import java.util.stream.Collectors;
 
 
 // TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
-public class HandleCommand {
+public class HandleCommand implements HandleCommandInterface {
 
-    private final String botName = "genbot22";
+    private static final String botName = "genbot22";
+
     private CommandEvent commandEvent;
-    private final DatabaseHandler db;
-    private final Calculator calculator;
-    private final Dice dice;
-    private final CatchPoke catchPoke;
-    private final LootBox lootBox;
+    private final DatabaseHandlerInterface db;
+    private final CalculatorInterface calculator;
+    private final DiceInterface dice;
+    private final CatchPokeInterface catchPoke;
+    private final LootBoxInterface lootBox;
+    private List<Command> commandsList;
 
 
-    public HandleCommand(DatabaseHandler db, Calculator calculator, Dice dice, CatchPoke catchPoke,
-                         LootBox lootBox) {
+    public HandleCommand(DatabaseHandlerInterface db, CalculatorInterface calculator, DiceInterface dice,
+                         CatchPokeInterface catchPoke, LootBoxInterface lootBox) {
         this.db = db;
         this.calculator = calculator;
         this.dice = dice;
@@ -39,7 +42,8 @@ public class HandleCommand {
         this.lootBox = lootBox;
     }
 
-    public void setCommandEvent(CommandEvent commandEvent) {
+    @Override
+    public void setCommandEvent(@Nonnull CommandEvent commandEvent) {
         this.commandEvent = commandEvent;
     }
 
@@ -49,81 +53,82 @@ public class HandleCommand {
      * @return String
      */
     @Nonnull
+    @Override
     public String decideCommand() {
         String preCommand = commandEvent.getCommandPrefix();
         CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
 
         String result = "";
-        List<Command> commandsList = db.getCommands();
+        commandsList = db.getCommands();
 
-        if (preCommand.equals(commandsList.get(0).getCommand()) &&
-                hasPermission(commandsList.get(0).getPermission(), userPermission)) {
+        if (isCommandHelper(preCommand, 0, -1) && hasPermission(0, userPermission)) {
             result = diceRollCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(1).getCommand()) &&
-                hasPermission(commandsList.get(1).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 1, -1) && hasPermission(1, userPermission)) {
 //            result = helloCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(2).getCommand()) &&
-                hasPermission(commandsList.get(2).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 2, -1) && hasPermission(2, userPermission)) {
 //            countCommand();
 
-        } else if (preCommand.equals(commandsList.get(3).getCommand()) &&
-                hasPermission(commandsList.get(3).getPermission(), userPermission)) {
-//            result = uptimeCommand(commandEvent);
+        } else if (isCommandHelper(preCommand, 3, -1) && hasPermission(3, userPermission)) {
+            result = uptimeCommand(commandEvent);
+            System.out.println(result);
+            result = "";
 
-        } else if (preCommand.equals(commandsList.get(4).getCommand()) &&
-                hasPermission(commandsList.get(4).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 4, -1) && hasPermission(4, userPermission)) {
             result = calcCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(5).getCommand()) &&
-                hasPermission(commandsList.get(5).getPermission(), userPermission)) {
-//            result = followageCommand(commandEvent);
+        } else if (isCommandHelper(preCommand, 5, -1) && hasPermission(5, userPermission)) {
+            result = followageCommand(commandEvent);
+            System.out.println(result);
+            result = "";
 
-        } else if (preCommand.equals(commandsList.get(6).getCommand()) &&
-                hasPermission(commandsList.get(6).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 6, 7) && hasPermission(6, userPermission)) {
             result = wordCountCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(7).getCommand()) &&
-                hasPermission(commandsList.get(7).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 8, 9) && hasPermission(8, userPermission)) {
             clearWordCountCommand();
-            System.out.println("Cleared wordCountTable");
 
-        } else if (preCommand.equals(commandsList.get(8).getCommand()) &&
-                hasPermission(commandsList.get(8).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 10, -1) && hasPermission(10, userPermission)) {
 //            result = "31's next release is on ...";
 
-        } else if (preCommand.equals(commandsList.get(9).getCommand()) &&
-                hasPermission(commandsList.get(9).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 11, 12) && hasPermission(11, userPermission)) {
             result = messageCountCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(10).getCommand()) &&
-                hasPermission(commandsList.get(10).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 13, -1) && hasPermission(13, userPermission)) {
             result = pointsCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(11).getCommand()) &&
-                hasPermission(commandsList.get(11).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 14, 15) && hasPermission(14, userPermission)) {
             result = catchPokeCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(12).getCommand()) &&
-                hasPermission(commandsList.get(12).getPermission(), userPermission)) {
-//            result = flipCoinCommand(commandEvent);
+        } else if (isCommandHelper(preCommand, 16, 17) && hasPermission(11, userPermission)) {
+            result = flipCoinCommand(commandEvent);
+            System.out.println(result);
+            result = "";
 
-        } else if (preCommand.equals(commandsList.get(13).getCommand()) &&
-                hasPermission(commandsList.get(13).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 18, 19) && hasPermission(18, userPermission)) {
             result = openLootCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(14).getCommand()) &&
-                hasPermission(commandsList.get(14).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 20, 21) && hasPermission(20, userPermission)) {
             result = secretValentineCommand(commandEvent);
 
-        } else if (preCommand.equals(commandsList.get(15).getCommand()) &&
-                hasPermission(commandsList.get(15).getPermission(), userPermission)) {
+        } else if (isCommandHelper(preCommand, 22, 23) && hasPermission(22, userPermission)) {
             result = myValentineCommand(commandEvent);
+
         }
 
         System.out.println(result);
         return result;
+    }
+
+    private boolean isCommandHelper(String command, int index1, int index2) {
+        boolean first = command.equals(commandsList.get(index1).getCommand());
+        boolean second = false;
+        if (index2 != -1) {
+            second = command.equals(commandsList.get(index2).getCommand());
+        }
+
+        return first || second;
     }
 
     /**
@@ -135,6 +140,11 @@ public class HandleCommand {
      */
     private boolean hasPermission(CommandNumPermission commandLevel, CommandNumPermission userLevel) {
         return userLevel.getCommandLevel() >= commandLevel.getCommandLevel();
+    }
+
+    private boolean hasPermission(int commandIndex, CommandNumPermission userLevel) {
+        CommandNumPermission command = commandsList.get(commandIndex).getPermission();
+        return userLevel.getCommandLevel() >= command.getCommandLevel();
     }
 
     /**
@@ -376,6 +386,7 @@ public class HandleCommand {
      */
     private void clearWordCountCommand() {
         db.clearWordCount();
+        System.out.println("Cleared wordCountTable");
     }
 
     /**
@@ -511,7 +522,7 @@ public class HandleCommand {
             if (newValentine.equals(botName)) {
                 output += ", your valentine is me MrDestructoid moon2CUTE";
             } else {
-                output += ", your valentine is " + newValentine;
+                output += ", your valentine is " + newValentine + "moon2CUTE";
             }
 
         } else if (!newValentine.equals(oldValentine)) {

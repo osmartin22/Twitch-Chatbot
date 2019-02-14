@@ -7,7 +7,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
-import ozmar.database.DatabaseHandler;
+import ozmar.database.interfaces.DatabaseHandlerInterface;
 import ozmar.features.*;
 import ozmar.helix.HelixCommands;
 
@@ -20,7 +20,7 @@ public class Bot {
     private Configuration configuration;
     private TwitchClient twitchClient;
 
-    private final DatabaseHandler db;
+    private final DatabaseHandlerInterface db;
 
     private final ChannelNotificationOnCheer channelNotificationOnCheer;
     private final ChannelNotificationOnDonation channelNotificationOnDonation;
@@ -30,7 +30,7 @@ public class Bot {
     private final OnChatChannelMessage onChatChannelMessage;
     private final OnCommandReceived onCommandReceived;
 
-    public Bot(DatabaseHandler db, ChannelNotificationOnCheer channelNotificationOnCheer,
+    public Bot(DatabaseHandlerInterface db, ChannelNotificationOnCheer channelNotificationOnCheer,
                ChannelNotificationOnDonation channelNotificationOnDonation,
                ChannelNotificationOnFollow channelNotificationOnFollow,
                ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscription,

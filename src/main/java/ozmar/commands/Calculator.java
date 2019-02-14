@@ -1,8 +1,11 @@
 package ozmar.commands;
 
 
-public class Calculator {
+import ozmar.commands.interfaces.CalculatorInterface;
 
+import javax.annotation.Nonnull;
+
+public class Calculator implements CalculatorInterface {
     private String operation;
     private int pos = -1;
     private int currChar = 0;
@@ -11,12 +14,14 @@ public class Calculator {
 
     }
 
-    public void setOperation(String operation) {
+    @Override
+    public void setOperation(@Nonnull String operation) {
         this.operation = operation;
         this.pos = -1;
         this.currChar = 0;
     }
 
+    @Override
     public double parse() {
         nextChar();
         double x = parseExpression();

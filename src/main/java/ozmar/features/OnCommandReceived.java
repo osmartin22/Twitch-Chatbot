@@ -2,15 +2,15 @@ package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.CommandEvent;
-import ozmar.commands.HandleCommand;
+import ozmar.commands.interfaces.HandleCommandInterface;
 
 public class OnCommandReceived {
 
-    private HandleCommand handleCommand;
+    private HandleCommandInterface handleCommand;
     private static long lastCommand = 0;
 
 
-    public OnCommandReceived(HandleCommand handleCommand) {
+    public OnCommandReceived(HandleCommandInterface handleCommand) {
         this.handleCommand = handleCommand;
     }
 
@@ -19,7 +19,7 @@ public class OnCommandReceived {
 
         // TODO: Temp solution to prevent chat spamming messages
         long currTime = System.currentTimeMillis();
-        if (currTime - lastCommand >= 2000) {
+        if (currTime - lastCommand >= 4000) {
             lastCommand = currTime;
 
             handleCommand.setCommandEvent(event);
@@ -30,7 +30,7 @@ public class OnCommandReceived {
             }
             System.out.println(event);
         } else {
-            System.out.println("NOT ALLOWING COMMAND");
+            System.out.println("NOT ALLOWING COMMAND: " + event.getCommandPrefix());
         }
 
 

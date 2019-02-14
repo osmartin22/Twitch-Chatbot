@@ -1,9 +1,11 @@
 package ozmar.database;
 
 import ozmar.Command;
+import ozmar.database.interfaces.CommandsTableInterface;
 import ozmar.enums.CommandNumPermission;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,7 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandsTable {
+public class CommandsTable implements CommandsTableInterface {
 
     private static final String COMMANDS_TABLE = "commandsTable";
     private static final String COLUMN_COMMAND_ID = "id";
@@ -34,6 +36,8 @@ public class CommandsTable {
 
     }
 
+    @Nonnull
+    @Override
     public String getCreateTableSql() {
         return CREATE_COMMANDS_TABLE;
     }
@@ -42,6 +46,7 @@ public class CommandsTable {
      * Meant for first time use only
      * Creates and inserts a List of Commands to the table from the given text file
      */
+    @Override
     public void initializeCommands() {
         // File is assumed to be in the correct format
         List<Command> commandList = new ArrayList<>();
@@ -63,6 +68,8 @@ public class CommandsTable {
      *
      * @return List of Commands
      */
+    @Nullable
+    @Override
     public List<Command> queryCommands() {
         Connection connection = DatabaseHandler.openConnection();
 
@@ -116,6 +123,7 @@ public class CommandsTable {
      *
      * @param command Command
      */
+    @Override
     public void insertCommand(@Nonnull Command command) {
         Connection connection = DatabaseHandler.openConnection();
 

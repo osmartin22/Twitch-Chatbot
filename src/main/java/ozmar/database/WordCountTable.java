@@ -1,12 +1,15 @@
 package ozmar.database;
 
+import ozmar.database.interfaces.WordCountTableInterface;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class WordCountTable {
+public class WordCountTable implements WordCountTableInterface {
 
     private static final String WORD_COUNT_TABLE = "wordCountTable";
     private static final String COLUMN_ID = "id";
@@ -42,6 +45,8 @@ public class WordCountTable {
 
     }
 
+    @Nonnull
+    @Override
     public String getCreateTableSql() {
         return CREATE_WORD_COUNT_TABLE;
     }
@@ -51,6 +56,8 @@ public class WordCountTable {
      *
      * @return Map of Strings and Integers
      */
+    @Nullable
+    @Override
     public Map<String, Integer> queryWordCount() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE;
         Connection connection = DatabaseHandler.openConnection();
@@ -79,6 +86,8 @@ public class WordCountTable {
      *
      * @return Map of Strings and Integers
      */
+    @Nonnull
+    @Override
     public Map<String, Integer> getTop10Words() {
         String sql = "SELECT " + COLUMN_WORD + ", " + COLUMN_COUNT +
                 " FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
@@ -101,7 +110,8 @@ public class WordCountTable {
         return map;
     }
 
-    public int getSpecificWordCount(String word) {
+    @Override
+    public int getSpecificWordCount(@Nonnull String word) {
         Connection connection = DatabaseHandler.openConnection();
         int count = -1;
         try (PreparedStatement preparedStatement = connection.prepareStatement(getSpecificWordCountSql)) {
@@ -125,6 +135,7 @@ public class WordCountTable {
      *
      * @param map map of words and count
      */
+    @Override
     public void updateOrInsert(@Nonnull Map<String, Integer> map) {
         Connection connection = DatabaseHandler.openConnectionCommitOff();
         PreparedStatement updatePreparedStatement = DatabaseHandler.prepareStatement(connection, updateCountSql);
@@ -155,6 +166,7 @@ public class WordCountTable {
     /**
      * Clears the entire table
      */
+    @Override
     public void clearTable() {
         String sql = "DELETE FROM " + WORD_COUNT_TABLE;
         Connection connection = DatabaseHandler.openConnection();
