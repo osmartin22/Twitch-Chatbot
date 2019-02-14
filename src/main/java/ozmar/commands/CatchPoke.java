@@ -7,6 +7,9 @@ import poke_models.pokemon.Pokemon;
 import poke_models.pokemon.PokemonSpecies;
 import poke_models.pokemon.PokemonSpeciesVariety;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class CatchPoke {
     private Pokemon pokemon;
     private PokemonSpecies pokemonSpecies;
@@ -34,11 +37,16 @@ public class CatchPoke {
      * @param pokeName name of pokemon to get
      * @return int
      */
-    public int initialize(String pokeName) {
+    public int initialize(@Nonnull String pokeName) {
         return initialize(-1, pokeName);
     }
 
-    private int initialize(int pokeId, String pokeName) {
+    /**
+     * @param pokeId
+     * @param pokeName name of the pokemon
+     * @return int
+     */
+    private int initialize(int pokeId, @Nonnull String pokeName) {
         try {
             pokemonSpecies = (pokeId > 0) ? PokemonSpecies.getById(pokeId) : PokemonSpecies.getByName(pokeName);
             if (pokemonSpecies == null) {
@@ -64,6 +72,7 @@ public class CatchPoke {
      *
      * @return String
      */
+    @Nonnull
     public String attemptCatch() {
         String pokeGender = getPokeGender();
         if (pokeGender == null) {
@@ -98,6 +107,7 @@ public class CatchPoke {
      *
      * @return String
      */
+    @Nullable
     private String getPokeGender() {
         String gender;
         try {

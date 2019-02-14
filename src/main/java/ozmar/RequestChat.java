@@ -25,33 +25,55 @@ import java.util.List;
 // While users chat, store their ids in the database and increment counter for chat messages
 // Save if sub or not by looking at permissions
 
+// TODO: MAKE THIS A STATIC CLASS OR REWRITE HOW THE LIST IS FETCHED
 public class RequestChat {
 
     // tmi.twitch.tv/group/user/channel_name/chatters
     private static final String url = "https://tmi.twitch.tv/group/user/";
 
     private String channelName;
+    public static List<String> chatList = new ArrayList<>();  // TODO: Currently the cache works for only one channel
 
     public RequestChat(@Nonnull String channelName) {
         this.channelName = channelName;
     }
 
+    /**
+     * Calls Twitch Api and returns a list of users in chat
+     * Should only be called when a fresh chat list is required
+     * <p>
+     * NOTE: this endpoint is unofficial and not supported but is the only way to
+     * get the list of users in chat
+     *
+     * @return List of user names
+     */
     public List<String> queryChatList() {
-        List<String> chatUserList = null;
-
         try {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
-            chatUserList = parseChatUsers(parser);
-            System.out.println("ChatUserList Size: " + chatUserList.size());
+            chatList = parseChatUsers(parser);
+            System.out.println("ChatUserList Size: " + chatList.size());
 
         } catch (IOException e) {
             System.out.println("Failed to query the chat list " + e.getMessage());
         }
 
-        return chatUserList;
+        return new ArrayList<>(chatList);
     }
 
+    /**
+     * Gets the cached copy of users in chat
+     * If the cache is empty, it will fetch the users itself
+     *
+     * @return Lisr of users in chat
+     */
+    public List<String> getChatList() {
+        if (!chatList.isEmpty()) {
+            return chatList;
+        }
+
+        return queryChatList();
+    }
 
     private List<String> parseChatUsers(JsonParser jsonParser) {
         List<String> chatUserList = new ArrayList<>();

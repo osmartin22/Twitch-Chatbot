@@ -61,6 +61,7 @@ public class Bot {
                 .withEnableChat(true)
                 .withClientId(configuration.getApi().get("twitch_client_id"))
                 .withClientSecret(configuration.getApi().get("twitch_client_secret"))
+                .withEnablePubSub(true)
                 .withEnableGraphQL(true)
                 .withEnableKraken(true);
 
@@ -82,11 +83,17 @@ public class Bot {
 
 
     public void registerFeatures() {
-//        twitchClient.getEventManager().registerListener(channelNotificationOnCheer);
-//        twitchClient.getEventManager().registerListener(channelNotificationOnDonation);
-//        twitchClient.getEventManager().registerListener(channelNotificationOnFollow);
-//        twitchClient.getEventManager().registerListener(channelNotificationOnGiftSubscription);
-//        twitchClient.getEventManager().registerListener(channelNotificationOnSubscription);
+
+//        twitchClient.getEventManager().onEvent(ChannelMessageEvent.class).subscribe(event -> {
+//            System.out.println("[" + event.getChannel().getName() + "] " + event.getUser().getName() + ": " + event.getMessage());
+//        });
+
+        twitchClient.getEventManager().registerListener(new ChannelChangeTitle());
+        twitchClient.getEventManager().registerListener(channelNotificationOnCheer);
+        twitchClient.getEventManager().registerListener(channelNotificationOnDonation);
+        twitchClient.getEventManager().registerListener(channelNotificationOnFollow);
+        twitchClient.getEventManager().registerListener(channelNotificationOnGiftSubscription);
+        twitchClient.getEventManager().registerListener(channelNotificationOnSubscription);
         twitchClient.getEventManager().registerListener(onChatChannelMessage);
         twitchClient.getEventManager().registerListener(onCommandReceived);
     }

@@ -6,12 +6,14 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 import ozmar.Bot;
 import ozmar.Command;
+import ozmar.RequestChat;
 import ozmar.database.DatabaseHandler;
 import ozmar.enums.CommandNumPermission;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
 
 import javax.annotation.Nonnull;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 // TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
 public class HandleCommand {
 
+    private final String botName = "genbot22";
     private CommandEvent commandEvent;
     private final DatabaseHandler db;
     private final Calculator calculator;
@@ -45,6 +48,7 @@ public class HandleCommand {
      *
      * @return String
      */
+    @Nonnull
     public String decideCommand() {
         String preCommand = commandEvent.getCommandPrefix();
         CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
@@ -108,6 +112,14 @@ public class HandleCommand {
         } else if (preCommand.equals(commandsList.get(13).getCommand()) &&
                 hasPermission(commandsList.get(13).getPermission(), userPermission)) {
             result = openLootCommand(commandEvent);
+
+        } else if (preCommand.equals(commandsList.get(14).getCommand()) &&
+                hasPermission(commandsList.get(14).getPermission(), userPermission)) {
+            result = secretValentineCommand(commandEvent);
+
+        } else if (preCommand.equals(commandsList.get(15).getCommand()) &&
+                hasPermission(commandsList.get(15).getPermission(), userPermission)) {
+            result = myValentineCommand(commandEvent);
         }
 
         System.out.println(result);
@@ -132,6 +144,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String diceRollCommand(@Nonnull CommandEvent event) {
         String output = event.getUser().getName() + " rolled a ";
 
@@ -182,6 +195,7 @@ public class HandleCommand {
      *
      * @return String
      */
+    @Nonnull
     private String diceRollHelperD20() {
         int randNum = RandomHelper.getRandNumInRange(1, 20);
         if (randNum == 20) {
@@ -200,6 +214,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String helloCommand(@Nonnull CommandEvent event) {
         String command = event.getCommand();
 
@@ -220,6 +235,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
         UserList userList = Bot.helixCommands.getUsersList(null, Collections.singletonList(channelName));
@@ -249,19 +265,20 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String calcCommand(@Nonnull CommandEvent event) {
         calculator.setOperation(event.getCommand());
-        Double result;
+        double result;
         try {
             result = calculator.parse();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return "";
-        } finally {
-            calculator.resetCalc();
         }
 
-        return String.valueOf(result);
+        // Round to n decimal places
+        BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(4, BigDecimal.ROUND_HALF_DOWN);
+        return (result % 1 == 0) ? String.valueOf(bigDecimal.intValue()) : String.valueOf(bigDecimal);
     }
 
     /**
@@ -274,6 +291,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String followageCommand(@Nonnull CommandEvent event) {
         String followedChannel = event.getSourceId();
         boolean emptyCommand = event.getCommand().isEmpty();
@@ -321,6 +339,7 @@ public class HandleCommand {
      *
      * @return String
      */
+    @Nonnull
     private String wordCountCommand(@Nonnull CommandEvent event) {
         String word = event.getCommand().trim();
         String result;
@@ -344,6 +363,7 @@ public class HandleCommand {
      * @param map map to convert to string
      * @return String
      */
+    @Nonnull
     private String turnMapToString(@Nonnull Map<String, Integer> map) {
         return map.entrySet()
                 .stream()
@@ -364,6 +384,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String messageCountCommand(@Nonnull CommandEvent event) {
         int count;
         String message = event.getCommand().trim().toLowerCase();
@@ -386,6 +407,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String pointsCommand(@Nonnull CommandEvent event) {
         int points;
         String message = event.getCommand().trim().toLowerCase();
@@ -408,6 +430,7 @@ public class HandleCommand {
      * @param event User info and command data
      * @return String
      */
+    @Nonnull
     private String catchPokeCommand(@Nonnull CommandEvent event) {
         String pokeName = event.getCommand().trim().toLowerCase();
         if (pokeName.contains(" ")) {
@@ -424,7 +447,7 @@ public class HandleCommand {
 
         if (initializeResult != -1) {
             String result = catchPoke.attemptCatch();
-            if (result == null) {
+            if (result.equals("")) {
                 return "";
             }
             return event.getUser().getName() + result;
@@ -439,6 +462,7 @@ public class HandleCommand {
      * @param event User id and info
      * @return String
      */
+    @Nonnull
     private String flipCoinCommand(@Nonnull CommandEvent event) {
         String output = event.getUser().getName() + " flipped ";
         if (RandomHelper.getRandNumInRange(0, 1) == 1) {
@@ -457,6 +481,7 @@ public class HandleCommand {
      * @param event User info
      * @return String
      */
+    @Nonnull
     private String openLootCommand(@Nonnull CommandEvent event) {
         String result = lootBox.getLoot();
         if (result.isEmpty()) {
@@ -464,5 +489,53 @@ public class HandleCommand {
         }
 
         return event.getUser().getName() + result;
+    }
+
+    @Nonnull
+    private String secretValentineCommand(@Nonnull CommandEvent event) {
+        List<String> chatList = RequestChat.chatList;
+        if (chatList.size() == 0) {
+            return "";
+        }
+        String newValentine = chatList.get(RandomHelper.getRandNumInRange(0, chatList.size() - 1));
+        String oldValentine = db.getValentine(event.getUser().getId());
+        String output = event.getUser().getName();
+
+        // Don't update database
+        if (newValentine.equals(event.getUser().getName())) {
+            return output + " got themselves moon2PH";
+        }
+
+        if (oldValentine == null) {
+            db.updateValentine(event.getUser().getId(), newValentine);
+            if (newValentine.equals(botName)) {
+                output += ", your valentine is me MrDestructoid moon2CUTE";
+            } else {
+                output += ", your valentine is " + newValentine;
+            }
+
+        } else if (!newValentine.equals(oldValentine)) {
+            db.updateValentine(event.getUser().getId(), newValentine);
+            if (oldValentine.equals(botName)) {
+                output += " how could you leave me for " + newValentine + " moon2PH";
+            } else {
+                output += " left " + oldValentine + " for " + newValentine;
+            }
+
+        } else {
+            output += " got the same valentine, " + newValentine;
+        }
+
+        return output;
+    }
+
+    @Nonnull
+    private String myValentineCommand(@Nonnull CommandEvent event) {
+        String valentine = db.getValentine(event.getUser().getId());
+        if (valentine == null) {
+            return event.getUser().getName() + ", you do not have a valentine, try !newValentine to get one";
+        }
+
+        return event.getUser().getName() + ", your current valentine is " + valentine + " moon2CUTE";
     }
 }

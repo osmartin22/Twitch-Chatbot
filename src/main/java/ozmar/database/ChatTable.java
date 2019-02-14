@@ -21,6 +21,7 @@ public class ChatTable {
     private static final String COLUMN_USER_NAME = "userName";
     private static final String COLUMN_MESSAGE_COUNT = "messageCount";
     private static final String COLUMN_POINTS = "points";
+    private static final String COLUMN_VALENTINE = "valentine";
 
     private static final int RANDOM_POINTS_RANGE_START = 3;
     private static final int RANDOM_POINTS_RANGE_END = 10;
@@ -31,7 +32,8 @@ public class ChatTable {
                     COLUMN_USER_ID + " INTEGER UNIQUE, " +
                     COLUMN_USER_NAME + " TEXT UNIQUE, " +
                     COLUMN_MESSAGE_COUNT + " INTEGER, " +
-                    COLUMN_POINTS + " INTEGER)";
+                    COLUMN_POINTS + " INTEGER, " +
+                    COLUMN_VALENTINE + " TEXT)";
 
     private static final String getUserSql =
             "SELECT * FROM " + CHAT_TABLE +
@@ -88,6 +90,18 @@ public class ChatTable {
             "SELECT " + COLUMN_POINTS + " FROM " + CHAT_TABLE +
                     " WHERE " +
                     COLUMN_USER_NAME + " = ?";
+
+    private static final String updateValentineSql =
+            "UPDATE " + CHAT_TABLE +
+                    " SET " +
+                    COLUMN_VALENTINE + " = ? " +
+                    " WHERE "
+                    + COLUMN_USER_ID + " = ?";
+
+    private static final String getValentineSql =
+            "SELECT " + COLUMN_VALENTINE + " FROM " + CHAT_TABLE +
+                    " WHERE " +
+                    COLUMN_USER_ID + " = ?";
 
     public ChatTable() {
 
@@ -345,5 +359,40 @@ public class ChatTable {
         }
 
         return points;
+    }
+
+    public void updateValentine(long userId, String newValentine) {
+        Connection connection = DatabaseHandler.openConnection();
+        PreparedStatement updateValentine = DatabaseHandler.prepareStatement(connection, updateValentineSql);
+
+        try {
+            updateValentine.setString(1, newValentine);
+            updateValentine.setLong(2, userId);
+            updateValentine.execute();
+        } catch (SQLException e) {
+            System.out.println("Failed to update valentine: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeStatement(updateValentine);
+            DatabaseHandler.closeConnection(connection);
+        }
+    }
+
+    public String getValentineById(long userId) {
+        Connection connection = DatabaseHandler.openConnection();
+        String valentine = "";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getValentineSql)) {
+            preparedStatement.setLong(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                valentine = resultSet.getString(COLUMN_VALENTINE);
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to get points by userId: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeConnection(connection);
+        }
+
+        return valentine;
     }
 }

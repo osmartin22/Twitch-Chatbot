@@ -13,9 +13,6 @@ public class Calculator {
 
     public void setOperation(String operation) {
         this.operation = operation;
-    }
-
-    public void resetCalc() {
         this.pos = -1;
         this.currChar = 0;
     }

@@ -15,10 +15,16 @@ public class Dice {
     }
 
     public int rollPosDie() {
+        if (sides == 0) {
+            return 0;
+        }
         return RandomHelper.getRandNumInRange(1, sides);
     }
 
     public int rollNegDie() {
+        if (sides == 0) {
+            return 0;
+        }
         return RandomHelper.getRandNumInRange(sides, -1);
     }
 

@@ -193,4 +193,12 @@ public class DatabaseHandler {
     public int getPoints(String userName) {
         return chatTable.getPointsByUserName(userName);
     }
+
+    public String getValentine(long userId) {
+        return chatTable.getValentineById(userId);
+    }
+
+    public void updateValentine(long userId, String newValentine) {
+        chatTable.updateValentine(userId, newValentine);
+    }
 }
