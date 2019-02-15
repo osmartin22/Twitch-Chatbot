@@ -19,18 +19,27 @@ public class CommandsTable implements CommandsTableInterface {
     private static final String COLUMN_COMMAND_ID = "id";
     private static final String COLUMN_COMMAND_NAME = "commandName";
     private static final String COLUMN_COMMAND_PERMISSION = "commandPermission";
+    private static final String COLUMN_COMMAND_USAGE = "commandUsage";
 
     private static final String CREATE_COMMANDS_TABLE =
             "CREATE TABLE IF NOT EXISTS " + COMMANDS_TABLE + " ( " +
                     COLUMN_COMMAND_ID + " INTEGER PRIMARY KEY, " +
                     COLUMN_COMMAND_NAME + " TEXT, " +
-                    COLUMN_COMMAND_PERMISSION + " INTEGER)";
+                    COLUMN_COMMAND_PERMISSION + " INTEGER, " +
+                    COLUMN_COMMAND_USAGE + " INTEGER DEFAULT 0)";
 
     private static final String insertCommandSql =
             "INSERT INTO " + COMMANDS_TABLE + " ( " +
                     COLUMN_COMMAND_NAME + " , " +
                     COLUMN_COMMAND_PERMISSION + " ) " +
                     " VALUES(?, ?)";
+
+    private static final String updateCommandUsageSql =
+            "UPDATE " + COMMANDS_TABLE +
+                    " SET " +
+                    COLUMN_COMMAND_USAGE + " = ? " +
+                    " WHERE " +
+                    COLUMN_COMMAND_ID + " = ?";
 
     public CommandsTable() {
 
@@ -54,7 +63,7 @@ public class CommandsTable implements CommandsTableInterface {
             String line = br.readLine();
             while (line != null) {
                 String[] tokens = line.split("\\s+");
-                commandList.add(new Command(tokens[0], CommandNumPermission.valueOf(tokens[1])));
+                commandList.add(new Command(tokens[0], CommandNumPermission.valueOf(tokens[1]), 0));
                 line = br.readLine();
             }
         } catch (IOException e) {
@@ -82,9 +91,11 @@ public class CommandsTable implements CommandsTableInterface {
                 int commandId = resultSet.getInt(COLUMN_COMMAND_ID);
                 String commandName = resultSet.getString(COLUMN_COMMAND_NAME);
                 int commandPermissions = resultSet.getInt(COLUMN_COMMAND_PERMISSION);
+                int usage = resultSet.getInt(COLUMN_COMMAND_USAGE);
 
                 // TODO: Change enum.values()[] to something more efficient
-                commandList.add(new Command(commandId, commandName, CommandNumPermission.values()[commandPermissions]));
+                commandList.add(new Command(commandId, commandName,
+                        CommandNumPermission.values()[commandPermissions], usage));
             }
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
@@ -134,6 +145,29 @@ public class CommandsTable implements CommandsTableInterface {
         } catch (SQLException e) {
             System.out.println("Adding command failed: " + e.getMessage());
         } finally {
+            DatabaseHandler.closeConnection(connection);
+        }
+    }
+
+    /**
+     * Updates usage of a command
+     *
+     * @param command
+     */
+    @Override
+    public void updateCommandUsage(@Nonnull Command command) {
+        Connection connection = DatabaseHandler.openConnection();
+        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, updateCommandUsageSql);
+
+        try {
+            preparedStatement.setInt(1, command.getUsage());
+            preparedStatement.setInt(2, command.getId());
+            preparedStatement.execute();
+
+        } catch (SQLException e) {
+            System.out.println("Failed to update usage for " + command.getCommand() + " : " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeStatement(preparedStatement);
             DatabaseHandler.closeConnection(connection);
         }
     }

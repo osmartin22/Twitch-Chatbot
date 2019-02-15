@@ -20,7 +20,7 @@ public class WordCountTable implements WordCountTableInterface {
             "CREATE TABLE IF NOT EXISTS " + WORD_COUNT_TABLE + " ( " +
                     COLUMN_ID + " INTEGER PRIMARY KEY, " +
                     COLUMN_WORD + " TEXT, " +
-                    COLUMN_COUNT + " INTEGER, UNIQUE ( " +
+                    COLUMN_COUNT + " INTEGER DEFAULT 0, UNIQUE ( " +
                     COLUMN_WORD + " ))";
 
     private static final String updateCountSql =

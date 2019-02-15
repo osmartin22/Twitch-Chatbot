@@ -143,6 +143,11 @@ public class DatabaseHandler implements DatabaseHandlerInterface {
         commandsTable.insertCommand(command);
     }
 
+    @Override
+    public void updateCommandUsage(@Nonnull Command command) {
+        commandsTable.updateCommandUsage(command);
+    }
+
 
     // WordCountTable
     @Override

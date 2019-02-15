@@ -14,6 +14,8 @@ public interface DatabaseHandlerInterface {
 
     void insertCommand(@Nonnull Command command);
 
+    void updateCommandUsage(@Nonnull Command command);
+
     Map<String, Integer> getWordCount();
 
     Map<String, Integer> getTop10Words();

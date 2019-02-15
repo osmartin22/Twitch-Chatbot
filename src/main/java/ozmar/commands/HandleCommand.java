@@ -59,64 +59,86 @@ public class HandleCommand implements HandleCommandInterface {
 
         String result = "";
         commandsList = db.getCommands();
+        Command command = null;
 
         if (isCommandHelper(preCommand, 0, -1) && hasPermission(0, userPermission)) {
+            command = commandsList.get(0);
             result = diceRollCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 1, -1) && hasPermission(1, userPermission)) {
+            command = commandsList.get(1);
 //            result = helloCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 2, -1) && hasPermission(2, userPermission)) {
-//            countCommand();
+            command = commandsList.get(2);
+            result = spitCommand(commandsList.get(2));
 
         } else if (isCommandHelper(preCommand, 3, -1) && hasPermission(3, userPermission)) {
+            command = commandsList.get(3);
             result = uptimeCommand(commandEvent);
             System.out.println(result);
             result = "";
 
         } else if (isCommandHelper(preCommand, 4, -1) && hasPermission(4, userPermission)) {
+            command = commandsList.get(4);
             result = calcCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 5, -1) && hasPermission(5, userPermission)) {
+            command = commandsList.get(5);
             result = followageCommand(commandEvent);    // TODO: OFF MAYBE ?
             System.out.println(result);
             result = "";
 
         } else if (isCommandHelper(preCommand, 6, 7) && hasPermission(6, userPermission)) {
+            command = commandsList.get(6);
             if (!commandEvent.getUser().getName().equals("namedauto")) {
                 return "";
             }
             result = wordCountCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 8, 9) && hasPermission(8, userPermission)) {
+            command = commandsList.get(8);
             clearWordCountCommand();
 
         } else if (isCommandHelper(preCommand, 10, -1) && hasPermission(10, userPermission)) {
+            command = commandsList.get(10);
 //            result = "31's next release is on ...";
 
         } else if (isCommandHelper(preCommand, 11, 12) && hasPermission(11, userPermission)) {
+            command = commandsList.get(11);
             result = messageCountCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 13, -1) && hasPermission(13, userPermission)) {
+            command = commandsList.get(13);
             result = pointsCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 14, 15) && hasPermission(14, userPermission)) {
+            command = commandsList.get(14);
             result = catchPokeCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 16, 17) && hasPermission(11, userPermission)) {
+            command = commandsList.get(16);
             result = flipCoinCommand(commandEvent);
             System.out.println(result);
             result = "";
 
         } else if (isCommandHelper(preCommand, 18, 19) && hasPermission(18, userPermission)) {
+            command = commandsList.get(18);
             result = openLootCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 20, 21) && hasPermission(20, userPermission)) {
+            command = commandsList.get(20);
             result = secretValentineCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 22, 23) && hasPermission(22, userPermission)) {
+            command = commandsList.get(22);
             result = myValentineCommand(commandEvent);
 
+        }
+
+        if (command != null) {
+            command.incrementUsage();
+            db.updateCommandUsage(command);
         }
 
         System.out.println(result);
@@ -237,8 +259,9 @@ public class HandleCommand implements HandleCommandInterface {
         return "";
     }
 
-    private void spitCommand() {
-
+    @Nonnull
+    private String spitCommand(@Nonnull Command command) {
+        return ":comet: moon2DEV " + (command.getUsage() + 1) + " spit drinkers ";
     }
 
     /**

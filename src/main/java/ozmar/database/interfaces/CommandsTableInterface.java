@@ -17,4 +17,6 @@ public interface CommandsTableInterface {
     List<Command> queryCommands();
 
     void insertCommand(@Nonnull Command command);
+
+    void updateCommandUsage(@Nonnull Command command);
 }
