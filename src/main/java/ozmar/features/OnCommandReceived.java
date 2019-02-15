@@ -18,8 +18,9 @@ public class OnCommandReceived {
     public void onCommand(CommandEvent event) {
 
         // TODO: Temp solution to prevent chat spamming messages
+
         long currTime = System.currentTimeMillis();
-        if (currTime - lastCommand >= 4000) {
+        if (currTime - lastCommand >= 3000) {
             lastCommand = currTime;
 
             handleCommand.setCommandEvent(event);
@@ -42,5 +43,4 @@ public class OnCommandReceived {
 //        }
 //        System.out.println(event);
     }
-
 }

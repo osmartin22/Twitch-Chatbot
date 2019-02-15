@@ -6,15 +6,14 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 import ozmar.Bot;
 import ozmar.Command;
-import ozmar.RequestChat;
 import ozmar.commands.interfaces.*;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
 import ozmar.enums.CommandNumPermission;
+import ozmar.timers.RecentChatterTimer;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
 
 import javax.annotation.Nonnull;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,11 +78,14 @@ public class HandleCommand implements HandleCommandInterface {
             result = calcCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 5, -1) && hasPermission(5, userPermission)) {
-            result = followageCommand(commandEvent);
+            result = followageCommand(commandEvent);    // TODO: OFF MAYBE ?
             System.out.println(result);
             result = "";
 
         } else if (isCommandHelper(preCommand, 6, 7) && hasPermission(6, userPermission)) {
+            if (!commandEvent.getUser().getName().equals("namedauto")) {
+                return "";
+            }
             result = wordCountCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 8, 9) && hasPermission(8, userPermission)) {
@@ -235,7 +237,7 @@ public class HandleCommand implements HandleCommandInterface {
         return "";
     }
 
-    private void countCommand() {
+    private void spitCommand() {
 
     }
 
@@ -256,7 +258,7 @@ public class HandleCommand implements HandleCommandInterface {
 
         String output;
         if (!streamList.getStreams().isEmpty()) {
-            System.out.println(streamList);
+            System.out.println(streamList.getStreams().get(0).getStartedAt());
             Calendar startTime = streamList.getStreams().get(0).getStartedAt();
             Calendar currentTime = Calendar.getInstance();
 
@@ -278,7 +280,7 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String calcCommand(@Nonnull CommandEvent event) {
         calculator.setOperation(event.getCommand());
-        double result;
+        Double result;
         try {
             result = calculator.parse();
         } catch (Exception e) {
@@ -287,8 +289,9 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         // Round to n decimal places
-        BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(4, BigDecimal.ROUND_HALF_DOWN);
-        return (result % 1 == 0) ? String.valueOf(bigDecimal.intValue()) : String.valueOf(bigDecimal);
+//        BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(5, BigDecimal.ROUND_HALF_DOWN);
+//        Double l = bigDecimal.doubleValue();
+        return (result % 1 == 0) ? String.valueOf(result.intValue()) : String.valueOf(result);
     }
 
     /**
@@ -354,17 +357,50 @@ public class HandleCommand implements HandleCommandInterface {
         String word = event.getCommand().trim();
         String result;
         if (word.isEmpty()) {
-            result = "The top 10 words used so far are " + turnMapToString(db.getTop10Words());
+            result = "The top 10 words used in my lifetime are " + turnMapToString(db.getTop10Words());
         } else {
+
             int count = db.getSpecificWordCount(word);
             if (count == -1) {
-                result = "0";
-            } else {
-                result = "The count for " + word + " is " + count;
+                count = 0;
             }
+
+            word = bannedWordsFilter(word);
+            if (word.isEmpty()) {
+                return "";
+            }
+
+            result = event.getUser().getName() + ", " + word + " has been used " + count + " times in my lifetime";
         }
 
         return result;
+    }
+
+    private String bannedWordsFilter(String word) {
+        String temp = word.toLowerCase();
+        if (word.equals("ResidentSleeper")) {
+            word = insertSpecial(word);
+
+        } else if (temp.equals("nam ")) {
+            word = insertSpecial(word);
+
+        } else if (temp.equals("overwatch")) {
+            word = insertSpecial(word);
+
+        } else if (temp.startsWith("nigg")) {
+            return "";
+
+        } else if (temp.equals("retard")) {
+            word = word + " D: ";
+        }
+
+        return word;
+    }
+
+    @Nonnull
+    private String insertSpecial(@Nonnull String word) {
+        String special = "\u00AD\u2063";
+        return word.substring(0, 1) + special + word.substring(1);
     }
 
     /**
@@ -444,7 +480,11 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String catchPokeCommand(@Nonnull CommandEvent event) {
         String pokeName = event.getCommand().trim().toLowerCase();
+
+        System.out.println("A" + pokeName + "B");
+
         if (pokeName.contains(" ")) {
+
             pokeName = pokeName.substring(0, pokeName.indexOf(" "));
         }
 
@@ -504,11 +544,14 @@ public class HandleCommand implements HandleCommandInterface {
 
     @Nonnull
     private String secretValentineCommand(@Nonnull CommandEvent event) {
-        List<String> chatList = RequestChat.chatList;
-        if (chatList.size() == 0) {
+        Map<String, Long> map = RecentChatterTimer.mostRecent;
+
+        if (map.size() == 0) {
             return "";
         }
-        String newValentine = chatList.get(RandomHelper.getRandNumInRange(0, chatList.size() - 1));
+
+        Object randomName = map.entrySet().toArray()[new Random().nextInt(map.entrySet().toArray().length)];
+        String newValentine = randomName.toString().substring(0, randomName.toString().indexOf("="));
         String oldValentine = db.getValentine(event.getUser().getId());
         String output = event.getUser().getName();
 
@@ -522,7 +565,7 @@ public class HandleCommand implements HandleCommandInterface {
             if (newValentine.equals(botName)) {
                 output += ", your valentine is me MrDestructoid moon2CUTE";
             } else {
-                output += ", your valentine is " + newValentine + "moon2CUTE";
+                output += ", your valentine is " + newValentine + " moon2CUTE";
             }
 
         } else if (!newValentine.equals(oldValentine)) {
@@ -530,7 +573,7 @@ public class HandleCommand implements HandleCommandInterface {
             if (oldValentine.equals(botName)) {
                 output += " how could you leave me for " + newValentine + " moon2PH";
             } else {
-                output += " left " + oldValentine + " for " + newValentine;
+                output += " left " + oldValentine + " D: for " + newValentine + " moon2CUTE";
             }
 
         } else {

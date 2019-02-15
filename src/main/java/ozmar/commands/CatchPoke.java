@@ -86,7 +86,7 @@ public class CatchPoke implements CatchPokeInterface {
         String pokeName = StringUtils.capitalize(pokemon.getName());
 
         String output = "";
-        boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 5;
+        boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 15;
         if (isShiny) {
             output = "shiny ";
         }
@@ -150,7 +150,7 @@ public class CatchPoke implements CatchPokeInterface {
         int hpMax = pokemon.getStats().get(5).getBaseStat();   // index 5 is for the hp stat
 
         // Add status and lower health even more only if pokemon has a low catch rate(usually a legendary)
-        double hpCurr = (captureRate == 3) ? hpMax * .1 : hpMax * .25;
+        double hpCurr = (captureRate == 3) ? hpMax * .05 : hpMax * .15;
         double status = (captureRate == 3) ? 2 : 1;
 
         // Catch rate formula Gen III - IV

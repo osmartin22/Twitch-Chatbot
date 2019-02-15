@@ -4,6 +4,7 @@ import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import ozmar.buffer.ChatDataBuffer;
 import ozmar.buffer.WordCountBuffer;
+import ozmar.timers.RecentChatterTimer;
 
 import javax.annotation.Nonnull;
 
@@ -15,6 +16,8 @@ public class OnChatChannelMessage {
 
         handleChatData(event);
         handleWordCount(message);
+
+        RecentChatterTimer.mostRecent.put(event.getUser().getName(), System.currentTimeMillis());
 
 //        System.out.printf(
 //                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
