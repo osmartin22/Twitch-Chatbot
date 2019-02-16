@@ -6,41 +6,30 @@ import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import ozmar.enums.SubPlan;
 
 public class ChannelNotificationOnSubscription {
+
+    private long lastMessage = 0;
+    private static final long DIFF = 3000;
+
     @EventSubscriber
     public void onSubscription(SubscriptionEvent event) {
-        String message = "";
-
-        if(event.getGifted()) {
-            message = String.format(
-              "%s has been gifted a sub by %s",
-              event.getUser().getName(),
-              event.getGiftedBy().getName()
-            );
-        }
-
-        else {
-            if (event.getMonths() <= 1) {
-                message = String.format(
-                        "%s has subscribed to %s!",
-                        event.getUser().getName(),
-                        event.getChannel().getName()
-                );
-            }
-
-            if (event.getMonths() > 1) {
-                message = String.format(
-                        "%s has subscribed to %s in their %s month!",
-                        event.getUser().getName(),
-                        event.getChannel().getName(),
-                        event.getMonths()
-                );
-            }
-        }
-
         SubPlan plan = SubPlan.getValue(event.getSubscriptionPlan());
-        String message2 = message + " SubPlan = " + plan.getSubPlanName();
+        if (System.currentTimeMillis() - lastMessage > DIFF) {
+            lastMessage = System.currentTimeMillis();
 
-        System.out.println("OnSub: " + message2);
-//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+            if (plan.equals(SubPlan.TIER3)) {
+                String message = String.format(
+                        "%s, nice Tier 3 sub moon2GOOD",
+                        event.getUser().getName()
+                );
+
+                event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+                System.out.print("Sent: ");
+            }
+            System.out.println("OnSub: " + event.getUser().getName() + " subscribed with a " + plan.getSubPlanName());
+
+        } else {
+            System.out.println("OnSub: IGNORED " + event.getUser().getName() + plan.getSubPlanName());
+        }
+
     }
 }

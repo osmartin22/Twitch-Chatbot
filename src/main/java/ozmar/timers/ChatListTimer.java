@@ -2,9 +2,9 @@ package ozmar.timers;
 
 import com.github.twitch4j.helix.domain.UserList;
 import org.apache.commons.collections4.ListUtils;
-import ozmar.Bot;
-import ozmar.RequestChat;
+import ozmar.api_calls.RequestChat;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.setup.Bot;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -23,13 +23,12 @@ public class ChatListTimer {
 
     public void startTimer() {
         final Runnable beeper = () -> {
-            RequestChat requestChat = new RequestChat("moonmoon_ow");
-            List<String> userNameList = requestChat.queryChatList();
+            List<String> userNameList = RequestChat.queryChatList("moonmoon_ow");
             List<List<String>> partition = ListUtils.partition(userNameList, 100);
 
             // Remove names from the list if they exist in the database
             db.checkIfNamesExist(userNameList);
-            System.out.println("Fetching " + userNameList.size() + " users in " + partition.size() + " partitions");
+            System.out.print("Fetching " + userNameList.size() + " users in " + partition.size() + " partitions: ");
 
             for (List<String> list : partition) {
                 UserList userList;
@@ -41,10 +40,14 @@ public class ChatListTimer {
                 }
 
                 if (userList != null && !userList.getUsers().isEmpty()) {
-                    System.out.println("Storing " + userList.getUsers().size() + " users");
+                    System.out.print("Storing " + userList.getUsers().size() + " users");
                     db.addUserList(userList.getUsers());
                 }
+
+                System.out.println();
             }
+
+            System.out.println();
         };
 
         final ScheduledFuture<?> fixedRateTimer =

@@ -7,13 +7,11 @@ public class ChannelNotificationOnDonation {
     @EventSubscriber
     public void onDonation(DonationEvent event) {
         String message = String.format(
-                "%s just donated %s using %s!",
-                event.getUser().getName(),
-                event.getAmount(),
-                event.getSource()
+                "%s, thanks for the money HACKERMANS moon2CUTE",
+                event.getUser().getName()
         );
 
         System.out.println("OnDonation: " + message);
-//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

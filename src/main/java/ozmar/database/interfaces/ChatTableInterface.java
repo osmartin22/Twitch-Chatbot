@@ -1,7 +1,7 @@
 package ozmar.database.interfaces;
 
 import com.github.twitch4j.helix.domain.User;
-import ozmar.ChatUser;
+import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -11,6 +11,8 @@ public interface ChatTableInterface {
 
     @Nonnull
     String getCreateTableSql();
+
+    long getUserId(@Nonnull String userName);
 
     void checkIfNameExists(@Nonnull List<String> list);
 

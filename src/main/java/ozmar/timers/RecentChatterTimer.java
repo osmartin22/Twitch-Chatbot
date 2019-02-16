@@ -1,7 +1,7 @@
 package ozmar.timers;
 
-import java.util.HashMap;
-import java.util.Map;
+import ozmar.buffer.interfaces.RecentChattersInterface;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -10,12 +10,17 @@ import java.util.concurrent.TimeUnit;
 public class RecentChatterTimer {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    public static Map<String, Long> mostRecent = new HashMap<>();
+    private final RecentChattersInterface recentChatters;
+
+    public RecentChatterTimer(RecentChattersInterface recentChatters) {
+        this.recentChatters = recentChatters;
+    }
 
     public void startTimer() {
         final Runnable beeper = () -> {
             int l = 120000;
-            mostRecent.entrySet().removeIf(entry -> System.currentTimeMillis() - entry.getValue() > l);
+            recentChatters.getRecentChatters().entrySet()
+                    .removeIf(entry -> System.currentTimeMillis() - entry.getValue() > l);
         };
 
         final ScheduledFuture<?> fixedRateTimer =

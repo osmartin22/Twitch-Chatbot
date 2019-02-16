@@ -1,18 +1,20 @@
 package ozmar.buffer;
 
-import ozmar.ChatUser;
+import ozmar.buffer.interfaces.ChatDataBufferInterface;
+import ozmar.user.ChatUser;
 import ozmar.utils.RandomHelper;
 
-import java.util.HashMap;
+import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class ChatDataBuffer {
-    private static boolean currentChatDataMap = true;    // true = chatData1     false = chatData1
-    private static Map<Long, ChatUser> chatData1 = new HashMap<>();
-    private static Map<Long, ChatUser> chatData2 = new HashMap<>();
+public class ChatDataBuffer implements ChatDataBufferInterface {
+    private boolean currentChatDataMap = true;    // true = chatData1     false = chatData1
+    private final Map<Long, ChatUser> chatData1;
+    private final Map<Long, ChatUser> chatData2;
 
-    public ChatDataBuffer() {
-
+    public ChatDataBuffer(Map<Long, ChatUser> chatData1, Map<Long, ChatUser> chatData2) {
+        this.chatData1 = chatData1;
+        this.chatData2 = chatData2;
     }
 
     /**
@@ -20,6 +22,8 @@ public class ChatDataBuffer {
      *
      * @return Map
      */
+    @Nonnull
+    @Override
     public Map<Long, ChatUser> getMap() {
         Map<Long, ChatUser> currentMap = getCurrentMap();
         flipFlag();
@@ -29,6 +33,7 @@ public class ChatDataBuffer {
     /**
      * Clears the map of the one currently not in use
      */
+    @Override
     public void clearMap() {
         if (currentChatDataMap) {
             chatData2.clear();
@@ -46,7 +51,8 @@ public class ChatDataBuffer {
      * @param userId   used as the key to check in the map
      * @param userName used only when storing a new ChatUser to the map
      */
-    public void updateChatUser(long userId, String userName) {
+    @Override
+    public void updateChatUser(long userId, @Nonnull String userName) {
         int randPoints = RandomHelper.getRandNumInRange(0, 1);
         Map<Long, ChatUser> currentMap = getCurrentMap();
         if (currentMap.containsKey(userId)) {

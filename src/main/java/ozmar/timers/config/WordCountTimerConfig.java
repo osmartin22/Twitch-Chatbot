@@ -2,8 +2,8 @@ package ozmar.timers.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ozmar.buffer.ChatDataBuffer;
-import ozmar.buffer.WordCountBuffer;
+import ozmar.buffer.interfaces.ChatDataBufferInterface;
+import ozmar.buffer.interfaces.WordCountBufferInterface;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
 import ozmar.timers.WordCountTimer;
 
@@ -12,7 +12,8 @@ public class WordCountTimerConfig {
 
     @Bean
     public WordCountTimer wordCountTimerBean(DatabaseHandlerInterface db,
-                                             WordCountBuffer wordCountBuffer, ChatDataBuffer chatDataBuffer) {
+                                             WordCountBufferInterface wordCountBuffer,
+                                             ChatDataBufferInterface chatDataBuffer) {
         return new WordCountTimer(db, wordCountBuffer, chatDataBuffer);
     }
 }

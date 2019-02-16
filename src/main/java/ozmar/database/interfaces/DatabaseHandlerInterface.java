@@ -1,8 +1,8 @@
 package ozmar.database.interfaces;
 
 import com.github.twitch4j.helix.domain.User;
-import ozmar.ChatUser;
-import ozmar.Command;
+import ozmar.commands.Command;
+import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -16,6 +16,7 @@ public interface DatabaseHandlerInterface {
 
     void updateCommandUsage(@Nonnull Command command);
 
+
     Map<String, Integer> getWordCount();
 
     Map<String, Integer> getTop10Words();
@@ -25,6 +26,9 @@ public interface DatabaseHandlerInterface {
     void updateOrInsertWordCount(@Nonnull Map<String, Integer> map);
 
     void clearWordCount();
+
+
+    long getUserId(@Nonnull String userName);
 
     void addUserList(@Nonnull List<User> userList);
 
@@ -42,5 +46,5 @@ public interface DatabaseHandlerInterface {
 
     String getValentine(long userId);
 
-    void updateValentine(long userId, @Nonnull String newValentine);
+    void updatePartner(long userId, @Nonnull String newValentine);
 }

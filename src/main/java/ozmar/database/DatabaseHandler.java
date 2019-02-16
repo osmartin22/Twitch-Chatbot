@@ -1,12 +1,12 @@
 package ozmar.database;
 
 import com.github.twitch4j.helix.domain.User;
-import ozmar.ChatUser;
-import ozmar.Command;
+import ozmar.commands.Command;
 import ozmar.database.interfaces.ChatTableInterface;
 import ozmar.database.interfaces.CommandsTableInterface;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
 import ozmar.database.interfaces.WordCountTableInterface;
+import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
@@ -180,6 +180,11 @@ public class DatabaseHandler implements DatabaseHandlerInterface {
 
     // ChatTable
     @Override
+    public long getUserId(@Nonnull String userName) {
+        return chatTable.getUserId(userName);
+    }
+
+    @Override
     public void addUserList(@Nonnull List<User> userList) {
         if (!userList.isEmpty()) {
             chatTable.addUsersToTable(userList);
@@ -225,7 +230,7 @@ public class DatabaseHandler implements DatabaseHandlerInterface {
     }
 
     @Override
-    public void updateValentine(long userId, @Nonnull String newValentine) {
+    public void updatePartner(long userId, @Nonnull String newValentine) {
         chatTable.updateValentine(userId, newValentine);
     }
 }

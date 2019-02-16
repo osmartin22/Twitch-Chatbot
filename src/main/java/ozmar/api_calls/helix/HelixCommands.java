@@ -1,4 +1,4 @@
-package ozmar.helix;
+package ozmar.api_calls.helix;
 
 import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.domain.FollowList;

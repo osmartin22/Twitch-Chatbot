@@ -1,4 +1,4 @@
-package ozmar;
+package ozmar.setup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;

@@ -1,4 +1,4 @@
-package ozmar;
+package ozmar.user;
 
 public class ChatUser {
 

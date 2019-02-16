@@ -7,6 +7,5 @@ public class ChannelChangeTitle {
     @EventSubscriber
     public void onTitleChange(ChannelChangeTitleEvent event) {
         System.out.println("Title change");
-
     }
 }

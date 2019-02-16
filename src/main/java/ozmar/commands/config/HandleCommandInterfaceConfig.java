@@ -2,6 +2,7 @@ package ozmar.commands.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.HandleCommand;
 import ozmar.commands.interfaces.*;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
@@ -14,7 +15,8 @@ public class HandleCommandInterfaceConfig {
                                                              CalculatorInterface calculator,
                                                              DiceInterface dice,
                                                              CatchPokeInterface catchPoke,
-                                                             LootBoxInterface lootBox) {
-        return new HandleCommand(databaseHandler, calculator, dice, catchPoke, lootBox);
+                                                             LootBoxInterface lootBox,
+                                                             RecentChattersInterface recentChatters) {
+        return new HandleCommand(databaseHandler, calculator, dice, catchPoke, lootBox, recentChatters);
     }
 }

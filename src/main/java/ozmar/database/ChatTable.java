@@ -1,8 +1,8 @@
 package ozmar.database;
 
 import com.github.twitch4j.helix.domain.User;
-import ozmar.ChatUser;
 import ozmar.database.interfaces.ChatTableInterface;
+import ozmar.user.ChatUser;
 import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
@@ -36,28 +36,28 @@ public class ChatTable implements ChatTableInterface {
                     COLUMN_POINTS + " INTEGER, " +
                     COLUMN_VALENTINE + " TEXT)";
 
+    private static final String getUserIdSql =
+            "SELECT " + COLUMN_USER_ID + " FROM " + CHAT_TABLE +
+                    " WHERE " + COLUMN_USER_NAME + " = ?";
+
     private static final String updatePointsSql =
             "UPDATE " + CHAT_TABLE +
-                    " SET " +
-                    COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
-                    " WHERE " +
-                    COLUMN_USER_NAME + " = ?";
+                    " SET " + COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
+                    " WHERE " + COLUMN_USER_NAME + " = ?";
 
     private static final String updateCountAndPointsSql =
             "UPDATE " + CHAT_TABLE +
                     " SET " +
                     COLUMN_MESSAGE_COUNT + " = " + COLUMN_MESSAGE_COUNT + " + ?, " +
                     COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
-                    " WHERE "
-                    + COLUMN_USER_ID + " = ?";
+                    " WHERE " + COLUMN_USER_ID + " = ?";
 
     private static final String updateNameAndPointsSql =
             "UPDATE " + CHAT_TABLE +
                     " SET " +
                     COLUMN_USER_NAME + " = ?, " +
                     COLUMN_POINTS + " = " + COLUMN_POINTS + " + ? " +
-                    " WHERE "
-                    + COLUMN_USER_ID + " = ?";
+                    " WHERE " + COLUMN_USER_ID + " = ?";
 
     private static final String insertUserSql =
             "INSERT OR IGNORE INTO " + CHAT_TABLE + " ( " +
@@ -69,35 +69,28 @@ public class ChatTable implements ChatTableInterface {
 
     private static final String getMessageCountByUserIdSql =
             "SELECT " + COLUMN_MESSAGE_COUNT + " FROM " + CHAT_TABLE +
-                    " WHERE " +
-                    COLUMN_USER_ID + " = ?";
+                    " WHERE " + COLUMN_USER_ID + " = ?";
 
     private static final String getMessageCountByUserNameSql =
             "SELECT " + COLUMN_MESSAGE_COUNT + " FROM " + CHAT_TABLE +
-                    " WHERE " +
-                    COLUMN_USER_NAME + " = ?";
+                    " WHERE " + COLUMN_USER_NAME + " = ?";
 
     private static final String getPointsByUserIdSql =
             "SELECT " + COLUMN_POINTS + " FROM " + CHAT_TABLE +
-                    " WHERE " +
-                    COLUMN_USER_ID + " = ?";
+                    " WHERE " + COLUMN_USER_ID + " = ?";
 
     private static final String getPointsByUserNameSql =
             "SELECT " + COLUMN_POINTS + " FROM " + CHAT_TABLE +
-                    " WHERE " +
-                    COLUMN_USER_NAME + " = ?";
+                    " WHERE " + COLUMN_USER_NAME + " = ?";
 
     private static final String updateValentineSql =
             "UPDATE " + CHAT_TABLE +
-                    " SET " +
-                    COLUMN_VALENTINE + " = ? " +
-                    " WHERE "
-                    + COLUMN_USER_ID + " = ?";
+                    " SET " + COLUMN_VALENTINE + " = ? " +
+                    " WHERE " + COLUMN_USER_ID + " = ?";
 
     private static final String getValentineSql =
             "SELECT " + COLUMN_VALENTINE + " FROM " + CHAT_TABLE +
-                    " WHERE " +
-                    COLUMN_USER_ID + " = ?";
+                    " WHERE " + COLUMN_USER_ID + " = ?";
 
     public ChatTable() {
 
@@ -112,6 +105,27 @@ public class ChatTable implements ChatTableInterface {
     @Override
     public String getCreateTableSql() {
         return CREATE_CHAT_TABLE;
+    }
+
+    @Override
+    public long getUserId(@Nonnull String userName) {
+        Connection connection = DatabaseHandler.openConnection();
+        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, getUserIdSql);
+        long userId = -1;
+        try {
+            preparedStatement.setString(1, userName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                userId = resultSet.getInt(COLUMN_USER_ID);
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to get user id: " + e.getMessage());
+        } finally {
+            DatabaseHandler.closeStatement(preparedStatement);
+            DatabaseHandler.closeConnection(connection);
+        }
+
+        return userId;
     }
 
     /**

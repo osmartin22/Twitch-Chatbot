@@ -1,6 +1,6 @@
 package ozmar.database.interfaces;
 
-import ozmar.Command;
+import ozmar.commands.Command;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

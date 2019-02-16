@@ -1,4 +1,4 @@
-package ozmar;
+package ozmar.setup;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ozmar.timers.ChatListTimer;
@@ -10,9 +10,6 @@ public class Launcher {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BotConfig.class);
 
-        RecentChatterTimer chatterTimer = new RecentChatterTimer();
-        chatterTimer.startTimer();
-
         Bot bot = context.getBean(Bot.class);
         bot.initialize();
         bot.registerFeatures();
@@ -20,12 +17,10 @@ public class Launcher {
 
         ChatListTimer chatListTimer = context.getBean(ChatListTimer.class);
         WordCountTimer wordCountTimer = context.getBean(WordCountTimer.class);
+        RecentChatterTimer recentChatterTimer = context.getBean(RecentChatterTimer.class);
         chatListTimer.startTimer();
         wordCountTimer.startTimer();
-//        InvocationTargetException
-//        HystrixRuntimeException
-//        ContextedRuntimeException
-        // FUSION COMMAND
+        recentChatterTimer.startTimer();
     }
 }
 

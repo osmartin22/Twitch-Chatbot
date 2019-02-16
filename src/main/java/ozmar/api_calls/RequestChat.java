@@ -1,4 +1,4 @@
-package ozmar;
+package ozmar.api_calls;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -10,32 +10,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-// Launch at start of app
-// Store usernames into database IF NOT EXISTS USER
-// (MAYBE) if user in database not in received list, delete from database
-// Can maybe have a counter that allows them to exist for X queries before deleting
-// Increment counter if not in list, set to 0 if they appear in future queries
 
-
-// Or maybe have a flag signifying in chat or not so there data isn't wiped entirely
-// i.e. implement point system, want to keep user points even if they leave chat
-// i.e. user only watches night stream,
-
-
-// While users chat, store their ids in the database and increment counter for chat messages
-// Save if sub or not by looking at permissions
-
-// TODO: MAKE THIS A STATIC CLASS OR REWRITE HOW THE LIST IS FETCHED
 public class RequestChat {
 
     // tmi.twitch.tv/group/user/channel_name/chatters
     private static final String url = "https://tmi.twitch.tv/group/user/";
 
-    private String channelName;
-    public static List<String> chatList = new ArrayList<>();  // TODO: Currently the cache works for only one channel
+    private RequestChat() {
 
-    public RequestChat(@Nonnull String channelName) {
-        this.channelName = channelName;
     }
 
     /**
@@ -47,7 +29,8 @@ public class RequestChat {
      *
      * @return List of user names
      */
-    public List<String> queryChatList() {
+    public static List<String> queryChatList(String channelName) {
+        List<String> chatList = new ArrayList<>();
         try {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
@@ -61,21 +44,7 @@ public class RequestChat {
         return new ArrayList<>(chatList);
     }
 
-    /**
-     * Gets the cached copy of users in chat
-     * If the cache is empty, it will fetch the users itself
-     *
-     * @return Lisr of users in chat
-     */
-    public List<String> getChatList() {
-        if (!chatList.isEmpty()) {
-            return chatList;
-        }
-
-        return queryChatList();
-    }
-
-    private List<String> parseChatUsers(JsonParser jsonParser) {
+    private static List<String> parseChatUsers(JsonParser jsonParser) {
         List<String> chatUserList = new ArrayList<>();
 
         try {
@@ -119,7 +88,7 @@ public class RequestChat {
         return chatUserList;
     }
 
-    private void parserHelper(@Nonnull JsonParser jsonParser, @Nonnull List<String> list) {
+    private static void parserHelper(@Nonnull JsonParser jsonParser, @Nonnull List<String> list) {
         try {
             jsonParser.nextToken();
             while (jsonParser.nextToken() != JsonToken.END_ARRAY) {

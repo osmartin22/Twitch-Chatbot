@@ -1,4 +1,4 @@
-package ozmar;
+package ozmar.commands;
 
 import ozmar.enums.CommandNumPermission;
 

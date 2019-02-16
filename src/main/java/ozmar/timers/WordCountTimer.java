@@ -1,9 +1,9 @@
 package ozmar.timers;
 
-import ozmar.ChatUser;
-import ozmar.buffer.ChatDataBuffer;
-import ozmar.buffer.WordCountBuffer;
+import ozmar.buffer.interfaces.ChatDataBufferInterface;
+import ozmar.buffer.interfaces.WordCountBufferInterface;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.user.ChatUser;
 
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -15,10 +15,11 @@ public class WordCountTimer {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final DatabaseHandlerInterface db;
-    private final WordCountBuffer wordCountBuffer;
-    private final ChatDataBuffer chatDataBuffer;
+    private final WordCountBufferInterface wordCountBuffer;
+    private final ChatDataBufferInterface chatDataBuffer;
 
-    public WordCountTimer(DatabaseHandlerInterface db, WordCountBuffer wordCountBuffer, ChatDataBuffer chatDataBuffer) {
+    public WordCountTimer(DatabaseHandlerInterface db, WordCountBufferInterface wordCountBuffer,
+                          ChatDataBufferInterface chatDataBuffer) {
         this.db = db;
         this.wordCountBuffer = wordCountBuffer;
         this.chatDataBuffer = chatDataBuffer;

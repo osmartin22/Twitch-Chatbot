@@ -1,6 +1,6 @@
 package ozmar.database;
 
-import ozmar.Command;
+import ozmar.commands.Command;
 import ozmar.database.interfaces.CommandsTableInterface;
 import ozmar.enums.CommandNumPermission;
 
@@ -152,7 +152,7 @@ public class CommandsTable implements CommandsTableInterface {
     /**
      * Updates usage of a command
      *
-     * @param command
+     * @param command command to update the usage of
      */
     @Override
     public void updateCommandUsage(@Nonnull Command command) {

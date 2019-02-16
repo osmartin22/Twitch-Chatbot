@@ -2,22 +2,36 @@ package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
-import ozmar.buffer.ChatDataBuffer;
-import ozmar.buffer.WordCountBuffer;
-import ozmar.timers.RecentChatterTimer;
+import com.github.twitch4j.common.events.domain.EventUser;
+import ozmar.buffer.interfaces.ChatDataBufferInterface;
+import ozmar.buffer.interfaces.RecentChattersInterface;
+import ozmar.buffer.interfaces.WordCountBufferInterface;
 
 import javax.annotation.Nonnull;
 
-// TODO: Maybe remove punctuation so that "hey" and "hey," are the same word
 public class OnChatChannelMessage {
+
+    private final WordCountBufferInterface wordCountBuffer;
+    private final ChatDataBufferInterface chatDataBuffer;
+    private final RecentChattersInterface recentChatters;
+
+    public OnChatChannelMessage(WordCountBufferInterface wordCountBuffer, ChatDataBufferInterface chatDataBuffer,
+                                RecentChattersInterface recentChatters) {
+        this.wordCountBuffer = wordCountBuffer;
+        this.chatDataBuffer = chatDataBuffer;
+        this.recentChatters = recentChatters;
+    }
+
     @EventSubscriber
     public void onChannelMessage(ChannelMessageEvent event) {
-        String message = event.getMessage().trim();
+        handleChatData(event.getUser());
+        recentChatters.getRecentChatters().put(event.getUser().getName(), System.currentTimeMillis());
 
-        handleChatData(event);
-        handleWordCount(message);
-
-        RecentChatterTimer.mostRecent.put(event.getUser().getName(), System.currentTimeMillis());
+        long userId = event.getUser().getId();
+        if (userId != 19264788 && userId != 250198045 && userId != 402734706) { // Ignore known bot responses
+            String message = event.getMessage().trim();
+            handleWordCount(message);
+        }
 
 //        System.out.printf(
 //                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
@@ -28,27 +42,35 @@ public class OnChatChannelMessage {
 //        );
     }
 
-    private void handleChatData(ChannelMessageEvent event) {
-        long userId = event.getUser().getId();
-        ChatDataBuffer chatDataBuffer = new ChatDataBuffer();
-        chatDataBuffer.updateChatUser(userId, event.getUser().getName());
+    private void handleChatData(EventUser user) {
+        long userId = user.getId();
+        chatDataBuffer.updateChatUser(userId, user.getName());
     }
 
     private void handleWordCount(@Nonnull String message) {
         for (String s : message.split(" ")) {
 
-            // Ignore urls from being stored and wasting space since it is unlikely the same url is
-            // more than a couple of times unless chat spams it
-            if (s.startsWith("http")) {
+            // Don't store urls "http"
+            // Ignore words starting with "[" as it is commonly used in bot responses
+            if (s.startsWith("http") || s.startsWith("[")) {
                 continue;
             }
 
             // Remove @ symbol so that @username and username are registered as the same
+            if (s.length() > 1) {
+                if (s.startsWith("@") || s.startsWith("\"") || s.startsWith(" ")) {
+                    s = s.substring(1);
+                }
+
+                char last = s.charAt(s.length() - 1);
+                if (last == ',' || last == '.' || last == ';' || last == '"') {
+                    s = s.substring(0, s.length() - 1);
+                }
+            }
             if (s.length() > 1 && s.startsWith("@")) {
                 s = s.substring(1);
             }
 
-            WordCountBuffer wordCountBuffer = new WordCountBuffer();
             wordCountBuffer.updateWordCount(s);
         }
     }

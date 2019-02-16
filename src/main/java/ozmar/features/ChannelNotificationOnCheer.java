@@ -7,13 +7,12 @@ public class ChannelNotificationOnCheer {
     @EventSubscriber
     public void onCheer(CheerEvent event) {
         String message = String.format(
-                "%s has cheered %s bit(s)\n%s",
+                "%s, thanks for the %s bits HACKERMANS moon2CUTE",
                 event.getUser().getName(),
-                event.getBits(),
-                event.getMessage()
+                event.getBits()
         );
 
         System.out.println("OnCheer: " + message);
-//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

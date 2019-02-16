@@ -1,15 +1,18 @@
 package ozmar.buffer;
 
-import java.util.HashMap;
+import ozmar.buffer.interfaces.WordCountBufferInterface;
+
+import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class WordCountBuffer {
-    private static boolean currentWordCountMap = true;   // true = wordCountMap1 false = wordCountMap2
-    private static Map<String, Integer> wordCountMap1 = new HashMap<>();
-    private static Map<String, Integer> wordCountMap2 = new HashMap<>();
+public class WordCountBuffer implements WordCountBufferInterface {
+    private boolean currentWordCountMap = true;   // true = wordCountMap1 false = wordCountMap2
+    private final Map<String, Integer> wordCountMap1;
+    private final Map<String, Integer> wordCountMap2;
 
-    public WordCountBuffer() {
-
+    public WordCountBuffer(Map<String, Integer> wordCountMap1, Map<String, Integer> wordCountMap2) {
+        this.wordCountMap1 = wordCountMap1;
+        this.wordCountMap2 = wordCountMap2;
     }
 
     /**
@@ -17,6 +20,8 @@ public class WordCountBuffer {
      *
      * @return Map
      */
+    @Nonnull
+    @Override
     public Map<String, Integer> getMap() {
         Map<String, Integer> currentMap = getCurrentMap();
         flipFlag();
@@ -26,6 +31,7 @@ public class WordCountBuffer {
     /**
      * Clears the map of the one currently not in use
      */
+    @Override
     public void clearMap() {
         if (currentWordCountMap) {
             wordCountMap2.clear();
@@ -39,7 +45,8 @@ public class WordCountBuffer {
      *
      * @param word String to increment or put in the map
      */
-    public void updateWordCount(String word) {
+    @Override
+    public void updateWordCount(@Nonnull String word) {
         Map<String, Integer> currentMap = getCurrentMap();
         int count = currentMap.getOrDefault(word, 0) + 1;
         currentMap.put(word, count);
@@ -50,6 +57,7 @@ public class WordCountBuffer {
      *
      * @return Map
      */
+    @Nonnull
     private Map<String, Integer> getCurrentMap() {
         return (currentWordCountMap) ? wordCountMap1 : wordCountMap2;
     }

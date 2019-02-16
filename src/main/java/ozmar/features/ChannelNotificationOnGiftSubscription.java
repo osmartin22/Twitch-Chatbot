@@ -9,14 +9,27 @@ public class ChannelNotificationOnGiftSubscription {
     public void onGiftSubscription(GiftSubscriptionsEvent event) {
 
         SubPlan plan = SubPlan.getValue(event.getSubscriptionPlan());
-        String message = String.format(
-                "%s has donated %s %s sub(s)",
-                event.getUser(),
-                event.getCount(),
-                plan.getSubPlanName()
-        );
+
+        String message;
+
+        if (event.getCount() > 1) {
+            message = String.format(
+                    "%s, so nice of you to donate %s %s subs moon2CUTE",
+                    event.getUser().getName(),
+                    event.getCount(),
+                    plan.getSubPlanName()
+            );
+
+        } else {
+            message = String.format(
+                    "%s, so nice of you to donate %s %s sub moon2CUTE",
+                    event.getUser().getName(),
+                    event.getCount(),
+                    plan.getSubPlanName()
+            );
+        }
 
         System.out.println("OnGiftSub: " + message);
-//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

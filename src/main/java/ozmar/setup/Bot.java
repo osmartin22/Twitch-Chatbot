@@ -1,4 +1,4 @@
-package ozmar;
+package ozmar.setup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -7,9 +7,10 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
+import ozmar.api_calls.helix.HelixCommands;
+import ozmar.commands.Command;
 import ozmar.database.interfaces.DatabaseHandlerInterface;
 import ozmar.features.*;
-import ozmar.helix.HelixCommands;
 
 import java.io.InputStream;
 
