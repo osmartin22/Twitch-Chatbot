@@ -586,7 +586,7 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         String newPartner = getRandomRecentChatter();
-        String oldPartner = db.getValentine(event.getUser().getId());
+        String oldPartner = db.getPartner(event.getUser().getId());
         String user = event.getUser().getName();
         String output;
 
@@ -620,7 +620,7 @@ public class HandleCommand implements HandleCommandInterface {
 
     @Nonnull
     private String myPartnerCommand(@Nonnull CommandEvent event) {
-        String currPartner = db.getValentine(event.getUser().getId());
+        String currPartner = db.getPartner(event.getUser().getId());
         if (currPartner == null) {
             return String.format("%s, you do not have a partner, try !newpartner to get one",
                     event.getUser().getName());

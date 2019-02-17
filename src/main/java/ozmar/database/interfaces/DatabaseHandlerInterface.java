@@ -5,6 +5,7 @@ import ozmar.commands.Command;
 import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,8 @@ public interface DatabaseHandlerInterface {
 
     int getPoints(@Nonnull String userName);
 
-    String getValentine(long userId);
+    @Nullable
+    String getPartner(long userId);
 
     void updatePartner(long userId, @Nonnull String newValentine);
 }

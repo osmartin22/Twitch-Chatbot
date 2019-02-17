@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class WordCountTable implements WordCountTableInterface {
+public class WordCountTable extends Table implements WordCountTableInterface {
 
     private static final String WORD_COUNT_TABLE = "wordCountTable";
     private static final String COLUMN_ID = "id";
@@ -60,7 +60,7 @@ public class WordCountTable implements WordCountTableInterface {
     @Override
     public Map<String, Integer> queryWordCount() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE;
-        Connection connection = DatabaseHandler.openConnection();
+        Connection connection = openConnection();
         Map<String, Integer> map = null;
 
         try (Statement statement = connection.createStatement();
@@ -75,7 +75,7 @@ public class WordCountTable implements WordCountTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed getting wordCount data: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return map;
@@ -92,7 +92,7 @@ public class WordCountTable implements WordCountTableInterface {
         String sql = "SELECT " + COLUMN_WORD + ", " + COLUMN_COUNT +
                 " FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
         Map<String, Integer> map = new LinkedHashMap<>();
-        Connection connection = DatabaseHandler.openConnection();
+        Connection connection = openConnection();
 
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
@@ -104,7 +104,7 @@ public class WordCountTable implements WordCountTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get top 10 words: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return map;
@@ -112,8 +112,9 @@ public class WordCountTable implements WordCountTableInterface {
 
     @Override
     public int getSpecificWordCount(@Nonnull String word) {
-        Connection connection = DatabaseHandler.openConnection();
         int count = -1;
+        Connection connection = openConnection();
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(getSpecificWordCountSql)) {
             preparedStatement.setString(1, word);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -123,7 +124,7 @@ public class WordCountTable implements WordCountTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get a word count: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return count;
@@ -137,11 +138,10 @@ public class WordCountTable implements WordCountTableInterface {
      */
     @Override
     public void updateOrInsert(@Nonnull Map<String, Integer> map) {
-        Connection connection = DatabaseHandler.openConnectionCommitOff();
-        PreparedStatement updatePreparedStatement = DatabaseHandler.prepareStatement(connection, updateCountSql);
-        PreparedStatement insertPreparedStatement = DatabaseHandler.prepareStatement(connection, insertWordAndCountSql);
+        Connection connection = openConnectionCommitOff();
 
-        try {
+        try (PreparedStatement updatePreparedStatement = connection.prepareStatement(updateCountSql);
+             PreparedStatement insertPreparedStatement = connection.prepareStatement(insertWordAndCountSql)) {
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 updatePreparedStatement.setInt(1, entry.getValue());
                 updatePreparedStatement.setString(2, entry.getKey());
@@ -155,11 +155,9 @@ public class WordCountTable implements WordCountTableInterface {
             }
         } catch (SQLException | NullPointerException e) {
             System.out.println("Update or insert failed: " + e.getMessage());
-            DatabaseHandler.rollBack(connection);
+            rollBack(connection);
         } finally {
-            DatabaseHandler.closeStatement(updatePreparedStatement);
-            DatabaseHandler.closeStatement(insertPreparedStatement);
-            DatabaseHandler.closeConnectionCommitOn(connection);
+            closeConnectionCommitOn(connection);
         }
     }
 
@@ -169,14 +167,14 @@ public class WordCountTable implements WordCountTableInterface {
     @Override
     public void clearTable() {
         String sql = "DELETE FROM " + WORD_COUNT_TABLE;
-        Connection connection = DatabaseHandler.openConnection();
+        Connection connection = openConnection();
 
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             System.out.println("Failed to clear the table: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 }

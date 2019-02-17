@@ -13,7 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandsTable implements CommandsTableInterface {
+public class CommandsTable extends Table implements CommandsTableInterface {
 
     private static final String COMMANDS_TABLE = "commandsTable";
     private static final String COLUMN_COMMAND_ID = "id";
@@ -59,7 +59,7 @@ public class CommandsTable implements CommandsTableInterface {
     public void initializeCommands() {
         // File is assumed to be in the correct format
         List<Command> commandList = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\\\TwitchBotFiles\\commands.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\TwitchBotFiles\\commands.txt"))) {
             String line = br.readLine();
             while (line != null) {
                 String[] tokens = line.split("\\s+");
@@ -72,6 +72,11 @@ public class CommandsTable implements CommandsTableInterface {
         insertCommandsList(commandList);
     }
 
+    @Override
+    public void createTable() {
+        super.createTable();
+    }
+
     /**
      * Fetches all the commands from the table
      *
@@ -80,7 +85,7 @@ public class CommandsTable implements CommandsTableInterface {
     @Nullable
     @Override
     public List<Command> queryCommands() {
-        Connection connection = DatabaseHandler.openConnection();
+        Connection connection = openConnection();
 
         List<Command> commandList = null;
         try (Statement statement = connection.createStatement();
@@ -100,7 +105,7 @@ public class CommandsTable implements CommandsTableInterface {
         } catch (SQLException e) {
             System.out.println("Query failed " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return commandList;
@@ -112,10 +117,9 @@ public class CommandsTable implements CommandsTableInterface {
      * @param list list of commands
      */
     private void insertCommandsList(@Nonnull List<Command> list) {
-        Connection connection = DatabaseHandler.openConnectionCommitOff();
-        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, insertCommandSql);
+        Connection connection = openConnectionCommitOff();
 
-        try {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertCommandSql)) {
             for (Command command : list) {
                 preparedStatement.setString(1, command.getCommand());
                 preparedStatement.setInt(2, command.getPermission().getCommandLevel());
@@ -124,8 +128,7 @@ public class CommandsTable implements CommandsTableInterface {
         } catch (SQLException | NullPointerException e) {
             System.out.println("Inserting command list failed: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeStatement(preparedStatement);
-            DatabaseHandler.closeConnectionCommitOn(connection);
+            closeConnectionCommitOn(connection);
         }
     }
 
@@ -136,7 +139,7 @@ public class CommandsTable implements CommandsTableInterface {
      */
     @Override
     public void insertCommand(@Nonnull Command command) {
-        Connection connection = DatabaseHandler.openConnection();
+        Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertCommandSql)) {
             preparedStatement.setString(1, command.getCommand());
@@ -145,7 +148,7 @@ public class CommandsTable implements CommandsTableInterface {
         } catch (SQLException e) {
             System.out.println("Adding command failed: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 
@@ -156,10 +159,9 @@ public class CommandsTable implements CommandsTableInterface {
      */
     @Override
     public void updateCommandUsage(@Nonnull Command command) {
-        Connection connection = DatabaseHandler.openConnection();
-        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, updateCommandUsageSql);
+        Connection connection = openConnection();
 
-        try {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateCommandUsageSql)) {
             preparedStatement.setInt(1, command.getUsage());
             preparedStatement.setInt(2, command.getId());
             preparedStatement.execute();
@@ -167,8 +169,7 @@ public class CommandsTable implements CommandsTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to update usage for " + command.getCommand() + " : " + e.getMessage());
         } finally {
-            DatabaseHandler.closeStatement(preparedStatement);
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
     }
 }

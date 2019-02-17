@@ -9,14 +9,17 @@ import ozmar.database.interfaces.WordCountTableInterface;
 import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
-import java.sql.*;
+import javax.annotation.Nullable;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
 public class DatabaseHandler implements DatabaseHandlerInterface {
 
-    private static final String DATABASE_NAME = "TwitchBot.db";
-    private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\" + DATABASE_NAME;
+    private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\TwitchBot.db";
 
     private CommandsTableInterface commandsTable;
     private WordCountTableInterface wordCountTable;
@@ -32,86 +35,11 @@ public class DatabaseHandler implements DatabaseHandlerInterface {
         initializeDb();
     }
 
-    public static Connection openConnection() {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(DB_URL);
-
-        } catch (SQLException e) {
-            System.out.println("Couldn't connect to database " + e.getMessage());
-        }
-
-        return connection;
-    }
-
-    public static Connection openConnectionCommitOff() {
-        Connection connection = openConnection();
-        turnOffAutoCommit(connection);
-
-        return connection;
-    }
-
-    public static void closeConnectionCommitOn(Connection connection) {
-        turnOnAutoCommit(connection);
-        closeConnection(connection);
-    }
-
-    public static void closeConnection(@Nonnull Connection connection) {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Couldn't close connection " + e.getMessage());
-        }
-    }
-
-    public static void turnOffAutoCommit(@Nonnull Connection connection) {
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            System.out.println("Failed to turn off auto commit " + e.getMessage());
-        }
-    }
-
-    public static void turnOnAutoCommit(@Nonnull Connection connection) {
-        try {
-            connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            System.out.println("Failed to turn on auto commit " + e.getMessage());
-        }
-    }
-
-    public static void rollBack(@Nonnull Connection connection) {
-        try {
-            connection.rollback();
-        } catch (SQLException e) {
-            System.out.println("Failed to roll back " + e.getMessage());
-        }
-    }
-
-    public static PreparedStatement prepareStatement(@Nonnull Connection connection, @Nonnull String statement) {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(statement);
-        } catch (SQLException e) {
-            System.out.println("Failed to prepare statement " + e.getMessage());
-        }
-        return preparedStatement;
-    }
-
-    public static void closeStatement(PreparedStatement preparedStatement) {
-        if (preparedStatement != null) {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                System.out.println("Failed to close statement: " + e.getMessage());
-            }
-        }
-    }
-
     private void initializeDb() {
-        Connection connection = openConnection();
 
-        try (Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             Statement statement = connection.createStatement()) {
+
             statement.execute(commandsTable.getCreateTableSql());
             statement.execute(wordCountTable.getCreateTableSql());
             statement.execute(chatTable.getCreateTableSql());
@@ -123,8 +51,6 @@ public class DatabaseHandler implements DatabaseHandlerInterface {
         } catch (SQLException e) {
             System.out.println("Failed to create connection " + e.getMessage());
         }
-
-        closeConnection(connection);
     }
 
 
@@ -223,14 +149,14 @@ public class DatabaseHandler implements DatabaseHandlerInterface {
         return chatTable.getPointsByUserName(userName);
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public String getValentine(long userId) {
-        return chatTable.getValentineById(userId);
+    public String getPartner(long userId) {
+        return chatTable.getPartnerById(userId);
     }
 
     @Override
     public void updatePartner(long userId, @Nonnull String newValentine) {
-        chatTable.updateValentine(userId, newValentine);
+        chatTable.updatePartner(userId, newValentine);
     }
 }

@@ -6,6 +6,7 @@ import ozmar.user.ChatUser;
 import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ChatTable implements ChatTableInterface {
+public class ChatTable extends Table implements ChatTableInterface {
 
     private static final String CHAT_TABLE = "chatTable";
     private static final String COLUMN_ID = "id";
@@ -22,7 +23,7 @@ public class ChatTable implements ChatTableInterface {
     private static final String COLUMN_USER_NAME = "userName";
     private static final String COLUMN_MESSAGE_COUNT = "messageCount";
     private static final String COLUMN_POINTS = "points";
-    private static final String COLUMN_VALENTINE = "valentine";
+    private static final String COLUMN_PARTNER = "partner";
 
     private static final int RANDOM_POINTS_RANGE_START = 3;
     private static final int RANDOM_POINTS_RANGE_END = 10;
@@ -34,7 +35,7 @@ public class ChatTable implements ChatTableInterface {
                     COLUMN_USER_NAME + " TEXT UNIQUE, " +
                     COLUMN_MESSAGE_COUNT + " INTEGER, " +
                     COLUMN_POINTS + " INTEGER, " +
-                    COLUMN_VALENTINE + " TEXT)";
+                    COLUMN_PARTNER + " TEXT)";
 
     private static final String getUserIdSql =
             "SELECT " + COLUMN_USER_ID + " FROM " + CHAT_TABLE +
@@ -83,13 +84,13 @@ public class ChatTable implements ChatTableInterface {
             "SELECT " + COLUMN_POINTS + " FROM " + CHAT_TABLE +
                     " WHERE " + COLUMN_USER_NAME + " = ?";
 
-    private static final String updateValentineSql =
+    private static final String updatePartnerSql =
             "UPDATE " + CHAT_TABLE +
-                    " SET " + COLUMN_VALENTINE + " = ? " +
+                    " SET " + COLUMN_PARTNER + " = ? " +
                     " WHERE " + COLUMN_USER_ID + " = ?";
 
-    private static final String getValentineSql =
-            "SELECT " + COLUMN_VALENTINE + " FROM " + CHAT_TABLE +
+    private static final String getPartnerSql =
+            "SELECT " + COLUMN_PARTNER + " FROM " + CHAT_TABLE +
                     " WHERE " + COLUMN_USER_ID + " = ?";
 
     public ChatTable() {
@@ -108,11 +109,16 @@ public class ChatTable implements ChatTableInterface {
     }
 
     @Override
+    public void createTable() {
+        super.createTable();
+    }
+
+    @Override
     public long getUserId(@Nonnull String userName) {
-        Connection connection = DatabaseHandler.openConnection();
-        PreparedStatement preparedStatement = DatabaseHandler.prepareStatement(connection, getUserIdSql);
         long userId = -1;
-        try {
+        Connection connection = openConnection();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getUserIdSql)) {
             preparedStatement.setString(1, userName);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -121,8 +127,7 @@ public class ChatTable implements ChatTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get user id: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeStatement(preparedStatement);
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return userId;
@@ -136,25 +141,23 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public void checkIfNameExists(@Nonnull List<String> list) {
-        Connection connection = DatabaseHandler.openConnectionCommitOff();
-        PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updatePointsSql);
+        Connection connection = openConnectionCommitOff();
 
-        try {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updatePointsSql)) {
             for (Iterator<String> iterator = list.iterator(); iterator.hasNext(); ) {
                 String userName = iterator.next();
-                updatePointsStatement.setInt(1,
+                preparedStatement.setInt(1,
                         RandomHelper.getRandNumInRange(RANDOM_POINTS_RANGE_START, RANDOM_POINTS_RANGE_END));
-                updatePointsStatement.setString(2, userName);
-                if (updatePointsStatement.executeUpdate() != 0) {
+                preparedStatement.setString(2, userName);
+                if (preparedStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
             }
         } catch (SQLException | NullPointerException e) {
             System.out.println("Failed to update points while checking: " + e.getMessage());
-            DatabaseHandler.rollBack(connection);
+            rollBack(connection);
         } finally {
-            DatabaseHandler.closeStatement(updatePointsStatement);
-            DatabaseHandler.closeConnectionCommitOn(connection);
+            closeConnectionCommitOn(connection);
         }
     }
 
@@ -182,26 +185,24 @@ public class ChatTable implements ChatTableInterface {
      * @param list list of users
      */
     private void updateNameAndPointsFromUserId(@Nonnull List<User> list) {
-        Connection connection = DatabaseHandler.openConnectionCommitOff();
-        PreparedStatement updatePointsStatement = DatabaseHandler.prepareStatement(connection, updateNameAndPointsSql);
+        Connection connection = openConnectionCommitOff();
 
-        try {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateNameAndPointsSql)) {
             for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
                 User user = iterator.next();
-                updatePointsStatement.setString(1, user.getLogin());
-                updatePointsStatement.setInt(2,
+                preparedStatement.setString(1, user.getLogin());
+                preparedStatement.setInt(2,
                         RandomHelper.getRandNumInRange(RANDOM_POINTS_RANGE_START, RANDOM_POINTS_RANGE_END));
-                updatePointsStatement.setLong(3, user.getId());
-                if (updatePointsStatement.executeUpdate() != 0) {
+                preparedStatement.setLong(3, user.getId());
+                if (preparedStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
             }
         } catch (SQLException | NullPointerException e) {
             System.out.println("Failed to update points from userName: " + e.getMessage());
-            DatabaseHandler.rollBack(connection);
+            rollBack(connection);
         } finally {
-            DatabaseHandler.closeStatement(updatePointsStatement);
-            DatabaseHandler.closeConnectionCommitOn(connection);
+            closeConnectionCommitOn(connection);
         }
     }
 
@@ -212,29 +213,26 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public void insertUserList(@Nonnull List<User> list) {
-        Connection connection = DatabaseHandler.openConnectionCommitOff();
-        PreparedStatement insertStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
+        Connection connection = openConnectionCommitOff();
 
-        try {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertUserSql)) {
             for (Iterator<User> iterator = list.iterator(); iterator.hasNext(); ) {
                 User user = iterator.next();
-                insertStatement.setLong(1, user.getId());
-                insertStatement.setString(2, user.getLogin());
-                insertStatement.setInt(3, 0);
-                insertStatement.setInt(4,
+                preparedStatement.setLong(1, user.getId());
+                preparedStatement.setString(2, user.getLogin());
+                preparedStatement.setInt(3, 0);
+                preparedStatement.setInt(4,
                         RandomHelper.getRandNumInRange(RANDOM_POINTS_RANGE_START, RANDOM_POINTS_RANGE_END));
 
-                if (insertStatement.executeUpdate() != 0) {
+                if (preparedStatement.executeUpdate() != 0) {
                     iterator.remove();
                 }
             }
-
         } catch (SQLException | NullPointerException e) {
             System.out.println("Failed to insert new row: " + e.getMessage());
-            DatabaseHandler.rollBack(connection);
+            rollBack(connection);
         } finally {
-            DatabaseHandler.closeStatement(insertStatement);
-            DatabaseHandler.closeConnectionCommitOn(connection);
+            closeConnectionCommitOn(connection);
         }
     }
 
@@ -246,11 +244,10 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public void updatePoints(@Nonnull Map<Long, ChatUser> map) {
-        Connection connection = DatabaseHandler.openConnectionCommitOff();
-        PreparedStatement updateStatement = DatabaseHandler.prepareStatement(connection, updateCountAndPointsSql);
-        PreparedStatement insertRowStatement = DatabaseHandler.prepareStatement(connection, insertUserSql);
+        Connection connection = openConnectionCommitOff();
 
-        try {
+        try (PreparedStatement updateStatement = connection.prepareStatement(updateCountAndPointsSql);
+             PreparedStatement insertRowStatement = connection.prepareStatement(insertUserSql)) {
             for (Map.Entry<Long, ChatUser> entry : map.entrySet()) {
                 ChatUser user = entry.getValue();
 
@@ -269,11 +266,9 @@ public class ChatTable implements ChatTableInterface {
             }
         } catch (SQLException | NullPointerException e) {
             System.out.println("Failed to update points or insert new row " + e.getMessage());
-            DatabaseHandler.rollBack(connection);
+            rollBack(connection);
         } finally {
-            DatabaseHandler.closeStatement(updateStatement);
-            DatabaseHandler.closeStatement(insertRowStatement);
-            DatabaseHandler.closeConnectionCommitOn(connection);
+            closeConnectionCommitOn(connection);
         }
     }
 
@@ -285,8 +280,8 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public int getMessageCountByUserId(long userId) {
-        Connection connection = DatabaseHandler.openConnection();
         int count = -1;
+        Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getMessageCountByUserIdSql)) {
             preparedStatement.setLong(1, userId);
@@ -297,7 +292,7 @@ public class ChatTable implements ChatTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get message count by userName: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return count;
@@ -311,8 +306,8 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public int getMessageCountByUserName(@Nonnull String userName) {
-        Connection connection = DatabaseHandler.openConnection();
         int count = -1;
+        Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getMessageCountByUserNameSql)) {
             preparedStatement.setString(1, userName);
@@ -323,7 +318,7 @@ public class ChatTable implements ChatTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get message count by userName: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return count;
@@ -337,8 +332,8 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public int getPointsByUserId(long userId) {
-        Connection connection = DatabaseHandler.openConnection();
         int points = -1;
+        Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getPointsByUserIdSql)) {
             preparedStatement.setLong(1, userId);
@@ -349,7 +344,7 @@ public class ChatTable implements ChatTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get points by userId: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return points;
@@ -363,8 +358,8 @@ public class ChatTable implements ChatTableInterface {
      */
     @Override
     public int getPointsByUserName(@Nonnull String userName) {
-        Connection connection = DatabaseHandler.openConnection();
         int points = -1;
+        Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getPointsByUserNameSql)) {
             preparedStatement.setString(1, userName);
@@ -375,46 +370,45 @@ public class ChatTable implements ChatTableInterface {
         } catch (SQLException e) {
             System.out.println("Failed to get points by userName: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
         return points;
     }
 
+    @Nullable
     @Override
-    public void updateValentine(long userId, @Nonnull String newValentine) {
-        Connection connection = DatabaseHandler.openConnection();
-        PreparedStatement updateValentine = DatabaseHandler.prepareStatement(connection, updateValentineSql);
+    public String getPartnerById(long userId) {
+        String partner = null;
+        Connection connection = openConnection();
 
-        try {
-            updateValentine.setString(1, newValentine);
-            updateValentine.setLong(2, userId);
-            updateValentine.execute();
-        } catch (SQLException e) {
-            System.out.println("Failed to update valentine: " + e.getMessage());
-        } finally {
-            DatabaseHandler.closeStatement(updateValentine);
-            DatabaseHandler.closeConnection(connection);
-        }
-    }
-
-    @Nonnull
-    public String getValentineById(long userId) {
-        Connection connection = DatabaseHandler.openConnection();
-        String valentine = "";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(getValentineSql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getPartnerSql)) {
             preparedStatement.setLong(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                valentine = resultSet.getString(COLUMN_VALENTINE);
+                partner = resultSet.getString(COLUMN_PARTNER);
             }
         } catch (SQLException e) {
             System.out.println("Failed to get points by userId: " + e.getMessage());
         } finally {
-            DatabaseHandler.closeConnection(connection);
+            closeConnection(connection);
         }
 
-        return valentine;
+        return partner;
+    }
+
+    @Override
+    public void updatePartner(long userId, @Nonnull String newPartner) {
+        Connection connection = openConnection();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updatePartnerSql)) {
+            preparedStatement.setString(1, newPartner);
+            preparedStatement.setLong(2, userId);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            System.out.println("Failed to update partner: " + e.getMessage());
+        } finally {
+            closeConnection(connection);
+        }
     }
 }

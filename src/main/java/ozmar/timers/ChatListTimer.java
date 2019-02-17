@@ -40,11 +40,9 @@ public class ChatListTimer {
                 }
 
                 if (userList != null && !userList.getUsers().isEmpty()) {
-                    System.out.print("Storing " + userList.getUsers().size() + " users");
+                    System.out.print("Storing " + userList.getUsers().size() + " users ");
                     db.addUserList(userList.getUsers());
                 }
-
-                System.out.println();
             }
 
             System.out.println();

@@ -4,6 +4,7 @@ import com.github.twitch4j.helix.domain.User;
 import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +31,8 @@ public interface ChatTableInterface {
 
     int getPointsByUserName(@Nonnull String userName);
 
-    void updateValentine(long userId, @Nonnull String newValentine);
+    void updatePartner(long userId, @Nonnull String newPartner);
 
-    @Nonnull
-    String getValentineById(long userId);
+    @Nullable
+    String getPartnerById(long userId);
 }
