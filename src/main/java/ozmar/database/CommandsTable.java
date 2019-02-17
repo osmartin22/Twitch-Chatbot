@@ -36,27 +36,20 @@ public class CommandsTable extends Table implements CommandsTableInterface {
 
     private static final String updateCommandUsageSql =
             "UPDATE " + COMMANDS_TABLE +
-                    " SET " +
-                    COLUMN_COMMAND_USAGE + " = ? " +
-                    " WHERE " +
-                    COLUMN_COMMAND_ID + " = ?";
+                    " SET " + COLUMN_COMMAND_USAGE + " = ? " +
+                    " WHERE " + COLUMN_COMMAND_ID + " = ?";
 
     public CommandsTable() {
-
+        createTable(CREATE_COMMANDS_TABLE);
+        initializeCommands();
     }
 
-    @Nonnull
-    @Override
-    public String getCreateTableSql() {
-        return CREATE_COMMANDS_TABLE;
-    }
 
     /**
      * Meant for first time use only
      * Creates and inserts a List of Commands to the table from the given text file
      */
-    @Override
-    public void initializeCommands() {
+    private void initializeCommands() {
         // File is assumed to be in the correct format
         List<Command> commandList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader("C:\\TwitchBotFiles\\commands.txt"))) {
@@ -70,11 +63,6 @@ public class CommandsTable extends Table implements CommandsTableInterface {
             System.out.println("Failed opening commands file: " + e.getMessage());
         }
         insertCommandsList(commandList);
-    }
-
-    @Override
-    public void createTable() {
-        super.createTable();
     }
 
     /**

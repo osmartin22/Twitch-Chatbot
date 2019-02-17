@@ -10,55 +10,24 @@ import ozmar.user.ChatUser;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
 public class DatabaseHandler implements DatabaseHandlerInterface {
 
-    private static final String DB_URL = "jdbc:sqlite:C:\\Databases\\TwitchBot.db";
-
     private CommandsTableInterface commandsTable;
     private WordCountTableInterface wordCountTable;
     private ChatTableInterface chatTable;
-
 
     public DatabaseHandler(CommandsTableInterface commandsTable, WordCountTableInterface wordCountTable,
                            ChatTableInterface chatTable) {
         this.commandsTable = commandsTable;
         this.wordCountTable = wordCountTable;
         this.chatTable = chatTable;
-
-        initializeDb();
-    }
-
-    private void initializeDb() {
-
-        try (Connection connection = DriverManager.getConnection(DB_URL);
-             Statement statement = connection.createStatement()) {
-
-            statement.execute(commandsTable.getCreateTableSql());
-            statement.execute(wordCountTable.getCreateTableSql());
-            statement.execute(chatTable.getCreateTableSql());
-
-            if (getCommands().isEmpty()) {
-                initializeCommandsTable();
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Failed to create connection " + e.getMessage());
-        }
     }
 
 
     // CommandsTable
-    private void initializeCommandsTable() {
-        commandsTable.initializeCommands();
-    }
-
     @Override
     public List<Command> getCommands() {
         return commandsTable.queryCommands();

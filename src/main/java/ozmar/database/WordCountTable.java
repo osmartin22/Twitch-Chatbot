@@ -25,10 +25,8 @@ public class WordCountTable extends Table implements WordCountTableInterface {
 
     private static final String updateCountSql =
             "UPDATE " + WORD_COUNT_TABLE +
-                    " SET " +
-                    COLUMN_COUNT + " = " + COLUMN_COUNT + " + ? " +
-                    " WHERE " +
-                    COLUMN_WORD + " = ?";
+                    " SET " + COLUMN_COUNT + " = " + COLUMN_COUNT + " + ? " +
+                    " WHERE " + COLUMN_WORD + " = ?";
 
     private static final String insertWordAndCountSql =
             "INSERT OR IGNORE INTO " + WORD_COUNT_TABLE + " ( " +
@@ -36,20 +34,13 @@ public class WordCountTable extends Table implements WordCountTableInterface {
                     COLUMN_COUNT + ") " +
                     " VALUES (?,  ? )";
     private static final String getSpecificWordCountSql =
-            "SELECT " + COLUMN_COUNT +
-                    " FROM " + WORD_COUNT_TABLE +
+            "SELECT " + COLUMN_COUNT + " FROM " + WORD_COUNT_TABLE +
                     " WHERE " + COLUMN_WORD + " = ?";
 
-
     public WordCountTable() {
-
+        createTable(CREATE_WORD_COUNT_TABLE);
     }
 
-    @Nonnull
-    @Override
-    public String getCreateTableSql() {
-        return CREATE_WORD_COUNT_TABLE;
-    }
 
     /**
      * Gets all the data in the table

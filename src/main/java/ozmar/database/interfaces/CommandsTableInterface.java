@@ -8,11 +8,6 @@ import java.util.List;
 
 public interface CommandsTableInterface {
 
-    @Nonnull
-    String getCreateTableSql();
-
-    void initializeCommands();
-
     @Nullable
     List<Command> queryCommands();
 

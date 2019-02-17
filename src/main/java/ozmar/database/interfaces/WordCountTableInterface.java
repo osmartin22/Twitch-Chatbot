@@ -6,9 +6,6 @@ import java.util.Map;
 
 public interface WordCountTableInterface {
 
-    @Nonnull
-    String getCreateTableSql();
-
     @Nullable
     Map<String, Integer> queryWordCount();
 

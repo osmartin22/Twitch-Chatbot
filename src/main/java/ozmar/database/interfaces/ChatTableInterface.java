@@ -10,9 +10,6 @@ import java.util.Map;
 
 public interface ChatTableInterface {
 
-    @Nonnull
-    String getCreateTableSql();
-
     long getUserId(@Nonnull String userName);
 
     void checkIfNameExists(@Nonnull List<String> list);

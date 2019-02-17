@@ -25,8 +25,8 @@ public class ChatTable extends Table implements ChatTableInterface {
     private static final String COLUMN_POINTS = "points";
     private static final String COLUMN_PARTNER = "partner";
 
-    private static final int RANDOM_POINTS_RANGE_START = 3;
-    private static final int RANDOM_POINTS_RANGE_END = 10;
+    private static final int RANDOM_POINTS_RANGE_START = 1;
+    private static final int RANDOM_POINTS_RANGE_END = 5;
 
     private static final String CREATE_CHAT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE + " (" +
@@ -94,25 +94,14 @@ public class ChatTable extends Table implements ChatTableInterface {
                     " WHERE " + COLUMN_USER_ID + " = ?";
 
     public ChatTable() {
-
+        createTable(CREATE_CHAT_TABLE);
     }
+
 
     /**
-     * get the name of the table
-     *
-     * @return String
+     * @param userName name of the desired user to get userId
+     * @return long
      */
-    @Nonnull
-    @Override
-    public String getCreateTableSql() {
-        return CREATE_CHAT_TABLE;
-    }
-
-    @Override
-    public void createTable() {
-        super.createTable();
-    }
-
     @Override
     public long getUserId(@Nonnull String userName) {
         long userId = -1;
@@ -376,6 +365,10 @@ public class ChatTable extends Table implements ChatTableInterface {
         return points;
     }
 
+    /**
+     * @param userId id of the desired user
+     * @return String
+     */
     @Nullable
     @Override
     public String getPartnerById(long userId) {
@@ -397,6 +390,10 @@ public class ChatTable extends Table implements ChatTableInterface {
         return partner;
     }
 
+    /**
+     * @param userId     id of the desired user to update
+     * @param newPartner name to update column with
+     */
     @Override
     public void updatePartner(long userId, @Nonnull String newPartner) {
         Connection connection = openConnection();
