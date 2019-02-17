@@ -1,7 +1,7 @@
-package ozmar.database;
+package ozmar.database.tables;
 
 import com.github.twitch4j.helix.domain.User;
-import ozmar.database.interfaces.ChatTableInterface;
+import ozmar.database.tables.interfaces.ChatTableInterface;
 import ozmar.user.ChatUser;
 import ozmar.utils.RandomHelper;
 
@@ -159,7 +159,7 @@ public class ChatTable extends Table implements ChatTableInterface {
      * @param list list of Users to add/update in the table
      */
     @Override
-    public void addUsersToTable(@Nonnull List<User> list) {
+    public void addUserList(@Nonnull List<User> list) {
         updateNameAndPointsFromUserId(list);
         insertUserList(list);
         if (!list.isEmpty()) {
@@ -268,7 +268,7 @@ public class ChatTable extends Table implements ChatTableInterface {
      * @return int
      */
     @Override
-    public int getMessageCountByUserId(long userId) {
+    public int getMessageCount(long userId) {
         int count = -1;
         Connection connection = openConnection();
 
@@ -294,7 +294,7 @@ public class ChatTable extends Table implements ChatTableInterface {
      * @return int
      */
     @Override
-    public int getMessageCountByUserName(@Nonnull String userName) {
+    public int getMessageCount(@Nonnull String userName) {
         int count = -1;
         Connection connection = openConnection();
 
@@ -320,7 +320,7 @@ public class ChatTable extends Table implements ChatTableInterface {
      * @return int
      */
     @Override
-    public int getPointsByUserId(long userId) {
+    public int getPoints(long userId) {
         int points = -1;
         Connection connection = openConnection();
 
@@ -346,7 +346,7 @@ public class ChatTable extends Table implements ChatTableInterface {
      * @return int
      */
     @Override
-    public int getPointsByUserName(@Nonnull String userName) {
+    public int getPoints(@Nonnull String userName) {
         int points = -1;
         Connection connection = openConnection();
 
@@ -371,7 +371,7 @@ public class ChatTable extends Table implements ChatTableInterface {
      */
     @Nullable
     @Override
-    public String getPartnerById(long userId) {
+    public String getPartner(long userId) {
         String partner = null;
         Connection connection = openConnection();
 

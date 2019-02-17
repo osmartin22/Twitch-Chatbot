@@ -3,7 +3,7 @@ package ozmar.timers;
 import com.github.twitch4j.helix.domain.UserList;
 import org.apache.commons.collections4.ListUtils;
 import ozmar.api_calls.RequestChat;
-import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.setup.Bot;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class ChatListTimer {
             List<List<String>> partition = ListUtils.partition(userNameList, 100);
 
             // Remove names from the list if they exist in the database
-            db.checkIfNamesExist(userNameList);
+            db.getChatDao().checkIfNamesExist(userNameList);
             System.out.print("Fetching " + userNameList.size() + " users in " + partition.size() + " partitions: ");
 
             for (List<String> list : partition) {
@@ -41,7 +41,7 @@ public class ChatListTimer {
 
                 if (userList != null && !userList.getUsers().isEmpty()) {
                     System.out.print("Storing " + userList.getUsers().size() + " users ");
-                    db.addUserList(userList.getUsers());
+                    db.getChatDao().addUserList(userList.getUsers());
                 }
             }
 

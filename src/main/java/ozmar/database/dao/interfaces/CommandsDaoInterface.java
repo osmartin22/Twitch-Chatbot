@@ -1,14 +1,12 @@
-package ozmar.database.interfaces;
+package ozmar.database.dao.interfaces;
 
 import ozmar.commands.Command;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
-public interface CommandsTableInterface {
+public interface CommandsDaoInterface {
 
-    @Nullable
     List<Command> queryCommands();
 
     void insertCommand(@Nonnull Command command);

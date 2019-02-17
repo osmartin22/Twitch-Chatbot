@@ -1,4 +1,4 @@
-package ozmar.database.interfaces;
+package ozmar.database.dao.interfaces;
 
 import com.github.twitch4j.helix.domain.User;
 import ozmar.user.ChatUser;
@@ -8,15 +8,13 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public interface ChatTableInterface {
+public interface ChatDaoInterface {
 
     long getUserId(@Nonnull String userName);
 
-    void checkIfNameExists(@Nonnull List<String> list);
+    void addUserList(@Nonnull List<User> userList);
 
-    void addUsersToTable(@Nonnull List<User> list);
-
-    void insertUserList(@Nonnull List<User> list);
+    void checkIfNamesExist(@Nonnull List<String> list);
 
     void updatePoints(@Nonnull Map<Long, ChatUser> map);
 
@@ -28,8 +26,8 @@ public interface ChatTableInterface {
 
     int getPointsByUserName(@Nonnull String userName);
 
-    void updatePartner(long userId, @Nonnull String newPartner);
-
     @Nullable
     String getPartnerById(long userId);
+
+    void updatePartner(long userId, @Nonnull String newPartner);
 }

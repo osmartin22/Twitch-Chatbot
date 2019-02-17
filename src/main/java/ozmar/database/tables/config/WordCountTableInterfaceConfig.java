@@ -1,9 +1,9 @@
-package ozmar.database.config;
+package ozmar.database.tables.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ozmar.database.WordCountTable;
-import ozmar.database.interfaces.WordCountTableInterface;
+import ozmar.database.tables.WordCountTable;
+import ozmar.database.tables.interfaces.WordCountTableInterface;
 
 @Configuration
 public class WordCountTableInterfaceConfig {

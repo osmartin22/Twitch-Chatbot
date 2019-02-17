@@ -1,4 +1,4 @@
-package ozmar.database.interfaces;
+package ozmar.database.tables.interfaces;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,11 +10,11 @@ public interface WordCountTableInterface {
     Map<String, Integer> queryWordCount();
 
     @Nonnull
-    Map<String, Integer> getTop10Words();
+    Map<String, Integer> queryTop10Words();
 
-    int getSpecificWordCount(@Nonnull String word);
+    int querySpecificWordCount(@Nonnull String word);
 
-    void updateOrInsert(@Nonnull Map<String, Integer> map);
+    void updateOrInsertWordCount(@Nonnull Map<String, Integer> map);
 
     void clearTable();
 }

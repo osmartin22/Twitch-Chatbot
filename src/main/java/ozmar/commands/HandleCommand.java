@@ -6,7 +6,7 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
-import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.enums.CommandNumPermission;
 import ozmar.setup.Bot;
 import ozmar.utils.RandomHelper;
@@ -59,7 +59,7 @@ public class HandleCommand implements HandleCommandInterface {
         CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
 
         String result = "";
-        commandsList = db.getCommands();
+        commandsList = db.getCommandsDao().queryCommands();
         Command command = null;
 
         if (isCommandHelper(preCommand, 0, -1) && hasPermission(0, userPermission)) {
@@ -142,7 +142,7 @@ public class HandleCommand implements HandleCommandInterface {
 
         if (command != null) {
             command.incrementUsage();
-            db.updateCommandUsage(command);
+            db.getCommandsDao().updateCommandUsage(command);
         }
 
         System.out.println(result);
@@ -328,7 +328,7 @@ public class HandleCommand implements HandleCommandInterface {
     private String followageCommand(@Nonnull CommandEvent event) {
         List<String> usersInfoList = new ArrayList<>();
         String channelName = event.getSourceId();
-        long channelId = db.getUserId(channelName);
+        long channelId = db.getChatDao().getUserId(channelName);
         if (channelId == -1) {
             usersInfoList.add(channelName);
         }
@@ -336,7 +336,7 @@ public class HandleCommand implements HandleCommandInterface {
         String userToCheckName = (event.getCommand().trim().isEmpty()) ?
                 event.getUser().getName() : event.getCommand().trim().toLowerCase();
         long userToCheckId = (event.getCommand().trim().isEmpty()) ?
-                event.getUser().getId() : db.getUserId(userToCheckName);
+                event.getUser().getId() : db.getChatDao().getUserId(userToCheckName);
         if (userToCheckId == -1) {
             usersInfoList.add(userToCheckName);
         }
@@ -380,10 +380,10 @@ public class HandleCommand implements HandleCommandInterface {
         String result;
         if (word.isEmpty()) {
             result = String.format("The top 10 words used in my lifetime are %s",
-                    turnMapToString(db.getTop10Words()));
+                    turnMapToString(db.getWordCountDao().queryTop10Words()));
         } else {
 
-            int count = db.getSpecificWordCount(word);
+            int count = db.getWordCountDao().querySpecificWordCount(word);
             if (count == -1) {
                 count = 0;
             }
@@ -454,7 +454,7 @@ public class HandleCommand implements HandleCommandInterface {
      * Clears the table containing the count of words used in the database
      */
     private void clearWordCountCommand() {
-        db.clearWordCount();
+        db.getWordCountDao().clearTable();
         System.out.println("Cleared wordCountTable");
     }
 
@@ -471,10 +471,10 @@ public class HandleCommand implements HandleCommandInterface {
         String result;
 
         if (message.isEmpty()) {
-            count = db.getMessageCount(event.getUser().getId()) + 1;
+            count = db.getChatDao().getMessageCountByUserId(event.getUser().getId()) + 1;
             result = event.getUser().getName();
         } else {
-            count = db.getMessageCount(message);
+            count = db.getChatDao().getMessageCountByUserName(message);
             result = message;
         }
 
@@ -498,10 +498,10 @@ public class HandleCommand implements HandleCommandInterface {
         String result;
 
         if (message.isEmpty()) {
-            points = db.getPoints(event.getUser().getId());
+            points = db.getChatDao().getPointsByUserId(event.getUser().getId());
             result = event.getUser().getName();
         } else {
-            points = db.getPoints(message);
+            points = db.getChatDao().getPointsByUserName(message);
             result = message;
         }
 
@@ -586,7 +586,7 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         String newPartner = getRandomRecentChatter();
-        String oldPartner = db.getPartner(event.getUser().getId());
+        String oldPartner = db.getChatDao().getPartnerById(event.getUser().getId());
         String user = event.getUser().getName();
         String output;
 
@@ -596,7 +596,7 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         if (oldPartner == null) {
-            db.updatePartner(event.getUser().getId(), newPartner);
+            db.getChatDao().updatePartner(event.getUser().getId(), newPartner);
             if (newPartner.equals(botName)) {
                 output = String.format("%s, your partner is me MrDestructoid peepoWink", user);
             } else {
@@ -604,7 +604,7 @@ public class HandleCommand implements HandleCommandInterface {
             }
 
         } else if (!newPartner.equals(oldPartner)) {
-            db.updatePartner(event.getUser().getId(), newPartner);
+            db.getChatDao().updatePartner(event.getUser().getId(), newPartner);
             if (oldPartner.equals(botName)) {
                 output = String.format("%s how could you leave me for %s moon2A", user, newPartner);
             } else {
@@ -620,7 +620,7 @@ public class HandleCommand implements HandleCommandInterface {
 
     @Nonnull
     private String myPartnerCommand(@Nonnull CommandEvent event) {
-        String currPartner = db.getPartner(event.getUser().getId());
+        String currPartner = db.getChatDao().getPartnerById(event.getUser().getId());
         if (currPartner == null) {
             return String.format("%s, you do not have a partner, try !newpartner to get one",
                     event.getUser().getName());

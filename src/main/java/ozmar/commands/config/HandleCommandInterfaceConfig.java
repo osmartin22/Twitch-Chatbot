@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.HandleCommand;
 import ozmar.commands.interfaces.*;
-import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 
 @Configuration
 public class HandleCommandInterfaceConfig {

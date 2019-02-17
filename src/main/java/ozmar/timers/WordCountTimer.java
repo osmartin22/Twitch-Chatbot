@@ -2,7 +2,7 @@ package ozmar.timers;
 
 import ozmar.buffer.interfaces.ChatDataBufferInterface;
 import ozmar.buffer.interfaces.WordCountBufferInterface;
-import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.user.ChatUser;
 
 import java.util.Map;
@@ -28,11 +28,11 @@ public class WordCountTimer {
     public void startTimer() {
         final Runnable beeper = () -> {
             Map<String, Integer> wordCountMap = wordCountBuffer.getMap();
-            db.updateOrInsertWordCount(wordCountMap);
+            db.getWordCountDao().updateOrInsertWordCount(wordCountMap);
             wordCountBuffer.clearMap();
 
             Map<Long, ChatUser> chatUserMap = chatDataBuffer.getMap();
-            db.updatePoints(chatUserMap);
+            db.getChatDao().updatePoints(chatUserMap);
             chatDataBuffer.clearMap();
         };
 

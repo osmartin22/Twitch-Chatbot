@@ -1,6 +1,6 @@
-package ozmar.database;
+package ozmar.database.tables;
 
-import ozmar.database.interfaces.WordCountTableInterface;
+import ozmar.database.tables.interfaces.WordCountTableInterface;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +79,7 @@ public class WordCountTable extends Table implements WordCountTableInterface {
      */
     @Nonnull
     @Override
-    public Map<String, Integer> getTop10Words() {
+    public Map<String, Integer> queryTop10Words() {
         String sql = "SELECT " + COLUMN_WORD + ", " + COLUMN_COUNT +
                 " FROM " + WORD_COUNT_TABLE + " ORDER BY " + COLUMN_COUNT + " DESC LIMIT 10";
         Map<String, Integer> map = new LinkedHashMap<>();
@@ -102,7 +102,7 @@ public class WordCountTable extends Table implements WordCountTableInterface {
     }
 
     @Override
-    public int getSpecificWordCount(@Nonnull String word) {
+    public int querySpecificWordCount(@Nonnull String word) {
         int count = -1;
         Connection connection = openConnection();
 
@@ -128,7 +128,7 @@ public class WordCountTable extends Table implements WordCountTableInterface {
      * @param map map of words and count
      */
     @Override
-    public void updateOrInsert(@Nonnull Map<String, Integer> map) {
+    public void updateOrInsertWordCount(@Nonnull Map<String, Integer> map) {
         Connection connection = openConnectionCommitOff();
 
         try (PreparedStatement updatePreparedStatement = connection.prepareStatement(updateCountSql);

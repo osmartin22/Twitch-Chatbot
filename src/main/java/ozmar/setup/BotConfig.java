@@ -3,7 +3,7 @@ package ozmar.setup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.features.*;
 
 @Configuration

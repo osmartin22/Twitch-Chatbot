@@ -1,7 +1,7 @@
-package ozmar.database;
+package ozmar.database.tables;
 
 import ozmar.commands.Command;
-import ozmar.database.interfaces.CommandsTableInterface;
+import ozmar.database.tables.interfaces.CommandsTableInterface;
 import ozmar.enums.CommandNumPermission;
 
 import javax.annotation.Nonnull;

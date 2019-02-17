@@ -1,4 +1,4 @@
-package ozmar.database;
+package ozmar.database.tables;
 
 import javax.annotation.Nonnull;
 import java.sql.Connection;

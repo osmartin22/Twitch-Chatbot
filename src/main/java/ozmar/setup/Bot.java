@@ -9,7 +9,7 @@ import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
 import ozmar.api_calls.helix.HelixCommands;
 import ozmar.commands.Command;
-import ozmar.database.interfaces.DatabaseHandlerInterface;
+import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.features.*;
 
 import java.io.InputStream;
@@ -67,7 +67,7 @@ public class Bot {
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
-        for (Command command : db.getCommands()) {
+        for (Command command : db.getCommandsDao().queryCommands()) {
             clientBuilder = clientBuilder.withCommandTrigger(command.getCommand());
         }
 
@@ -96,7 +96,7 @@ public class Bot {
         twitchClient.getEventManager().registerListener(channelNotificationOnGiftSubscription);
         twitchClient.getEventManager().registerListener(channelNotificationOnSubscription);
         twitchClient.getEventManager().registerListener(onChatChannelMessage);
-        twitchClient.getEventManager().registerListener(onCommandReceived);
+//        twitchClient.getEventManager().registerListener(onCommandReceived);
     }
 
     private void loadConfiguration() {
