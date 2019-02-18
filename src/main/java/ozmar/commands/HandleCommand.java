@@ -13,6 +13,7 @@ import ozmar.utils.RandomHelper;
 import ozmar.utils.TimeHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class HandleCommand implements HandleCommandInterface {
      *
      * @return String
      */
-    @Nonnull
+    @Nullable
     @Override
     public String decideCommand() {
         String preCommand = commandEvent.getCommandPrefix();
@@ -78,7 +79,7 @@ public class HandleCommand implements HandleCommandInterface {
             command = commandsList.get(3);
             result = uptimeCommand(commandEvent);
             System.out.println(result);
-            result = "";
+            result = null;
 
         } else if (isCommandHelper(preCommand, 4, -1) && hasPermission(4, userPermission)) {
             command = commandsList.get(4);
@@ -88,12 +89,12 @@ public class HandleCommand implements HandleCommandInterface {
             command = commandsList.get(5);
             result = followageCommand(commandEvent);    // TODO: OFF MAYBE ?
             System.out.println(result);
-            result = "";
+            result = null;
 
         } else if (isCommandHelper(preCommand, 6, 7) && hasPermission(6, userPermission)) {
             command = commandsList.get(6);
             if (!commandEvent.getUser().getName().equals("namedauto")) {
-                return "";
+                return null;
             }
             result = wordCountCommand(commandEvent);
 
@@ -108,7 +109,7 @@ public class HandleCommand implements HandleCommandInterface {
         } else if (isCommandHelper(preCommand, 11, 12) && hasPermission(11, userPermission)) {
             command = commandsList.get(11);
             if (!commandEvent.getUser().getName().equals("namedauto")) {
-                return "";
+                return null;
             }
             result = messageCountCommand(commandEvent);
 
@@ -124,7 +125,7 @@ public class HandleCommand implements HandleCommandInterface {
             command = commandsList.get(16);
             result = flipCoinCommand(commandEvent);
             System.out.println(result);
-            result = "";
+            result = null;
 
         } else if (isCommandHelper(preCommand, 18, 19) && hasPermission(18, userPermission)) {
             command = commandsList.get(18);
@@ -202,18 +203,18 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         if (sides == 0 || dieCount <= 0) {
-            return "";
+            return String.format("%s, you rolled a 0", event.getUser().getName());
         }
 
         System.out.println("Sides: " + sides + " Dies: " + dieCount);
-        dice.setSides(sides);
 
+        dice.setSides(sides);
         if (sides == 20 && dieCount == 1) {
             output += diceRollHelperD20();
         } else {
             Integer result = dice.rollNDie(dieCount);
             if (result == null) {
-                return "";
+                return somethingWentWrong(event.getUser().getName());
             }
 
             output += result;
@@ -261,10 +262,15 @@ public class HandleCommand implements HandleCommandInterface {
      * @param command command
      * @return String
      */
-    @Nonnull
+    @Nullable
     private String spitCommand(@Nonnull CommandEvent event, @Nonnull Command command) {
+        String randomChatter = getRandomRecentChatter();
+        if (randomChatter == null) {
+            return null;
+        }
+
         return String.format(":comet: moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
-                event.getUser().getName(), getRandomRecentChatter(), (command.getUsage() + 1));
+                event.getUser().getName(), randomChatter, (command.getUsage() + 1));
     }
 
     /**
@@ -306,7 +312,7 @@ public class HandleCommand implements HandleCommandInterface {
             result = calculator.parse();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "";
+            return somethingWentWrong(event.getUser().getName());
         }
 
         // Round to n decimal places
@@ -325,6 +331,7 @@ public class HandleCommand implements HandleCommandInterface {
      * @return String
      */
     @Nonnull
+    // TODO: FIX EXCEPTION ON FAKE NAMES
     private String followageCommand(@Nonnull CommandEvent event) {
         List<String> usersInfoList = new ArrayList<>();
         String channelName = event.getSourceId();
@@ -333,8 +340,14 @@ public class HandleCommand implements HandleCommandInterface {
             usersInfoList.add(channelName);
         }
 
-        String userToCheckName = (event.getCommand().trim().isEmpty()) ?
-                event.getUser().getName() : event.getCommand().trim().toLowerCase();
+        String name = event.getCommand().trim();
+        String userToCheckName;
+        if (name.isEmpty()) {
+            userToCheckName = event.getUser().getName();
+        } else {
+            userToCheckName = getFirstWord(name);
+        }
+
         long userToCheckId = (event.getCommand().trim().isEmpty()) ?
                 event.getUser().getId() : db.getChatDao().getUserId(userToCheckName);
         if (userToCheckId == -1) {
@@ -355,8 +368,7 @@ public class HandleCommand implements HandleCommandInterface {
 
         // Not a real user name
         if (userToCheckId == -1) {
-            System.out.println("Not a real name");
-            return "";
+            return String.format("%s, %s does not exist", event.getUser().getName(), userToCheckName);
         }
 
         FollowList followList = Bot.helixCommands.getFollowers(userToCheckId, channelId, null, 1);
@@ -375,22 +387,23 @@ public class HandleCommand implements HandleCommandInterface {
      * @return String
      */
     @Nonnull
+    // TODO: Change get top 10 to another command
     private String wordCountCommand(@Nonnull CommandEvent event) {
-        String word = event.getCommand().trim();
         String result;
-        if (word.isEmpty()) {
-            result = String.format("The top 10 words used in my lifetime are %s",
-                    turnMapToString(db.getWordCountDao().queryTop10Words()));
-        } else {
+        String word = event.getCommand().trim();
 
+        if (word.isEmpty()) {
+            result = String.format("%s, try again using !wordcount <word>", event.getUser().getName());
+        } else {
+            word = getFirstWord(word);
             int count = db.getWordCountDao().querySpecificWordCount(word);
             if (count == -1) {
                 count = 0;
             }
 
             word = bannedWordsFilter(word);
-            if (word.isEmpty()) {
-                return "";
+            if (word == null) {
+                return "Can't get me moon2DEV";
             }
 
             result = String.format("%s, %s has been used %s times in my lifetime",
@@ -401,7 +414,8 @@ public class HandleCommand implements HandleCommandInterface {
     }
 
     // TODO: Finish before making command public
-    private String bannedWordsFilter(String word) {
+    @Nullable
+    private String bannedWordsFilter(@Nonnull String word) {
         String temp = word.toLowerCase();
         if (word.equals("ResidentSleeper")) {
             word = insertSpecialChars(word);
@@ -413,7 +427,7 @@ public class HandleCommand implements HandleCommandInterface {
             word = insertSpecialChars(word);
 
         } else if (temp.startsWith("nigg")) {
-            return "";
+            return null;
 
         } else if (temp.equals("retard")) {
             word = word + " D: ";
@@ -467,22 +481,26 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String messageCountCommand(@Nonnull CommandEvent event) {
         int count;
-        String message = event.getCommand().trim().toLowerCase();
         String result;
+        String message = event.getCommand().trim().toLowerCase();
 
         if (message.isEmpty()) {
-            count = db.getChatDao().getMessageCountByUserId(event.getUser().getId()) + 1;
-            result = event.getUser().getName();
+            count = db.getChatDao().getMessageCount(event.getUser().getId()) + 1;
+            if (count != -1) {
+                return String.format("%s, you have sent %s messages", event.getUser().getName(), count);
+            }
         } else {
-            count = db.getChatDao().getMessageCountByUserName(message);
             result = message;
+            message = getFirstWord(message);
+            count = db.getChatDao().getMessageCount(message);
+            if (count != -1) {
+                return String.format("%s has sent %s messages ", result, count);
+            }
+
+            return String.format("%s, %s does not exist in my database", event.getUser().getName(), message);
         }
 
-        if (count != -1) {
-            return String.format("%s has sent %s messages ", result, count);
-        }
-
-        return "";
+        return somethingWentWrong(event.getUser().getName());
     }
 
     /**
@@ -495,21 +513,23 @@ public class HandleCommand implements HandleCommandInterface {
     private String pointsCommand(@Nonnull CommandEvent event) {
         int points;
         String message = event.getCommand().trim().toLowerCase();
-        String result;
 
         if (message.isEmpty()) {
-            points = db.getChatDao().getPointsByUserId(event.getUser().getId());
-            result = event.getUser().getName();
+            points = db.getChatDao().getPoints(event.getUser().getId());
+            if (points != -1) {
+                return String.format("%s, you have %s points", event.getUser().getName(), points);
+            }
         } else {
-            points = db.getChatDao().getPointsByUserName(message);
-            result = message;
+            message = getFirstWord(message);
+            points = db.getChatDao().getPoints(message);
+            if (points != -1) {
+                return String.format("%s has %s points  ", message, points);
+            }
+
+            return String.format("%s, %s does not exist in my database", event.getUser().getName(), message);
         }
 
-        if (points != -1) {
-            return String.format("%s has %s points  ", result, points);
-        }
-
-        return "";
+        return somethingWentWrong(event.getUser().getName());
     }
 
     /**
@@ -522,15 +542,14 @@ public class HandleCommand implements HandleCommandInterface {
     private String catchPokeCommand(@Nonnull CommandEvent event) {
         String pokeName = event.getCommand().trim().toLowerCase();
 
-        System.out.println("A" + pokeName + "B");
-
-        if (pokeName.contains(" ")) {
-
-            pokeName = pokeName.substring(0, pokeName.indexOf(" "));
+        if (pokeName.length() < 3) { // Shortest Pokemon name is 3 letters long (Mew, Muk)
+            pokeName = null;
+        } else {
+            pokeName = getFirstWord(pokeName);
         }
 
         int initializeResult;
-        if (!pokeName.isEmpty()) {
+        if (pokeName != null) {
             initializeResult = catchPoke.initialize(pokeName);
         } else {
             // Only 807 pokemon exist currently
@@ -539,13 +558,13 @@ public class HandleCommand implements HandleCommandInterface {
 
         if (initializeResult != -1) {
             String result = catchPoke.attemptCatch();
-            if (result.equals("")) {
-                return "";
+            if (result == null) {
+                return somethingWentWrong(event.getUser().getName());
             }
             return event.getUser().getName() + result;
         }
 
-        return "";
+        return String.format("%s, that is not a Pokemon, try !catchpoke <optionalName>", event.getUser().getName());
     }
 
     /**
@@ -560,6 +579,7 @@ public class HandleCommand implements HandleCommandInterface {
             return String.format("%s flipped heads", event.getUser().getName());
 
         }
+
         return String.format("%s flipped tails", event.getUser().getName());
     }
 
@@ -570,19 +590,21 @@ public class HandleCommand implements HandleCommandInterface {
      * @return String
      */
     @Nonnull
+    // TODO: FIX RETURN
     private String openLootCommand(@Nonnull CommandEvent event) {
         String result = lootBox.getLoot();
         if (result.isEmpty()) {
-            return "";
+            return somethingWentWrong(event.getUser().getName());
         }
 
         return event.getUser().getName() + result;
     }
 
+    // TODO: FIX RETURN
     @Nonnull
     private String newPartnerCommand(@Nonnull CommandEvent event) {
         if (recentChatters.getRecentChatters().size() == 0) {
-            return "";
+            return somethingWentWrong(event.getUser().getName());
         }
 
         String newPartner = getRandomRecentChatter();
@@ -629,10 +651,42 @@ public class HandleCommand implements HandleCommandInterface {
         return String.format("%s, your current partner is %s pepeBASS", event.getUser().getName(), currPartner);
     }
 
-    @Nonnull
+    @Nullable
     private String getRandomRecentChatter() {
         Map<String, Long> map = recentChatters.getRecentChatters();
-        Object randomName = map.entrySet().toArray()[new Random().nextInt(map.entrySet().toArray().length)];
-        return randomName.toString().substring(0, randomName.toString().indexOf("="));
+        if (map.isEmpty()) {
+            System.out.println("RECENT CHATTERS IS EMPTY");
+            return null;
+
+        } else {
+            Object randomName = map.entrySet().toArray()[new Random().nextInt(map.entrySet().toArray().length)];
+            return randomName.toString().substring(0, randomName.toString().indexOf("="));
+        }
+    }
+
+    /**
+     * gets the first word of a string
+     *
+     * @param word string to parse
+     * @return String
+     */
+    @Nonnull
+    private String getFirstWord(@Nonnull String word) {
+        if (word.contains(" ")) {
+            word = word.substring(0, word.indexOf(" "));
+        }
+
+        return word;
+    }
+
+    /**
+     * Returns default error message
+     *
+     * @param userName name of the user that used the command
+     * @return String
+     */
+    @Nonnull
+    private String somethingWentWrong(@Nonnull String userName) {
+        return String.format("%s, something went wrong :(", userName);
     }
 }

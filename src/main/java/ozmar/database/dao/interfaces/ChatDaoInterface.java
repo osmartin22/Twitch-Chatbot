@@ -18,13 +18,13 @@ public interface ChatDaoInterface {
 
     void updatePoints(@Nonnull Map<Long, ChatUser> map);
 
-    int getMessageCountByUserId(long userId);
+    int getMessageCount(long userId);
 
-    int getMessageCountByUserName(@Nonnull String userName);
+    int getMessageCount(@Nonnull String userName);
 
-    int getPointsByUserId(long userId);
+    int getPoints(long userId);
 
-    int getPointsByUserName(@Nonnull String userName);
+    int getPoints(@Nonnull String userName);
 
     @Nullable
     String getPartnerById(long userId);

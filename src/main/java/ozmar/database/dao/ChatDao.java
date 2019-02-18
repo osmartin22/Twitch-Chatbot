@@ -43,22 +43,22 @@ public class ChatDao implements ChatDaoInterface {
     }
 
     @Override
-    public int getMessageCountByUserId(long userId) {
+    public int getMessageCount(long userId) {
         return chatTable.getMessageCount(userId);
     }
 
     @Override
-    public int getMessageCountByUserName(@Nonnull String userName) {
+    public int getMessageCount(@Nonnull String userName) {
         return chatTable.getMessageCount(userName);
     }
 
     @Override
-    public int getPointsByUserId(long userId) {
+    public int getPoints(long userId) {
         return chatTable.getPoints(userId);
     }
 
     @Override
-    public int getPointsByUserName(@Nonnull String userName) {
+    public int getPoints(@Nonnull String userName) {
         return chatTable.getPoints(userName);
     }
 

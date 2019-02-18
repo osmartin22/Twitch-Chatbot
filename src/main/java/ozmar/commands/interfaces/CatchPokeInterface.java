@@ -1,6 +1,6 @@
 package ozmar.commands.interfaces;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface CatchPokeInterface {
 
@@ -8,6 +8,6 @@ public interface CatchPokeInterface {
 
     int initialize(String pokeName);
 
-    @Nonnull
+    @Nullable
     String attemptCatch();
 }

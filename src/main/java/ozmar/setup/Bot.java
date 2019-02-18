@@ -96,7 +96,7 @@ public class Bot {
         twitchClient.getEventManager().registerListener(channelNotificationOnGiftSubscription);
         twitchClient.getEventManager().registerListener(channelNotificationOnSubscription);
         twitchClient.getEventManager().registerListener(onChatChannelMessage);
-//        twitchClient.getEventManager().registerListener(onCommandReceived);
+        twitchClient.getEventManager().registerListener(onCommandReceived);
     }
 
     private void loadConfiguration() {

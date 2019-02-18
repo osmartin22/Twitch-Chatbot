@@ -26,7 +26,7 @@ public class OnCommandReceived {
             handleCommand.setCommandEvent(event);
             String output = handleCommand.decideCommand();
 
-            if (!output.isEmpty()) {
+            if (output != null) {
                 event.respondToUser(output);
             }
             System.out.println(event);

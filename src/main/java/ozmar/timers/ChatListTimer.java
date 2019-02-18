@@ -34,8 +34,12 @@ public class ChatListTimer {
                 UserList userList;
                 try {
                     userList = Bot.helixCommands.getUsersList(null, list);
-                } catch (Throwable e) {
-                    System.out.println("Timed out, trying again " + e.getMessage());
+                } catch (Exception e) {
+                    /* TODO: From testing, the api call doesn't fail, it's just that the call
+                        sometimes takes longer than the timeout and is registered as a timeout exception
+                        but the result is received a little bit later
+                     */
+                    System.out.println("Getting user info timed out" + e.getMessage());
                     continue;   // Skip list, will be called the next time the timer occurs
                 }
 

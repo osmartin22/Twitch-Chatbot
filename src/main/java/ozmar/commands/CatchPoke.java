@@ -29,7 +29,7 @@ public class CatchPoke implements CatchPokeInterface {
      */
     @Override
     public int initialize(int pokeId) {
-        return initialize(pokeId, "");
+        return initialize(pokeId, null);
     }
 
     /**
@@ -45,13 +45,13 @@ public class CatchPoke implements CatchPokeInterface {
     }
 
     /**
-     * @param pokeId
+     * @param pokeId id of the pokemon
      * @param pokeName name of the pokemon
      * @return int
      */
-    private int initialize(int pokeId, @Nonnull String pokeName) {
+    private int initialize(int pokeId, String pokeName) {
         try {
-            pokemonSpecies = (pokeId > 0) ? PokemonSpecies.getById(pokeId) : PokemonSpecies.getByName(pokeName);
+            pokemonSpecies = (pokeName == null) ? PokemonSpecies.getById(pokeId) : PokemonSpecies.getByName(pokeName);
             if (pokemonSpecies == null) {
                 return -1;
             }
@@ -75,17 +75,17 @@ public class CatchPoke implements CatchPokeInterface {
      *
      * @return String
      */
-    @Nonnull
+    @Nullable
     @Override
     public String attemptCatch() {
         String pokeGender = getPokeGender();
         if (pokeGender == null) {
-            return "";
+            return null;
         }
         String natureName = nature.getName();
         String pokeName = StringUtils.capitalize(pokemon.getName());
 
-        String output = "";
+        String output = null;
         boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 15;
         if (isShiny) {
             output = "shiny ";
@@ -93,9 +93,9 @@ public class CatchPoke implements CatchPokeInterface {
 
         output += natureName + pokeGender + pokeName;
         if (decideCapture()) {
-            output = " caught a " + output;
+            output = String.format(" caught a %s", output);
         } else {
-            output = " let a " + output + " get away";
+            output = String.format(" let a %s get away", output);
         }
 
         return output;
