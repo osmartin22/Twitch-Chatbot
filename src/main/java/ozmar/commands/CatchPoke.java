@@ -45,7 +45,7 @@ public class CatchPoke implements CatchPokeInterface {
     }
 
     /**
-     * @param pokeId id of the pokemon
+     * @param pokeId   id of the pokemon
      * @param pokeName name of the pokemon
      * @return int
      */
@@ -85,7 +85,7 @@ public class CatchPoke implements CatchPokeInterface {
         String natureName = nature.getName();
         String pokeName = StringUtils.capitalize(pokemon.getName());
 
-        String output = null;
+        String output = "";
         boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 15;
         if (isShiny) {
             output = "shiny ";

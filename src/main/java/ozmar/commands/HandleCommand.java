@@ -93,9 +93,9 @@ public class HandleCommand implements HandleCommandInterface {
 
         } else if (isCommandHelper(preCommand, 6, 7) && hasPermission(6, userPermission)) {
             command = commandsList.get(6);
-            if (!commandEvent.getUser().getName().equals("namedauto")) {
-                return null;
-            }
+//            if (!commandEvent.getUser().getName().equals("namedauto")) {
+//                return null;
+//            }
             result = wordCountCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 8, 9) && hasPermission(8, userPermission)) {
@@ -108,9 +108,9 @@ public class HandleCommand implements HandleCommandInterface {
 
         } else if (isCommandHelper(preCommand, 11, 12) && hasPermission(11, userPermission)) {
             command = commandsList.get(11);
-            if (!commandEvent.getUser().getName().equals("namedauto")) {
-                return null;
-            }
+//            if (!commandEvent.getUser().getName().equals("namedauto")) {
+//                return null;
+//            }
             result = messageCountCommand(commandEvent);
 
         } else if (isCommandHelper(preCommand, 13, -1) && hasPermission(13, userPermission)) {
@@ -269,6 +269,12 @@ public class HandleCommand implements HandleCommandInterface {
             return null;
         }
 
+        // TODO: Currently people can get themselves
+//        if(randomChatter.equals(event.getUser().getName())) {
+//            return String.format(":comet: moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
+//                    event.getUser().getName(), randomChatter, (command.getUsage() + 1));
+//        }
+
         return String.format(":comet: moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
                 event.getUser().getName(), randomChatter, (command.getUsage() + 1));
     }
@@ -283,10 +289,17 @@ public class HandleCommand implements HandleCommandInterface {
     private String uptimeCommand(@Nonnull CommandEvent event) {
         String channelName = event.getSourceId();
         UserList userList = Bot.helixCommands.getUsersList(null, Collections.singletonList(channelName));
+        if (userList == null) {
+            return somethingWentWrong(event.getUser().getName());
+        }
 
         Long channelId = userList.getUsers().get(0).getId();
         StreamList streamList = Bot.helixCommands.getStreams(null, null, null, null,
                 null, null, Collections.singletonList(channelId), null);
+        if (streamList == null) {
+            return somethingWentWrong(event.getUser().getName());
+        }
+
 
         if (!streamList.getStreams().isEmpty()) {
             System.out.println(streamList.getStreams().get(0).getStartedAt());
@@ -355,7 +368,7 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         UserList userList = (!usersInfoList.isEmpty()) ? Bot.helixCommands.getUsersList(null, usersInfoList) : null;
-        if (userList != null) {
+        if (userList != null && !userList.getUsers().isEmpty()) {
             if (channelId == -1) {
                 channelId = userList.getUsers().get(0).getId();
                 if (userToCheckId == -1) {
@@ -372,6 +385,10 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         FollowList followList = Bot.helixCommands.getFollowers(userToCheckId, channelId, null, 1);
+        if (followList == null) {
+            return String.format("%s, %s does not exist", event.getUser().getName(), userToCheckName);
+        }
+
         if (!followList.getFollows().isEmpty()) {
             return String.format("%s has been following %s since %s",
                     userToCheckName, channelName, followList.getFollows().get(0).getFollowedAt());
@@ -403,7 +420,7 @@ public class HandleCommand implements HandleCommandInterface {
 
             word = bannedWordsFilter(word);
             if (word == null) {
-                return "Can't get me moon2DEV";
+                return String.format("%s, Can't get me moon2DEV", event.getUser().getName());
             }
 
             result = String.format("%s, %s has been used %s times in my lifetime",
@@ -413,23 +430,40 @@ public class HandleCommand implements HandleCommandInterface {
         return result;
     }
 
-    // TODO: Finish before making command public
+    @Nonnull
+    private Set<String> bannedWords() {
+        Set<String> set = new HashSet<>();
+        set.add("residentsleeper");
+        set.add("cirSlain");
+        set.add("narostaryn");
+        set.add("meguface");
+        set.add("cmonbruh");
+        set.add(":memo:");
+        set.add("nam");
+        set.add("seal");
+        set.add("tdogwiz");
+        set.add("c9");
+        set.add("yiff");
+        set.add("pikagirl");
+        set.add("overwatch");
+        set.add("ark");
+        set.add("arc");
+        set.add("kirby");
+        set.add("seppuku");
+        set.add("staryn");
+        return set;
+    }
+
     @Nullable
     private String bannedWordsFilter(@Nonnull String word) {
-        String temp = word.toLowerCase();
-        if (word.equals("ResidentSleeper")) {
+        String lowerCase = word.toLowerCase();
+        if (bannedWords().contains(lowerCase)) {
             word = insertSpecialChars(word);
 
-        } else if (temp.equals("nam ")) {
-            word = insertSpecialChars(word);
-
-        } else if (temp.equals("overwatch")) {
-            word = insertSpecialChars(word);
-
-        } else if (temp.startsWith("nigg")) {
+        } else if (lowerCase.startsWith("nigg") || lowerCase.startsWith("fag")) {
             return null;
 
-        } else if (temp.equals("retard")) {
+        } else if (lowerCase.equals("retard")) {
             word = word + " D: ";
         }
 
@@ -481,7 +515,6 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String messageCountCommand(@Nonnull CommandEvent event) {
         int count;
-        String result;
         String message = event.getCommand().trim().toLowerCase();
 
         if (message.isEmpty()) {
@@ -490,11 +523,10 @@ public class HandleCommand implements HandleCommandInterface {
                 return String.format("%s, you have sent %s messages", event.getUser().getName(), count);
             }
         } else {
-            result = message;
             message = getFirstWord(message);
             count = db.getChatDao().getMessageCount(message);
             if (count != -1) {
-                return String.format("%s has sent %s messages ", result, count);
+                return String.format("%s has sent %s messages ", message, count);
             }
 
             return String.format("%s, %s does not exist in my database", event.getUser().getName(), message);
@@ -608,6 +640,9 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         String newPartner = getRandomRecentChatter();
+        if (newPartner == null) {
+            return somethingWentWrong(event.getUser().getName());
+        }
         String oldPartner = db.getChatDao().getPartnerById(event.getUser().getId());
         String user = event.getUser().getName();
         String output;

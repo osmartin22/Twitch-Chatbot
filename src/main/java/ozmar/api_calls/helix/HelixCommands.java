@@ -4,7 +4,9 @@ import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +28,15 @@ public class HelixCommands {
      * @param userNames user login name
      * @return UserLIst
      */
+    @Nullable
     public UserList getUsersList(List<Long> userIds, List<String> userNames) {
-
-        return twitchHelix.getUsers(oAuthToken, userIds, userNames).execute();
+        UserList userList;
+        try {
+            userList = twitchHelix.getUsers(oAuthToken, userIds, userNames).execute();
+        } catch (HystrixRuntimeException e) {
+            return null;
+        }
+        return userList;
     }
 
 
@@ -43,16 +51,28 @@ public class HelixCommands {
      * @param userLogin   Streams broadcast by one or more specified user login names. You can specify up to 100 names.
      * @return StreamList
      */
+    @Nullable
     public StreamList getStreams(String after, String before, List<UUID> communityId,
                                  Integer first, List<String> gameIds, String language,
                                  List<Long> userIds, List<String> userLogin) {
-
-        return twitchHelix.getStreams(after, before, first, communityId, gameIds,
-                language, userIds, userLogin).execute();
-
+        StreamList streamList;
+        try {
+            streamList = twitchHelix.getStreams(after, before, first, communityId, gameIds,
+                    language, userIds, userLogin).execute();
+        } catch (HystrixRuntimeException e) {
+            return null;
+        }
+        return streamList;
     }
 
+    @Nullable
     public FollowList getFollowers(Long fromId, Long toId, String after, Integer limit) {
-        return twitchHelix.getFollowers(fromId, toId, after, limit).execute();
+        FollowList followList;
+        try {
+            followList = twitchHelix.getFollowers(fromId, toId, after, limit).execute();
+        } catch (HystrixRuntimeException e) {
+            return null;
+        }
+        return followList;
     }
 }
