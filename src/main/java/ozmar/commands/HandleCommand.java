@@ -4,6 +4,13 @@ import com.github.twitch4j.chat.events.CommandEvent;
 import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
@@ -32,6 +39,9 @@ public class HandleCommand implements HandleCommandInterface {
     private final RecentChattersInterface recentChatters;
     private List<Command> commandsList;
 
+    ChromeOptions chromeOptions;
+    WebDriver driver;
+
 
     public HandleCommand(DatabaseHandlerInterface db, CalculatorInterface calculator, DiceInterface dice,
                          CatchPokeInterface catchPoke, LootBoxInterface lootBox, RecentChattersInterface recentChatters) {
@@ -41,6 +51,11 @@ public class HandleCommand implements HandleCommandInterface {
         this.catchPoke = catchPoke;
         this.lootBox = lootBox;
         this.recentChatters = recentChatters;
+
+        chromeOptions = new ChromeOptions();
+        chromeOptions.setHeadless(true);
+        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\chromedriver.exe");
+        driver = new ChromeDriver(chromeOptions);
     }
 
     @Override
@@ -104,7 +119,7 @@ public class HandleCommand implements HandleCommandInterface {
 
         } else if (isCommandHelper(preCommand, 10, -1) && hasPermission(10, userPermission)) {
             command = commandsList.get(10);
-//            result = "31's next release is on ...";
+            result = getStock();
 
         } else if (isCommandHelper(preCommand, 11, 12) && hasPermission(11, userPermission)) {
             command = commandsList.get(11);
@@ -275,7 +290,7 @@ public class HandleCommand implements HandleCommandInterface {
 //                    event.getUser().getName(), randomChatter, (command.getUsage() + 1));
 //        }
 
-        return String.format(":comet: moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
+        return String.format("☄️ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
                 event.getUser().getName(), randomChatter, (command.getUsage() + 1));
     }
 
@@ -438,7 +453,7 @@ public class HandleCommand implements HandleCommandInterface {
         set.add("narostaryn");
         set.add("meguface");
         set.add("cmonbruh");
-        set.add(":memo:");
+        set.add("\uD83D\uDCDD");    // :memo:
         set.add("nam");
         set.add("seal");
         set.add("tdogwiz");
@@ -723,5 +738,24 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String somethingWentWrong(@Nonnull String userName) {
         return String.format("%s, something went wrong :(", userName);
+    }
+
+    // Temp
+    @Nullable
+    private String getStock() {
+        try {
+            driver.get("https://twitchstocks.com/stock/mnmn");
+            String xPath = "/html/body/app-root/app-nav/mat-sidenav-container/mat-sidenav-content/app-stock-home/div/mat-grid-list/div/mat-grid-tile[1]/figure/mat-card";
+
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPath)));
+
+            WebElement price = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[1]");
+            WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-header[1]/div/mat-card-title");
+            WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[2]");
+            return price.getText() + " " + name.getText() + " " + diff.getText();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }
