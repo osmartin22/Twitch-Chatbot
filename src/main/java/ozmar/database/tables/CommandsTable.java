@@ -40,8 +40,7 @@ public class CommandsTable extends Table implements CommandsTableInterface {
     private static final String updateCommandUsageSql =
             "UPDATE " + COMMANDS_TABLE +
                     " SET " + COLUMN_COMMAND_USAGE + " = ? " +
-                    " WHERE " + COLUMN_COMMAND_ID + " = ? " +
-                    " VALUES(?, ?)";
+                    " WHERE " + COLUMN_COMMAND_ID + " = ? ";
 
     public CommandsTable() {
         createTable(CREATE_COMMANDS_TABLE);
@@ -175,7 +174,7 @@ public class CommandsTable extends Table implements CommandsTableInterface {
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateCommandUsageSql)) {
             preparedStatement.setInt(1, command.getUsage());
             preparedStatement.setInt(2, command.getId());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println("Failed to update usage for " + command.getCommand() + " : " + e.getMessage());

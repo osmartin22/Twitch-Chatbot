@@ -283,7 +283,7 @@ public class HandleCommand implements HandleCommandInterface {
         }
 
         // Round to n decimal places
-        BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(5, BigDecimal.ROUND_HALF_DOWN);
+        BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_UNNECESSARY);
         Double value = bigDecimal.doubleValue();
         return (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
     }
