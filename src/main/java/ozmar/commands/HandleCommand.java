@@ -69,88 +69,78 @@ public class HandleCommand implements HandleCommandInterface {
     @Nullable
     @Override
     public String decideCommand() {
-        String preCommand = commandEvent.getCommandPrefix();
-        CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
-
-        String result = "";
-        commandsList = db.getCommandsDao().queryCommands();
+        String result = null;
         Command command = null;
+        commandsList = db.getCommandsDao().queryCommands();
 
-        if (isCommandHelper(preCommand, 0, -1) && hasPermission(0, userPermission)) {
+        if (isCommandHelper(0, commandEvent)) {
             command = commandsList.get(0);
             result = diceRollCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 1, -1) && hasPermission(1, userPermission)) {
+        } else if (isCommandHelper(1, commandEvent)) {
             command = commandsList.get(1);
-            // TODO: CHANGE COMMAND
+            result = spitCommand(commandEvent, command);
 
-        } else if (isCommandHelper(preCommand, 2, -1) && hasPermission(2, userPermission)) {
+        } else if (isCommandHelper(2, commandEvent)) {
             command = commandsList.get(2);
-            result = spitCommand(commandEvent, commandsList.get(2));
-
-        } else if (isCommandHelper(preCommand, 3, -1) && hasPermission(3, userPermission)) {
-            command = commandsList.get(3);
             result = uptimeCommand(commandEvent);
             System.out.println(result);
             result = null;
 
-        } else if (isCommandHelper(preCommand, 4, -1) && hasPermission(4, userPermission)) {
-            command = commandsList.get(4);
+        } else if (isCommandHelper(3, commandEvent)) {
+            command = commandsList.get(3);
             result = calcCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 5, -1) && hasPermission(5, userPermission)) {
-            command = commandsList.get(5);
+        } else if (isCommandHelper(4, commandEvent)) {
+            command = commandsList.get(4);
             result = followageCommand(commandEvent);
             System.out.println(result);
             result = null;
 
-        } else if (isCommandHelper(preCommand, 6, 7) && hasPermission(6, userPermission)) {
-            command = commandsList.get(6);
+        } else if (isCommandHelper(5, commandEvent)) {
+            command = commandsList.get(5);
 //            if (!commandEvent.getUser().getName().equals("namedauto")) {
 //                return null;
 //            }
             result = wordCountCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 8, 9) && hasPermission(8, userPermission)) {
-            command = commandsList.get(8);
-            // TODO: CHANGE COMMAND
-
-        } else if (isCommandHelper(preCommand, 10, -1) && hasPermission(10, userPermission)) {
-            command = commandsList.get(10);
-            result = getStock(commandEvent);
-
-        } else if (isCommandHelper(preCommand, 11, 12) && hasPermission(11, userPermission)) {
-            command = commandsList.get(11);
+        } else if (isCommandHelper(6, commandEvent)) {
+            command = commandsList.get(6);
 //            if (!commandEvent.getUser().getName().equals("namedauto")) {
 //                return null;
 //            }
             result = messageCountCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 13, -1) && hasPermission(13, userPermission)) {
-            command = commandsList.get(13);
+        } else if (isCommandHelper(7, commandEvent)) {
+            command = commandsList.get(7);
             result = pointsCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 14, 15) && hasPermission(14, userPermission)) {
-            command = commandsList.get(14);
+        } else if (isCommandHelper(8, commandEvent)) {
+            command = commandsList.get(8);
             result = catchPokeCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 16, 17) && hasPermission(11, userPermission)) {
-            command = commandsList.get(16);
+        } else if (isCommandHelper(9, commandEvent)) {
+            command = commandsList.get(9);
             result = flipCoinCommand(commandEvent);
             System.out.println(result);
             result = null;
 
-        } else if (isCommandHelper(preCommand, 18, 19) && hasPermission(18, userPermission)) {
-            command = commandsList.get(18);
+        } else if (isCommandHelper(10, commandEvent)) {
+            command = commandsList.get(10);
             result = openLootCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 20, 21) && hasPermission(20, userPermission)) {
-            command = commandsList.get(20);
+        } else if (isCommandHelper(11, commandEvent)) {
+            command = commandsList.get(11);
             result = newPartnerCommand(commandEvent);
 
-        } else if (isCommandHelper(preCommand, 22, 23) && hasPermission(22, userPermission)) {
-            command = commandsList.get(22);
+        } else if (isCommandHelper(12, commandEvent)) {
+            command = commandsList.get(12);
             result = myPartnerCommand(commandEvent);
+
+        } else if (isCommandHelper(13, commandEvent)) {
+            command = commandsList.get(10);
+            result = getStock(commandEvent);
+
         }
 
         if (command != null) {
@@ -162,26 +152,38 @@ public class HandleCommand implements HandleCommandInterface {
         return result;
     }
 
-    private boolean isCommandHelper(@Nonnull String command, int index1, int index2) {
-        boolean first = command.equals(commandsList.get(index1).getCommand());
-        boolean second = false;
-        if (index2 != -1) {
-            second = command.equals(commandsList.get(index2).getCommand());
-        }
-
-        return first || second;
+    /**
+     * Checks if the command from twitch chat matches one of the bots commands
+     * Also checks if the user has permission
+     *
+     * @param index command index in the list
+     * @param event User info and command data
+     * @return boolean
+     */
+    private boolean isCommandHelper(int index, @Nonnull CommandEvent event) {
+        return event.getCommandPrefix().equals(commandsList.get(index).getCommand()) &&
+                hasPermission(index, event);
     }
 
     /**
      * Checks if the user has permission to use the command
      *
-     * @param commandIndex index of the command to get the permission level
-     * @param userLevel    permission level of user
+     * @param index command index in the list
+     * @param event User info and command data
      * @return boolean
      */
-    private boolean hasPermission(int commandIndex, @Nonnull CommandNumPermission userLevel) {
-        CommandNumPermission command = commandsList.get(commandIndex).getPermission();
-        return userLevel.getCommandLevel() >= command.getCommandLevel();
+    private boolean hasPermission(int index, @Nonnull CommandEvent event) {
+        boolean hasPermission;
+        CommandNumPermission permission = commandsList.get(index).getPermission();
+        CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
+
+        if (event.getUser().getName().equals("namedauto")) {
+            hasPermission = true;
+        } else {
+            hasPermission = userPermission.getCommandLevel() >= permission.getCommandLevel();
+        }
+
+        return hasPermission;
     }
 
     /**
@@ -267,7 +269,6 @@ public class HandleCommand implements HandleCommandInterface {
      * @return String
      */
     @Nonnull
-    // TODO: FIX EXCEPTION ON FAKE NAMES
     private String followageCommand(@Nonnull CommandEvent event) {
         return twitchCalls.followage(event, db);
     }
@@ -447,6 +448,12 @@ public class HandleCommand implements HandleCommandInterface {
         return (!result.isEmpty()) ? event.getUser().getName() + result : somethingWentWrong(event.getUser().getName());
     }
 
+    /**
+     * Gets a random user from the list of recent chatters and replaces them in the database
+     *
+     * @param event User data and command info
+     * @return String
+     */
     @Nonnull
     private String newPartnerCommand(@Nonnull CommandEvent event) {
         if (recentChatters.getRecentChatters().size() == 0) {
@@ -479,6 +486,12 @@ public class HandleCommand implements HandleCommandInterface {
         return output;
     }
 
+    /**
+     * Gets the users current partner
+     *
+     * @param event User data and command info
+     * @return String
+     */
     @Nonnull
     private String myPartnerCommand(@Nonnull CommandEvent event) {
         String user = event.getUser().getName();
@@ -488,6 +501,11 @@ public class HandleCommand implements HandleCommandInterface {
                 String.format("%s, you do not have a partner, try !newpartner to get one", user);
     }
 
+    /**
+     * Gets a random user from the recent chatters list
+     *
+     * @return String
+     */
     @Nullable
     private String getRandomRecentChatter() {
         Map<String, Long> map = recentChatters.getRecentChatters();

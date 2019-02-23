@@ -51,19 +51,37 @@ public class CommandsTable extends Table implements CommandsTableInterface {
      */
     private void initializeCommands() {
         // File is assumed to be in the correct format
-        List<Command> commandList = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\TwitchBotFiles\\commands.txt"))) {
-            String line = br.readLine();
-            while (line != null) {
-                String[] tokens = line.split("\\s+");
-                commandList.add(new Command(tokens[0], CommandNumPermission.valueOf(tokens[1]), 0));
-                line = br.readLine();
+        int rowCount = getRowCount();
+        if (rowCount == 0) {
+            List<Command> commandList = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader("C:\\TwitchBotFiles\\commands.txt"))) {
+                String line = br.readLine();
+                while (line != null) {
+                    String[] tokens = line.split("\\s+");
+                    commandList.add(new Command(tokens[0], CommandNumPermission.valueOf(tokens[1]), 0));
+                    line = br.readLine();
+                }
+            } catch (IOException e) {
+                System.out.println("Failed opening commands file: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println("Failed opening commands file: " + e.getMessage());
+            insertCommandsList(commandList);
         }
-        insertCommandsList(commandList);
     }
+
+    private int getRowCount() {
+        String sql = "SELECT COUNT(*) FROM " + COMMANDS_TABLE;
+        Connection connection = openConnection();
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            return resultSet.getInt(1);
+
+        } catch (SQLException e) {
+            System.out.println("Failed to get number of rows: " + e.getMessage());
+        }
+
+        return -1;
+    }
+
 
     /**
      * Fetches all the commands from the table
