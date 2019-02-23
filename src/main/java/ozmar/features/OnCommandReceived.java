@@ -16,31 +16,12 @@ public class OnCommandReceived {
 
     @EventSubscriber
     public void onCommand(CommandEvent event) {
+        handleCommand.setCommandEvent(event);
+        String output = handleCommand.decideCommand();
 
-        // TODO: Temp solution to prevent chat spamming messages
-
-        long currTime = System.currentTimeMillis();
-        if (currTime - lastCommand >= 3000) {
-            lastCommand = currTime;
-
-            handleCommand.setCommandEvent(event);
-            String output = handleCommand.decideCommand();
-
-            if (output != null) {
-                event.respondToUser(output);
-            }
-            System.out.println(event);
-        } else {
-            System.out.println("NOT ALLOWING COMMAND: " + event.getCommandPrefix());
+        if (output != null) {
+            event.respondToUser(output);
         }
-
-
-//        handleCommand.setCommandEvent(event);
-//        String output = handleCommand.decideCommand();
-//
-//        if (!output.isEmpty()) {
-//            event.respondToUser(output);
-//        }
-//        System.out.println(event);
+        System.out.println(event);
     }
 }

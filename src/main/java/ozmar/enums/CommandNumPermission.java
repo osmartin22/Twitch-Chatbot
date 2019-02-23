@@ -2,11 +2,11 @@ package ozmar.enums;
 
 import com.github.twitch4j.common.enums.CommandPermission;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public enum CommandNumPermission {
 
-    // TODO: CHECK PERMISSION TO MAKE SURE A SUB DOESN'T GET THE WRONG LEVEL
     EVERYONE(0),
     SUBSCRIBER(1),
     VIP(2),
@@ -30,7 +30,8 @@ public enum CommandNumPermission {
      * @param commandPermissionSet Set of permissions using CommandPermission
      * @return CommandNumPermission
      */
-    public static CommandNumPermission convertToNumPermission(Set<CommandPermission> commandPermissionSet) {
+    @Nonnull
+    public static CommandNumPermission convertToNumPermission(@Nonnull Set<CommandPermission> commandPermissionSet) {
         if (commandPermissionSet.contains(CommandPermission.OWNER)) {
             return CommandNumPermission.OWNER;
 
@@ -50,5 +51,4 @@ public enum CommandNumPermission {
             return CommandNumPermission.EVERYONE;
         }
     }
-
 }

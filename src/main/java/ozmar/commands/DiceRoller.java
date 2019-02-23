@@ -67,6 +67,19 @@ public class DiceRoller implements DiceRollerInterface {
         return roll(sides, count);
     }
 
+    @Nullable
+    @Override
+    public Integer roll(@Nonnull String dieSides, int dieCount) {
+        int sides = 20;
+        try {
+            sides = Integer.parseInt(dieSides);
+        } catch (NumberFormatException e) {
+            System.out.println("Input was incorrect, defaulting to preset value: " + e.getMessage());
+        }
+
+        return roll(sides, dieCount);
+    }
+
     @Override
     public int rollPosDie(int dieSides) {
         if (dieSides == 0) {

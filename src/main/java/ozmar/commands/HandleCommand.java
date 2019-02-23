@@ -27,28 +27,36 @@ public class HandleCommand implements HandleCommandInterface {
     private CommandEvent commandEvent;
     private final DatabaseHandlerInterface db;
     private final CalculatorInterface calculator;
-    private final DiceRollerInterface dice;
+    private final DiceRollerInterface diceRoller;
     private final CatchPokeInterface catchPoke;
     private final LootBoxInterface lootBox;
     private final RecentChattersInterface recentChatters;
     private final TwitchCallsInterface twitchCalls;
     private List<Command> commandsList;
 
-    ChromeOptions chromeOptions;
     WebDriver driver;
+    ChromeOptions chromeOptions;
     boolean webFlag = false;
 
+    Map<Command, Long> commandCooldownMap;
 
-    public HandleCommand(DatabaseHandlerInterface db, CalculatorInterface calculator, DiceRollerInterface dice,
+    public HandleCommand(DatabaseHandlerInterface db, CalculatorInterface calculator, DiceRollerInterface diceRoller,
                          CatchPokeInterface catchPoke, LootBoxInterface lootBox, RecentChattersInterface recentChatters,
                          TwitchCallsInterface twitchCalls) {
         this.db = db;
         this.calculator = calculator;
-        this.dice = dice;
+        this.diceRoller = diceRoller;
         this.catchPoke = catchPoke;
         this.lootBox = lootBox;
         this.recentChatters = recentChatters;
         this.twitchCalls = twitchCalls;
+        this.commandsList = db.getCommandsDao().queryCommands();
+
+        this.commandCooldownMap = new HashMap<>();
+        for (Command command : commandsList) {
+            this.commandCooldownMap.put(command, 0L);
+        }
+
 
         chromeOptions = new ChromeOptions();
         chromeOptions.setHeadless(true);
@@ -71,7 +79,6 @@ public class HandleCommand implements HandleCommandInterface {
     public String decideCommand() {
         String result = null;
         Command command = null;
-        commandsList = db.getCommandsDao().queryCommands();
 
         if (isCommandHelper(0, commandEvent)) {
             command = commandsList.get(0);
@@ -140,12 +147,12 @@ public class HandleCommand implements HandleCommandInterface {
         } else if (isCommandHelper(13, commandEvent)) {
             command = commandsList.get(10);
             result = getStock(commandEvent);
-
         }
 
-        if (command != null) {
+        if (command != null) {      // Update usage and set cooldown
             command.incrementUsage();
             db.getCommandsDao().updateCommandUsage(command);
+            commandCooldownMap.put(command, System.currentTimeMillis());
         }
 
         System.out.println(result);
@@ -162,7 +169,7 @@ public class HandleCommand implements HandleCommandInterface {
      */
     private boolean isCommandHelper(int index, @Nonnull CommandEvent event) {
         return event.getCommandPrefix().equals(commandsList.get(index).getCommand()) &&
-                hasPermission(index, event);
+                hasPermission(index, event) && isCooldownReady(index);
     }
 
     /**
@@ -187,6 +194,24 @@ public class HandleCommand implements HandleCommandInterface {
     }
 
     /**
+     * Checks if the command cooldown has passed
+     *
+     * @param index command index in the list
+     * @return boolean
+     */
+    private boolean isCooldownReady(int index) {
+        boolean isReady = false;
+
+        Command command = commandsList.get(index);
+        long diff = System.currentTimeMillis() - commandCooldownMap.get(command);
+        if (diff > command.getCooldown()) {
+            isReady = true;
+        }
+
+        return isReady;
+    }
+
+    /**
      * Returns a random number from user input or uses a predefined random number if none is chosen
      * If an invalid command is passed, an empty string is returned
      *
@@ -199,9 +224,13 @@ public class HandleCommand implements HandleCommandInterface {
         Integer rollResult;
         if (!command.isEmpty()) {
             String[] dieSettings = command.split(" ", 3);
-            rollResult = dice.roll(dieSettings[0], dieSettings[1]);
+            if (dieSettings.length == 1) {
+                rollResult = diceRoller.roll(dieSettings[0], 1);
+            } else {
+                rollResult = diceRoller.roll(dieSettings[0], dieSettings[1]);
+            }
         } else {
-            rollResult = dice.roll(20, 1);
+            rollResult = diceRoller.roll(20, 1);
         }
 
         if (rollResult == null) {
@@ -527,17 +556,25 @@ public class HandleCommand implements HandleCommandInterface {
      */
     @Nonnull
     private String somethingWentWrong(@Nonnull String userName) {
-        return String.format("%s, something went wrong \uD83D\uDE1E", userName);
+        return String.format("%s, something went wrong moon2WAH", userName);
     }
 
-    // Temp
+
+    /**
+     * Checks the website and gets the stock info
+     * NOTE: website has no api so everything must be done through web scraping
+     *
+     * @param event User data anc command info
+     * @return String
+     */
+    // TODO: Remove to separate class
     @Nullable
     private String getStock(@Nonnull CommandEvent event) {
         String stockSymbol = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
         String url = "https://twitchstocks.com/stock/";
         String result = null;
         if (stockSymbol.isEmpty()) {
-            result = "Try again using !checkstocks <Stock Symbol>";
+            result = "Try again using !checkstocks <StockSymbol>";
         } else if (!webFlag) {
             try {
                 webFlag = true;
