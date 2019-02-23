@@ -13,10 +13,11 @@ public class HandleCommandInterfaceConfig {
     @Bean
     public HandleCommandInterface HandleCommandInterfaceBean(DatabaseHandlerInterface databaseHandler,
                                                              CalculatorInterface calculator,
-                                                             DiceInterface dice,
+                                                             DiceRollerInterface dice,
                                                              CatchPokeInterface catchPoke,
                                                              LootBoxInterface lootBox,
-                                                             RecentChattersInterface recentChatters) {
-        return new HandleCommand(databaseHandler, calculator, dice, catchPoke, lootBox, recentChatters);
+                                                             RecentChattersInterface recentChatters,
+                                                             TwitchCallsInterface twitchCalls) {
+        return new HandleCommand(databaseHandler, calculator, dice, catchPoke, lootBox, recentChatters, twitchCalls);
     }
 }

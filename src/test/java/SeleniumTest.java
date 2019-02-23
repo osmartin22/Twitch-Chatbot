@@ -2,6 +2,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,21 +34,25 @@ public class SeleniumTest {
 
     @Test
     public void getElements() {
-        driver.get("https://twitchstocks.com/stock/mnmn");
-        String xPath = "/html/body/app-root/app-nav/mat-sidenav-container/mat-sidenav-content/app-stock-home/div/mat-grid-list/div/mat-grid-tile[1]/figure/mat-card";
 
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPath)));
+        String symbol = "frsn";
+        String websiteStocks = "https://twitchstocks.com/stock/";
+        String url = websiteStocks + symbol;
+        driver.get(url);
 
-        WebElement price = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[1]");
-        WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-header[1]/div/mat-card-title");
-        WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[2]");
+        try {
+            String xPath = "/html/body/app-root/app-nav/mat-sidenav-container/mat-sidenav-content/app-stock-home/div/mat-grid-list/div/mat-grid-tile[1]/figure/mat-card";
 
-        System.out.println(price.getText() + " " + name.getText() + " " + diff.getText());
+            WebDriverWait wait = new WebDriverWait(driver, 5);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPath)));
+            WebElement price = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[1]");
+            WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-header[1]/div/mat-card-title");
+            WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[2]");
 
-//        stock.setPrice(price.getText());
-//        stock.setStockName(name.getText());
-//        stock.setChange24Hour(diff.getText());
+            System.out.println(price.getText() + " " + name.getText() + " " + diff.getText());
+        } catch (TimeoutException e) {
+            System.out.println(":( " + e.getMessage());
+        }
     }
 
 
