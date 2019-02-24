@@ -3,21 +3,25 @@ package ozmar.commands;
 import org.springframework.util.StringUtils;
 import ozmar.commands.interfaces.CatchPokeInterface;
 import ozmar.utils.RandomHelper;
-import poke_models.pokemon.Nature;
-import poke_models.pokemon.Pokemon;
-import poke_models.pokemon.PokemonSpecies;
-import poke_models.pokemon.PokemonSpeciesVariety;
+import poke_models.pokemon.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class CatchPoke implements CatchPokeInterface {
     private Pokemon pokemon;
     private PokemonSpecies pokemonSpecies;
     private Nature nature;
+    private Set<Integer> specialFormPokemonSet;
 
     public CatchPoke() {
-
+        // unown=201, burmy=412, shellos=422, gastrodon=423, deerling=585, sawsbuck=586, vivillon=666
+        // flabebe=669, floette=670, florges=671, furfrou=676
+        specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
     }
 
     /**
@@ -82,11 +86,21 @@ public class CatchPoke implements CatchPokeInterface {
         if (pokeGender == null) {
             return null;
         }
+
+        String pokeName;
         String natureName = nature.getName();
-        String pokeName = StringUtils.capitalize(pokemon.getName());
+
+        // Check for pokemon that have unique forms, but aren't found in PokemonSpeciesVariety
+        if (specialFormPokemonSet.contains(pokemon.getId())) {
+            List<PokemonForm> pokemonForms = pokemon.getForms();
+            PokemonForm randomForm = pokemon.getForms().get(RandomHelper.getRandNumInRange(0, pokemonForms.size() - 1));
+            pokeName = StringUtils.capitalize(randomForm.getName());
+        } else {
+            pokeName = StringUtils.capitalize(pokemon.getName());
+        }
 
         String output = "";
-        boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 15;
+        boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 16;
         if (isShiny) {
             output = "shiny ";
         }
