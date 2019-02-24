@@ -1,6 +1,7 @@
 package ozmar.setup;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ozmar.WordFilter;
 import ozmar.timers.ChatListTimer;
 import ozmar.timers.RecentChatterTimer;
 import ozmar.timers.WordCountTimer;
@@ -9,6 +10,9 @@ public class Launcher {
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BotConfig.class);
+
+        // TODO: TEMP
+        WordFilter.loadConfigs();
 
         Bot bot = context.getBean(Bot.class);
         bot.initialize();

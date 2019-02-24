@@ -40,9 +40,8 @@ public class StringHelper {
     }
 
     /**
-     * Inserts special characters so that banned words can be posted
-     * NOTE: Channels can still have these chars banned as well
-     * NOTE: NOT meant to be used to circumvent filters
+     * Inserts special characters so that words can bypass blacklist
+     * NOTE: Might still not work depending on the filter of the channel, should not be abused
      *
      * @param word word to modify
      * @return String

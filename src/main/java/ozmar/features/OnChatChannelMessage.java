@@ -42,13 +42,13 @@ public class OnChatChannelMessage {
 //        );
     }
 
-    private void handleChatData(EventUser user) {
+    private void handleChatData(@Nonnull EventUser user) {
         long userId = user.getId();
         chatDataBuffer.updateChatUser(userId, user.getName());
     }
 
     private void handleWordCount(@Nonnull String message) {
-        for (String s : message.split(" ")) {
+        for (String s : message.split("\\s+")) {
 
             // Don't store urls "http"
             // Ignore words starting with "[" as it is commonly used in bot responses

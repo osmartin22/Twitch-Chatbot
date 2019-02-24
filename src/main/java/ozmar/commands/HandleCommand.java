@@ -8,6 +8,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ozmar.WordFilter;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
@@ -18,7 +19,10 @@ import ozmar.utils.StringHelper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 // TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
@@ -145,7 +149,7 @@ public class HandleCommand implements HandleCommandInterface {
             result = myPartnerCommand(commandEvent);
 
         } else if (isCommandHelper(13, commandEvent)) {
-            command = commandsList.get(10);
+            command = commandsList.get(13);
             result = getStock(commandEvent);
         }
 
@@ -223,7 +227,7 @@ public class HandleCommand implements HandleCommandInterface {
         String command = event.getCommand().trim();
         Integer rollResult;
         if (!command.isEmpty()) {
-            String[] dieSettings = command.split(" ", 3);
+            String[] dieSettings = command.split("\\s+", 3);
             if (dieSettings.length == 1) {
                 rollResult = diceRoller.roll(dieSettings[0], 1);
             } else {
@@ -271,7 +275,7 @@ public class HandleCommand implements HandleCommandInterface {
      * @param event User info and command data
      * @return String
      */
-    @Nonnull
+    @Nullable
     private String calcCommand(@Nonnull CommandEvent event) {
         calculator.setOperation(event.getCommand());
         double result;
@@ -279,13 +283,15 @@ public class HandleCommand implements HandleCommandInterface {
             result = calculator.parse();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return somethingWentWrong(event.getUser().getName());
+            return null;
         }
 
         // Round to n decimal places
         BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_UNNECESSARY);
         Double value = bigDecimal.doubleValue();
-        return (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
+        String numOutput = (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
+
+        return String.format("%s, %s", event.getUser().getName(), numOutput);
     }
 
     /**
@@ -321,55 +327,19 @@ public class HandleCommand implements HandleCommandInterface {
                 count = 0;
             }
 
-            word = bannedWordsFilter(word, event);
+            List<String> badWordsFound = WordFilter.badWordsFound(word);
+            if (badWordsFound.isEmpty()) {
+                word = WordFilter.timeoutWordFound(word);
+            } else {
+                word = null;
+            }
+
+
             result = (word == null) ? null : String.format("%s, %s has been used %s times in my lifetime",
                     event.getUser().getName(), word, count);
         }
 
         return result;
-    }
-
-    // TODO: Move outside so list can be access elsewhere
-    @Nonnull
-    private Set<String> bannedWords() {
-        Set<String> set = new HashSet<>();
-        set.add("residentsleeper");
-        set.add("cirSlain");
-        set.add("narostaryn");
-        set.add("meguface");
-        set.add("cmonbruh");
-        set.add("\uD83D\uDCDD");    // :memo:
-        set.add("nam");
-        set.add("seal");
-        set.add("tdogwiz");
-        set.add("c9");
-        set.add("yiff");
-        set.add("pikagirl");
-        set.add("overwatch");
-        set.add("ark");
-        set.add("arc");
-        set.add("kirby");
-        set.add("seppuku");
-        set.add("staryn");
-        return set;
-    }
-
-    @Nullable
-    private String bannedWordsFilter(@Nonnull String word, @Nonnull CommandEvent event) {
-        String lowerCase = word.toLowerCase();
-        if (bannedWords().contains(lowerCase)) {
-            word = StringHelper.insertSpecialChars(word);
-
-        } else if (lowerCase.startsWith("nigg") || lowerCase.startsWith("fag")) {
-
-            System.out.println(String.format("User: %s, Message: %s", event.getUser(), event.getCommand()));
-            return null;
-
-        } else if (lowerCase.equals("retard")) {
-            word = word + " D: ";
-        }
-
-        return word;
     }
 
     /**
@@ -588,7 +558,7 @@ public class HandleCommand implements HandleCommandInterface {
                 WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-header[1]/div/mat-card-title");
                 WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[2]");
                 result = price.getText() + " " + name.getText() + " " + diff.getText();
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 result = null;
             }
         }
