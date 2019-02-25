@@ -4,6 +4,7 @@ import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.common.events.domain.EventUser;
 import com.vdurmont.emoji.EmojiParser;
+import ozmar.WordFilter;
 import ozmar.buffer.interfaces.ChatDataBufferInterface;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.buffer.interfaces.WordCountBufferInterface;
@@ -31,11 +32,14 @@ public class OnChatChannelMessage {
 
         long userId = event.getUser().getId();
         if (userId != 19264788 && userId != 250198045 && userId != 402734706) { // Ignore known bot responses
-            String message = event.getMessage().trim();
-            handleWordCount(message);
-        }
 
-        System.out.println(event.getMessage());
+            String message = event.getMessage().trim();
+            if (WordFilter.badWordsFound(message).isEmpty()) {
+                handleWordCount(message);
+            } else { //SHOW ON CONSOLE THE USER
+                System.out.println("\n\n\n" + event + "\n\n\n");
+            }
+        }
 
 //        System.out.printf(
 //                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
@@ -67,26 +71,19 @@ public class OnChatChannelMessage {
                 continue;
             }
 
-            if (word.matches("(.)\\1*")) {
-                // Turn "......" into "..."
-                if (word.length() > 3) {
-                    word = word.substring(0, 3);
-                }
-            } else {
-                // > 3 to allow ASCII faces
-                if (word.length() > 3) {
-                    word = word.replaceFirst("^[^\\p{IsDigit}\\p{IsAlphabetic}#!_]+", "");
-                    if (word.length() > 1) {
-                        char first = word.charAt(0);
-                        word = word.replaceAll("[^\\p{IsDigit}\\p{IsAlphabetic}'_\\-.]", "");
-                        if (first == '!' || first == '#') {
-                            word = first + word;
-                        }
-                        word = word.replaceAll("[^\\p{IsDigit}\\p{IsAlphabetic}_]+$", "");
+            if (word.matches("(.)\\1*") && word.length() > 3) { // Turn "......" into "..."
+                word = word.substring(0, 3);
+            } else if (word.length() > 3) {
+                word = word.replaceFirst("^[^\\p{IsAlnum}#!_]+", "");
+                if (word.length() > 1) {
+                    char first = word.charAt(0);
+                    word = word.replaceAll("[^\\p{IsAlnum}'_\\-.]", "");
+                    if (first == '!' || first == '#') {
+                        word = first + word;
                     }
+                    word = word.replaceAll("[^\\p{IsAlnum}_]+$", "");
                 }
             }
-
             wordCountBuffer.updateWordCount(word);
         }
     }

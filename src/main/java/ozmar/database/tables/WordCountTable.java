@@ -3,7 +3,6 @@ package ozmar.database.tables;
 import ozmar.database.tables.interfaces.WordCountTableInterface;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,11 +16,11 @@ public class WordCountTable extends Table implements WordCountTableInterface {
     private static final String COLUMN_COUNT = "count";
 
     private static final String CREATE_WORD_COUNT_TABLE =
-            "CREATE TABLE IF NOT EXISTS " + WORD_COUNT_TABLE + " ( " +
+            "CREATE TABLE IF NOT EXISTS " + WORD_COUNT_TABLE + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY, " +
                     COLUMN_WORD + " TEXT, " +
-                    COLUMN_COUNT + " INTEGER DEFAULT 0, UNIQUE ( " +
-                    COLUMN_WORD + " ))";
+                    COLUMN_COUNT + " INTEGER DEFAULT 0, " +
+                    "UNIQUE (" + COLUMN_WORD + "))";
 
     private static final String updateCountSql =
             "UPDATE " + WORD_COUNT_TABLE +
@@ -29,10 +28,10 @@ public class WordCountTable extends Table implements WordCountTableInterface {
                     " WHERE " + COLUMN_WORD + " = ?";
 
     private static final String insertWordAndCountSql =
-            "INSERT OR IGNORE INTO " + WORD_COUNT_TABLE + " ( " +
+            "INSERT OR IGNORE INTO " + WORD_COUNT_TABLE + " (" +
                     COLUMN_WORD + ", " +
                     COLUMN_COUNT + ") " +
-                    " VALUES (?,  ? )";
+                    " VALUES (?,  ?)";
     private static final String getSpecificWordCountSql =
             "SELECT " + COLUMN_COUNT + " FROM " + WORD_COUNT_TABLE +
                     " WHERE " + COLUMN_WORD + " = ?";
@@ -47,17 +46,16 @@ public class WordCountTable extends Table implements WordCountTableInterface {
      *
      * @return Map of Strings and Integers
      */
-    @Nullable
+    @Nonnull
     @Override
     public Map<String, Integer> queryWordCount() {
         String sql = "SELECT * FROM " + WORD_COUNT_TABLE;
         Connection connection = openConnection();
-        Map<String, Integer> map = null;
+        Map<String, Integer> map = new HashMap<>();
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
-            map = new HashMap<>();
             while (resultSet.next()) {
                 String word = resultSet.getString(COLUMN_WORD);
                 int count = resultSet.getInt(COLUMN_COUNT);

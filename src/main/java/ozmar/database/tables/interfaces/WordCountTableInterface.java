@@ -1,12 +1,11 @@
 package ozmar.database.tables.interfaces;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Map;
 
 public interface WordCountTableInterface {
 
-    @Nullable
+    @Nonnull
     Map<String, Integer> queryWordCount();
 
     @Nonnull
