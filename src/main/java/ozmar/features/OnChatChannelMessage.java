@@ -3,11 +3,13 @@ package ozmar.features;
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.common.events.domain.EventUser;
+import com.vdurmont.emoji.EmojiParser;
 import ozmar.buffer.interfaces.ChatDataBufferInterface;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.buffer.interfaces.WordCountBufferInterface;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class OnChatChannelMessage {
 
@@ -33,6 +35,8 @@ public class OnChatChannelMessage {
             handleWordCount(message);
         }
 
+        System.out.println(event.getMessage());
+
 //        System.out.printf(
 //                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
 //                event.getChannel().getName(),
@@ -48,30 +52,42 @@ public class OnChatChannelMessage {
     }
 
     private void handleWordCount(@Nonnull String message) {
-        for (String s : message.split("\\s+")) {
+        // Extract and remove all emojis
+        List<String> emojiList = EmojiParser.extractEmojis(message);
+        message = EmojiParser.removeAllEmojis(message);
+        for (String emoji : emojiList) {
+            wordCountBuffer.updateWordCount(emoji);
+        }
+
+        for (String word : message.split("\\s+")) {
 
             // Don't store urls "http"
             // Ignore words starting with "[" as it is commonly used in bot responses
-            if (s.startsWith("http") || s.startsWith("[")) {
+            if (word.startsWith("http") || word.startsWith("[")) {
                 continue;
             }
 
-            // Remove @ symbol so that @username and username are registered as the same
-            if (s.length() > 1) {
-                if (s.startsWith("@") || s.startsWith("\"") || s.startsWith(" ")) {
-                    s = s.substring(1);
+            if (word.matches("(.)\\1*")) {
+                // Turn "......" into "..."
+                if (word.length() > 3) {
+                    word = word.substring(0, 3);
                 }
-
-                char last = s.charAt(s.length() - 1);
-                if (last == ',' || last == '.' || last == ';' || last == '"') {
-                    s = s.substring(0, s.length() - 1);
+            } else {
+                // > 3 to allow ASCII faces
+                if (word.length() > 3) {
+                    word = word.replaceFirst("^[^\\p{IsDigit}\\p{IsAlphabetic}#!_]+", "");
+                    if (word.length() > 1) {
+                        char first = word.charAt(0);
+                        word = word.replaceAll("[^\\p{IsDigit}\\p{IsAlphabetic}'_\\-.]", "");
+                        if (first == '!' || first == '#') {
+                            word = first + word;
+                        }
+                        word = word.replaceAll("[^\\p{IsDigit}\\p{IsAlphabetic}_]+$", "");
+                    }
                 }
             }
-            if (s.length() > 1 && s.startsWith("@")) {
-                s = s.substring(1);
-            }
 
-            wordCountBuffer.updateWordCount(s);
+            wordCountBuffer.updateWordCount(word);
         }
     }
 }

@@ -253,7 +253,7 @@ public class HandleCommand implements HandleCommandInterface {
     private String spitCommand(@Nonnull CommandEvent event, @Nonnull Command command) {
         String randomChatter = getRandomRecentChatter();
         return (randomChatter == null) ? null :
-                String.format("☄️ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
+                String.format("☄ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
                         event.getUser().getName(), randomChatter, (command.getUsage() + 1));
     }
 
