@@ -1,5 +1,6 @@
 package ozmar;
 
+import com.vdurmont.emoji.EmojiParser;
 import ozmar.utils.StringHelper;
 
 import javax.annotation.Nonnull;
@@ -111,6 +112,57 @@ public class WordFilter {
         String temp = makeInputReady(word).trim();
         if (timeoutWordsMap.containsKey(temp)) {
             word = StringHelper.insertSpecialChars(word);
+        }
+
+        return word;
+    }
+
+    /**
+     * Returns a list of each emoji found, empty list if none are found
+     *
+     * @param input string to extract emojis from
+     * @return List of found emojis
+     */
+    @Nonnull
+    public static List<String> extractEmojis(@Nonnull String input) {
+        return EmojiParser.extractEmojis(input);
+    }
+
+    /**
+     * Removes emojis from the given string
+     *
+     * @param input String to remove emojis from
+     * @return string without emojis
+     */
+    @Nonnull
+    public static String removeEmojis(@Nonnull String input) {
+        return EmojiParser.removeAllEmojis(input);
+    }
+
+    /**
+     * Modifies the string in an attempt to make it a word
+     * <p>
+     * NOTE: meant for 1 word at a time, not a full sentence
+     * Words passed into this method should have emojis extracted from it before hand
+     * else an error will be thrown
+     *
+     * @param word string to modify
+     * @return modified string
+     */
+    @Nonnull
+    public static String transformWord(@Nonnull String word) {
+        if (word.matches("(.)\\1*") && word.length() > 3) { // Turn "......" into "..."
+            word = word.substring(0, 3);
+        } else if (word.length() > 3) {
+            word = word.replaceFirst("^[^\\p{IsAlnum}#!_]+", "");
+            if (word.length() > 1) {
+                char first = word.charAt(0);
+                word = word.replaceAll("[^\\p{IsAlnum}'_\\-.]", "");
+                if (first == '!' || first == '#') {
+                    word = first + word;
+                }
+                word = word.replaceAll("[^\\p{IsAlnum}_]+$", "");
+            }
         }
 
         return word;

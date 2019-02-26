@@ -22,10 +22,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-
-// TODO: IMPLEMENT A QUEUE TO PREVENT USERS SPAMMING THE SAME COMMAND MULTIPLE TIMES
+// TODO: Write command to update command cooldowns or permissions while the bot is running
+// To add/delete commands without recompiling would require rewriting part of the twitch4j library
 public class HandleCommand implements HandleCommandInterface {
 
     private CommandEvent commandEvent;
@@ -40,7 +39,6 @@ public class HandleCommand implements HandleCommandInterface {
 
     WebDriver driver;
     ChromeOptions chromeOptions;
-    boolean webFlag = false;
 
     Map<Command, Long> commandCooldownMap;
 
@@ -153,7 +151,7 @@ public class HandleCommand implements HandleCommandInterface {
             result = getStock(commandEvent);
         }
 
-        if (command != null) {      // Update usage and set cooldown
+        if (command != null) {      // Update usage and set cooldown timer
             command.incrementUsage();
             db.getCommandsDao().updateCommandUsage(command);
             commandCooldownMap.put(command, System.currentTimeMillis());
@@ -228,11 +226,8 @@ public class HandleCommand implements HandleCommandInterface {
         Integer rollResult;
         if (!command.isEmpty()) {
             String[] dieSettings = command.split("\\s+", 3);
-            if (dieSettings.length == 1) {
-                rollResult = diceRoller.roll(dieSettings[0], 1);
-            } else {
-                rollResult = diceRoller.roll(dieSettings[0], dieSettings[1]);
-            }
+            rollResult = (dieSettings.length == 1) ? diceRoller.roll(dieSettings[0], 1) :
+                    diceRoller.roll(dieSettings[0], dieSettings[1]);
         } else {
             rollResult = diceRoller.roll(20, 1);
         }
@@ -249,12 +244,14 @@ public class HandleCommand implements HandleCommandInterface {
      * @param command command
      * @return String
      */
-    @Nullable
+    @Nonnull
     private String spitCommand(@Nonnull CommandEvent event, @Nonnull Command command) {
-        String randomChatter = getRandomRecentChatter();
-        return (randomChatter == null) ? null :
-                String.format("☄ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
-                        event.getUser().getName(), randomChatter, (command.getUsage() + 1));
+        String randomChatter = recentChatters.getRandomRecentChatter();
+        if (randomChatter == null) {
+            randomChatter = event.getUser().getName();
+        }
+        return String.format("☄ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
+                event.getUser().getName(), randomChatter, (command.getUsage() + 1));
     }
 
     /**
@@ -275,23 +272,22 @@ public class HandleCommand implements HandleCommandInterface {
      * @param event User info and command data
      * @return String
      */
-    @Nullable
+    @Nonnull
     private String calcCommand(@Nonnull CommandEvent event) {
-        calculator.setOperation(event.getCommand());
-        double result;
         try {
-            result = calculator.parse();
+            calculator.setOperation(event.getCommand());
+            double result = calculator.parse();
+
+            // Round to n decimal places, remove decimal if it is a whole number
+            BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_UNNECESSARY);
+            Double value = bigDecimal.doubleValue();
+            String numOutput = (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
+
+            return String.format("%s, %s", event.getUser().getName(), numOutput);
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+            return String.format("%s, %s", event.getUser().getName(), e.getMessage());
         }
-
-        // Round to n decimal places
-        BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_UNNECESSARY);
-        Double value = bigDecimal.doubleValue();
-        String numOutput = (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
-
-        return String.format("%s, %s", event.getUser().getName(), numOutput);
     }
 
     /**
@@ -313,7 +309,8 @@ public class HandleCommand implements HandleCommandInterface {
      *
      * @return String
      */
-    @Nullable
+    // TODO: Parse the word, the same way I parse messages in OnChatChannelMessage
+    @Nonnull
     private String wordCountCommand(@Nonnull CommandEvent event) {
         String result;
         String word = event.getCommand().trim();
@@ -321,22 +318,34 @@ public class HandleCommand implements HandleCommandInterface {
         if (word.isEmpty()) {
             result = String.format("%s, try again using !wordcount <word>", event.getUser().getName());
         } else {
-            word = StringHelper.getFirstWord(word);
-            int count = db.getWordCountDao().querySpecificWordCount(word);
-            if (count == -1) {
-                count = 0;
-            }
-
             List<String> badWordsFound = WordFilter.badWordsFound(word);
             if (badWordsFound.isEmpty()) {
+                word = StringHelper.getFirstWord(word);
+
+                int count;
+                List<String> emojiList = WordFilter.extractEmojis(word);
+                if (!emojiList.isEmpty()) {
+                    int temp1 = db.getWordCountDao().querySpecificWordCount(emojiList.get(0));
+                    if (emojiList.size() == 1) {
+                        count = temp1;
+                        word = emojiList.get(0);
+                    } else {
+                        int temp2 = db.getWordCountDao().querySpecificWordCount(emojiList.get(1));
+                        count = Math.min(temp1, temp2);
+                        word = emojiList.get(0) + emojiList.get(1);
+                    }
+                } else {
+                    word = WordFilter.transformWord(word);
+                    count = db.getWordCountDao().querySpecificWordCount(word);
+                }
+
                 word = WordFilter.timeoutWordFound(word);
+                result = String.format("%s, %s has been used %s times in my lifetime",
+                        event.getUser().getName(), word, count);
+
             } else {
-                word = null;
+                result = String.format("%s, D: you can't say that", event.getUser().getName());
             }
-
-
-            result = (word == null) ? null : String.format("%s, %s has been used %s times in my lifetime",
-                    event.getUser().getName(), word, count);
         }
 
         return result;
@@ -459,7 +468,7 @@ public class HandleCommand implements HandleCommandInterface {
             return somethingWentWrong(event.getUser().getName());
         }
 
-        String newPartner = getRandomRecentChatter();
+        String newPartner = recentChatters.getRandomRecentChatter();
         if (newPartner == null) {
             return somethingWentWrong(event.getUser().getName());
         }
@@ -501,24 +510,6 @@ public class HandleCommand implements HandleCommandInterface {
     }
 
     /**
-     * Gets a random user from the recent chatters list
-     *
-     * @return String
-     */
-    @Nullable
-    private String getRandomRecentChatter() {
-        Map<String, Long> map = recentChatters.getRecentChatters();
-        if (map.isEmpty()) {
-            System.out.println("RECENT CHATTERS IS EMPTY");
-            return null;
-
-        } else {
-            Object randomName = map.entrySet().toArray()[new Random().nextInt(map.entrySet().toArray().length)];
-            return randomName.toString().substring(0, randomName.toString().indexOf("="));
-        }
-    }
-
-    /**
      * Returns default error message
      *
      * @param userName name of the user that used the command
@@ -542,12 +533,11 @@ public class HandleCommand implements HandleCommandInterface {
     private String getStock(@Nonnull CommandEvent event) {
         String stockSymbol = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
         String url = "https://twitchstocks.com/stock/";
-        String result = null;
+        String result;
         if (stockSymbol.isEmpty()) {
             result = "Try again using !checkstocks <StockSymbol>";
-        } else if (!webFlag) {
+        } else {
             try {
-                webFlag = true;
                 driver.get(url + stockSymbol);
                 String xPath = "/html/body/app-root/app-nav/mat-sidenav-container/mat-sidenav-content/app-stock-home/div/mat-grid-list/div/mat-grid-tile[1]/figure/mat-card";
 
@@ -563,7 +553,7 @@ public class HandleCommand implements HandleCommandInterface {
             }
         }
 
-        webFlag = false;
         return result;
     }
+
 }

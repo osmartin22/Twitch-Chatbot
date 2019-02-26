@@ -14,7 +14,7 @@ public class ChannelNotificationOnGiftSubscription {
 
         if (event.getCount() > 1) {
             message = String.format(
-                    "%s, so nice of you to donate %s %s subs moon2CUTE",
+                    "%s, so nice of you to gift %s %s subs moon2CUTE",
                     event.getUser().getName(),
                     event.getCount(),
                     plan.getSubPlanName()
@@ -22,7 +22,7 @@ public class ChannelNotificationOnGiftSubscription {
 
         } else {
             message = String.format(
-                    "%s, so nice of you to donate %s %s sub moon2CUTE",
+                    "%s, so nice of you to gift %s %s sub moon2CUTE",
                     event.getUser().getName(),
                     event.getCount(),
                     plan.getSubPlanName()

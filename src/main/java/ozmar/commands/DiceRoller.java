@@ -19,8 +19,12 @@ public class DiceRoller implements DiceRollerInterface {
             return 0;
         }
 
+        // limit die roll to not overflow
         if (dieCount > 100) {
             dieCount = 100;
+        }
+        if (dieSides > 21474836) {
+            dieSides = 21474836;
         }
 
         Integer roll = 0;

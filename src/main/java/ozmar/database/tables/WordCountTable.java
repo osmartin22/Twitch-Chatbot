@@ -101,7 +101,7 @@ public class WordCountTable extends Table implements WordCountTableInterface {
 
     @Override
     public int querySpecificWordCount(@Nonnull String word) {
-        int count = -1;
+        int count = 0;
         Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getSpecificWordCountSql)) {
