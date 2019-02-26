@@ -15,6 +15,7 @@ public class CommandsDao implements CommandsDaoInterface {
         this.commandsTable = commandsTable;
     }
 
+    @Nonnull
     @Override
     public List<Command> queryCommands() {
         return commandsTable.queryCommands();
@@ -28,5 +29,10 @@ public class CommandsDao implements CommandsDaoInterface {
     @Override
     public void updateCommandUsage(@Nonnull Command command) {
         commandsTable.updateCommandUsage(command);
+    }
+
+    @Override
+    public boolean updateCommandCooldown(@Nonnull String commandName, long cooldown) {
+        return commandsTable.updateCommandCooldown(commandName, cooldown);
     }
 }

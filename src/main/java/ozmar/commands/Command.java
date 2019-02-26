@@ -55,6 +55,10 @@ public class Command {
         this.permission = permission;
     }
 
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, command, permission, usage, cooldown);

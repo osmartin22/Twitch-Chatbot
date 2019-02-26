@@ -1,6 +1,7 @@
 package ozmar.commands;
 
 import com.github.twitch4j.chat.events.CommandEvent;
+import javafx.util.Pair;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -36,11 +37,10 @@ public class HandleCommand implements HandleCommandInterface {
     private final RecentChattersInterface recentChatters;
     private final TwitchCallsInterface twitchCalls;
     private List<Command> commandsList;
+    private boolean commandsEnabled = true;
 
-    WebDriver driver;
-    ChromeOptions chromeOptions;
-
-    Map<Command, Long> commandCooldownMap;
+    private WebDriver driver;
+    private Map<Integer, Pair<Command, Long>> cooldownMap;
 
     public HandleCommand(DatabaseHandlerInterface db, CalculatorInterface calculator, DiceRollerInterface diceRoller,
                          CatchPokeInterface catchPoke, LootBoxInterface lootBox, RecentChattersInterface recentChatters,
@@ -54,13 +54,13 @@ public class HandleCommand implements HandleCommandInterface {
         this.twitchCalls = twitchCalls;
         this.commandsList = db.getCommandsDao().queryCommands();
 
-        this.commandCooldownMap = new HashMap<>();
+        this.cooldownMap = new HashMap<>();
         for (Command command : commandsList) {
-            this.commandCooldownMap.put(command, 0L);
+            cooldownMap.put(command.getId(), new Pair<>(command, 0L));
         }
 
 
-        chromeOptions = new ChromeOptions();
+        ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setHeadless(true);
         System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\chromedriver.exe");
         driver = new ChromeDriver(chromeOptions);
@@ -82,79 +82,83 @@ public class HandleCommand implements HandleCommandInterface {
         String result = null;
         Command command = null;
 
-        if (isCommandHelper(0, commandEvent)) {
-            command = commandsList.get(0);
-            result = diceRollCommand(commandEvent);
+        if (commandsEnabled) {
+            if (isCommandHelper(0, commandEvent)) {
+                command = commandsList.get(0);
+                result = diceRollCommand(commandEvent);
 
-        } else if (isCommandHelper(1, commandEvent)) {
-            command = commandsList.get(1);
-            result = spitCommand(commandEvent, command);
+            } else if (isCommandHelper(1, commandEvent)) {
+                command = commandsList.get(1);
+                result = spitCommand(commandEvent, command);
 
-        } else if (isCommandHelper(2, commandEvent)) {
-            command = commandsList.get(2);
-            result = uptimeCommand(commandEvent);
-            System.out.println(result);
-            result = null;
+            } else if (isCommandHelper(2, commandEvent)) {
+                command = commandsList.get(2);
+                result = uptimeCommand(commandEvent);
+                System.out.println(result);
+                result = null;
 
-        } else if (isCommandHelper(3, commandEvent)) {
-            command = commandsList.get(3);
-            result = calcCommand(commandEvent);
+            } else if (isCommandHelper(3, commandEvent)) {
+                command = commandsList.get(3);
+                result = calcCommand(commandEvent);
 
-        } else if (isCommandHelper(4, commandEvent)) {
-            command = commandsList.get(4);
-            result = followageCommand(commandEvent);
-            System.out.println(result);
-            result = null;
+            } else if (isCommandHelper(4, commandEvent)) {
+                command = commandsList.get(4);
+                result = followageCommand(commandEvent);
+                System.out.println(result);
+                result = null;
 
-        } else if (isCommandHelper(5, commandEvent)) {
-            command = commandsList.get(5);
-//            if (!commandEvent.getUser().getName().equals("namedauto")) {
-//                return null;
-//            }
-            result = wordCountCommand(commandEvent);
+            } else if (isCommandHelper(5, commandEvent)) {
+                command = commandsList.get(5);
+                result = wordCountCommand(commandEvent);
 
-        } else if (isCommandHelper(6, commandEvent)) {
-            command = commandsList.get(6);
-//            if (!commandEvent.getUser().getName().equals("namedauto")) {
-//                return null;
-//            }
-            result = messageCountCommand(commandEvent);
+            } else if (isCommandHelper(6, commandEvent)) {
+                command = commandsList.get(6);
+                result = messageCountCommand(commandEvent);
 
-        } else if (isCommandHelper(7, commandEvent)) {
-            command = commandsList.get(7);
-            result = pointsCommand(commandEvent);
+            } else if (isCommandHelper(7, commandEvent)) {
+                command = commandsList.get(7);
+                result = pointsCommand(commandEvent);
 
-        } else if (isCommandHelper(8, commandEvent)) {
-            command = commandsList.get(8);
-            result = catchPokeCommand(commandEvent);
+            } else if (isCommandHelper(8, commandEvent)) {
+                command = commandsList.get(8);
+                result = catchPokeCommand(commandEvent);
 
-        } else if (isCommandHelper(9, commandEvent)) {
-            command = commandsList.get(9);
-            result = flipCoinCommand(commandEvent);
-            System.out.println(result);
-            result = null;
+            } else if (isCommandHelper(9, commandEvent)) {
+                command = commandsList.get(9);
+                result = flipCoinCommand(commandEvent);
+                System.out.println(result);
+                result = null;
 
-        } else if (isCommandHelper(10, commandEvent)) {
-            command = commandsList.get(10);
-            result = openLootCommand(commandEvent);
+            } else if (isCommandHelper(10, commandEvent)) {
+                command = commandsList.get(10);
+                result = openLootCommand(commandEvent);
 
-        } else if (isCommandHelper(11, commandEvent)) {
-            command = commandsList.get(11);
-            result = newPartnerCommand(commandEvent);
+            } else if (isCommandHelper(11, commandEvent)) {
+                command = commandsList.get(11);
+                result = newPartnerCommand(commandEvent);
 
-        } else if (isCommandHelper(12, commandEvent)) {
-            command = commandsList.get(12);
-            result = myPartnerCommand(commandEvent);
+            } else if (isCommandHelper(12, commandEvent)) {
+                command = commandsList.get(12);
+                result = myPartnerCommand(commandEvent);
 
-        } else if (isCommandHelper(13, commandEvent)) {
-            command = commandsList.get(13);
-            result = getStock(commandEvent);
+            } else if (isCommandHelper(13, commandEvent)) {
+                command = commandsList.get(13);
+                result = getStock(commandEvent);
+
+            } else if (isCommandHelper(14, commandEvent)) {
+                command = commandsList.get(14);
+                modifyCommandsCommand(commandEvent);
+            }
+
+        } else if (isCommandHelper(14, commandEvent)) {
+            command = commandsList.get(14);
+            modifyCommandsCommand(commandEvent);
         }
 
         if (command != null) {      // Update usage and set cooldown timer
             command.incrementUsage();
             db.getCommandsDao().updateCommandUsage(command);
-            commandCooldownMap.put(command, System.currentTimeMillis());
+            cooldownMap.put(command.getId(), new Pair<>(command, System.currentTimeMillis()));
         }
 
         System.out.println(result);
@@ -186,7 +190,7 @@ public class HandleCommand implements HandleCommandInterface {
         CommandNumPermission permission = commandsList.get(index).getPermission();
         CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
 
-        if (event.getUser().getName().equals("namedauto")) {
+        if (event.getUser().getName().equals("namedauto")) {    // Allow my account to use any command
             hasPermission = true;
         } else {
             hasPermission = userPermission.getCommandLevel() >= permission.getCommandLevel();
@@ -203,9 +207,8 @@ public class HandleCommand implements HandleCommandInterface {
      */
     private boolean isCooldownReady(int index) {
         boolean isReady = false;
-
         Command command = commandsList.get(index);
-        long diff = System.currentTimeMillis() - commandCooldownMap.get(command);
+        long diff = System.currentTimeMillis() - cooldownMap.get(command.getId()).getValue();
         if (diff > command.getCooldown()) {
             isReady = true;
         }
@@ -520,7 +523,6 @@ public class HandleCommand implements HandleCommandInterface {
         return String.format("%s, something went wrong moon2WAH", userName);
     }
 
-
     /**
      * Checks the website and gets the stock info
      * NOTE: website has no api so everything must be done through web scraping
@@ -556,4 +558,51 @@ public class HandleCommand implements HandleCommandInterface {
         return result;
     }
 
+    // TODO: possibly make it it's own class
+    private void modifyCommandsCommand(@Nonnull CommandEvent event) {
+        String[] info = event.getCommand().trim().split("\\s+");
+        String commandAction = info[0];
+        if (commandAction.equals("disable")) {
+            disableCommands();
+
+        } else if (commandAction.equals("enable")) {
+            enableCommands();
+
+        } else if (commandAction.equals("cd") && info.length > 2) {
+            updateCommandCooldown(info[1], info[2]);
+        }
+
+    }
+
+    private void updateCommandCooldown(@Nonnull String commandName, @Nonnull String cooldown) {
+        String result;
+        try {
+            long newCooldown = Long.valueOf(cooldown);
+            if (db.getCommandsDao().updateCommandCooldown(commandName, newCooldown)) {
+                commandsList = db.getCommandsDao().queryCommands();
+                Map<Integer, Pair<Command, Long>> tempMap = new HashMap<>();
+                for (Command command : commandsList) {
+                    tempMap.put(command.getId(), new Pair<>(command, 0L));
+                }
+                cooldownMap = tempMap;
+                result = String.format("Update successful for %s", commandName);
+
+            } else {
+                result = String.format("Failed to update command %s", commandName);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("New cooldown was not a number: " + e.getMessage());
+            result = String.format("Failed to update command %s", commandName);
+        }
+
+        System.out.println(result);
+    }
+
+    private void disableCommands() {
+        commandsEnabled = false;
+    }
+
+    private void enableCommands() {
+        commandsEnabled = true;
+    }
 }
