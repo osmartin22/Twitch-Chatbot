@@ -129,7 +129,16 @@ public class CatchPoke implements CatchPokeInterface {
     private String getPokeGender() {
         String gender;
         try {
-            int genderRate = pokemonSpecies.getGenderRate();
+            int genderRate;
+
+            // Meowstic is a special case pokemon for gender
+            // The api returns the gender for Meowstic, so no need to decide its gender here
+            if (pokemonSpecies.getId() == 678) {
+                genderRate = -1;
+            } else {
+                genderRate = pokemonSpecies.getGenderRate();
+            }
+
             System.out.println("GenderRate: " + genderRate);
             if (genderRate == -1) { // Genderless
                 gender = " ";
