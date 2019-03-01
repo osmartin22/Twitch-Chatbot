@@ -132,6 +132,8 @@ public class HandleCommand implements HandleCommandInterface {
             } else if (isCommandHelper(10, commandEvent)) {
                 command = commandsList.get(10);
                 result = openLootCommand(commandEvent);
+                System.out.println(result);
+                result = null;
 
             } else if (isCommandHelper(11, commandEvent)) {
                 command = commandsList.get(11);
@@ -418,8 +420,8 @@ public class HandleCommand implements HandleCommandInterface {
 
         // Shortest Pokemon name is 3 letters long (Mew, Muk)
         // Only 807 pokemon currently exist
-        String pokeName = (input.length() < 3) ? null : StringHelper.getFirstWord(input);
-        int initializeResult = (pokeName != null) ? catchPoke.initialize(pokeName) :
+        String pokeName = (input.length() < 3) ? "" : StringHelper.getFirstWord(input);
+        int initializeResult = (!pokeName.isEmpty()) ? catchPoke.initialize(pokeName) :
                 catchPoke.initialize(RandomHelper.getRandNumInRange(1, 807));
 
         String output;
@@ -428,7 +430,10 @@ public class HandleCommand implements HandleCommandInterface {
             output = (result != null) ? event.getUser().getName() + result :
                     somethingWentWrong(event.getUser().getName());
         } else {
-            output = String.format("%s, that is not a Pokemon, try !catchpoke <optionalName>", event.getUser().getName());
+//            output = String.format("%s, I only know of Pokemon up until Ultra Sun/Moon, except Meltan," +
+////                    " replace spaces/punctuation with '-' if a name is not working", event.getUser().getName());
+            output = String.format("%s, I couldn't find that Pokemon," +
+                    " replace spaces/punctuation with '-' if a name is not working", event.getUser().getName());
         }
 
         return output;
@@ -488,7 +493,7 @@ public class HandleCommand implements HandleCommandInterface {
 
         } else if (!newPartner.equals(oldPartner)) {
             db.getChatDao().updatePartner(event.getUser().getId(), newPartner);
-            output = String.format("%s left %s D: for %s pepeBASS", user, oldPartner, newPartner);
+            output = String.format("%s left %s for %s pepeBASS", user, oldPartner, newPartner);
 
         } else {
             output = String.format("%s got the same partner, %s moon2N", user, newPartner);

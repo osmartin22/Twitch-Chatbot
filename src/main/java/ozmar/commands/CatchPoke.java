@@ -7,21 +7,21 @@ import poke_models.pokemon.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CatchPoke implements CatchPokeInterface {
     private Pokemon pokemon;
     private PokemonSpecies pokemonSpecies;
     private Nature nature;
     private Set<Integer> specialFormPokemonSet;
+    private Set<String> unreleasedPokemon;
+    private boolean isUnreleased;
 
     public CatchPoke() {
         // unown=201, burmy=412, shellos=422, gastrodon=423, deerling=585, sawsbuck=586, vivillon=666
         // flabebe=669, floette=670, florges=671, furfrou=676
         specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
+        unreleasedPokemon = new HashSet<>(Arrays.asList("meltan", "melmetal", "grookey", "scorbunny", "sobble"));
     }
 
     /**
@@ -33,7 +33,7 @@ public class CatchPoke implements CatchPokeInterface {
      */
     @Override
     public int initialize(int pokeId) {
-        return initialize(pokeId, null);
+        return initialize(pokeId, "");
     }
 
     /**
@@ -55,16 +55,32 @@ public class CatchPoke implements CatchPokeInterface {
      */
     private int initialize(int pokeId, String pokeName) {
         try {
-            pokemonSpecies = (pokeName == null) ? PokemonSpecies.getById(pokeId) : PokemonSpecies.getByName(pokeName);
-            if (pokemonSpecies == null) {
-                return -1;
+            isUnreleased = unreleasedPokemon.contains(pokeName);
+            if (pokeName.isEmpty()) {
+                pokemonSpecies = PokemonSpecies.getById(pokeId);
+            } else {
+                if (isUnreleased) {
+                    pokemonSpecies = PokemonSpecies.getById(150);   // Use Mew as the default template
+                    pokemon = Pokemon.getById(150);
+                    pokemon.setName(pokeName);
+                    PokemonForm tempPokeForm = new PokemonForm();
+                    tempPokeForm.setName(pokeName);
+                    List<PokemonForm> temp = new ArrayList<>(Collections.singletonList(tempPokeForm));
+                    pokemon.setForms(temp);
+                } else {
+                    pokemonSpecies = PokemonSpecies.getByName(pokeName);
+                }
             }
 
-            int pokeVariety = pokemonSpecies.getVarieties().size();
-            int randVariety = RandomHelper.getRandNumInRange(0, pokeVariety - 1);
-            PokemonSpeciesVariety pokemonSpeciesVariety = pokemonSpecies.getVarieties().get(randVariety);
-            pokemon = Pokemon.getByName(pokemonSpeciesVariety.getPokemon().getName());
-            nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
+            if (pokemonSpecies != null && !isUnreleased) {
+                int pokeVariety = pokemonSpecies.getVarieties().size();
+                int randVariety = RandomHelper.getRandNumInRange(0, pokeVariety - 1);
+                PokemonSpeciesVariety pokemonSpeciesVariety = pokemonSpecies.getVarieties().get(randVariety);
+                pokemon = Pokemon.getByName(pokemonSpeciesVariety.getPokemon().getName());
+                nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
+            } else if (pokemonSpecies == null && !isUnreleased) {
+                return -1;
+            }
 
         } catch (Exception e) {
             System.out.println("Failed to initialize: " + e.getMessage());
@@ -82,14 +98,47 @@ public class CatchPoke implements CatchPokeInterface {
     @Nullable
     @Override
     public String attemptCatch() {
-        String pokeGender = getPokeGender();
+        int gender;
+        // Meowstic is a special case pokemon for gender
+        // The api returns the gender for Meowstic, so no need to decide its gender here
+        if (pokemon.getId() == 678 || isUnreleased) {
+            gender = -1;
+        } else {
+            gender = pokemonSpecies.getGenderRate();
+        }
+
+        String pokeGender = decideGender(gender);
         if (pokeGender == null) {
             return null;
         }
 
-        String pokeName;
-        String natureName = nature.getName();
+        String output;
+        output = decideIfShiny() + nature.getName() + pokeGender + decidePokeName(pokemon);
 
+        // index 5 is for the hp stat
+        int captureRate;
+        if (isUnreleased) {
+            String name = pokemon.getName();
+            if (name.equals("meltan") || name.equals("melmetal")) {
+                captureRate = 3;
+            } else {
+                captureRate = 45;
+            }
+        } else {
+            captureRate = pokemonSpecies.getCaptureRate();
+        }
+        if (decideCapture(captureRate, pokemon.getStats().get(5).getBaseStat())) {
+            output = String.format(" caught a %s", output);
+        } else {
+            output = String.format(" let a %s get away", output);
+        }
+
+        return output;
+    }
+
+    @Nonnull
+    private String decidePokeName(@Nonnull Pokemon pokemon) {
+        String pokeName;
         // Check for pokemon that have unique forms, but aren't found in PokemonSpeciesVariety
         if (specialFormPokemonSet.contains(pokemon.getId())) {
             List<PokemonForm> pokemonForms = pokemon.getForms();
@@ -99,20 +148,16 @@ public class CatchPoke implements CatchPokeInterface {
             pokeName = StringUtils.capitalize(pokemon.getName());
         }
 
-        String output = "";
-        boolean isShiny = RandomHelper.getRandNumInRange(1, 100) < 16;
-        if (isShiny) {
-            output = "shiny ";
-        }
+        return pokeName;
+    }
 
-        output += natureName + pokeGender + pokeName;
-        if (decideCapture()) {
-            output = String.format(" caught a %s", output);
-        } else {
-            output = String.format(" let a %s get away", output);
+    @Nonnull
+    private String decideIfShiny() {
+        String shinyStatus = "";
+        if (RandomHelper.getRandNumInRange(1, 100) < 16) {
+            shinyStatus = "shiny ";
         }
-
-        return output;
+        return shinyStatus;
     }
 
     /**
@@ -123,23 +168,13 @@ public class CatchPoke implements CatchPokeInterface {
      * 8 means the pokemon can only be female
      * -1 means the pokemon is genderless
      *
+     * @param genderRate gender rate of the pokemon
      * @return String
      */
     @Nullable
-    private String getPokeGender() {
-        String gender;
+    private String decideGender(int genderRate) {
+        String gender = null;
         try {
-            int genderRate;
-
-            // Meowstic is a special case pokemon for gender
-            // The api returns the gender for Meowstic, so no need to decide its gender here
-            if (pokemonSpecies.getId() == 678) {
-                genderRate = -1;
-            } else {
-                genderRate = pokemonSpecies.getGenderRate();
-            }
-
-            System.out.println("GenderRate: " + genderRate);
             if (genderRate == -1) { // Genderless
                 gender = " ";
             } else if (genderRate == 0) {   // Only males
@@ -148,7 +183,6 @@ public class CatchPoke implements CatchPokeInterface {
                 gender = " female ";
             } else {
                 int genderChance = RandomHelper.getRandNumInRange(1, 8);    // Gender ratios are done in eighths
-                System.out.println("GenderChance: " + genderChance);
                 if (genderChance <= genderRate) {
                     gender = " female ";
                 } else {
@@ -157,7 +191,6 @@ public class CatchPoke implements CatchPokeInterface {
             }
         } catch (Exception e) {
             System.out.println("Failed to get gender: " + e.getMessage());
-            return null;
         }
 
         return gender;
@@ -166,11 +199,13 @@ public class CatchPoke implements CatchPokeInterface {
     /**
      * Decides whether pokemon is captured or not
      *
+     * @param captureRate capture rate of the pokemon
+     * @param hpMax       max hp of the pokemon at level 1
      * @return boolean
      */
-    private boolean decideCapture() {
-        int captureRate = pokemonSpecies.getCaptureRate();
-        int hpMax = pokemon.getStats().get(5).getBaseStat();   // index 5 is for the hp stat
+    private boolean decideCapture(int captureRate, int hpMax) {
+//        int captureRate = pokemonSpecies.getCaptureRate();
+//        int hpMax = pokemon.getStats().get(5).getBaseStat();   // index 5 is for the hp stat
 
         // Add status and lower health even more only if pokemon has a low catch rate(usually a legendary)
         double hpCurr = (captureRate == 3) ? hpMax * .05 : hpMax * .15;
