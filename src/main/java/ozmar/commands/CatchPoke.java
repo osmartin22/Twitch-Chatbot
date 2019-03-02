@@ -54,19 +54,21 @@ public class CatchPoke implements CatchPokeInterface {
      * @return int
      */
     private int initialize(int pokeId, String pokeName) {
+        pokeName = pokeName.toLowerCase();
         try {
             isUnreleased = unreleasedPokemon.contains(pokeName);
             if (pokeName.isEmpty()) {
                 pokemonSpecies = PokemonSpecies.getById(pokeId);
             } else {
                 if (isUnreleased) {
-                    pokemonSpecies = PokemonSpecies.getById(150);   // Use Mew as the default template
+                    // Use Mewtwo as the default template
+                    // Modify the parts that are used so that it imitates the unreleased Pokemon
+                    pokemonSpecies = PokemonSpecies.getById(150);
                     pokemon = Pokemon.getById(150);
                     pokemon.setName(pokeName);
                     PokemonForm tempPokeForm = new PokemonForm();
                     tempPokeForm.setName(pokeName);
-                    List<PokemonForm> temp = new ArrayList<>(Collections.singletonList(tempPokeForm));
-                    pokemon.setForms(temp);
+                    pokemon.setForms(Collections.singletonList(tempPokeForm));
                 } else {
                     pokemonSpecies = PokemonSpecies.getByName(pokeName);
                 }
@@ -77,10 +79,11 @@ public class CatchPoke implements CatchPokeInterface {
                 int randVariety = RandomHelper.getRandNumInRange(0, pokeVariety - 1);
                 PokemonSpeciesVariety pokemonSpeciesVariety = pokemonSpecies.getVarieties().get(randVariety);
                 pokemon = Pokemon.getByName(pokemonSpeciesVariety.getPokemon().getName());
-                nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
             } else if (pokemonSpecies == null && !isUnreleased) {
                 return -1;
             }
+
+            nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
 
         } catch (Exception e) {
             System.out.println("Failed to initialize: " + e.getMessage());
@@ -101,7 +104,7 @@ public class CatchPoke implements CatchPokeInterface {
         int gender;
         // Meowstic is a special case pokemon for gender
         // The api returns the gender for Meowstic, so no need to decide its gender here
-        if (pokemon.getId() == 678 || isUnreleased) {
+        if (isUnreleased || pokemonSpecies.getId() == 678) {
             gender = -1;
         } else {
             gender = pokemonSpecies.getGenderRate();
@@ -113,7 +116,12 @@ public class CatchPoke implements CatchPokeInterface {
         }
 
         String output;
-        output = decideIfShiny() + nature.getName() + pokeGender + decidePokeName(pokemon);
+        try {
+            output = decideIfShiny() + nature.getName() + pokeGender + decidePokeName(pokemon);
+        } catch (Exception e) {
+            System.out.println("Failed attempting to catch a Pokemon " + e.getMessage());
+            return null;
+        }
 
         // index 5 is for the hp stat
         int captureRate;
@@ -127,15 +135,28 @@ public class CatchPoke implements CatchPokeInterface {
         } else {
             captureRate = pokemonSpecies.getCaptureRate();
         }
+
         if (decideCapture(captureRate, pokemon.getStats().get(5).getBaseStat())) {
-            output = String.format(" caught a %s", output);
+            char firstChar = output.charAt(0);
+            if (firstChar == 'a' || firstChar == 'e' || firstChar == 'i' || firstChar == 'o' || firstChar == 'u') {
+                output = String.format(" caught an %s", output);
+            } else {
+                output = String.format(" caught a %s", output);
+            }
         } else {
             output = String.format(" let a %s get away", output);
         }
 
+        isUnreleased = false;
         return output;
     }
 
+    /**
+     * Picks a Pokemon form for the given pokemon
+     *
+     * @param pokemon Pokemon to choose from
+     * @return String
+     */
     @Nonnull
     private String decidePokeName(@Nonnull Pokemon pokemon) {
         String pokeName;
@@ -151,6 +172,11 @@ public class CatchPoke implements CatchPokeInterface {
         return pokeName;
     }
 
+    /**
+     * Returns aa string if a Pokemon is shiny
+     *
+     * @return string
+     */
     @Nonnull
     private String decideIfShiny() {
         String shinyStatus = "";
@@ -176,6 +202,7 @@ public class CatchPoke implements CatchPokeInterface {
         String gender = null;
         try {
             if (genderRate == -1) { // Genderless
+                gender = " ";
                 gender = " ";
             } else if (genderRate == 0) {   // Only males
                 gender = " male ";

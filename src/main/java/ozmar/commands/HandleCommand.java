@@ -253,8 +253,10 @@ public class HandleCommand implements HandleCommandInterface {
     private String spitCommand(@Nonnull CommandEvent event, @Nonnull Command command) {
         String randomChatter = recentChatters.getRandomRecentChatter();
         if (randomChatter == null) {
-            randomChatter = event.getUser().getName();
+//            randomChatter = event.getUser().getName();
+            randomChatter = "nightbot";
         }
+
         return String.format("☄ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
                 event.getUser().getName(), randomChatter, (command.getUsage() + 1));
     }
@@ -430,10 +432,8 @@ public class HandleCommand implements HandleCommandInterface {
             output = (result != null) ? event.getUser().getName() + result :
                     somethingWentWrong(event.getUser().getName());
         } else {
-//            output = String.format("%s, I only know of Pokemon up until Ultra Sun/Moon, except Meltan," +
-////                    " replace spaces/punctuation with '-' if a name is not working", event.getUser().getName());
             output = String.format("%s, I couldn't find that Pokemon," +
-                    " replace spaces/punctuation with '-' if a name is not working", event.getUser().getName());
+                    " replace spaces/punctuation with '-' if a Pokemon name is not working", event.getUser().getName());
         }
 
         return output;

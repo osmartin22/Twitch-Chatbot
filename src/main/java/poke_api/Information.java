@@ -29,7 +29,6 @@ public class Information {
     public static String fromInternet(String targetURL) {
         String str;
         // if CACHE is on, and exists in db, get it from db
-        System.out.println("INFO CHECKING");
         if (Client.CACHE && ((str = Database.getInstance().getByUrl(targetURL)) != null)) {
             return str;
         }
@@ -46,7 +45,7 @@ public class Information {
 
             if (Client.CACHE) {
                 if (Database.getInstance().insert(targetURL, str)) {
-                    System.out.println("SAVED TO DB");
+//                    System.out.println("SAVED TO DB");
                 } else {
                     System.out.println("ERROR SAVING TO DB");
                 }
