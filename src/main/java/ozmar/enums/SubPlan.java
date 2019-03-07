@@ -1,5 +1,8 @@
 package ozmar.enums;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public enum SubPlan {
     NONE("none"),
     TWITCH_PRIME("Prime"),
@@ -13,7 +16,8 @@ public enum SubPlan {
         this.ordinal = ordinal;
     }
 
-    public static SubPlan getValue(String plan) {
+    @Nonnull
+    public static SubPlan getValue(@Nullable String plan) {
         if (plan != null) {
             for (SubPlan subPlan : values()) {
                 if (plan.equalsIgnoreCase(subPlan.ordinal)) {
@@ -30,6 +34,7 @@ public enum SubPlan {
         return ordinal;
     }
 
+    @Nonnull
     public String getSubPlanName() {
         switch (this) {
             case TWITCH_PRIME:

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import ozmar.database.dao.interfaces.ChatDaoInterface;
 import ozmar.database.dao.interfaces.CommandsDaoInterface;
+import ozmar.database.dao.interfaces.PokemonDaoInterface;
 import ozmar.database.dao.interfaces.WordCountDaoInterface;
 import ozmar.database.tables.config.ChatTableInterfaceConfig;
 import ozmar.database.tables.config.CommandsTableInterfaceConfig;
@@ -18,7 +19,8 @@ public class DataBaseHandlerInterfaceConfig {
     @Bean
     public DatabaseHandlerInterface databaseHandlerInterfaceBean(CommandsDaoInterface commandsDao,
                                                                  WordCountDaoInterface wordCountDao,
-                                                                 ChatDaoInterface chatDao) {
-        return new DatabaseHandler(commandsDao, wordCountDao, chatDao);
+                                                                 ChatDaoInterface chatDao,
+                                                                 PokemonDaoInterface pokemonDao) {
+        return new DatabaseHandler(commandsDao, wordCountDao, chatDao, pokemonDao);
     }
 }

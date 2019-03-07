@@ -29,7 +29,8 @@ public class RequestChat {
      *
      * @return List of user names
      */
-    public static List<String> queryChatList(String channelName) {
+    @Nonnull
+    public static List<String> queryChatList(@Nonnull String channelName) {
         List<String> chatList = new ArrayList<>();
         try {
             JsonFactory factory = new JsonFactory();
@@ -44,7 +45,8 @@ public class RequestChat {
         return new ArrayList<>(chatList);
     }
 
-    private static List<String> parseChatUsers(JsonParser jsonParser) {
+    @Nonnull
+    private static List<String> parseChatUsers(@Nonnull JsonParser jsonParser) {
         List<String> chatUserList = new ArrayList<>();
 
         try {

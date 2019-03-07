@@ -1,5 +1,7 @@
 package ozmar.utils;
 
+import reactor.util.annotation.NonNull;
+
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,5 +52,15 @@ public class StringHelper {
     public static String insertSpecialChars(@Nonnull String word) {
         String special = "\u00AD\u2063";
         return word.substring(0, 1) + special + word.substring(1);
+    }
+
+
+    public static boolean startsWithVowel(@NonNull String input) {
+        if (input.length() > 0) {
+            char firstChar = input.charAt(0);
+            return firstChar == 'a' || firstChar == 'e' || firstChar == 'i' || firstChar == 'o' || firstChar == 'u';
+        } else {
+            return false;
+        }
     }
 }

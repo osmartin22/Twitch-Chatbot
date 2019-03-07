@@ -7,7 +7,6 @@ import ozmar.commands.interfaces.HandleCommandInterface;
 public class OnCommandReceived {
 
     private HandleCommandInterface handleCommand;
-    private static long lastCommand = 0;
 
 
     public OnCommandReceived(HandleCommandInterface handleCommand) {

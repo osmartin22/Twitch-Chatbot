@@ -9,6 +9,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ozmar.CaughtPokeInfo;
+import ozmar.PokemonPoke;
 import ozmar.WordFilter;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
@@ -428,9 +430,9 @@ public class HandleCommand implements HandleCommandInterface {
 
         String output;
         if (initializeResult != -1) {
-            String result = catchPoke.attemptCatch();
-            output = (result != null) ? event.getUser().getName() + result :
-                    somethingWentWrong(event.getUser().getName());
+            CaughtPokeInfo caughtPokeInfo = catchPoke.attemptCatch();
+            output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
+
         } else {
             output = String.format("%s, I couldn't find that Pokemon," +
                     " replace spaces/punctuation with '-' if a Pokemon name is not working", event.getUser().getName());
@@ -493,7 +495,7 @@ public class HandleCommand implements HandleCommandInterface {
 
         } else if (!newPartner.equals(oldPartner)) {
             db.getChatDao().updatePartner(event.getUser().getId(), newPartner);
-            output = String.format("%s left %s for %s pepeBASS", user, oldPartner, newPartner);
+            output = String.format("%s left %s for %s PEPELEPSY", user, oldPartner, newPartner);
 
         } else {
             output = String.format("%s got the same partner, %s moon2N", user, newPartner);
