@@ -99,12 +99,10 @@ public class CatchPoke implements CatchPokeInterface {
         return 1;
     }
 
-    //TODO: REWRITE
-
     /**
-     * Creates a string to return whether the pokemon was captured or not
+     * Creates a CaughtPokeInfo object to return info about the pokemon and its capture status
      *
-     * @return String
+     * @return CaughtPokeInfo
      */
     @NonNull
     @Override
@@ -133,10 +131,13 @@ public class CatchPoke implements CatchPokeInterface {
             pokemonGender = decideGender(pokemonSpecies.getGenderRate());
         }
 
+        poke.setPokemonSpecies(pokemonSpecies.getName());
         poke.setPokemonName(decidePokeName(pokemon));
+        poke.setPokemonNickName(poke.getPokemonName());
         poke.setShiny(isShiny());
         poke.setNature(nature.getName());
         poke.setGender(pokemonGender);
+        poke.setPokemonMoves(new HashSet<>());
 
         return poke;
     }

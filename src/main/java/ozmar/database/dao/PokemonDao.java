@@ -15,6 +15,11 @@ public class PokemonDao implements PokemonDaoInterface {
         this.pokemonTable = pokemonTable;
     }
 
+    @Override
+    public int getUsersPokemonCount(long userId) {
+        return pokemonTable.getUsersPokemonCount(userId);
+    }
+
     @Nullable
     @Override
     public PokemonPoke getPokemon(long userId) {

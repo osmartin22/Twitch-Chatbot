@@ -152,6 +152,14 @@ public class HandleCommand implements HandleCommandInterface {
             } else if (isCommandHelper(14, commandEvent)) {
                 command = commandsList.get(14);
                 modifyCommandsCommand(commandEvent);
+
+            } else if (isCommandHelper(15, commandEvent)) {
+                command = commandsList.get(15);
+                result = myPoke(commandEvent);
+
+            } else if (isCommandHelper(16, commandEvent)) {
+                command = commandsList.get(16);
+                replacePoke(commandEvent);
             }
 
         } else if (isCommandHelper(14, commandEvent)) {
@@ -433,6 +441,18 @@ public class HandleCommand implements HandleCommandInterface {
             CaughtPokeInfo caughtPokeInfo = catchPoke.attemptCatch();
             output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
 
+            if (caughtPokeInfo.isCaptured() && !caughtPokeInfo.isUnreleased()) {
+                long userId = event.getUser().getId();
+                int pokeCount = db.getPokemonDao().getUsersPokemonCount(userId);
+                if (pokeCount == 0) {
+                    db.getPokemonDao().insertPokemon(userId, caughtPokeInfo.getPoke());
+                    System.out.println("Inserting new pokemon");
+                } else {
+                    db.getPokemonDao().updatePokemon(userId, caughtPokeInfo.getPoke());
+                    System.out.println("updating pokemon");
+                }
+            }
+
         } else {
             output = String.format("%s, I couldn't find that Pokemon," +
                     " replace spaces/punctuation with '-' if a Pokemon name is not working", event.getUser().getName());
@@ -611,5 +631,28 @@ public class HandleCommand implements HandleCommandInterface {
 
     private void enableCommands() {
         commandsEnabled = true;
+    }
+
+
+    @Nonnull
+    private String myPoke(@Nonnull CommandEvent event) {
+        String output;
+        PokemonPoke poke = db.getPokemonDao().getPokemon(event.getUser().getId());
+        if (poke == null) {
+            output = String.format("%s, you do not have a pokemon yet", event.getUser().getName());
+        } else {
+            String pokeString = poke.getPokeString();
+            if (StringHelper.startsWithVowel(pokeString)) {
+                output = String.format("%s, your current pokemon is an %s", event.getUser().getName(), pokeString);
+            } else {
+                output = String.format("%s, your current pokemon is a %s", event.getUser().getName(), pokeString);
+            }
+        }
+
+        return output;
+    }
+
+    private void replacePoke(@Nonnull CommandEvent event) {
+
     }
 }

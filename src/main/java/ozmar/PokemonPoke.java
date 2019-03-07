@@ -1,8 +1,11 @@
 package ozmar;
 
 import ozmar.enums.PokemonGender;
+import reactor.util.annotation.NonNull;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 public class PokemonPoke {
 
@@ -18,27 +21,30 @@ public class PokemonPoke {
 
     }
 
+    @NonNull
     public String getPokemonSpecies() {
         return pokemonSpecies;
     }
 
-    public void setPokemonSpecies(String pokemonSpecies) {
+    public void setPokemonSpecies(@NonNull String pokemonSpecies) {
         this.pokemonSpecies = pokemonSpecies;
     }
 
+    @NonNull
     public String getPokemonName() {
         return pokemonName;
     }
 
-    public void setPokemonName(String pokemonName) {
+    public void setPokemonName(@NonNull String pokemonName) {
         this.pokemonName = pokemonName;
     }
 
+    @NonNull
     public String getPokemonNickName() {
         return pokemonNickName;
     }
 
-    public void setPokemonNickName(String pokemonNickName) {
+    public void setPokemonNickName(@NonNull String pokemonNickName) {
         this.pokemonNickName = pokemonNickName;
     }
 
@@ -50,26 +56,30 @@ public class PokemonPoke {
         isShiny = shiny;
     }
 
+    @NonNull
     public PokemonGender getGender() {
         return gender;
     }
 
-    public void setGender(PokemonGender gender) {
+    public void setGender(@NonNull PokemonGender gender) {
         this.gender = gender;
     }
 
+    @NonNull
     public String getNature() {
         return nature;
     }
 
-    public void setNature(String nature) {
+    public void setNature(@NonNull String nature) {
         this.nature = nature;
     }
 
+    @NonNull
     public Set<String> getPokemonMovesSet() {
         return pokemonMoves;
     }
 
+    @NonNull
     public String getPokemonMovesString() {
         StringBuilder moves = new StringBuilder();
         for (String pokemonMove : pokemonMoves) {
@@ -80,10 +90,20 @@ public class PokemonPoke {
         return moves.toString();
     }
 
-    public void setPokemonMoves(Set<String> pokemonMoves) {
+    public void setPokemonMoves(@NonNull Set<String> pokemonMoves) {
         this.pokemonMoves = pokemonMoves;
     }
 
+    public void setPokemonMoves(@NonNull String moves) {
+        Set<String> pokemonMoves = new HashSet<>(4);
+        StringTokenizer st = new StringTokenizer(moves, ",");
+        while (st.hasMoreTokens()) {
+            pokemonMoves.add(st.nextToken());
+        }
+        this.pokemonMoves = pokemonMoves;
+    }
+
+    @NonNull
     public String getPokeString() {
         StringBuilder sb = new StringBuilder();
         if (isShiny) {

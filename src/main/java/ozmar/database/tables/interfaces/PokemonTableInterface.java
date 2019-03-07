@@ -13,4 +13,6 @@ public interface PokemonTableInterface {
     void insertPokemon(long userId, @Nonnull PokemonPoke poke);
 
     void updatePokemon(long userId, @Nonnull PokemonPoke poke);
+
+    int getUsersPokemonCount(long userId);
 }

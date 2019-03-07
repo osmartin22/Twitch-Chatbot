@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 
 public interface PokemonDaoInterface {
 
+    int getUsersPokemonCount(long userId);
+
     @Nullable
     PokemonPoke getPokemon(long userId);
 

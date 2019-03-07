@@ -6,10 +6,7 @@ import ozmar.enums.PokemonGender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class PokemonTable extends Table implements PokemonTableInterface {
 
@@ -20,8 +17,8 @@ public class PokemonTable extends Table implements PokemonTableInterface {
     private static final String COLUMN_POKEMON_NAME = "pokemonName";
     private static final String COLUMN_POKEMON_NICKNAME = "pokemonNickName";
     private static final String COLUMN_IS_SHINY = "isShiny";
-    private static final String COLUMN_GENDER = "gender";
     private static final String COLUMN_NATURE = "nature";
+    private static final String COLUMN_GENDER = "gender";
     private static final String COLUMN_MOVES = "moves";
 
     /*
@@ -35,8 +32,8 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     COLUMN_POKEMON_NAME + " TEXT, " +
                     COLUMN_POKEMON_NICKNAME + " TEXT, " +
                     COLUMN_IS_SHINY + " INTEGER, " +
-                    COLUMN_GENDER + " INTEGER, " +
                     COLUMN_NATURE + " TEXT, " +
+                    COLUMN_GENDER + " INTEGER, " +
                     COLUMN_MOVES + " TEXT)";
 
     private static final String getPokemonSql =
@@ -50,10 +47,10 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     COLUMN_POKEMON_NAME + ", " +
                     COLUMN_POKEMON_NICKNAME + ", " +
                     COLUMN_IS_SHINY + ", " +
-                    COLUMN_GENDER + ", " +
                     COLUMN_NATURE + ", " +
+                    COLUMN_GENDER + ", " +
                     COLUMN_MOVES + ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String updatePokemonSql =
             "UPDATE " + POKEMON_TABLE +
@@ -62,8 +59,8 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     COLUMN_POKEMON_NAME + " = ?, " +
                     COLUMN_POKEMON_NICKNAME + " = ?, " +
                     COLUMN_IS_SHINY + " = ?, " +
-                    COLUMN_GENDER + " = ?, " +
                     COLUMN_NATURE + " = ?, " +
+                    COLUMN_GENDER + " = ?, " +
                     COLUMN_MOVES + " = ? " +
                     " WHERE " + COLUMN_USER_ID + " = ?";
 
@@ -72,6 +69,26 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     " FROM " + POKEMON_TABLE +
                     " WHERE " + COLUMN_USER_ID + " = ?";
 
+    public PokemonTable() {
+        createTable(CREATE_POKEMON_TABLE);
+    }
+
+    @Override
+    public int getUsersPokemonCount(long userId) {
+        Connection connection = openConnection();
+        String sql = "SELECT " + COLUMN_USER_ID + ", count(*) FROM " + POKEMON_TABLE +
+                " WHERE " + COLUMN_USER_ID + " = " + userId;
+        int count = 0;
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to check table for user " + userId + " " + e.getMessage());
+        }
+        return count;
+    }
 
     @Nullable
     @Override
@@ -89,7 +106,9 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     pokemonPoke.setPokemonName(resultSet.getString(COLUMN_POKEMON_NAME));
                     pokemonPoke.setPokemonNickName(resultSet.getString(COLUMN_POKEMON_NICKNAME));
                     pokemonPoke.setShiny(resultSet.getInt(COLUMN_IS_SHINY) == 1);
+                    pokemonPoke.setNature(resultSet.getString(COLUMN_NATURE));
                     pokemonPoke.setGender(PokemonGender.genders[resultSet.getInt(COLUMN_GENDER)]);
+                    pokemonPoke.setPokemonMoves(resultSet.getString(COLUMN_MOVES));
                 }
             }
         } catch (SQLException e) {
@@ -110,12 +129,11 @@ public class PokemonTable extends Table implements PokemonTableInterface {
             preparedStatement.setString(2, poke.getPokemonSpecies());
             preparedStatement.setString(3, poke.getPokemonName());
             preparedStatement.setString(4, poke.getPokemonNickName());
-            preparedStatement.setInt(4, poke.isShiny() ? 1 : 0);
-            preparedStatement.setInt(6, poke.getGender().getGenderNum());
-            preparedStatement.setString(7, poke.getNature());
+            preparedStatement.setInt(5, poke.isShiny() ? 1 : 0);
+            preparedStatement.setString(6, poke.getNature());
+            preparedStatement.setInt(7, poke.getGender().getGenderNum());
             preparedStatement.setString(8, poke.getPokemonMovesString());
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             System.out.println("Failed to insert pokemon for " + userId + ": " + e.getMessage());
         } finally {
@@ -133,12 +151,11 @@ public class PokemonTable extends Table implements PokemonTableInterface {
             preparedStatement.setString(2, poke.getPokemonName());
             preparedStatement.setString(3, poke.getPokemonNickName());
             preparedStatement.setInt(4, poke.isShiny() ? 1 : 0);
-            preparedStatement.setInt(5, poke.getGender().getGenderNum());
-            preparedStatement.setString(6, poke.getNature());
+            preparedStatement.setString(5, poke.getNature());
+            preparedStatement.setInt(6, poke.getGender().getGenderNum());
             preparedStatement.setString(7, poke.getPokemonMovesString());
             preparedStatement.setLong(8, userId);
             preparedStatement.executeUpdate();
-
         } catch (SQLException e) {
             System.out.println("Failed to update pokemon for " + userId + ": " + e.getMessage());
         } finally {

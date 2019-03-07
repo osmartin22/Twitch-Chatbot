@@ -32,8 +32,8 @@ public class CatchPokeTest {
 
     @Test
     public void checkExistingPokemonByName() {
-        for (int i = 0; i < pokemonNames.size(); i++) {
-            checkStringNotEmpty(catchPoke.initialize(pokemonNames.get(i)));
+        for (String pokemonName : pokemonNames) {
+            checkStringNotEmpty(catchPoke.initialize(pokemonName));
         }
     }
 
@@ -55,7 +55,7 @@ public class CatchPokeTest {
         Assert.assertEquals(1, result);
 
         // return String should not be empty if the pokemon exists
-        String catchResult = catchPoke.attemptCatch();
+        String catchResult = catchPoke.attemptCatch().getCatchResultString();
         Assert.assertNotEquals("", catchResult);
     }
 }
