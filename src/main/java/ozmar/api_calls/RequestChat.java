@@ -36,7 +36,6 @@ public class RequestChat {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(new URL(url + channelName + "/chatters"));
             chatList = parseChatUsers(parser);
-            System.out.println("ChatUserList Size: " + chatList.size());
 
         } catch (IOException e) {
             System.out.println("Failed to query the chat list " + e.getMessage());

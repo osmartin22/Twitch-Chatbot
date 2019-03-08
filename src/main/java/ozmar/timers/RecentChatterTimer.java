@@ -18,7 +18,7 @@ public class RecentChatterTimer {
 
     public void startTimer() {
         final Runnable beeper = () -> {
-            int l = 120000;
+            int l = 240000;
             recentChatters.getRecentChatters().entrySet()
                     .removeIf(entry -> System.currentTimeMillis() - entry.getValue() > l);
         };

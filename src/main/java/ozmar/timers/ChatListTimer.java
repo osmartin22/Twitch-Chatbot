@@ -27,29 +27,27 @@ public class ChatListTimer {
             List<List<String>> partition = ListUtils.partition(userNameList, 100);
 
             // Remove names from the list if they exist in the database
+            int originalChatterCount = userNameList.size();
             db.getChatDao().checkIfNamesExist(userNameList);
-            System.out.print("Fetching " + userNameList.size() + " users in " + partition.size() + " partitions: ");
 
+            int usersSavedCount = 0;
             for (List<String> list : partition) {
                 UserList userList;
                 try {
                     userList = Bot.helixCommands.getUsersList(null, list);
                 } catch (Exception e) {
-                    /* TODO: From testing, the api call doesn't fail, it's just that the call
-                        sometimes takes longer than the timeout and is registered as a timeout exception
-                        but the result is received a little bit later
-                     */
                     System.out.println("Getting user info timed out" + e.getMessage());
                     continue;   // Skip list, will be called the next time the timer occurs
                 }
 
                 if (userList != null && !userList.getUsers().isEmpty()) {
-                    System.out.print("Storing " + userList.getUsers().size() + " users ");
+                    usersSavedCount += userList.getUsers().size();
                     db.getChatDao().addUserList(userList.getUsers());
                 }
             }
 
-            System.out.println();
+            System.out.println(String.format("ChatterCount: %s, Saved %s/%s users from %s partitions",
+                    originalChatterCount, usersSavedCount, userNameList.size(), partition.size()));
         };
 
         final ScheduledFuture<?> fixedRateTimer =
