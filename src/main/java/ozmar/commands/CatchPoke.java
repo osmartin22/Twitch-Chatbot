@@ -11,7 +11,12 @@ import poke_models.pokemon.*;
 import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class CatchPoke implements CatchPokeInterface {
     private Pokemon pokemon;
@@ -21,11 +26,16 @@ public class CatchPoke implements CatchPokeInterface {
     private Set<String> unreleasedPokemon;
     private boolean isUnreleased;
 
+    private Map<Long, CaughtPokeHelper> caughtPokes;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     public CatchPoke() {
         // unown=201, burmy=412, shellos=422, gastrodon=423, deerling=585, sawsbuck=586, vivillon=666
         // flabebe=669, floette=670, florges=671, furfrou=676
         specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
         unreleasedPokemon = new HashSet<>(Arrays.asList("meltan", "melmetal", "grookey", "scorbunny", "sobble"));
+        caughtPokes = new HashMap<>();
+        startTimer();
     }
 
     /**
@@ -267,5 +277,47 @@ public class CatchPoke implements CatchPokeInterface {
         }
 
         return true;
+    }
+
+
+    private class CaughtPokeHelper {
+        private long timeStored;
+        private CaughtPokeInfo pokeInfo;
+
+        CaughtPokeHelper(long timeStored, @NonNull CaughtPokeInfo pokeInfo) {
+            this.timeStored = timeStored;
+            this.pokeInfo = pokeInfo;
+        }
+    }
+
+    @Override
+    public void saveCatch(long userId, @NonNull CaughtPokeInfo pokeInfo) {
+        CaughtPokeHelper helper = new CaughtPokeHelper(System.currentTimeMillis(), pokeInfo);
+        caughtPokes.put(userId, helper);
+    }
+
+    @Override
+    public void removeCatch(long userId) {
+        caughtPokes.remove(userId);
+    }
+
+    @Nullable
+    @Override
+    public CaughtPokeInfo getSavedCatch(long userId) {
+        CaughtPokeHelper helper = caughtPokes.get(userId);
+        if (helper != null) {
+            return helper.pokeInfo;
+        }
+
+        return null;
+    }
+
+    public void startTimer() {
+        final long removeTimer = 60000;
+        final Runnable clearUnclaimedPokes = () -> caughtPokes.entrySet()
+                .removeIf(entry -> System.currentTimeMillis() - entry.getValue().timeStored > removeTimer);
+
+        final ScheduledFuture<?> fixedRateTimer =
+                scheduler.scheduleAtFixedRate(clearUnclaimedPokes, 60, 60, TimeUnit.SECONDS);
     }
 }

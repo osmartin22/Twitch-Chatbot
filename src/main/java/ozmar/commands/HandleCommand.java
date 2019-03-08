@@ -159,7 +159,7 @@ public class HandleCommand implements HandleCommandInterface {
 
             } else if (isCommandHelper(16, commandEvent)) {
                 command = commandsList.get(16);
-                replacePoke(commandEvent);
+                result = replacePoke(commandEvent);
             }
 
         } else if (isCommandHelper(14, commandEvent)) {
@@ -326,7 +326,6 @@ public class HandleCommand implements HandleCommandInterface {
      *
      * @return String
      */
-    // TODO: Parse the word, the same way I parse messages in OnChatChannelMessage
     @Nonnull
     private String wordCountCommand(@Nonnull CommandEvent event) {
         String result;
@@ -440,16 +439,17 @@ public class HandleCommand implements HandleCommandInterface {
         if (initializeResult != -1) {
             CaughtPokeInfo caughtPokeInfo = catchPoke.attemptCatch();
             output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
+            if (caughtPokeInfo.isCaptured()) {
+                output += ", use !replacepoke to replace your current Pokemon with this one";
+            }
 
-            if (caughtPokeInfo.isCaptured() && !caughtPokeInfo.isUnreleased()) {
+            if (caughtPokeInfo.isCaptured()) {
                 long userId = event.getUser().getId();
                 int pokeCount = db.getPokemonDao().getUsersPokemonCount(userId);
                 if (pokeCount == 0) {
                     db.getPokemonDao().insertPokemon(userId, caughtPokeInfo.getPoke());
-                    System.out.println("Inserting new pokemon");
                 } else {
-                    db.getPokemonDao().updatePokemon(userId, caughtPokeInfo.getPoke());
-                    System.out.println("updating pokemon");
+                    catchPoke.saveCatch(userId, caughtPokeInfo);
                 }
             }
 
@@ -633,13 +633,18 @@ public class HandleCommand implements HandleCommandInterface {
         commandsEnabled = true;
     }
 
-
+    /**
+     * Returns the current Pokemon a user has or informs the user they do not have one
+     *
+     * @param event User data and command info
+     * @return String
+     */
     @Nonnull
     private String myPoke(@Nonnull CommandEvent event) {
         String output;
         PokemonPoke poke = db.getPokemonDao().getPokemon(event.getUser().getId());
         if (poke == null) {
-            output = String.format("%s, you do not have a pokemon yet", event.getUser().getName());
+            output = String.format("%s, you do not have a pokemon yet, use !catchpoke to get one", event.getUser().getName());
         } else {
             String pokeString = poke.getPokeString();
             if (StringHelper.startsWithVowel(pokeString)) {
@@ -652,7 +657,18 @@ public class HandleCommand implements HandleCommandInterface {
         return output;
     }
 
-    private void replacePoke(@Nonnull CommandEvent event) {
+    // TODO: Decide on whether to output or not if a replace was successful(output means more spam)
+    @Nullable
+    private String replacePoke(@Nonnull CommandEvent event) {
+        long userId = event.getUser().getId();
+        CaughtPokeInfo pokeInfo = catchPoke.getSavedCatch(userId);
+        if (pokeInfo != null) {
+            db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke());
+            catchPoke.removeCatch(userId);
+            return null;
+        }
 
+//        return String.format("%s, you don't have a pokemon to replace your current one, use !catchpoke to get one", event.getUser().getName());
+        return null;
     }
 }
