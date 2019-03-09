@@ -15,15 +15,15 @@ public class OnCommandReceived {
 
     private final HandleCommandInterface handleCommand;
 
-    private final long OUTPUT_COOLDOWN = 1000;
+    private final long OUTPUT_COOLDOWN = 1500;
     private long lastSentMessage = 0;
     private final Deque<Pair<CommandEvent, String>> outputQueue;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> fixedRateTimer;
 
     public OnCommandReceived(HandleCommandInterface handleCommand, Deque<Pair<CommandEvent, String>> commandOutputQueue) {
         this.handleCommand = handleCommand;
         this.outputQueue = commandOutputQueue;
-        startTimer();
     }
 
     @EventSubscriber
@@ -36,15 +36,22 @@ public class OnCommandReceived {
         if (output != null) {
             long currTime = System.currentTimeMillis();
             if (currTime - lastSentMessage > OUTPUT_COOLDOWN && outputQueue.isEmpty()) {
+                if (fixedRateTimer != null) {
+                    fixedRateTimer.cancel(true);
+                    fixedRateTimer = null;
+                }
                 event.respondToUser(output);
                 lastSentMessage = currTime;
             } else {
+                if (fixedRateTimer == null) {
+                    fixedRateTimer = startTimer();
+                }
                 outputQueue.add(new Pair<>(event, output));
             }
         }
     }
 
-    public void startTimer() {
+    public ScheduledFuture<?> startTimer() {
         final Runnable sendQueuedOutput = () -> {
             long currTime = System.currentTimeMillis();
             if (currTime - lastSentMessage > OUTPUT_COOLDOWN && !outputQueue.isEmpty()) {
@@ -53,9 +60,13 @@ public class OnCommandReceived {
                 outputQueue.removeFirst();
                 lastSentMessage = currTime;
             }
+
+            if (outputQueue.isEmpty()) {
+                fixedRateTimer.cancel(true);
+                fixedRateTimer = null;
+            }
         };
 
-        final ScheduledFuture<?> fixedRateTimer =
-                scheduler.scheduleAtFixedRate(sendQueuedOutput, 1000, 500, TimeUnit.MILLISECONDS);
+        return scheduler.scheduleAtFixedRate(sendQueuedOutput, 1000, 750, TimeUnit.MILLISECONDS);
     }
 }

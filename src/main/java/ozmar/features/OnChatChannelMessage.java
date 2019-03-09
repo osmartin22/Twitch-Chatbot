@@ -16,7 +16,7 @@ public class OnChatChannelMessage {
     private final WordCountBufferInterface wordCountBuffer;
     private final ChatDataBufferInterface chatDataBuffer;
     private final RecentChattersInterface recentChatters;
-    private long lastBadWordMessageTime;
+//    private long lastBadWordMessageTime;
 
     public OnChatChannelMessage(WordCountBufferInterface wordCountBuffer, ChatDataBufferInterface chatDataBuffer,
                                 RecentChattersInterface recentChatters) {
@@ -38,22 +38,14 @@ public class OnChatChannelMessage {
                 handleWordCount(message);
             } else { //SHOW ON CONSOLE THE USER
                 System.out.println("\n" + event + "\n");
-                if (System.currentTimeMillis() - lastBadWordMessageTime > 3000) {
-                    event.getTwitchChat().sendMessage(event.getChannel().getName(),
-                            event.getUser().getName() + " D: you can't say that");
-                }
-
-                lastBadWordMessageTime = System.currentTimeMillis();
+//                if (System.currentTimeMillis() - lastBadWordMessageTime > 3000) {
+//                    event.getTwitchChat().sendMessage(event.getChannel().getName(),
+//                            event.getUser().getName() + " D: you can't say that");
+//                }
+//
+//                lastBadWordMessageTime = System.currentTimeMillis();
             }
         }
-
-//        System.out.printf(
-//                "Channel [%s] - User[%s] - Id[%d] - Message [%s]%n",
-//                event.getChannel().getName(),
-//                event.getUser().getName(),
-//                event.getUser().getId(),
-//                event.getMessage()
-//        );
     }
 
     private void handleChatData(@Nonnull EventUser user) {
