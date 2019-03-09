@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 
 public class PokemonPoke {
 
+    private int id = -1;
     private String pokemonSpecies;
     private String pokemonName;
     private String pokemonNickName;
@@ -19,6 +20,14 @@ public class PokemonPoke {
 
     public PokemonPoke() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @NonNull

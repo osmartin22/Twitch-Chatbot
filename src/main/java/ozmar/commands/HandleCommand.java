@@ -440,16 +440,13 @@ public class HandleCommand implements HandleCommandInterface {
             CaughtPokeInfo caughtPokeInfo = catchPoke.attemptCatch();
             output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
             if (caughtPokeInfo.isCaptured()) {
-                output += ", use !replacepoke to replace your current Pokemon with this one";
-            }
-
-            if (caughtPokeInfo.isCaptured()) {
                 long userId = event.getUser().getId();
                 int pokeCount = db.getPokemonDao().getUsersPokemonCount(userId);
-                if (pokeCount == 0) {
+                if (pokeCount < 3) {
                     db.getPokemonDao().insertPokemon(userId, caughtPokeInfo.getPoke());
                 } else {
                     catchPoke.saveCatch(userId, caughtPokeInfo);
+                    output += ", use !replacepoke <num> to replace a Pokemon with this one, use !mypoke to check number";
                 }
             }
 
@@ -634,7 +631,7 @@ public class HandleCommand implements HandleCommandInterface {
     }
 
     /**
-     * Returns the current Pokemon a user has or informs the user they do not have one
+     * Returns the current Pokemon a user has or informs the user they do not have any
      *
      * @param event User data and command info
      * @return String
@@ -642,33 +639,58 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String myPoke(@Nonnull CommandEvent event) {
         String output;
-        PokemonPoke poke = db.getPokemonDao().getPokemon(event.getUser().getId());
-        if (poke == null) {
-            output = String.format("%s, you do not have a pokemon yet, use !catchpoke to get one", event.getUser().getName());
+        List<PokemonPoke> pokeList = db.getPokemonDao().getPokemon(event.getUser().getId());
+        if (pokeList.isEmpty()) {
+            output = String.format("%s, you have 0/3 Pokemon, use !catchpoke to get some", event.getUser().getName());
         } else {
-            String pokeString = poke.getPokeString();
-            if (StringHelper.startsWithVowel(pokeString)) {
-                output = String.format("%s, your current pokemon is an %s", event.getUser().getName(), pokeString);
-            } else {
-                output = String.format("%s, your current pokemon is a %s", event.getUser().getName(), pokeString);
+            int count = 1;
+            output = String.format(" %s, you have %s/3 Pokemon,", event.getUser().getName(), pokeList.size());
+            StringBuilder pokeString = new StringBuilder();
+
+            for (PokemonPoke poke : pokeList) {
+                pokeString.append(String.format(" %s) %s,", count++, poke.getPokeString()));
             }
+
+            pokeString.setLength(pokeString.length() - 1);
+            output += pokeString;
         }
 
         return output;
     }
 
-    // TODO: Decide on whether to output or not if a replace was successful(output means more spam)
+    /**
+     * Replaces the Pokemon of a user with the most recent catch
+     *
+     * @param event User data and command info
+     * @return String
+     */
     @Nullable
     private String replacePoke(@Nonnull CommandEvent event) {
         long userId = event.getUser().getId();
         CaughtPokeInfo pokeInfo = catchPoke.getSavedCatch(userId);
+
+        String output = null;
         if (pokeInfo != null) {
-            db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke());
-            catchPoke.removeCatch(userId);
-            return null;
+            String userName = event.getUser().getName();
+            String input = event.getCommand().trim();
+            if (input.isEmpty()) {
+                output = String.format("%s, specify the pokeNumber, use !mypoke to see your Pokemon's number", userName);
+            } else {
+                int pokeNum;
+                try {
+                    pokeNum = Integer.valueOf(StringHelper.getFirstWord(input));
+                    if (pokeNum > 0 && pokeNum <= 3) {
+                        db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke(), pokeNum);
+                        catchPoke.removeCatch(userId);
+                    } else {
+                        output = String.format("%s, number not found, use !mypoke to see your Pokemon's number", userName);
+                    }
+                } catch (NumberFormatException e) {
+                    output = String.format("%s, that was not a number, use !mypoke to see your Pokemon's number", userName);
+                }
+            }
         }
 
-//        return String.format("%s, you don't have a pokemon to replace your current one, use !catchpoke to get one", event.getUser().getName());
-        return null;
+        return output;
     }
 }

@@ -5,7 +5,7 @@ import ozmar.database.dao.interfaces.PokemonDaoInterface;
 import ozmar.database.tables.interfaces.PokemonTableInterface;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class PokemonDao implements PokemonDaoInterface {
 
@@ -20,9 +20,9 @@ public class PokemonDao implements PokemonDaoInterface {
         return pokemonTable.getUsersPokemonCount(userId);
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public PokemonPoke getPokemon(long userId) {
+    public List<PokemonPoke> getPokemon(long userId) {
         return pokemonTable.getPokemon(userId);
     }
 
@@ -32,7 +32,7 @@ public class PokemonDao implements PokemonDaoInterface {
     }
 
     @Override
-    public void updatePokemon(long userId, @Nonnull PokemonPoke poke) {
-        pokemonTable.updatePokemon(userId, poke);
+    public void updatePokemon(long userId, @Nonnull PokemonPoke poke, int pokeToReplace) {
+        pokemonTable.updatePokemon(userId, poke, pokeToReplace);
     }
 }

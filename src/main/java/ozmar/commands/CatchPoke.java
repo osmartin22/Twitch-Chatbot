@@ -313,7 +313,7 @@ public class CatchPoke implements CatchPokeInterface {
     }
 
     public void startTimer() {
-        final long removeTimer = 60000;
+        final long removeTimer = 240000;    // Temporary time while users get used to the updated commands
         final Runnable clearUnclaimedPokes = () -> caughtPokes.entrySet()
                 .removeIf(entry -> System.currentTimeMillis() - entry.getValue().timeStored > removeTimer);
 

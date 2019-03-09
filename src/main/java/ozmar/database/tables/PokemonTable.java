@@ -5,8 +5,9 @@ import ozmar.database.tables.interfaces.PokemonTableInterface;
 import ozmar.enums.PokemonGender;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PokemonTable extends Table implements PokemonTableInterface {
 
@@ -21,13 +22,10 @@ public class PokemonTable extends Table implements PokemonTableInterface {
     private static final String COLUMN_GENDER = "gender";
     private static final String COLUMN_MOVES = "moves";
 
-    /*
-    USER_ID is unique for now while a user can only have one pokemon
-     */
     private static final String CREATE_POKEMON_TABLE =
             "CREATE TABLE IF NOT EXISTS " + POKEMON_TABLE + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                    COLUMN_USER_ID + " INTEGER UNIQUE, " +
+                    COLUMN_USER_ID + " INTEGER, " +
                     COLUMN_POKEMON_SPECIES + " TEXT, " +
                     COLUMN_POKEMON_NAME + " TEXT, " +
                     COLUMN_POKEMON_NICKNAME + " TEXT, " +
@@ -41,7 +39,7 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     " WHERE " + COLUMN_USER_ID + " = ?";
 
     private static final String insertPokemonSql =
-            "INSERT OR IGNORE INTO " + POKEMON_TABLE + " (" +
+            "INSERT INTO " + POKEMON_TABLE + " (" +
                     COLUMN_USER_ID + ", " +
                     COLUMN_POKEMON_SPECIES + ", " +
                     COLUMN_POKEMON_NAME + ", " +
@@ -62,7 +60,7 @@ public class PokemonTable extends Table implements PokemonTableInterface {
                     COLUMN_NATURE + " = ?, " +
                     COLUMN_GENDER + " = ?, " +
                     COLUMN_MOVES + " = ? " +
-                    " WHERE " + COLUMN_USER_ID + " = ?";
+                    " WHERE " + COLUMN_ID + " = ?";
 
     private static final String getPokemonNameSql =
             "SELECT " + COLUMN_POKEMON_NAME + ", " + COLUMN_POKEMON_NICKNAME +
@@ -76,7 +74,7 @@ public class PokemonTable extends Table implements PokemonTableInterface {
     @Override
     public int getUsersPokemonCount(long userId) {
         Connection connection = openConnection();
-        String sql = "SELECT " + COLUMN_USER_ID + ", count(*) FROM " + POKEMON_TABLE +
+        String sql = "SELECT count(*) FROM " + POKEMON_TABLE +
                 " WHERE " + COLUMN_USER_ID + " = " + userId;
         int count = 0;
         try (Statement statement = connection.createStatement()) {
@@ -90,25 +88,27 @@ public class PokemonTable extends Table implements PokemonTableInterface {
         return count;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public PokemonPoke getPokemon(long userId) {
-        PokemonPoke pokemonPoke = null;
+    public List<PokemonPoke> getPokemon(long userId) {
+        List<PokemonPoke> pokeList = new ArrayList<>();
         Connection connection = openConnection();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getPokemonSql)) {
             preparedStatement.setLong(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.isBeforeFirst()) {
-                pokemonPoke = new PokemonPoke();
                 while (resultSet.next()) {
-                    pokemonPoke.setPokemonSpecies(resultSet.getString(COLUMN_POKEMON_SPECIES));
-                    pokemonPoke.setPokemonName(resultSet.getString(COLUMN_POKEMON_NAME));
-                    pokemonPoke.setPokemonNickName(resultSet.getString(COLUMN_POKEMON_NICKNAME));
-                    pokemonPoke.setShiny(resultSet.getInt(COLUMN_IS_SHINY) == 1);
-                    pokemonPoke.setNature(resultSet.getString(COLUMN_NATURE));
-                    pokemonPoke.setGender(PokemonGender.genders[resultSet.getInt(COLUMN_GENDER)]);
-                    pokemonPoke.setPokemonMoves(resultSet.getString(COLUMN_MOVES));
+                    PokemonPoke poke = new PokemonPoke();
+                    poke.setId(resultSet.getInt(COLUMN_ID));
+                    poke.setPokemonSpecies(resultSet.getString(COLUMN_POKEMON_SPECIES));
+                    poke.setPokemonName(resultSet.getString(COLUMN_POKEMON_NAME));
+                    poke.setPokemonNickName(resultSet.getString(COLUMN_POKEMON_NICKNAME));
+                    poke.setShiny(resultSet.getInt(COLUMN_IS_SHINY) == 1);
+                    poke.setNature(resultSet.getString(COLUMN_NATURE));
+                    poke.setGender(PokemonGender.genders[resultSet.getInt(COLUMN_GENDER)]);
+                    poke.setPokemonMoves(resultSet.getString(COLUMN_MOVES));
+                    pokeList.add(poke);
                 }
             }
         } catch (SQLException e) {
@@ -117,7 +117,7 @@ public class PokemonTable extends Table implements PokemonTableInterface {
             closeConnection(connection);
         }
 
-        return pokemonPoke;
+        return pokeList;
     }
 
     @Override
@@ -141,10 +141,13 @@ public class PokemonTable extends Table implements PokemonTableInterface {
         }
     }
 
-
     @Override
-    public void updatePokemon(long userId, @Nonnull PokemonPoke poke) {
+    public void updatePokemon(long userId, @Nonnull PokemonPoke poke, int pokeToReplace) {
         Connection connection = openConnection();
+
+        List<PokemonPoke> pokeList = getPokemon(userId);
+        PokemonPoke oldPoke = pokeList.get(pokeToReplace - 1);
+        poke.setId(oldPoke.getId());
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(updatePokemonSql)) {
             preparedStatement.setString(1, poke.getPokemonSpecies());
@@ -154,7 +157,7 @@ public class PokemonTable extends Table implements PokemonTableInterface {
             preparedStatement.setString(5, poke.getNature());
             preparedStatement.setInt(6, poke.getGender().getGenderNum());
             preparedStatement.setString(7, poke.getPokemonMovesString());
-            preparedStatement.setLong(8, userId);
+            preparedStatement.setLong(8, poke.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Failed to update pokemon for " + userId + ": " + e.getMessage());
