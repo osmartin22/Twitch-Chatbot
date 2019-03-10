@@ -132,22 +132,3 @@ public class PokeCommand implements PokeCommandInterface {
         return output;
     }
 }
-/*
-WeirdFeelsMan: kiss my ass  peepoWink
-SeanAnemone:  pepeBASS
-BiggerWhenPulled:  gachiBASS YES SIR
-mannnydilller: !catchpoke
-GenBot22: mannnydilller let a timid male Amaura get away
-SpitefuI: 🍷  AYAYA  🚬
-sweetdunes: 🍑 moon2KISSES
-WeirdFeelsMan: m0xyHand1  gachiBASS  m0xyHand2
-WeirdFeelsMan: !catchpoke mew
-GenBot22: weirdfeelsman caught a brave Mew, use !replacepoke [num] to replace a Poke with this one, use !mypoke to check numbering
-SeanAnemone: !catchpoke pikipek
-GenBot22: seananemone caught a sassy male Pikipek, use !replacepoke [num] to replace a Poke with this one, use !mypoke to check numbering
-WeirdFeelsMan: !replacepoke 4
-GenBot22: weirdfeelsman, number not found, use !mypoke to see your Pokemon's number
-WeirdFeelsMan: wtf
-WeirdFeelsMan: !mypoke
-GenBot22: weirdfeelsman, you have 5/5 P
- */

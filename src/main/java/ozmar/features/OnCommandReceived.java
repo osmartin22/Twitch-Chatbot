@@ -28,12 +28,12 @@ public class OnCommandReceived {
 
     @EventSubscriber
     public void onCommand(CommandEvent event) {
-        System.out.println(event);
         handleCommand.setCommandEvent(event);
         String output = handleCommand.decideCommand();
-        System.out.println();
 
         if (output != null) {
+            System.out.println(event);
+            System.out.println();
             long currTime = System.currentTimeMillis();
             if (currTime - lastSentMessage > OUTPUT_COOLDOWN && outputQueue.isEmpty()) {
                 if (fixedRateTimer != null) {
