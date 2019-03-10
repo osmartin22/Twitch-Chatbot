@@ -1,16 +1,8 @@
 package ozmar.commands;
 
 import com.github.twitch4j.chat.events.CommandEvent;
+import com.github.twitch4j.common.enums.CommandPermission;
 import javafx.util.Pair;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import ozmar.CaughtPokeInfo;
-import ozmar.PokemonPoke;
 import ozmar.WordFilter;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
@@ -25,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // TODO: Write command to update command cooldowns or permissions while the bot is running
 // To add/delete commands without recompiling would require rewriting part of the twitch4j library
@@ -32,25 +25,31 @@ public class HandleCommand implements HandleCommandInterface {
 
     private CommandEvent commandEvent;
     private final DatabaseHandlerInterface db;
+
+    private final PokeCommandInterface pokeCommand;
+    private final TwitchStockCommandInterface twitchStockCommand;
+    private final TwitchCallCommandInterface twitchCalls;
+
     private final CalculatorInterface calculator;
     private final DiceRollerInterface diceRoller;
-    private final CatchPokeInterface catchPoke;
     private final LootBoxInterface lootBox;
     private final RecentChattersInterface recentChatters;
-    private final TwitchCallsInterface twitchCalls;
     private List<Command> commandsList;
     private boolean commandsEnabled = true;
 
-    private WebDriver driver;
     private Map<Integer, Pair<Command, Long>> cooldownMap;
 
-    public HandleCommand(DatabaseHandlerInterface db, CalculatorInterface calculator, DiceRollerInterface diceRoller,
-                         CatchPokeInterface catchPoke, LootBoxInterface lootBox, RecentChattersInterface recentChatters,
-                         TwitchCallsInterface twitchCalls) {
+    public HandleCommand(DatabaseHandlerInterface db, PokeCommandInterface pokeCommand,
+                         TwitchStockCommandInterface twitchStockCommand,
+                         TwitchCallCommandInterface twitchCalls,
+                         CalculatorInterface calculator, DiceRollerInterface diceRoller,
+                         LootBoxInterface lootBox, RecentChattersInterface recentChatters) {
         this.db = db;
+        this.pokeCommand = pokeCommand;
+        this.twitchStockCommand = twitchStockCommand;
+
         this.calculator = calculator;
         this.diceRoller = diceRoller;
-        this.catchPoke = catchPoke;
         this.lootBox = lootBox;
         this.recentChatters = recentChatters;
         this.twitchCalls = twitchCalls;
@@ -60,12 +59,6 @@ public class HandleCommand implements HandleCommandInterface {
         for (Command command : commandsList) {
             cooldownMap.put(command.getId(), new Pair<>(command, 0L));
         }
-
-
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.setHeadless(true);
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\chromedriver.exe");
-        driver = new ChromeDriver(chromeOptions);
     }
 
     @Override
@@ -85,81 +78,84 @@ public class HandleCommand implements HandleCommandInterface {
         Command command = null;
 
         if (commandsEnabled) {
-            if (isCommandHelper(0, commandEvent)) {
-                command = commandsList.get(0);
+
+            int count = -1;
+
+            if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = diceRollCommand(commandEvent);
 
-            } else if (isCommandHelper(1, commandEvent)) {
-                command = commandsList.get(1);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = spitCommand(commandEvent, command);
 
-            } else if (isCommandHelper(2, commandEvent)) {
-                command = commandsList.get(2);
-                result = uptimeCommand(commandEvent);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
+                result = twitchCalls.uptime(commandEvent);
                 System.out.println(result);
                 result = null;
 
-            } else if (isCommandHelper(3, commandEvent)) {
-                command = commandsList.get(3);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = calcCommand(commandEvent);
 
-            } else if (isCommandHelper(4, commandEvent)) {
-                command = commandsList.get(4);
-                result = followageCommand(commandEvent);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
+                result = twitchCalls.followage(commandEvent);
                 System.out.println(result);
                 result = null;
 
-            } else if (isCommandHelper(5, commandEvent)) {
-                command = commandsList.get(5);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = wordCountCommand(commandEvent);
 
-            } else if (isCommandHelper(6, commandEvent)) {
-                command = commandsList.get(6);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = messageCountCommand(commandEvent);
 
-            } else if (isCommandHelper(7, commandEvent)) {
-                command = commandsList.get(7);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = pointsCommand(commandEvent);
 
-            } else if (isCommandHelper(8, commandEvent)) {
-                command = commandsList.get(8);
-                result = catchPokeCommand(commandEvent);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
+                result = pokeCommand.catchPokeCommand(commandEvent);
 
-            } else if (isCommandHelper(9, commandEvent)) {
-                command = commandsList.get(9);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = flipCoinCommand(commandEvent);
                 System.out.println(result);
                 result = null;
 
-            } else if (isCommandHelper(10, commandEvent)) {
-                command = commandsList.get(10);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = openLootCommand(commandEvent);
                 System.out.println(result);
                 result = null;
 
-            } else if (isCommandHelper(11, commandEvent)) {
-                command = commandsList.get(11);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = newPartnerCommand(commandEvent);
 
-            } else if (isCommandHelper(12, commandEvent)) {
-                command = commandsList.get(12);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 result = myPartnerCommand(commandEvent);
 
-            } else if (isCommandHelper(13, commandEvent)) {
-                command = commandsList.get(13);
-                result = getStock(commandEvent);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
+                result = twitchStockCommand.getStock(commandEvent);
 
-            } else if (isCommandHelper(14, commandEvent)) {
-                command = commandsList.get(14);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
                 modifyCommandsCommand(commandEvent);
 
-            } else if (isCommandHelper(15, commandEvent)) {
-                command = commandsList.get(15);
-                result = myPoke(commandEvent);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
+                result = pokeCommand.myPoke(commandEvent);
 
-            } else if (isCommandHelper(16, commandEvent)) {
-                command = commandsList.get(16);
-                result = replacePoke(commandEvent);
+            } else if (isCommandHelper(++count, commandEvent)) {
+                command = commandsList.get(count);
+                result = pokeCommand.replacePoke(commandEvent);
             }
 
         } else if (isCommandHelper(14, commandEvent)) {
@@ -171,9 +167,9 @@ public class HandleCommand implements HandleCommandInterface {
             command.incrementUsage();
             db.getCommandsDao().updateCommandUsage(command);
             cooldownMap.put(command.getId(), new Pair<>(command, System.currentTimeMillis()));
+            System.out.println(result);
         }
 
-        System.out.println(result);
         return result;
     }
 
@@ -186,41 +182,43 @@ public class HandleCommand implements HandleCommandInterface {
      * @return boolean
      */
     private boolean isCommandHelper(int index, @Nonnull CommandEvent event) {
-        return event.getCommandPrefix().equals(commandsList.get(index).getCommand()) &&
-                hasPermission(index, event) && isCooldownReady(index);
+        Command command = commandsList.get(index);
+        long commandLastUsed = cooldownMap.get(command.getId()).getValue();
+
+        boolean hasPermission;
+        if (event.getUser().getName().equals("namedauto")) {
+            hasPermission = true;
+        } else {
+            hasPermission = hasPermission(command.getPermission(), event.getPermissions());
+        }
+
+        return event.getCommandPrefix().equals(command.getCommand()) &&
+                hasPermission && isCooldownReady(command, commandLastUsed);
     }
 
     /**
      * Checks if the user has permission to use the command
      *
-     * @param index command index in the list
-     * @param event User info and command data
+     * @param permission           desired command permissions
+     * @param commandPermissionSet user permissions
      * @return boolean
      */
-    private boolean hasPermission(int index, @Nonnull CommandEvent event) {
-        boolean hasPermission;
-        CommandNumPermission permission = commandsList.get(index).getPermission();
-        CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandEvent.getPermissions());
-
-        if (event.getUser().getName().equals("namedauto")) {    // Allow my account to use any command
-            hasPermission = true;
-        } else {
-            hasPermission = userPermission.getCommandLevel() >= permission.getCommandLevel();
-        }
-
-        return hasPermission;
+    private boolean hasPermission(@Nonnull CommandNumPermission permission,
+                                  @Nonnull Set<CommandPermission> commandPermissionSet) {
+        CommandNumPermission userPermission = CommandNumPermission.convertToNumPermission(commandPermissionSet);
+        return userPermission.getCommandLevel() >= permission.getCommandLevel();
     }
 
     /**
      * Checks if the command cooldown has passed
      *
-     * @param index command index in the list
+     * @param command         Command to check
+     * @param commandLastUsed Time the command was last used
      * @return boolean
      */
-    private boolean isCooldownReady(int index) {
+    private boolean isCooldownReady(@Nonnull Command command, long commandLastUsed) {
         boolean isReady = false;
-        Command command = commandsList.get(index);
-        long diff = System.currentTimeMillis() - cooldownMap.get(command.getId()).getValue();
+        long diff = System.currentTimeMillis() - commandLastUsed;
         if (diff > command.getCooldown()) {
             isReady = true;
         }
@@ -272,17 +270,6 @@ public class HandleCommand implements HandleCommandInterface {
     }
 
     /**
-     * Gets the uptime of a stream if currently streaming
-     *
-     * @param event User info and command data
-     * @return String
-     */
-    @Nonnull
-    private String uptimeCommand(@Nonnull CommandEvent event) {
-        return twitchCalls.uptime(event);
-    }
-
-    /**
      * Calculates user operation input
      * returns empty string if input is invalid
      *
@@ -305,20 +292,6 @@ public class HandleCommand implements HandleCommandInterface {
         } catch (Exception e) {
             return String.format("%s, %s", event.getUser().getName(), e.getMessage());
         }
-    }
-
-    /**
-     * Gets follow length between user and channel message was sent from
-     * Optional username can be entered to get the follow length between
-     * the optional username and current channel.
-     * returns empty string if username was not found
-     *
-     * @param event User info and command data
-     * @return String
-     */
-    @Nonnull
-    private String followageCommand(@Nonnull CommandEvent event) {
-        return twitchCalls.followage(event, db);
     }
 
     /**
@@ -420,45 +393,6 @@ public class HandleCommand implements HandleCommandInterface {
     }
 
     /**
-     * Gets a random pokemon with a name, nature, and gender and decides if it was caught or not
-     *
-     * @param event User info and command data
-     * @return String
-     */
-    @Nonnull
-    private String catchPokeCommand(@Nonnull CommandEvent event) {
-        String input = event.getCommand().trim().toLowerCase();
-
-        // Shortest Pokemon name is 3 letters long (Mew, Muk)
-        // Only 807 pokemon currently exist
-        String pokeName = (input.length() < 3) ? "" : StringHelper.getFirstWord(input);
-        int initializeResult = (!pokeName.isEmpty()) ? catchPoke.initialize(pokeName) :
-                catchPoke.initialize(RandomHelper.getRandNumInRange(1, 807));
-
-        String output;
-        if (initializeResult != -1) {
-            CaughtPokeInfo caughtPokeInfo = catchPoke.attemptCatch();
-            output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
-            if (caughtPokeInfo.isCaptured()) {
-                long userId = event.getUser().getId();
-                int pokeCount = db.getPokemonDao().getUsersPokemonCount(userId);
-                if (pokeCount < 3) {
-                    db.getPokemonDao().insertPokemon(userId, caughtPokeInfo.getPoke());
-                } else {
-                    catchPoke.saveCatch(userId, caughtPokeInfo);
-                    output += ", use !replacepoke <num> to replace a Pokemon with this one, use !mypoke to check number";
-                }
-            }
-
-        } else {
-            output = String.format("%s, I couldn't find that Pokemon," +
-                    " replace spaces/punctuation with '-' if a Pokemon name is not working", event.getUser().getName());
-        }
-
-        return output;
-    }
-
-    /**
      * Flips a coin and returns the result
      *
      * @param event User id and info
@@ -547,41 +481,6 @@ public class HandleCommand implements HandleCommandInterface {
         return String.format("%s, something went wrong moon2WAH", userName);
     }
 
-    /**
-     * Checks the website and gets the stock info
-     * NOTE: website has no api so everything must be done through web scraping
-     *
-     * @param event User data anc command info
-     * @return String
-     */
-    // TODO: Remove to separate class
-    @Nullable
-    private String getStock(@Nonnull CommandEvent event) {
-        String stockSymbol = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
-        String url = "https://twitchstocks.com/stock/";
-        String result;
-        if (stockSymbol.isEmpty()) {
-            result = "Try again using !checkstocks <StockSymbol>";
-        } else {
-            try {
-                driver.get(url + stockSymbol);
-                String xPath = "/html/body/app-root/app-nav/mat-sidenav-container/mat-sidenav-content/app-stock-home/div/mat-grid-list/div/mat-grid-tile[1]/figure/mat-card";
-
-                WebDriverWait wait = new WebDriverWait(driver, 10);
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPath)));
-
-                WebElement price = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[1]");
-                WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-header[1]/div/mat-card-title");
-                WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[2]");
-                result = price.getText() + " " + name.getText() + " " + diff.getText();
-            } catch (Exception e) {
-                result = null;
-            }
-        }
-
-        return result;
-    }
-
     // TODO: possibly make it it's own class
     private void modifyCommandsCommand(@Nonnull CommandEvent event) {
         String[] info = event.getCommand().trim().split("\\s+");
@@ -628,69 +527,5 @@ public class HandleCommand implements HandleCommandInterface {
 
     private void enableCommands() {
         commandsEnabled = true;
-    }
-
-    /**
-     * Returns the current Pokemon a user has or informs the user they do not have any
-     *
-     * @param event User data and command info
-     * @return String
-     */
-    @Nonnull
-    private String myPoke(@Nonnull CommandEvent event) {
-        String output;
-        List<PokemonPoke> pokeList = db.getPokemonDao().getPokemon(event.getUser().getId());
-        if (pokeList.isEmpty()) {
-            output = String.format("%s, you have 0/3 Pokemon, use !catchpoke to get some", event.getUser().getName());
-        } else {
-            int count = 1;
-            output = String.format(" %s, you have %s/3 Pokemon,", event.getUser().getName(), pokeList.size());
-            StringBuilder pokeString = new StringBuilder();
-
-            for (PokemonPoke poke : pokeList) {
-                pokeString.append(String.format(" %s) %s,", count++, poke.getPokeString()));
-            }
-
-            pokeString.setLength(pokeString.length() - 1);
-            output += pokeString;
-        }
-
-        return output;
-    }
-
-    /**
-     * Replaces the Pokemon of a user with the most recent catch
-     *
-     * @param event User data and command info
-     * @return String
-     */
-    @Nullable
-    private String replacePoke(@Nonnull CommandEvent event) {
-        long userId = event.getUser().getId();
-        CaughtPokeInfo pokeInfo = catchPoke.getSavedCatch(userId);
-
-        String output = null;
-        if (pokeInfo != null) {
-            String userName = event.getUser().getName();
-            String input = event.getCommand().trim();
-            if (input.isEmpty()) {
-                output = String.format("%s, specify the pokeNumber, use !mypoke to see your Pokemon's number", userName);
-            } else {
-                int pokeNum;
-                try {
-                    pokeNum = Integer.valueOf(StringHelper.getFirstWord(input));
-                    if (pokeNum > 0 && pokeNum <= 3) {
-                        db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke(), pokeNum);
-                        catchPoke.removeCatch(userId);
-                    } else {
-                        output = String.format("%s, number not found, use !mypoke to see your Pokemon's number", userName);
-                    }
-                } catch (NumberFormatException e) {
-                    output = String.format("%s, that was not a number, use !mypoke to see your Pokemon's number", userName);
-                }
-            }
-        }
-
-        return output;
     }
 }

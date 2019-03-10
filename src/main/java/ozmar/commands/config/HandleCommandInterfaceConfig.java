@@ -11,13 +11,17 @@ import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 public class HandleCommandInterfaceConfig {
 
     @Bean
-    public HandleCommandInterface HandleCommandInterfaceBean(DatabaseHandlerInterface databaseHandler,
-                                                             CalculatorInterface calculator,
-                                                             DiceRollerInterface dice,
-                                                             CatchPokeInterface catchPoke,
-                                                             LootBoxInterface lootBox,
-                                                             RecentChattersInterface recentChatters,
-                                                             TwitchCallsInterface twitchCalls) {
-        return new HandleCommand(databaseHandler, calculator, dice, catchPoke, lootBox, recentChatters, twitchCalls);
+    public HandleCommandInterface HandleCommandInterfaceBean(DatabaseHandlerInterface databaseHandlerInterface,
+                                                             PokeCommandInterface pokeCommandInterface,
+                                                             TwitchStockCommandInterface twitchStockCommandInterface,
+                                                             TwitchCallCommandInterface twitchCallCommandInterface,
+                                                             CalculatorInterface calculatorInterface,
+                                                             DiceRollerInterface diceRollerInterface,
+                                                             LootBoxInterface lootBoxInterface,
+                                                             RecentChattersInterface recentChattersInterface) {
+
+        return new HandleCommand(databaseHandlerInterface, pokeCommandInterface,
+                twitchStockCommandInterface, twitchCallCommandInterface, calculatorInterface,
+                diceRollerInterface, lootBoxInterface, recentChattersInterface);
     }
 }

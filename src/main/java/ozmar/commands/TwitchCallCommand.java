@@ -4,7 +4,7 @@ import com.github.twitch4j.chat.events.CommandEvent;
 import com.github.twitch4j.helix.domain.FollowList;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
-import ozmar.commands.interfaces.TwitchCallsInterface;
+import ozmar.commands.interfaces.TwitchCallCommandInterface;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.setup.Bot;
 import ozmar.utils.StringHelper;
@@ -16,10 +16,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-public class TwitchCalls implements TwitchCallsInterface {
+public class TwitchCallCommand implements TwitchCallCommandInterface {
 
-    public TwitchCalls() {
+    private final DatabaseHandlerInterface db;
 
+    public TwitchCallCommand(DatabaseHandlerInterface db) {
+        this.db = db;
     }
 
     @Nonnull
@@ -48,7 +50,7 @@ public class TwitchCalls implements TwitchCallsInterface {
 
     @Nonnull
     @Override
-    public String followage(@Nonnull CommandEvent event, @Nonnull DatabaseHandlerInterface db) {
+    public String followage(@Nonnull CommandEvent event) {
         List<String> usersInfoList = new ArrayList<>();
         String channelName = event.getSourceId();
         long channelId = db.getChatDao().getUserId(channelName);
