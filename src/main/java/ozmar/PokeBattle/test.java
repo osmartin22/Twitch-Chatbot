@@ -503,6 +503,315 @@ public class test {
         Transform (move)                    Trump Card (move)           Twinkle Tackle (move)   Veevee Volley (move)
         Vital Throw (move)                  Whirlwind (move)            Yawn (move)
 
+
+    MOVES THAT CAUSE THE USER TO FAINT
+    These are moves which cause the user to faint when used in battle.
+        Explosion (move)        Final Gambit (move)     Healing Wish (move)     Lunar Dance (move)
+        Memento (move)          Perish Song (move)      Self-Destruct (move)
+
+
+    MOVES THAT CHANGE A POKEMON'S TYPE
+    These are moves that can directly change the type of a Pokémon.
+        Burn Up (move)              Camouflage (move)       Conversion (move)       Conversion 2 (move)
+        Forest's Curse (move)       Reflect Type (move)     Roost (move)            Soak (move)
+        Transform (move)            Trick-or-Treat (move)
+
+
+    MOVES THAT CHANGE TERRAIN
+    These are moves that alter the terrain of the battlefield.
+        Electric Terrain (move)     Genesis Supernova (move)        Grassy Terrain (move)       Misty Terrain (move)
+        Psychic Terrain (move)
+
+    MOVES THAT CHANGE TYPE
+    These are moves that can have a different type (from their own effect).
+        Hidden Power (move)         Judgment (move)         Multi-Attack (move)     Natural Gift (move)
+        Revelation Dance (move)     Techno Blast (move)     Weather Ball (move)
+
+
+    MOVES THAT COST HP TO USE
+    These moves require their user to sacrifice a portion of their maximum HP in order to use them. Depending on
+    the move, it may fail without deducting HP or succeed but KO the user if they do not have enough HP remaining
+    to use it. Moves in this category are similar to but should not be confused with moves that cause recoil damage,
+    which deal damage to their user as a side-effect of their successful use, or moves that cause the user to faint,
+    which outright render their user unconscious in order to be used
+        Belly Drum (move)       Curse (move)        Mind Blown (move)       Substitute (move)
+
+
+    MOVES THAT DEAL DIRECT DAMAGE
+    These moves deal direct damage, unaffected by the attacker's or defender's stats.
+        Bide (move)                 Counter (move)          Endeavor (move)         Final Gambit (move)
+        Guardian of Alola (move)    Metal Burst (move)      Mirror Coat (move)      Nature's Madness (move)
+        Night Shade (move)          Psywave (move)          Seismic Toss (move)     Super Fang (move)
+
+        ONE HIT KNOCKOUT MOVES
+            Fissure (move)      Guillotine (move)       Horn Drill (move)       Sheer Cold (move)
+
+        SET DAMAGE MOVES
+            Dragon Rage (move)      Sonic Boom (move)
+
+
+    MOVES THAT HAVE RECOIL
+    The following moves can cause their users recoil damage.
+        Brave Bird (move)       Double-Edge (move)      Flare Blitz (move)      Head Charge (move)
+        Head Smash (move)       High Jump Kick (move)   Jump Kick (move)        Light of Ruin (move)
+        Shadow End (move)       Shadow Rush (move)      Struggle (move)         Submission (move)
+        Take Down (move)        Volt Tackle (move)      Wild Charge (move)      Wood Hammer (move)
+
+
+    MOVES THAT HAVE SPECIAL TYPE EFFECTIVENESS PROPERTIES
+    These are moves that deviate from the type effectiveness chart in some respect.
+        Flying Press (move)     Freeze-Dry (move)       Thousand Arrows (move)
+
+
+    MOVES THAT HAVE VARIABLE POWER
+    These are moves that do not have a fixed base power; usually the power is displayed as "—". The power
+    of these moves is determined by factors such as the user or target's weight, HP, or friendship; some
+    may depend on a random factor. For some of these moves, the power may be calculated directly from these
+    factors and have a continuous range of possible power (e.g., Return), but for others, the power will have
+    discrete levels depending on the exact conditions (e.g., Reversal).
+        Beat Up (move)          Crush Grip (move)           Electro Ball (move)         Eruption (move)
+        Flail (move)            Fling (move)                Frustration (move)          Grass Knot (move)
+        Gyro Ball (move)        Heat Crash (move)           Heavy Slam (move)           Hidden Power (move)
+        Low Kick (move)         Magnitude (move)            Natural Gift (move)         Pika Papow (move)
+        Power Trip (move)       Present (move)              Punishment (move)           Return (move)
+        Reversal (move)         Spit Up (move)              Stored Power (move)         Trump Card (move)
+        Veevee Volley (move)    Water Spout (move)          Wring Out (move)
+
+
+    MOVES THAT IGNORE ABILITIES
+    These are moves that ignore the target's Ability when they are used.
+        Light That Burns the Sky (move)     Menacing Moonraze Maelstrom (move)      Moongeist Beam (move)
+        Photon Geyser (move)                Searing Sunraze Smash (move)            Sunsteel Strike (move)
+
+
+    MOVES THAT MAKE THE TARGET THE CENTER OF ATTENTION
+    These are moves that make the target the center of attention.
+        Follow Me (move)        Rage Powder (move)      Spotlight (move)
+
+
+    MOVES THAT POWER UP
+    These are moves that receive an increase to their base power under certain conditions.
+    Usually, these moves' power doubles when their condition is met.
+    Some of these moves may receive an increase in their base power in specific generations only.
+    Earthquake, for example, has its power doubled against Pokémon in the semi-invulnerable turn of Dig
+    from Generation II to IV only (but does not have any special interaction with them in Generation I,
+    and will technically have the damage against them doubled from Generation V onwards instead).
+        Acrobatics (move)           Assurance (move)            Avalanche (move)        Brine (move)
+        Earthquake (move)           Echoed Voice (move)         Facade (move)           Fire Pledge (move)
+        Fury Cutter (move)          Fusion Bolt (move)          Fusion Flare (move)     Grass Pledge (move)
+        Gust (move)                 Hex (move)                  Ice Ball (move)         Magnitude (move)
+        Malicious Moonsault (move)  Payback (move)              Pursuit (move)          Retaliate (move)
+        Revenge (move)              Rollout (move)              Round (move)            Smelling Salts (move)
+        Stomp (move)                Stomping Tantrum (move)     Surf (move)             Triple Kick (move)
+        Twister (move)              Venoshock (move)            Wake-Up Slap (move)      Water Pledge (move)
+        Weather Ball (move)         Whirlpool (move)
+
+
+    MOVES THAT REMOVE SOME TYPE IMMUNITIES
+    Moves in this category can remove one or more immunities granted by type. For example,
+    Odor Sleuth removes the Ghost-type's immunity to Fighting-type and Normal-type attacks. They may
+    also have additional effects, typically dealing with Evasion.
+    Some of the moves affect the target, while Gravity affects all Pokémon for several turns.
+        Foresight (move)        Gravity (move)      Miracle Eye (move)      Odor Sleuth (move)
+        Smack Down (move)       Thousand Arrows (move)
+
+
+    MOVES THAT REQUIRE RECHARGING
+    This is a list of moves that, if used successfully, the user must recharge for one turn. The recharge
+    turns takes place the very next turn and the user cannot make any other action such as using a move, switching
+    out or use an item.
+        Blast Burn (move)       Frenzy Plant (move)     Giga Impact (move)      Hydro Cannon (move)
+        Hyper Beam (move)       Prismatic Laser (move)  Roar of Time (move)     Rock Wrecker (move)
+        Shadow Half (move)
+
+
+    MOVES THAT RESTORE HP
+    These moves restore a portion of the user's or target's HP.
+        Aqua Ring (move)        Floral Healing (move)       Grassy Terrain (move)       Heal Pulse (move)
+        Healing Wish (move)     Ingrain (move)              Leech Seed (move)           Lunar Dance (move)
+        Pain Split (move)       Pollen Puff (move)          Present (move)              Wish (move)
+
+        HP DRAINING MOVES
+        These moves restore a portion of their user's HP after damaging an opponent, healing a set percentage
+        of the damage inflicted.
+        Holding a Big Root will increase the amount of HP recovered with these moves, without altering the move's
+        base power. If used on a Pokémon with Liquid Ooze (except Dream Eater prior to Generation V), the user will
+        take equivalent damage instead of being healed.
+        A similar move, Strength Sap, also restores the user's HP, but lowers the opponent's Attack instead of damaging it.
+            Absorb (move)       Bouncy Bubble (move)        Drain Punch (move)      Draining Kiss (move)
+            Dream Eater (move)  Giga Drain (move)           Horn Leech (move)       Leech Life (move)
+            Leech Seed (move)   Mega Drain (move)           Oblivion Wing (move)    Parabolic Charge (move)
+
+        STATUS MOVES THAT HEAL THE USER IMMEDIATELY
+        These status moves restore a portion of their user's HP on the same turn as they are used.
+        A number of other moves can also recover HP for the user in different ways. HP-draining moves are moves that
+        simultaneously do damage and recover HP for the user immediately. Aqua Ring and Ingrain can heal the user
+        continually, starting at the end of the turn they are used. Leech Seed and Wish can heal either the user or a
+        Pokémon that replaces it.
+            Heal Order (move)       Milk Drink (move)       Moonlight (move)        Morning Sun (move)
+            Purify (move)           Recover (move)          Rest (move)             Roost (move)
+            Shore Up (move)         Slack Off (move)        Soft-Boiled (move)      Strength Sap (move)
+            Synthesis (move)
+
+
+    MOVES THAT SWITCH THE TARGET OUT
+    These are moves that switch their target out.
+        Circle Throw (move)     Dragon Tail (move)      Roar (move)     Whirlwind (move)
+
+
+    MOVES THAT SWITCH THE USER OUT
+    These are moves that switch the user out when they are used.
+        Baton Pass (move)       Parting Shot (move)     Teleport (move)     U-turn (move)
+        Volt Switch (move)
+
+
+    MOVES THAT USE STATS FROM DIFFERENT CATEGORIES
+    These are moves for which the damage is calculated using the user's Attack and target's Special Defense,
+    or the user's Special Attack and target's Defense.
+        Light That Burns the Sky (move)     Photon Geyser (move)        Psyshock (move)     Psystrike (move)
+        Secret Sword (move)
+
+
+    MOVES THAT VARY WITH ENVIRONMENT
+    These are moves whose effect changes based on the environment they are used in.
+        Camouflage (move)       Nature Power (move)     Secret Power (move)
+
+
+    MOVES WITH A CHARGING TURN
+    These are moves that take two turns to complete. On the first turn, the user charges (sometimes causing some
+    effect such as becoming semi-invulnerable or raising a stat). On the second turn, the user executes the move
+    fully. All of these moves, except Sky Drop, can be performed in one turn using the Power Herb; some of these
+    moves can be performed in one turn if some condition is met.
+    A similar move, Bide, causes to user to wait for two turns (2-3 turns prior to Generation IV); after those
+    two turns, Bide inflicts damage to the last Pokémon to damage it equal to double the amount of damage it took
+    during those turns.
+        Bounce (move)           Dig (move)              Dive (move)         Fly (move)
+        Freeze Shock (move)     Geomancy (move)         Ice Burn (move)     Phantom Force (move)
+        Razor Wind (move)       Shadow Force (move)     Skull Bash (move)   Sky Attack (move)
+        Sky Drop (move)         Solar Beam (move)       Solar Blade (move)
+
+        MOVES WITH A SEMI INVULNERABLE TURN
+        These moves take two turns to execute. During the first turn, the user of the move will perform an action
+        (ascending into the sky, hiding underwater, etc.) that renders them invulnerable to all but a few specific
+        moves; Pokémon in this state can also be hit by a Pokémon that used Lock-On or Mind Reader on it on the
+        previous turn, or if either it or the attacking Pokémon has No Guard. On the second turn, PP will be deducted,
+        the move will deal damage, and it will count as the last move used.
+        While these moves have these characteristics in common, they are not strictly variations of each other,
+        since many of their other attributes (like power, accuracy, power points, or secondary effects, including
+        which moves can still strike them) are different.
+            Bounce (move)           Dig (move)              Dive (move)         Fly (move)
+            Phantom Force (move)    Shadow Force (move)     Sky Drop (move)
+
+
+    MOVES WITH A HIGH CRITICAL HIT RATIO
+    These moves have an increased chance of landing a critical hit.
+        10,000,000 Volt Thunderbolt (move)      Aeroblast (move)        Air Cutter (move)   Attack Order (move)
+        Blaze Kick (move)                       Crabhammer (move)       Cross Chop (move)   Cross Poison (move)
+        Drill Run (move)                        Karate Chop (move)      Leaf Blade (move)   Night Slash (move)
+        Poison Tail (move)                      Psycho Cut (move)       Razor Leaf (move)   Razor Wind (move)
+        Shadow Blast (move)                     Shadow Claw (move)      Sky Attack (move)   Slash (move)
+        Spacial Rend (move)                     Stone Edge (move)
+
+
+    MOVES WITH A PERFECT CRITICAL HIT RATIO
+    These moves will always result in a critical hit, unless the critical hit is prevented by another effect.
+        Frost Breath (move)     Storm Throw (move)      Zippy Zap (move)
+
+
+    MOVES WITH A SEMI INVULNERABLE TURN
+    These moves take two turns to execute. During the first turn, the user of the move will perform an action
+    (ascending into the sky, hiding underwater, etc.) that renders them invulnerable to all but a few specific
+    moves; Pokémon in this state can also be hit by a Pokémon that used Lock-On or Mind Reader on it on the
+    previous turn, or if either it or the attacking Pokémon has No Guard. On the second turn, PP will be deducted,
+    the move will deal damage, and it will count as the last move used.
+    While these moves have these characteristics in common, they are not strictly variations of each other,
+    since many of their other attributes (like power, accuracy, power points, or secondary effects, including
+    which moves can still strike them) are different.
+        Bounce (move)           Dig (move)              Dive (move)         Fly (move)
+        Phantom Force (move)    Shadow Force (move)     Sky Drop (move)
+
+
+    MOVES WITH NO EFFECT
+    These are moves that do not have any known effect. However, when turned into Z-Moves, they may have Z-Power effects.
+        Celebrate (move)        Hold Hands (move)       Splash (move)
+
+
+    MULTI STRIKE MOVES
+    Multi-strike moves are moves which have multiple strikes per turn.
+        Arm Thrust (move)           Barrage (move)          Beat Up (move)          Bone Rush (move)
+        Bonemerang (move)           Bullet Seed (move)      Comet Punch (move)      Double Hit (move)
+        Double Iron Bash (move)     Double Kick (move)      Double Slap (move)      Dual Chop (move)
+        Fury Attack (move)          Fury Swipes (move)      Gear Grind (move)       Icicle Spear (move)
+        Pin Missile (move)          Rock Blast (move)       Spike Cannon (move)     Tail Slap (move)
+        Triple Kick (move)          Twineedle (move)        Water Shuriken (move)
+
+
+    ONE HIT KNOCKOUT MOVES
+        Fissure (move)      Guillotine (move)       Horn Drill (move)       Sheer Cold (move)
+
+
+    PROTECTION MOVES
+    These moves protect the user entirely from certain moves for a turn. Moves that break through protection can
+    bypass their protection (even if the protection move would not normally protect the Pokémon from those moves)
+    and remove their effects for the rest of the turn.
+        Baneful Bunker (move)       Crafty Shield (move)        Detect (move)           King's Shield (move)
+        Mat Block (move)            Protect (move)              Quick Guard (move)      Spiky Shield (move)
+        Wide Guard (move)
+
+
+    SET DAMAGE MOVES
+        Dragon Rage (move)      Sonic Boom (move)
+
+
+    STATUS MOVES THAT HEAL THE USER IMMEDIATELY
+    These status moves restore a portion of their user's HP on the same turn as they are used.
+    A number of other moves can also recover HP for the user in different ways. HP-draining moves are moves that
+    simultaneously do damage and recover HP for the user immediately. Aqua Ring and Ingrain can heal the user
+    continually, starting at the end of the turn they are used. Leech Seed and Wish can heal either the user or a
+    Pokémon that replaces it.
+        Heal Order (move)       Milk Drink (move)       Moonlight (move)        Morning Sun (move)
+        Purify (move)           Recover (move)          Rest (move)             Roost (move)
+        Shore Up (move)         Slack Off (move)        Soft-Boiled (move)      Strength Sap (move)
+        Synthesis (move)
+
+
+    TRAPPING MOVES
+    These are moves that prevent an affected Pokémon from switching or escaping. Since Generation VI,
+    Ghost-type Pokémon are unaffected by the trapping effect of these moves.
+        Anchor Shot (move)      Block (move)            Fairy Lock (move)       Ingrain (move)
+        Mean Look (move)        Shadow Hold (move)      Spider Web (move)       Spirit Shackle (move)
+        Thousand Waves (move)
+
+        BINDING MOVES
+        These moves partially trap the foe and deal a small amount of damage for anywhere between two and five turns
+        in Generations I-IV and for four to five turns in Generation V. If the user of a partial trapping move is holding
+        a Grip Claw, the move will last for 7 turns (5 turns prior to Generation VI). A Pokémon can be only affected by
+        one partial trapping move at a time.
+            Bind (move)             Clamp (move)        Fire Spin (move)    Infestation (move)
+            Magma Storm (move)      Sand Tomb (move)    Whirlpool (move)    Wrap (move)
+
+
+    WEATHER CHANGING MOVES
+    These are moves that alter the weather in battle.
+        Defog (move)        Hail (move)     Rain Dance (move)       Sandstorm (move)
+        Shadow Sky (move)   Sunny Day (move)
+
+
+    LIST OF MOVES THAT CAN CAUSE ENTRY HAZARDS
+    An entry hazard is any battlefield effect that affects the opponent's Pokémon as they are sent out of their
+    Poké Ball. Any Pokémon already on the battlefield when these effects begin will be unaffected. All moves that
+    create entry hazards are status moves.
+    Entry hazards are removed by Rapid Spin (user's side) and Defog (Generation VI: both sides; Generation IV-V:
+    only opponent's side). In addition, Toxic Spikes is removed by a grounded Poison-type Pokémon upon switching in.
+    Entry hazards will not trigger for support trainers joining the battle in Pokemon: Let's Go, Pikachu! and
+    Let's Go, Eevee!
+
+
+
+
+    CATEGORIES NOT INCLUDED AS THEY DON'T PERTAIN TO BATTLES(only doing battles right now)
+    MOVES THAT CAN JAM (only used in pokemon contests)
+    MOVES USABLE OUTSIDE OF BATTLE (no need to know if moves are usable outside of battle)
      */
 
 }
