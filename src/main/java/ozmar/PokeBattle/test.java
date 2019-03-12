@@ -1,7 +1,7 @@
 package ozmar.PokeBattle;
 
 public class test {
-
+// TODO: Maybe add a category for moves that make contact with the opponent
     /*
     BINDING MOVES
     These moves partially trap the foe and deal a small amount of damage for anywhere between two and five turns

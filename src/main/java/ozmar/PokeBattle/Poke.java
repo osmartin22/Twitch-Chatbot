@@ -41,4 +41,10 @@ public class Poke {
     private List<StatusConditionVolatileBattleStatus> volatileBattleStatusList;
 
     // ABILITIES GO HERE WHEN IMPLEMENTED
+
+    /*
+    Keep track of the pokemon that last hit this one
+
+    Keep track of the last move used,(maybe the last few if a move depends on knowing more than the last one)
+     */
 }

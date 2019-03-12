@@ -1,61 +1,224 @@
 package ozmar.PokeBattle;
 
-public class AllPokemonMoves {
+public class PokeMoveDescriptions {
     /*
-NOTE: PokeAPI only has moves 1-728, (No Pokemon Let's Go Moves)
-Moves 622-658, 695-703, 719, 723-728 are Z-Moves
+    // TODO: Include abilities, started including at Whirlwind
+    NOTE: Moves are using Gen VII
+        Z-Moves not taken into account
+        Abilities are not taken into account, therefore if a move is affected by an ability,it is not written here
+        Moves affecting results after a battle are not taken into account, (e.g. Payday)
+        Moves only consider single battles(no 2v2 battles)
 
 #	Name	                Type	    Category    Contest     PP	Power	Accuracy	Gen
 1	Pound	                Normal      Physical	Tough	    35	40	    100%	    I
-2	Karate Chop*	        Fighting    Physical	Tough	    25	50	    100%	    I
+        No secondary effects
+
+2	Karate Chop 	        Fighting    Physical	Tough	    25	50	    100%	    I
+        Increased crit-hit ratio
+
 3	Double Slap	            Normal	    Physical	Cute	    10	15	    85%	        I
+        (Multi Strike)2-5 hits (33.33) for 2/3, (16.7) for 4/5, each hit is calculated separately
+
 4	Comet Punch	            Normal	    Physical	Tough	    15	18	    85%	        I
+        (Multi Strike)2-5 hits (33.33) for 2/3, (16.7) for 4/5, each hit is calculated separately
+
 5	Mega Punch	            Normal	    Physical	Tough	    20	80	    85%	        I
+        No secondary effects
+
 6	Pay Day	                Normal	    Physical    Clever	    20	40	    100%	    I
+        No secondary effects
+
 7	Fire Punch	            Fire	    Physical    Tough	    15	75	    100%	    I
+        10% chance of burning the target, Fire types are immune
+
 8	Ice Punch	            Ice	        Physical	Beautiful	15	75	    100%	    I
+        10% chance of freezing the target, Ice types are immune
+
 9	Thunder Punch	        Electric	Physical	Cool	    15	75	    100%	    I
+        10% chance of paralyzing the target, Electric types are immune
+
 10	Scratch	                Normal	    Physical	Tough	    35	40	    100%	    I
+        No secondary effects
+
 11	Vice Grip	            Normal	    Physical	Tough	    30	55	    100%	    I
+        No secondary effects
+
 12	Guillotine	            Normal	    Physical	Cool	    5	—	    —* *	    I
+        OHKO, accuracy calculation, Acc = ( ( user_level - target_level ) + 30 ) * 100%
+        unaffected by accuracy and evasion stats
+
 13	Razor Wind	            Normal	    Special	    Cool	    10	80	    100%*	    I
-14	Swords Dance	        Normal	    Status	    Beautiful	20*	—	    —	        I
+        Increased crit-hit ratio, Charges up, Does nothing when first used , other than saying "<Pokémon> whipped up a whirlwind!"
+        On the following turn, Razor Wind inflicts damage, PP is deducted, and it will count as the last move used.
+        User unable to swap out until razor wind completed.
+        If not fully executed, no PP is deducted, and does not count as the last used move.
+        Mirror move will copy previous move if the opponent uses Razor Wind, or fail if it can't
+        Sleep, freeze, partial trapping, and flinching will pause but not disrupt the duration of Razor Wind.
+
+14	Swords Dance	        Normal	    Status	    Beautiful	20	—	    —	        I
+        Increases the user's Attack stat by two stages
+
 15	Cut	                    Normal	    Physical	Cool	    30	50	    95%	        I
-16	Gust*	                Flying	    Special	    Clever	    35	40	    100%	    I
-17	Wing Attack	            Flying	    Physical	Cool	    35	60*	    100%	    I
+        No secondary effects
+
+16	Gust	                Flying	    Special	    Clever	    35	40	    100%	    I
+        Can hit Pokemon during the semi-invulnerable turn of Bounce, Fly, and Sky Drop, and if it does, it will have its power doubled
+
+17	Wing Attack	            Flying	    Physical	Cool	    35	60	    100%	    I
+        No secondary effects
+
 18	Whirlwind	            Normal	    Status	    Clever	    20	—	    —*	        I
+        Bypasses accuracy checks to always hit unless Pokemon is in semi invulnerable phase. Reflected by Magic Coat and Magic Bounce.
+        Fails against Pokemon with the ability Suction Cups or rooted by Ingrain. Can now hit a target even if it has
+        used Protect, Detect, or Spiky Shield, but will fail if the target is protected by Crafty Shield. Forces
+        target Pokemon to switch with another Pokemon on the team. Fails if no other Pokemon is available.
+        Priority of -6
+
 19	Fly	                    Flying      Physical	Clever	    15	90*	    95%	        I
-20	Bind	                Normal	    Physical	Tough	    20	15	    85%*	    I
+        On turn of selection, user will fly high up and attack on the second turn lowering PP if the move succeeded.
+        Opponents using Mirror Move will copy last used move. User not able to switch out until move is fully executed.
+        Full paralysis and self-inflicted damage due to confusion will disrupt Fly.
+        Gust(2x), Thunder, Twister(2x), Sky Uppercut, Whirlwind, Hurricane, Smack Down and Thousand Arrows
+        can hit during the semi-invulnerable turn. If hit by Smack Down or Thousand Arrows, the move is cancelled.
+        Can also be hit if it was previously targeted by Lock-On or Mind Reader, and struck the following turn.
+        Unable to avoid moves with Pokemon with the ability No Guard or if the user itself has the ability.
+
+20	Bind	                Normal	    Physical	Tough	    20	15	    85%	        I
+        Traps the Pokemon for 4-5 turns
+        Deals 1/16 of the targets max HP damage per turn. On the last turn it deals 1/8 of the targets max HP
+         Prevents Pokemon from switching out. Effect ends if user is no longer on
+        the field. Rapid Spin can be used to break free. Cannot affect Ghost Types
+
 21	Slam	                Normal	    Physical	Tough	    20	80	    75%	        I
-22	Vine Whip	            Grass	    Physical	Cool	    25*	45*	    100%	    I
+        No secondary effects
+
+22	Vine Whip	            Grass	    Physical	Cool	    25	45	    100%	    I
+        No secondary effects
+
 23	Stomp	                Normal	    Physical	Tough	    20	65	    100%	    I
+        30% chance of causing target to flinch, Targets with substitute can not be flinched by it.
+        If the target has used minimize. Accuracy checks are bypassed to always hit unless the Pokemon is in the
+        semi invulnerable phase. The damage dealt will be doubled as well
+
 24	Double Kick	            Fighting	Physical	Cool	    30	30	    100%	    I
+        Multi Strike Move. Attacks the user twice, damage calculated separately.
+        Bide and counter acknowledge only the last hit
+        Targets with an ability that activate upon contact can have the ability activate on each turn
+        If the first strike activates the Sturdy(for the target), the next attack causes it to faint
+        Targets with weak armor will activate the ability on each hit
+
 25	Mega Kick	            Normal	    Physical	Cool	    5	120 	75%	        I
+        No secondary effects
+
 26	Jump Kick	            Fighting	Physical	Cool	    10*	100*	95%	        I
+        User takes crash damage equal to 1/2 of its max HP, rounded down. Can still take crash damage if the move
+        was protected against by a move like Protect, but not to type immunity, (i.e. ghost type).
+        Cannot be used if the move Gravity is in effect
+
 27	Rolling Kick	        Fighting	Physical	Cool	    15	60	    85%	        I
-28	Sand Attack*	        Ground	    Status	    Cute	    15	—	    100%	    I
+        30% chance to cause target to flinch. Targets with substitute cannot be flinched
+
+28	Sand Attack 	        Ground	    Status	    Cute	    15	—	    100%	    I
+        Decreases the targets accuracy stat by one stage
+        Still affects Flying type pokemon and pokemon with the ability levitate.
+
 29	Headbutt	            Normal	    Physical	Tough	    15	70	    100%	    I
+        30% chance of causing the target to flinch
+
 30	Horn Attack	            Normal	    Physical	Cool	    25	65	    100%	    I
+        No secondary effects
+
 31	Fury Attack	            Normal	    Physical	Cool	    20	15	    85%	        I
+        Multi Strike Move 2-5 times (33.33)2-3, (16.7)4-5. Each hit calculated separately. Abilities can activate
+        on each hit(contact)
+        Pokemon with the ability Skill Link will hit 5 times (unless it misses).
+        If sturdy activates on the target on the first hit, the next hit will cause it to faint
+        If the target has Weak Armor, it will activate on each strike
+
 32	Horn Drill	            Normal	    Physical	Cool	    5	—	    —* *	    I
-33	Tackle	                Normal	    Physical	Tough	    35	40*	    100%*	    I
+        OHKO
+        Accuracy calculation Acc = ( ( user_level - target_level ) + 30 ) * 100%
+        Unaffected by accuracy and evasion, cannot affect targets with a higher level
+
+33	Tackle	                Normal	    Physical	Tough	    35	40	    100%	    I
+        No secondary effects
+
 34	Body Slam	            Normal	    Physical	Tough	    15	85	    100%	    I
+        30% chance of paralyzing the target
+        Bypasses accuracy if the target uses minimize and does 2x damage, except if target is in semi invulnerable phase
+
 35	Wrap	                Normal	    Physical	Tough	    20	15	    90%*	    I
+        Move lasts for 4-5 turns causing 1/16th of max targets HP as damge, 1/8th on the last turn
+        // TODO: More research
+
 36	Take Down	            Normal	    Physical	Tough	    20	90	    85%	        I
+        User takes 25% of damage dealt to opponent as recoil damage. The turn ends if the user faints
+        Recoil damage is still taken if a substitute breaks
+
 37	Thrash	                Normal	    Physical	Tough	    10*	120*	100%	    I
+        Attacks for 2-3 turns. PP only deducted on the turn Thrash is first used. User is unable to switch out.
+        User becomes confused after the end of Thrash. If the move is disrupted, execution of the move stops.
+        It is disrupted if it is not successful due to missing, sleeping,
+        paralysis, freeze, flinching, a Protecting target, Ghost-type or Wonder Guard immunity. If it is disrupted on
+        the last turn, the user will still become confused.
+
 38	Double-Edge	            Normal	    Physical	Tough	    15	120*	100%	    I
+        User takes 1/3 of the damage dealt as recoil damage.
+        The turn ends if the user faints due to recoil damage
+        Pokemon with Rock Head do not take recoil damage from this move
+
 39	Tail Whip	            Normal	    Status	    Cute	    30	—	    100%	    I
+        Decreases the Defense stat of all adjacent opponents by one stage
+
 40	Poison Sting	        Poison	    Physical	Clever	    35	15	    100%	    I
+        30% chance to poison the target
+
 41	Twineedle	            Bug	        Physical	Cool	    20	25	    100%	    I
+        Multi Strike Move
+        Hits target twice per use. Each strike is calculated independently, and has a 20% chance to poison
+        Bide and counter only acknowledge the last hit,
+        If the attack activates sturdy on the target on the first hit, the next hit will cause the target to faint.
+        Weak Armor(target) will activate on each hit
+
 42	Pin Missile	            Bug	        Physical	Cool	    20	25*	    95%*	    I
+        Same as fury attack
+
 43	Leer	                Normal	    Status	    Cool	    30	—	    100%	    I
-44	Bite*	                Dark	    Physical	Tough	    25	60	    100%	    I
+        Decreases the Defense stat of all adjacent opponents by one stage
+
+44	Bite	                Dark	    Physical	Tough	    25	60	    100%	    I
+        30% chance of causing the target to flinch
+
 45	Growl	                Normal	    Status	    Cute	    40	—	    100%	    I
+        Decreases the Attack stat of all adjacent opponents by one stage. It does not affect Pokemon with the
+        Abilities Soundproof, Hyper Cutter, Clear Body, White Smoke, or Full Metal Body
+
 46	Roar	                Normal	    Status	    Cool	    20	—	    —*	        I
+        Causes target Pokemon to switch out with a random one, fails if no other Pokemon to switch to
+        Priority of -6. Reflected by Magic Coat and Magic Bounce
+        Bypasses accuracy checks to always hit, unless the target is in the semi-invulnerable state
+        Can hit a target even if it has used Protect, Detect, or Spiky Shield, but will fail if the target is protected by Crafty Shield
+
 47	Sing	                Normal	    Status	    Cute	    15	—	    55%	        I
+        Puts the target to sleep, even behind substitute
+        Pokemon with Insomnia, Vital Spirit or Soundproof as their Ability are unaffected by Sing
+        Pokemon under the effect of Sweet Veil are also unaffected
+
 48	Supersonic	            Normal	    Status	    Clever	    20	—	    55%	        I
+        Causes the target to become confused, even behind substitute
+        Fails if the target is already confused or has the ability Soundproof or Own Tempo
+
 49	Sonic Boom	            Normal	    Special	    Cool	    20	*	    90%	        I
+        Always inflicts 20 damage exactly.  No secondary effects, does not take weaknesses or resistances into account
+        Cannot hit Ghost types
+
 50	Disable	                Normal	    Status	    Clever	    20	—	    100%*	    I
+        Disables the lst move the target used. Turn count is reduced every time the target tries to use the attack
+        Will fail if no move was used yet or the last move used was Struggle.
+        Sleep Talk can still call a disabled move.
+        Lasts for 4 turns and can be reflected by Magic Coat
+        Does not affect Pokémon under the protection of Aroma Veil
+
 51	Acid	                Poison	    Special	    Clever	    30	40	    100%	    I
 52	Ember	                Fire	    Special	    Cute	    25	40	    100%	    I
 53	Flamethrower	        Fire	    Special	    Beautiful	15	90*	    100%	    I
@@ -754,6 +917,5 @@ Moves 622-658, 695-703, 719, 723-728 are Z-Moves
 740	Sparkly Swirl	        Fairy	    Special	    ???	        15	90	    100%	    VII*
 741	Veevee Volley	        Normal	    Physical	???	        20	—	    —	        VII*
 742	Double Iron Bash	    Steel	    Physical	???	        5	60	    100%	    VII*
-
      */
 }
