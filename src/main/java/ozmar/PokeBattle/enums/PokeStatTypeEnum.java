@@ -1,6 +1,6 @@
 package ozmar.PokeBattle.enums;
 
-public enum PokeStatEnum {
+public enum PokeStatTypeEnum {
     HP(1),
     ATTACK(2),
     DEFENSE(3),
@@ -12,7 +12,7 @@ public enum PokeStatEnum {
 
     private final int id;
 
-    PokeStatEnum(int id) {
+    PokeStatTypeEnum(int id) {
         this.id = id;
     }
 

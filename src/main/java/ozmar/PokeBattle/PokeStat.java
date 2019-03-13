@@ -1,40 +1,39 @@
 package ozmar.PokeBattle;
 
-import ozmar.PokeBattle.enums.PokeNatureEnum;
-import ozmar.PokeBattle.enums.PokeStatEnum;
-
-import java.util.List;
-
 public class PokeStat {
-    private int value;
-    private PokeStatEnum stat;
-    private List<PokeNatureEnum> increaseStat;
-    private List<PokeNatureEnum> decreaseStat;
 
-    public PokeStat(int value, PokeStatEnum stat, List<PokeNatureEnum> increaseStat, List<PokeNatureEnum> decreaseStat) {
+    // The HP stat should not use this class as it is directly modified unlike the other stats
+    // Pokemon stat modifications are done in "Stages" instead of directly increasing the stat value
+    private int value;
+    private int statStage;
+
+    private static final int MAX_STAT_STAGE = 6;
+    private static final int MIN_STAT_STAGE = -6;
+
+    public PokeStat(int value) {
         this.value = value;
-        this.stat = stat;
-        this.increaseStat = increaseStat;
-        this.decreaseStat = decreaseStat;
+        this.statStage = 0;
     }
 
     public int getValue() {
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public int getStatStage() {
+        return statStage;
     }
 
-    public PokeStatEnum getStat() {
-        return stat;
+    public boolean updateStatStage(int statStageChange) {
+        int tempStage = statStage + statStageChange;
+        if (tempStage > MAX_STAT_STAGE || tempStage < MIN_STAT_STAGE) {
+            return false;
+        }
+
+        statStage = tempStage;
+        return true;
     }
 
-    public List<PokeNatureEnum> getIncreaseStat() {
-        return increaseStat;
-    }
-
-    public List<PokeNatureEnum> getDecreaseStat() {
-        return decreaseStat;
+    public void resetStatStage() {
+        this.statStage = 0;
     }
 }

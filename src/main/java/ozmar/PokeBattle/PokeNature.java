@@ -1,14 +1,14 @@
 package ozmar.PokeBattle;
 
 import ozmar.PokeBattle.enums.PokeNatureEnum;
-import ozmar.PokeBattle.enums.PokeStatEnum;
+import ozmar.PokeBattle.enums.PokeStatTypeEnum;
 
 public class PokeNature {
     private PokeNatureEnum nature;
-    private PokeStatEnum increaseStat;
-    private PokeStatEnum decreaseStat;
+    private PokeStatTypeEnum increaseStat;
+    private PokeStatTypeEnum decreaseStat;
 
-    public PokeNature(PokeNatureEnum nature, PokeStatEnum increaseStat, PokeStatEnum decreaseStat) {
+    public PokeNature(PokeNatureEnum nature, PokeStatTypeEnum increaseStat, PokeStatTypeEnum decreaseStat) {
         this.nature = nature;
         this.increaseStat = increaseStat;
         this.decreaseStat = decreaseStat;
@@ -18,11 +18,11 @@ public class PokeNature {
         return nature;
     }
 
-    public PokeStatEnum getIncreaseStat() {
+    public PokeStatTypeEnum getIncreaseStat() {
         return increaseStat;
     }
 
-    public PokeStatEnum getDecreaseStat() {
+    public PokeStatTypeEnum getDecreaseStat() {
         return decreaseStat;
     }
 }
