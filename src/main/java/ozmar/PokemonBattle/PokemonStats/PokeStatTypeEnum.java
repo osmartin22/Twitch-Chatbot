@@ -1,4 +1,4 @@
-package ozmar.PokeBattle.enums;
+package ozmar.PokemonBattle.PokemonStats;
 
 public enum PokeStatTypeEnum {
     HP(1),

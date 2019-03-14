@@ -1,4 +1,4 @@
-package ozmar.PokeBattle;
+package ozmar.PokemonBattle.PokemonStats;
 
 public class PokeStat {
 

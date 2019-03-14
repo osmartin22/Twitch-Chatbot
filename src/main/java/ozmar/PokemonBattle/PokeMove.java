@@ -1,14 +1,13 @@
-package ozmar.PokeBattle;
+package ozmar.PokemonBattle;
 
-import ozmar.PokeBattle.enums.PokeMoveDamageClass;
-import ozmar.PokeBattle.enums.PokeMoveTarget;
-import ozmar.PokeBattle.enums.PokeTypeEnum;
+import ozmar.PokemonBattle.PokemonType.PokeTypeEnum;
+import ozmar.PokemonBattle.enums.PokeMoveDamageClass;
+import ozmar.PokemonBattle.enums.PokeMoveTarget;
 
 public class PokeMove {
     private int accuracy;
     private PokeMoveDamageClass damageClass;
     private int effectChance;
-    // Effect Entries   ???
     private int id;
     private PokeMoveMetaData metaData;
     private String name;
@@ -18,4 +17,5 @@ public class PokeMove {
     private PokeTypeEnum moveType;
     private PokeMoveTarget moveTarget;
 
+    private boolean isDirectAttack;
 }

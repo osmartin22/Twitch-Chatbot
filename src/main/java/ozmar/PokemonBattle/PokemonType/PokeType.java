@@ -1,6 +1,4 @@
-package ozmar.PokeBattle;
-
-import ozmar.PokeBattle.enums.PokeTypeEnum;
+package ozmar.PokemonBattle.PokemonType;
 
 public class PokeType {
     PokeTypeEnum type1;
@@ -13,6 +11,18 @@ public class PokeType {
         this.type1 = type1;
         this.type2 = type2;
         this.type2 = PokeTypeEnum.NONE;
+    }
+
+    public PokeTypeEnum getType1() {
+        return type1;
+    }
+
+    public PokeTypeEnum getType2() {
+        return type2;
+    }
+
+    public PokeTypeEnum getType3() {
+        return type3;
     }
 
     /**
@@ -37,11 +47,13 @@ public class PokeType {
      * @return double
      */
     public double damageReceivedMultiplier(PokeType pokeType) {
-        // TODO: Compare the types to an Object to be created later that contains the damage type chart
-        // TODO: Should be able to handle UNKNOWN(???)
-        return 0;
+        double multiplier1 = PokeTypeChart.TYPE_CHART[pokeType.getType1().getId()][type1.getId()];
+        double multiplier2 = PokeTypeChart.TYPE_CHART[pokeType.getType2().getId()][type2.getId()];
+        double multiplier3 = PokeTypeChart.TYPE_CHART[pokeType.getType3().getId()][type3.getId()];
+
+        return multiplier1 * multiplier2 * multiplier3;
     }
 
-    // TODO: Add methods to rearrange Types after removing a type so that NONE always appears after the other types
+    // TODO: Add methods to rearrange Types after removing a type so that NONE always appears after the other types(not necessary)
     // TODO: Add methods to modify a type(maybe keep track of previous type), should be able to hand UNKNOWN(???)
 }

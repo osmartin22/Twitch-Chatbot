@@ -1,6 +1,7 @@
-package ozmar.PokeBattle;
+package ozmar.PokemonBattle;
 
-import ozmar.PokeBattle.enums.StatusConditionNonVolatile;
+import ozmar.PokemonBattle.PokemonStats.PokeAllStats;
+import ozmar.PokemonBattle.enums.StatusConditionNonVolatile;
 
 import java.util.List;
 

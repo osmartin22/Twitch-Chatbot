@@ -1,7 +1,7 @@
-package ozmar.PokeBattle;
+package ozmar.PokemonBattle;
 
-import ozmar.PokeBattle.enums.PokeMoveAilment;
-import ozmar.PokeBattle.enums.PokeMoveCategory;
+import ozmar.PokemonBattle.enums.PokeMoveAilment;
+import ozmar.PokemonBattle.enums.PokeMoveCategory;
 
 public class PokeMoveMetaData {
 

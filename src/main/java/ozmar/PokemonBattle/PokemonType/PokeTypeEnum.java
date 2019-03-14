@@ -1,4 +1,4 @@
-package ozmar.PokeBattle.enums;
+package ozmar.PokemonBattle.PokemonType;
 
 public enum PokeTypeEnum {
     NONE(0),    // Only to be used for the second and third type of a Pokemon
