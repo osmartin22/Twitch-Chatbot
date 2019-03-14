@@ -23,6 +23,15 @@ public class PokeStat {
         return statStage;
     }
 
+    /**
+     * Adds the stat stage change to the current stat stage
+     * Positive values are considered an increase to the stage
+     * Negative values are considered a decrease to the stage
+     * Returns false if the stage is already at the highest or lowest it can be at
+     *
+     * @param statStageChange change to the stat stage
+     * @return boolean
+     */
     public boolean updateStatStage(int statStageChange) {
         int tempStage = statStage + statStageChange;
         if (tempStage > MAX_STAT_STAGE || tempStage < MIN_STAT_STAGE) {
@@ -33,6 +42,9 @@ public class PokeStat {
         return true;
     }
 
+    /**
+     * Resets the stage back to its original stage 0
+     */
     public void resetStatStage() {
         this.statStage = 0;
     }

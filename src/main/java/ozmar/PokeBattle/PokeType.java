@@ -2,54 +2,46 @@ package ozmar.PokeBattle;
 
 import ozmar.PokeBattle.enums.PokeTypeEnum;
 
-import java.util.List;
-
 public class PokeType {
-    private PokeTypeEnum type;
-    private List<PokeTypeEnum> doubleDamageFrom;
-    private List<PokeTypeEnum> doubleDamageTo;
-    private List<PokeTypeEnum> halfDamageFrom;
-    private List<PokeTypeEnum> halfDamageTo;
-    private List<PokeTypeEnum> noDamageFrom;
-    private List<PokeTypeEnum> noDamageTo;
+    PokeTypeEnum type1;
+    PokeTypeEnum type2;
+    PokeTypeEnum type3;
 
-    public PokeType(PokeTypeEnum type, List<PokeTypeEnum> doubleDamageFrom, List<PokeTypeEnum> doubleDamageTo,
-                    List<PokeTypeEnum> halfDamageFrom, List<PokeTypeEnum> halfDamageTo,
-                    List<PokeTypeEnum> noDamageFrom, List<PokeTypeEnum> noDamageTo) {
-        this.type = type;
-        this.doubleDamageFrom = doubleDamageFrom;
-        this.doubleDamageTo = doubleDamageTo;
-        this.halfDamageFrom = halfDamageFrom;
-        this.halfDamageTo = halfDamageTo;
-        this.noDamageFrom = noDamageFrom;
-        this.noDamageTo = noDamageTo;
+    // Pokemon all start with a max of 2 types at the start of a battle
+    // Can gain a 3rd through certain moves
+    public PokeType(PokeTypeEnum type1, PokeTypeEnum type2) {
+        this.type1 = type1;
+        this.type2 = type2;
+        this.type2 = PokeTypeEnum.NONE;
     }
 
-    public PokeTypeEnum getType() {
-        return type;
+    /**
+     * Checks if the used move will have STAB
+     *
+     * @param moveType enum for the moves type
+     * @return boolean
+     */
+    public boolean moveWillHaveStab(PokeTypeEnum moveType) {
+        boolean hasStab = false;
+        if (moveType != PokeTypeEnum.NONE && moveType != PokeTypeEnum.UNKNOWN) {
+            hasStab = type1 == moveType || type2 == moveType || type3 == moveType;
+        }
+
+        return hasStab;
     }
 
-    public List<PokeTypeEnum> getDoubleDamageFrom() {
-        return doubleDamageFrom;
+    /**
+     * Gets the total multiplier the move will have on the given Pokemon
+     *
+     * @param pokeType contains all of the  types of the given Pokemon
+     * @return double
+     */
+    public double damageReceivedMultiplier(PokeType pokeType) {
+        // TODO: Compare the types to an Object to be created later that contains the damage type chart
+        // TODO: Should be able to handle UNKNOWN(???)
+        return 0;
     }
 
-    public List<PokeTypeEnum> getDoubleDamageTo() {
-        return doubleDamageTo;
-    }
-
-    public List<PokeTypeEnum> getHalfDamageFrom() {
-        return halfDamageFrom;
-    }
-
-    public List<PokeTypeEnum> getHalfDamageTo() {
-        return halfDamageTo;
-    }
-
-    public List<PokeTypeEnum> getNoDamageFrom() {
-        return noDamageFrom;
-    }
-
-    public List<PokeTypeEnum> getNoDamageTo() {
-        return noDamageTo;
-    }
+    // TODO: Add methods to rearrange Types after removing a type so that NONE always appears after the other types
+    // TODO: Add methods to modify a type(maybe keep track of previous type), should be able to hand UNKNOWN(???)
 }

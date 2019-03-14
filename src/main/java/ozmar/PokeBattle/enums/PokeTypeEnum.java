@@ -1,7 +1,7 @@
 package ozmar.PokeBattle.enums;
 
 public enum PokeTypeEnum {
-    NONE(0),    // NONE to be used only for the second type of a pokemon, (Fire/Flying), (Fire/None)
+    NONE(0),    // Only to be used for the second and third type of a Pokemon
     NORMAL(1),
     FIGHTING(2),
     FLYING(3),
@@ -19,7 +19,8 @@ public enum PokeTypeEnum {
     ICE(15),
     DRAGON(16),
     DARK(17),
-    FAIRY(18);
+    FAIRY(18),
+    UNKNOWN(19);  // Only to be used for the first type of a Pokemon in rare cases, also known as type "???"
 
     private final int id;
 

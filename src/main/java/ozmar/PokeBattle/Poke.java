@@ -1,50 +1,43 @@
 package ozmar.PokeBattle;
 
-import ozmar.PokeBattle.enums.PokeTypeEnum;
 import ozmar.PokeBattle.enums.StatusConditionNonVolatile;
-import ozmar.PokeBattle.enums.StatusConditionVolatile;
-import ozmar.PokeBattle.enums.StatusConditionVolatileBattleStatus;
 
 import java.util.List;
 
 public class Poke {
-    // Pokemon Id
-    private int id;
-
-    // Pokemon Level
+    private final int id;
     private int level;
+    private final String name;
+    private final String nickname;
+    private final int height; // decimeters
+    private final int weight; // hectograms
 
-    // Pokemon Names
-    private String name;
-    private String nickname;
 
-    private int height; // decimeters
-    private int weight; // hectograms
+    private final PokeNature nature;      // Natures can not change in battle
+    private final PokeAllStats pokeStats;
 
-    // Pokemon Nature
-    private PokeNature nature;
+    private final List<PokeMove> moveList;
 
-    // Pokemon Stats
-    private PokeAllStats startingStats;
-    private PokeAllStats battleStats;
-
-    // Pokemon Moves
-    private List<PokeMove> moveList;
-
-    // Pokemon types
-    private PokeTypeEnum pokeType1;
-    private PokeTypeEnum getPokeType2;
 
     // Pokemon status conditions;
     private StatusConditionNonVolatile nonVolatile;
-    private List<StatusConditionVolatile> volatileList;
-    private List<StatusConditionVolatileBattleStatus> volatileBattleStatusList;
 
     // ABILITIES GO HERE WHEN IMPLEMENTED
 
-    /*
-    Keep track of the pokemon that last hit this one
 
-    Keep track of the last move used,(maybe the last few if a move depends on knowing more than the last one)
-     */
+    public Poke(int id, int level, String name, String nickname, int height, int weight, PokeNature nature,
+                PokeAllStats pokeStats, List<PokeMove> moveList) {
+        this.id = id;
+        this.level = level;
+        this.name = name;
+        this.nickname = nickname;
+        this.height = height;
+        this.weight = weight;
+        this.nature = nature;
+        this.pokeStats = pokeStats;
+        this.moveList = moveList;
+        this.nonVolatile = StatusConditionNonVolatile.NONE;
+    }
+
+
 }
