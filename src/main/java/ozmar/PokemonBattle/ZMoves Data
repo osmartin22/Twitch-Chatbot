@@ -1,751 +1,751 @@
-#    Name,                      Type,  Cat,  Con,    PP,    Pow,    Acc,  Gen, Cnct,   Tar,
-001, Pound,                        1,    0,    4,    35,     40,    100,    1,    1,     1,
-002, Karate Chop,                  2,    0,    4,    25,     50,    100,    1,    1,     1,        HIGH_CRIT_HIT
-003, Double Slap,                  1,    0,    2,    10,     15,     85,    1,    1,     1,        MULTI_STRIKE
-004, Comet Punch,                  1,    0,    4,    15,     18,     85,    1,    1,     1,        PUNCHING        MULTI_STRIKE
-005, Mega Punch,                   1,    0,    4,    20,     80,     85,    1,    1,     1,        PUNCHING
-006, Pay Day,                      1,    0,    3,    20,     40,    100,    1,    0,     1,
-007, Fire Punch,                  10,    0,    4,    15,     75,    100,    1,    1,     1,        PUNCHING        CAN_BRN
-008, Ice Punch,                   15,    0,    2,    15,     75,    100,    1,    1,     1,        PUNCHING        CAN_FRZ
-009, Thunder Punch,               13,    0,    0,    15,     75,    100,    1,    1,     1,        PUNCHING        CAN_PAR
-010, Scratch,                      1,    0,    4,    35,     40,    100,    1,    1,     1,
-011, Vice Grip,                    1,    0,    4,    30,     55,    100,    1,    1,     1,
-012, Guillotine,                   1,    0,    0,     5,      0,      0,    1,    1,     1,        OHKO        DIRECT_DAMAGE
-013, Razor Wind,                   1,    1,    0,    10,     80,    100,    1,    0,     4,        CHARGES     HIGH_CRIT_HIT
-014, Swords Dance,                 1,    2,    2,    20,      0,      0,    1,    0,     9,        STAT_USERS_ATT++        DANCE
-015, Cut,                          1,    0,    0,    30,     50,     95,    1,    1,     1,
-016, Gust,                         3,    1,    3,    35,     40,    100,    1,    0,     2,        CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
-017, Wing Attack,                  3,    0,    0,    35,     60,    100,    1,    1,     2,
-018, Whirlwind,                    1,    2,    3,    20,      0,      0,    1,    0,     1,        PRIORITY--      CAN_HIT_SEMI_INVULNERABLE       BYPASS_ACC_CHECK        SWITCHES_TARGET_OUT
-019, Fly,                          3,    0,    3,    15,     90,     95,    1,    1,     2,        HAS_SEMI_INVULNERABLE TURN      CHARGES
-020, Bind,                         1,    0,    4,    20,     15,     85,    1,    1,     1,        BINDING        TRAPPING        TRAPPING
-021, Slam,                         1,    0,    4,    20,     80,     75,    1,    1,     1,
-022, Vine Whip,                   12,    0,    0,    25,     45,    100,    1,    1,     1,
-023, Stomp,                        1,    0,    4,    20,     65,    100,    1,    1,     1,        MINIMIZED_TARGET_DMG++      CAN_FLINCH      BYPASS_ACC_CHECK        POWERS_UP       VARIABLE_POWER
-024, Double Kick,                  2,    0,    0,    30,     30,    100,    1,    1,     1,        MULTI_STRIKE
-025, Mega Kick,                    1,    0,    0,     5,    120,     75,    1,    1,     1,
-026, Jump Kick,                    2,    0,    0,    10,    100,     95,    1,    1,     1,        HAVE_RECOIL
-027, Rolling Kick,                 2,    0,    0,    15,     60,     85,    1,    1,     1,        CAN_FLINCH
-028, Sand Attack,                  5,    2,    2,    15,      0,    100,    1,    0,     1,        STAT_TARGET_ACC--
-029, Headbutt,                     1,    0,    4,    15,     70,    100,    1,    1,     1,        CAN_FLINCH
-030, Horn Attack,                  1,    0,    0,    25,     65,    100,    1,    1,     1,
-031, Fury Attack,                  1,    0,    0,    20,     15,     85,    1,    1,     1,        MULTI_STRIKE
-032, Horn Drill,                   1,    0,    0,     5,      0,      0,    1,    1,     1,        OHKO        DIRECT_DAMAGE
-033, Tackle,                       1,    0,    4,    35,     40,    100,    1,    1,     1,
-034, Body Slam,                    1,    0,    4,    15,     85,    100,    1,    1,     1,        MINIMIZED_TARGET_DMG++      CAN_PAR     BYPASS_ACC_CHECK
-035, Wrap,                         1,    0,    4,    20,     15,     90,    1,    1,     1,        BINDING        TRAPPING
-036, Take Down,                    1,    0,    4,    20,     90,     85,    1,    1,     1,        HAVE_RECOIL
-037, Thrash,                       1,    0,    4,    10,    120,    100,    1,    1,     9,        CONSECUTIVE
-038, Double-Edge,                  1,    0,    4,    15,    120,    100,    1,    0,     1,        HAVE_RECOIL
-039, Tail Whip,                    1,    2,    2,    30,      0,    100,    1,    0,     4,        STAT_TARGET_DEF--
-040, Poison Sting,                 4,    0,    3,    35,     15,    100,    1,    0,     1,        CAN_PSN
-041, Twineedle,                    7,    0,    0,    20,     25,    100,    1,    0,     1,        CAN_PSN     MULTI_STRIKE
-042, Pin Missile,                  7,    0,    0,    20,     25,     95,    1,    0,     1,        MULTI_STRIKE
-043, Leer,                         1,    2,    0,    30,      0,    100,    1,    0,     4,        STAT_TARGET_DEF--
-044, Bite,                        17,    0,    4,    25,     60,    100,    1,    1,     1,        BITING      CAN_FLINCH
-045, Growl,                        1,    2,    2,    40,      0,    100,    1,    0,     4,        STAT_TARGET_ATT--       SOUND_BASED
-046, Roar,                         1,    2,    0,    20,      0,      0,    1,    0,     1,        PRIORITY--      SOUND_BASED     BYPASS_ACC_CHECK        SWITCHES_TARGET_OUT
-047, Sing,                         1,    2,    2,    15,      0,     55,    1,    1,     1,        SOUND_BASED     CAN_SLP
-048, Supersonic,                   1,    2,    3,    20,      0,     55,    1,    0,     1,        SOUND_BASED     CAN_CONFUSE
-049, Sonic Boom,                   1,    1,    0,    20,     20,     90,    1,    0,     1,        SET_DAMAGE      DIRECT_DAMAGE
-050, Disable,                      1,    2,    3,    20,      0,    100,    1,    0,     1,
-051, Acid,                         4,    1,    3,    30,     40,    100,    1,    0,     4,        STAT_TARGET_DEF--       STAT_TARGET_SPDEF--
-052, Ember,                       10,    1,    2,    25,     40,    100,    1,    0,     1,        CAN_BRN
-053, Flamethrower,                10,    1,    2,    15,     90,    100,    1,    0,     1,        CAN_BRN
-054, Mist,                        15,    2,    2,    30,      0,      0,    1,    0,    10,
-055, Water Gun,                   11,    1,    2,    25,     40,    100,    1,    0,     1,
-056, Hydro Pump,                  11,    1,    2,     5,    110,     80,    1,    0,     1,
-057, Surf,                        11,    1,    2,    15,     90,    100,    1,    0,     4,        CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
-058, Ice Beam,                    15,    1,    2,    10,     90,    100,    1,    0,     1,        CAN_FRZ
-059, Blizzard,                    15,    1,    2,     5,    110,     70,    1,    0,     4,        CAN_FRZ     BYPASS_ACC_CHECK
-060, Psybeam,                     14,    1,    2,    20,     65,    100,    1,    0,     1,        CAN_CONFUSE
-061, Bubble Beam,                 11,    1,    2,    20,     65,    100,    1,    0,     1,        STAT_TARGET_SPD--
-062, Aurora Beam,                 15,    1,    2,    20,     65,    100,    1,    0,     1,        STAT_TARGET_ATT--
-063, Hyper Beam,                   1,    1,    0,     5,    150,     90,    1,    0,     1,        RECHARGES
-064, Peck,                         3,    0,    0,    35,     35,    100,    1,    1,     2,
-065, Drill Peck,                   3,    0,    0,    20,     80,    100,    1,    1,     2,
-066, Submission,                   2,    0,    0,    20,     80,     80,    1,    1,     1,        HAVE_RECOIL
-067, Low Kick,                     2,    0,    4,    20,      0,    100,    1,    1,     1,        AFFECTED_BY_WEIGHT      CAN_FLINCH      VARIABLE_POWER
-068, Counter,                      2,    0,    4,    20,      0,    100,    1,    1,     9,        PRIORITY--      DIRECT_DAMAGE
-069, Seismic Toss,                 2,    0,    4,    20,      0,    100,    1,    1,     1,        DIRECT_DAMAGE
-070, Strength,                     1,    0,    4,    15,     80,    100,    1,    1,     1,
-071, Absorb,                      12,    1,    3,    15,     40,    100,    1,    0,     1,        HP_DRAINING_DAMAGE        RESTORES_HP
-072, Mega Drain,                  12,    1,    3,    10,     75,    100,    1,    0,     1,        HP_DRAINING_DAMAGE        RESTORES_HP
-073, Leech Seed,                  12,    2,    3,    10,      0,     90,    1,    0,     1,        HP_DRAINING_DAMAGE        RESTORES_HP
-074, Growth,                       1,    2,    2,    20,      0,      0,    1,    1,     9,        STAT_USERS_ATT++        STAT_USERS_SPATT++
-075, Razor Leaf,                  12,    0,    0,    25,     55,     95,    1,    0,     4,        HIGH_CRIT_HIT
-076, Solar Beam,                  12,    1,    0,    10,    200,    100,    1,    0,     1,        CHARGES
-077, Poison Powder,                4,    2,    3,    35,      0,     75,    1,    0,     1,        POWDER_AND_SPORE        CAN_PSN
-078, Stun Spore,                  12,    2,    3,    30,      0,     75,    1,    0,     1,        POWDER_AND_SPORE        CAN_PAR
-079, Sleep Powder,                12,    2,    3,    15,      0,     75,    1,    0,     1,        POWDER_AND_SPORE        CAN_SLP
-080, Petal Dance,                 12,    1,    2,    10,    120,    100,    1,    1,     9,        CONSECUTIVE     DANCE
-081, String Shot,                  7,    2,    3,    40,      0,     95,    1,    0,     4,        STAT_TARGET_SPD--
-082, Dragon Rage,                 16,    1,    0,    10,     40,    100,    1,    0,     1,        SET_DAMAGE      DIRECT_DAMAGE
-083, Fire Spin,                   10,    1,    2,    15,     35,     85,    1,    0,     1,        BINDING        TRAPPING
-084, Thunder Shock,               13,    1,    0,    30,     40,    100,    1,    0,     1,        CAN_PAR
-085, Thunderbolt,                 13,    1,    0,    15,     90,    100,    1,    0,     1,        CAN_PAR
-086, Thunder Wave,                13,    2,    0,    20,      0,     90,    1,    0,     1,        CAN_PAR
-087, Thunder,                     13,    1,    0,    10,    110,     70,    1,    0,     1,        CAN_HIT_SEMI_INVULNERABLE       CAN_PAR     BYPASS_ACC_CHECK
-088, Rock Throw,                   6,    0,    4,    15,     50,     90,    1,    0,     1,
-089, Earthquake,                   5,    0,    4,    10,    100,    100,    1,    0,     5,        CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
-090, Fissure,                      5,    0,    4,     5,      0,      0,    1,    0,     1,        CAN_HIT_SEMI_INVULNERABLE       OHKO        DIRECT_DAMAGE
-091, Dig,                          5,    0,    4,    10,     80,    100,    1,    1,     1,        HAS_SEMI_INVULNERABLE TURN      CHARGES
-092, Toxic,                        4,    2,    3,    10,      0,     90,    1,    0,     1,        CAN_HIT_SEMI_INVULNERABLE       CAN_PSN     BYPASS_ACC_CHECK
-093, Confusion,                   14,    1,    3,    25,     50,    100,    1,    0,     1,        CAN_CONFUSE
-094, Psychic,                     14,    1,    3,    10,     90,    100,    1,    0,     1,        STAT_TARGET_SPDEF--
-095, Hypnosis,                    14,    2,    3,    20,      0,     60,    1,    0,     1,        CAN_SLP
-096, Meditate,                    14,    2,    2,    40,      0,      0,    1,    0,     9,        STAT_USERS_ATT++
-097, Agility,                     14,    2,    0,    30,      0,      0,    1,    0,     9,        STAT_USERS_SPD++
-098, Quick Attack,                 1,    0,    0,    30,     40,    100,    1,    1,     1,        PRIORITY++
-099, Rage,                         1,    0,    4,    20,     20,    100,    1,    1,     1,        STAT_USERS_ATT++
-100, Teleport,                    14,    2,    0,    20,      0,      0,    1,    0,     9,        PRIORITY--      SWITCHES_USER_OUT
-101, Night Shade,                  8,    1,    3,    15,      0,    100,    1,    0,     1,        DIRECT_DAMAGE
-102, Mimic,                        1,    2,    2,    10,      0,      0,    1,    0,     1,        BYPASS_ACC_CHECK
-103, Screech,                      1,    2,    3,    40,      0,     85,    1,    0,     1,        STAT_TARGET_DEF--       SOUND_BASED
-104, Double Team,                  1,    2,    0,    15,      0,      0,    1,    0,     9,        STAT_USERS_EVA++
-105, Recover,                      1,    2,    3,    10,      0,      0,    1,    0,     9,        HEALS_USER_IMMEDIATELY       RESTORES_HP
-106, Harden,                       1,    2,    4,    30,      0,      0,    1,    0,     9,        STAT_USERS_DEF++
-107, Minimize,                     1,    2,    2,    10,      0,      0,    1,    0,     9,        STAT_USERS_EVA++
-108, Smokescreen,                  1,    2,    3,    20,      0,    100,    1,    0,     1,        STAT_TARGET_ACC--
-109, Confuse Ray,                  8,    2,    3,    10,      0,    100,    1,    0,     1,        CAN_CONFUSE
-110, Withdraw,                    11,    2,    2,    40,      0,      0,    1,    0,     9,        STAT_USERS_DEF++
-111, Defense Curl,                 1,    2,    2,    40,      0,      0,    1,    0,     9,        STAT_USERS_DEF++
-112, Barrier,                     14,    2,    0,    20,      0,      0,    1,    0,     9,        STAT_USERS_DEF++
-113, Light Screen,                14,    2,    2,    30,      0,      0,    1,    0,    10,
-114, Haze,                        15,    2,    2,    30,      0,      0,    1,    0,     7,
-115, Reflect,                     14,    2,    3,    20,      0,      0,    1,    0,    10,
-116, Focus Energy,                 1,    2,    0,    30,      0,      0,    1,    1,     9,
-117, Bide,                         1,    0,    4,    10,      0,      0,    1,    1,     9,        PRIORITY++      BYPASS_ACC_CHECK        DIRECT_DAMAGE
-118, Metronome,                    1,    2,    2,    10,      0,      0,    1,    0,     9,        CALLS_OTHER_MOVES
-119, Mirror Move,                  3,    2,    3,    20,      0,      0,    1,    0,     1,        CALLS_OTHER_MOVES
-120, Self-Destruct,                1,    0,    2,     5,    200,    100,    1,    0,     5,        EXPLOSIVE       CAUSES_USER_TO_FAINT
-121, Egg Bomb,                     1,    0,    2,    10,    100,     75,    1,    0,     1,        BALL_AND_BOMB
-122, Lick,                         8,    0,    2,    30,     30,    100,    1,    1,     1,        CAN_PAR
-123, Smog,                         4,    1,    4,    20,     30,     70,    1,    0,     1,        CAN_PSN
-124, Sludge,                       4,    1,    4,    20,     65,    100,    1,    0,     1,        CAN_PSN
-125, Bone Club,                    5,    0,    4,    20,     65,     85,    1,    0,     1,        CAN_FLINCH
-126, Fire Blast,                  10,    1,    2,     5,    110,     85,    1,    0,     1,        CAN_BRN
-127, Waterfall,                   11,    0,    4,    15,     80,    100,    1,    1,     1,        CAN_FLINCH
-128, Clamp,                       11,    0,    4,    15,     35,     85,    1,    1,     1,        BINDING        TRAPPING
-129, Swift,                        1,    1,    0,    20,     60,      0,    1,    0,     4,        BYPASS_ACC_CHECK
-130, Skull Bash,                   1,    0,    4,    10,    130,    100,    1,    1,     1,        STAT_USERS_DEF++        CHARGES
-131, Spike Cannon,                 1,    0,    0,    15,     20,    100,    1,    0,     1,        MULTI_STRIKE
-132, Constrict,                    1,    0,    4,    35,     10,    100,    1,    1,     1,        STAT_TARGET_SPD--
-133, Amnesia,                     14,    2,    2,    20,      0,      0,    1,    0,     9,        STAT_USERS_SPDEF++
-134, Kinesis,                     14,    2,    3,    15,      0,     80,    1,    0,     1,    STAT_TARGET_ACC--
-135, Soft-Boiled,                  1,    2,    2,    10,      0,      0,    1,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-136, High Jump Kick,               2,    0,    0,    10,    130,     90,    1,    1,     1,    HAVE_RECOIL
-137, Glare,                        1,    2,    4,    30,      0,    100,    1,    0,     1,    CAN_PAR
-138, Dream Eater,                 14,    1,    3,    15,    100,    100,    1,    0,     1,   HP_DRAINING_DAMAGE        RESTORES_HP
-139, Poison Gas,                   4,    2,    3,    40,      0,     90,    1,    0,     4,    CAN_PSN
-140, Barrage,                      1,    0,    2,    20,     15,     85,    1,    0,     1,    BALL_AND_BOMB       MULTI_STRIKE
-141, Leech Life,                   7,    0,    3,    10,     80,    100,    1,    1,     1,    HP_DRAINING_DAMAGE        RESTORES_HP
-142, Lovely Kiss,                  1,    2,    2,    10,      0,     75,    1,    0,     1,    CAN_SLP
-143, Sky Attack,                   3,    0,    0,     5,    200,     90,    1,    0,     2,    CAN_FLINCH      CHARGES     HIGH_CRIT_HIT
-144, Transform,                    1,    2,    3,    10,      0,      0,    1,    0,     1,    ABILITY_CHANGING        BYPASS_ACC_CHECK        CHANGES_POKE_TYPE
-145, Bubble,                      11,    1,    2,    30,     40,    100,    1,    0,     4,    STAT_TARGET_SPD--
-146, Dizzy Punch,                  1,    0,    2,    10,     70,    100,    1,    1,     1,    PUNCHING        CAN_CONFUSE
-147, Spore,                       12,    2,    2,    15,      0,    100,    1,    0,     1,    POWDER_AND_SPORE        CAN_SLP
-148, Flash,                        1,    2,    2,    20,      0,    100,    1,    0,     1,    STAT_TARGET_ACC--
-149, Psywave,                     14,    1,    3,    15,      0,    100,    1,    0,     1,    DIRECT_DAMAGE
-150, Splash,                       1,    2,    2,    40,      0,      0,    1,    0,     9,    NO_EFFECT
-151, Acid Armor,                   4,    2,    4,    20,      0,      0,    1,    0,     9,    STAT_USERS_DEF++
-152, Crabhammer,                  11,    0,    4,    10,    100,     90,    1,    1,     1,    HIGH_CRIT_HIT
-153, Explosion,                    1,    0,    2,     5,    250,    100,    1,    0,     5,    EXPLOSIVE       CAUSES_USER_TO_FAINT
-154, Fury Swipes,                  1,    0,    4,    15,     18,     80,    1,    1,     1,    MULTI_STRIKE
-155, Bonemerang,                   5,    0,    4,    10,     50,     90,    1,    0,     1,    MULTI_STRIKE
-156, Rest,                        14,    2,    2,    10,      0,      0,    1,    0,     9,    CAN_HEAL_NON_VOL_STAT       CAN_SLP     HEALS_USER_IMMEDIATELY       RESTORES_HP
-157, Rock Slide,                   6,    0,    4,    10,     75,     90,    1,    0,     4,    CAN_FLINCH
-158, Hyper Fang,                   1,    0,    0,    15,     80,     90,    1,    1,     1,    BITING      CAN_FLINCH
-159, Sharpen,                      1,    2,    2,    30,      0,      0,    1,    0,     9,    STAT_USERS_ATT++
-160, Conversion,                   1,    2,    2,    30,      0,      0,    1,    0,     9,    CHANGES_POKE_TYPE
-161, Tri Attack,                   1,    1,    2,    10,     80,    100,    1,    0,     1,    CAN_BRN     CAN_FRZ     CAN_PAR
-162, Super Fang,                   1,    0,    4,    10,      0,     90,    1,    1,     1,    DIRECT_DAMAGE
-163, Slash,                        1,    0,    0,    20,     70,    100,    1,    1,     1,    HIGH_CRIT_HIT
-164, Substitute,                   1,    2,    2,    10,      0,      0,    1,    0,     9,    COST_HP
-165, Struggle,                     1,    0,    4,     1,     50,      0,    1,    1,     0,    BYPASS_ACC_CHECK        HAVE_RECOIL
-166, Sketch,                       1,    2,    3,     1,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK
-167, Triple Kick,                  2,    0,    0,    10,     10,     90,    2,    1,     1,    POWERS_UP       VARIABLE_POWER      MULTI_STRIKE
-168, Thief,                       17,    0,    4,    25,     60,    100,    2,    1,     1,
-169, Spider Web,                   7,    2,    3,    10,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK        TRAPPING
-170, Mind Reader,                  1,    2,    3,     5,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK
-171, Nightmare,                    8,    2,    3,    15,      0,    100,    2,    0,     1,    BYPASS_ACC_CHECK
-172, Flame Wheel,                 10,    0,    2,    25,     60,    100,    2,    1,     1,    CAN_THAW_USER       CAN_BRN
-173, Snore,                        1,    1,    2,    15,     50,    100,    2,    0,     1,    SOUND_BASED     CAN_FLINCH
-174, Curse,                        8,    2,    4,    10,      0,      0,    2,    0,     9,    STAT_USERS_SPD--        STAT_USERS_ATT++        STAT_USERS_DEF++        COST_HP
-175, Flail,                        1,    0,    2,    15,      0,    100,    2,    1,     1,    VARIABLE_POWER
-176, Conversion 2,                 1,    2,    2,    30,      0,      0,    2,    0,     9,    BYPASS_ACC_CHECK        CHANGES_POKE_TYPE
-177, Aeroblast,                    3,    1,    0,     5,    100,     95,    2,    0,     2,    HIGH_CRIT_HIT
-178, Cotton Spore,                12,    2,    2,    40,      0,    100,    2,    0,     4,    STAT_TARGET_SPD--       POWDER_AND_SPORE
-179, Reversal,                     2,    0,    0,    15,      0,    100,    2,    1,     1,    VARIABLE_POWER
-180, Spite,                        8,    2,    4,    10,      0,    100,    2,    0,     1,
-181, Powder Snow,                 15,    1,    2,    25,     40,    100,    2,    0,     4,    CAN_FRZ
-182, Protect,                      1,    2,    2,    10,      0,      0,    2,    0,     9,    PRIORITY++      PROTECTION
-183, Mach Punch,                   2,    0,    0,    30,     40,    100,    2,    1,     1,    PRIORITY++      PUNCHING
-184, Scary Face,                   1,    2,    4,    10,      0,    100,    2,    0,     1,    STAT_TARGET_SPD--
-185, Feint Attack,                17,    0,    3,    20,     60,      0,    2,    1,     1,    BYPASS_ACC_CHECK
-186, Sweet Kiss,                  13,    2,    2,    10,      0,     75,    2,    0,     1,    CAN_CONFUSE
-187, Belly Drum,                   1,    2,    2,    10,      0,      0,    2,    0,     9,    STAT_USERS_ATT++        COST_HP
-188, Sludge Bomb,                  4,    1,    4,    10,     90,    100,    2,    0,     1,    BALL_AND_BOMB       CAN_PSN
-189, Mud-Slap,                     5,    1,    2,    10,     20,    100,    2,    0,     1,    STAT_TARGET_ACC--
-190, Octazooka,                   11,    1,    4,    10,     65,     85,    2,    0,     1,    STAT_TARGET_ACC--       BALL_AND_BOMB
-191, Spikes,                       5,    2,    3,    20,      0,      0,    2,    0,     6,    ENTRY_HAZARD
-192, Zap Cannon,                  13,    1,    0,     5,    120,     50,    2,    0,     1,    BALL_AND_BOMB       CAN_PAR
-193, Foresight,                    1,    2,    3,    40,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK        REMOVES_SOME_TYPE_IMMUNITIES
-194, Destiny Bond,                 8,    2,    3,     5,      0,      0,    2,    0,     9,
-195, Perish Song,                  1,    2,    2,     5,      0,      0,    2,    0,     7,    SOUND_BASED     CAUSES_USER_TO_FAINT
-196, Icy Wind,                    15,    1,    2,    15,     55,     95,    2,    0,     4,    STAT_TARGET_SPD--
-197, Detect,                       2,    2,    0,     5,      0,      0,    2,    0,     9,    PRIORITY++      PROTECTION
-198, Bone Rush,                    5,    0,    4,    10,     25,     90,    2,    0,     1,    MULTI_STRIKE
-199, Lock-On,                      1,    2,    3,     5,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK
-200, Outrage,                     16,    0,    0,    10,    120,    100,    2,    1,     9,    CONSECUTIVE
-201, Sandstorm,                    6,    2,    4,    10,      0,      0,    2,    0,     7,    WEATHER_CHANGING
-202, Giga Drain,                  12,    1,    3,    10,     75,    100,    2,    0,     1,    HP_DRAINING_DAMAGE        RESTORES_HP
-203, Endure,                       1,    2,    4,    10,      0,      0,    2,    0,     9,    PRIORITY++
-204, Charm,                       13,    2,    2,    20,      0,    100,    2,    0,     1,    STAT_TARGET_ATT--
-205, Rollout,                      6,    0,    2,    20,     30,     90,    2,    1,     1,    CONSECUTIVE     POWERS_UP       VARIABLE_POWER
-206, False Swipe,                  1,    0,    0,    40,     40,    100,    2,    1,     1,
-207, Swagger,                      1,    2,    2,    15,      0,     85,    2,    0,     1,    STAT_TARGETS_ATT++      CAN_CONFUSE
-208, Milk Drink,                   1,    2,    2,    10,      0,      0,    2,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-209, Spark,                       13,    0,    0,    20,     65,    100,    2,    0,     1,    CAN_PAR
-210, Fury Cutter,                  7,    0,    0,    20,     40,     95,    2,    1,     1,    POWERS_UP       VARIABLE_POWER
-211, Steel Wing,                   9,    0,    0,    25,     70,     90,    2,    1,     1,    STAT_USERS_DEF++
-212, Mean Look,                    1,    2,    2,     5,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK        TRAPPING
-213, Attract,                      1,    2,    2,    15,      0,    100,    2,    0,     1,
-214, Sleep Talk,                   1,    2,    2,    10,      0,      0,    2,    0,     9,    CALLS_OTHER_MOVES
-215, Heal Bell,                    1,    2,    2,     5,      0,      0,    2,    0,    10,    SOUND_BASED     CAN_HEAL_NON_VOL_STAT
-216, Return,                       1,    0,    2,    20,      0,    100,    2,    1,     1,    VARIABLE_POWER
-217, Present,                      1,    0,    2,    15,      0,     90,    2,    0,     1,    VARIABLE_POWER      RESTORES_HP
-218, Frustration,                  1,    0,    2,    20,      0,    100,    2,    1,     1,    VARIABLE_POWER
-219, Safeguard,                    1,    2,    2,    25,      0,      0,    2,    0,    10,
-220, Pain Split,                   1,    2,    3,    20,      0,      0,    2,    0,     1,    BYPASS_ACC_CHECK        RESTORES_HP
-221, Sacred Fire,                 10,    0,    2,     5,    100,     95,    2,    0,     1,    CAN_THAW_USER       CAN_BRN
-222, Magnitude,                    5,    0,    4,    30,      0,    100,    2,    0,     5,    CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER      VARIABLE_POWER
-223, Dynamic Punch,                2,    0,    0,     5,    100,     50,    2,    1,     1,    PUNCHING        CAN_CONFUSE
-224, Megahorn,                     7,    0,    0,    10,    120,     85,    2,    1,     1,
-225, Dragon Breath,               16,    1,    0,    20,     60,    100,    2,    0,     1,    CAN_PAR
-226, Baton Pass,                   1,    2,    2,    40,      0,      0,    2,    0,     9,    SWITCHES_USER_OUT
-227, Encore,                       1,    2,    2,     5,      0,    100,    2,    0,     1,
-228, Pursuit,                     17,    0,    3,    20,     40,    100,    2,    1,     1,    BYPASS_ACC_CHECK        POWERS_UP       VARIABLE_POWER
-229, Rapid Spin,                   1,    0,    0,    40,     20,    100,    2,    1,     1,
-230, Sweet Scent,                  1,    2,    2,    20,      0,    100,    2,    0,     4,    STAT_TARGET_EVA--
-231, Iron Tail,                    9,    0,    0,    15,    100,     75,    2,    1,     1,    STAT_TARGET_DEF--
-232, Metal Claw,                   9,    0,    0,    35,     50,     95,    2,    1,     1,    STAT_USERS_ATT++
-233, Vital Throw,                  2,    0,    0,    10,     70,      0,    2,    1,     1,    PRIORITY--      BYPASS_ACC_CHECK
-234, Morning Sun,                  1,    2,    2,     5,      0,      0,    2,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-235, Synthesis,                   12,    2,    3,     5,      0,      0,    2,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-236, Moonlight,                   13,    2,    2,     5,      0,      0,    2,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-237, Hidden Power,                 1,    1,    3,    15,     60,    100,    2,    0,     1,    CAN_CHANGE_TYPE     VARIABLE_POWER
-238, Cross Chop,                   2,    0,    0,     5,    100,     80,    2,    1,     1,    HIGH_CRIT_HIT
-239, Twister,                     16,    1,    0,    20,     40,    100,    2,    0,     4,    CAN_FLINCH      CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
-240, Rain Dance,                  11,    2,    2,     5,      0,      0,    2,    0,     7,    WEATHER_CHANGING
-241, Sunny Day,                   10,    2,    2,     5,      0,      0,    2,    0,     7,    WEATHER_CHANGING
-242, Crunch,                      17,    0,    4,    15,     80,    100,    2,    1,     1,    STAT_TARGET_DEF--       STAT_TARGET_SPDEF--     BITING
-243, Mirror Coat,                 14,    1,    2,    20,      0,    100,    2,    0,     9,    PRIORITY--      DIRECT_DAMAGE
-244, Psych Up,                     1,    2,    3,    10,      0,      0,    2,    0,     1,     BYPASS_ACC_CHECK
-245, Extreme Speed,                1,    0,    0,     5,     80,    100,    2,    1,     1,    PRIORITY++
-246, Ancient Power,                6,    1,    4,     5,     60,    100,    2,    0,     1,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
-247, Shadow Ball,                  8,    1,    3,    15,     80,    100,    2,    0,     1,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
-248, Future Sight,                14,    1,    3,    10,    120,    100,    2,    0,     1,
-249, Rock Smash,                   2,    0,    4,    15,     40,    100,    2,    0,     1,    STAT_TARGET_DEF--
-250, Whirlpool,                   11,    1,    2,    15,     35,     85,    2,    0,     1,    BINDING        TRAPPING     CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
-251, Beat Up,                     17,    0,    3,    10,      0,    100,    2,    0,     1,    VARIABLE_POWER      MULTI_STRIKE
-252, Fake Out,                     1,    0,    2,    10,     40,    100,    3,    0,     1,    PRIORITY++      CAN_FLINCH
-253, Uproar,                       1,    1,    2,    10,     90,    100,    3,    0,     9,    CONSECUTIVE     SOUND_BASED     CAN_HEAL_NON_VOL_STAT
-254, Stockpile,                    1,    2,    4,    20,      0,      0,    3,    0,     9,    STAT_USERS_DEF++        STAT_USERS_SPDEF++
-255, Spit Up,                      1,    1,    4,    10,      0,    100,    3,    0,     1,    VARIABLE_POWER
-256, Swallow,                      1,    2,    4,    10,      0,      0,    3,    0,     9,
-257, Heat Wave,                   10,    1,    2,    10,     95,     90,    3,    0,     4,    CAN_BRN
-258, Hail,                        15,    2,    2,    10,      0,      0,    3,    0,     7,    WEATHER_CHANGING
-259, Torment,                     17,    2,    4,    15,      0,    100,    3,    0,     1,
-260, Flatter,                     17,    2,    3,    15,      0,    100,    3,    0,     1,    STAT_TARGETS_SPATK++        CAN_CONFUSE
-261, Will-O-Wisp,                 10,    2,    2,    15,      0,     85,    3,    0,     1,    CAN_BRN
-262, Memento,                     17,    2,    4,    10,      0,    100,    3,    0,     1,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     CAUSES_USER_TO_FAINT
-263, Facade,                       1,    0,    2,    20,     70,    100,    3,    1,     1,    POWERS_UP       VARIABLE_POWER
-264, Focus Punch,                  2,    0,    4,    20,    150,    100,    3,    1,     1,    PRIORITY--      PUNCHING
-265, Smelling Salts,               1,    0,    4,    10,     70,    100,    3,    1,     1,    CAN_HEAL_NON_VOL_STAT       POWERS_UP       VARIABLE_POWER
-266, Follow Me,                    1,    2,    2,    20,      0,      0,    3,    0,     9,    PRIORITY++      MAKES_TARGET_CENTER_OF_ATTENTION
-267, Nature Power,                 1,    2,    2,    20,      0,      0,    3,    0,     9,    CALLS_OTHER_MOVES       VARIES_WITH_ENVIRONMENT
-268, Charge,                      13,    2,    3,    20,      0,      0,    3,    0,     9,    STAT_USERS_SPDEF++
-269, Taunt,                       17,    2,    3,    20,      0,    100,    3,    0,     1,
-270, Helping Hand,                 1,    2,    3,    20,      0,      0,    3,    0,     8,    PRIORITY++      CAN_HIT_SEMI_INVULNERABLE
-271, Trick,                       14,    2,    3,    10,      0,    100,    3,    0,     1,
-272, Role Play,                   14,    2,    2,    10,      0,      0,    3,    0,     1,    ABILITY_CHANGING        BYPASS_ACC_CHECK
-273, Wish,                         1,    2,    2,    10,      0,      0,    3,    0,     9,    RESTORES_HP
-274, Assist,                       1,    2,    2,    20,      0,      0,    3,    0,     9,    CALLS_OTHER_MOVES
-275, Ingrain,                     12,    2,    3,    20,      0,      0,    3,    0,     9,    RESTORES_HP     TRAPPING
-276, Superpower,                   2,    0,    4,     5,    120,    100,    3,    0,     1,    STAT_USERS_ATT--
-277, Magic Coat,                  14,    2,    2,    15,      0,      0,    3,    0,     9,    PRIORITY++
-278, Recycle,                      1,    2,    3,    10,      0,      0,    3,    0,     9,
-279, Revenge,                      2,    0,    4,    10,     60,    100,    3,    1,     1,    PRIORITY--      POWERS_UP       VARIABLE_POWER
-280, Brick Break,                  2,    0,    0,    15,     75,    100,    3,    1,     1,
-281, Yawn,                         1,    2,    2,    10,      0,      0,    3,    0,     1,    CAN_SLP     BYPASS_ACC_CHECK
-282, Knock Off,                   17,    0,    3,    20,     65,    100,    3,    1,     1,
-283, Endeavor,                     1,    0,    4,     5,      0,    100,    3,    1,     1,    DIRECT_DAMAGE
-284, Eruption,                    10,    1,    2,     5,    150,    100,    3,    0,     4,    VARIABLE_POWER
-285, Skill Swap,                  14,    2,    3,    10,      0,      0,    3,    0,     1,    ABILITY_CHANGING        BYPASS_ACC_CHECK
-286, Imprison,                    14,    2,    3,    10,      0,      0,    3,    0,     9,
-287, Refresh,                      1,    2,    2,    20,      0,      0,    3,    0,     9,    CAN_HEAL_NON_VOL_STAT
-288, Grudge,                       8,    2,    4,     5,      0,      0,    3,    0,     9,
-289, Snatch,                      17,    2,    3,    10,      0,      0,    3,    0,     9,    PRIORITY++
-290, Secret Power,                 1,    0,    3,    20,     70,    100,    3,    0,     1,    STAT_TARGET_ACC--       STAT_TARGET_ATT--       STAT_TARGET_DEF--       STAT_TARGET_SPATT--     STAT_TARGET_SPD--       CAN_FLINCH      CAN_CONFUSE     CAN_BRN     CAN_FRZ     CAN_PAR     CAN_PSN     CAN_SLP     VARIES_WITH_ENVIRONMENT
-291, Dive,                        11,    0,    2,    10,     80,    100,    3,    1,     1,    HAS_SEMI_INVULNERABLE TURN      CHARGES
-292, Arm Thrust,                   2,    0,    4,    20,     15,    100,    3,    1,     1,    MULTI_STRIKE
-293, Camouflage,                   1,    2,    3,    20,      0,      0,    3,    0,     9,    CHANGES_POKE_TYPE       VARIES_WITH_ENVIRONMENT
-294, Tail Glow,                    7,    2,    2,    20,      0,      0,    3,    0,     9,    STAT_USERS_SPATT++
-295, Luster Purge,                14,    1,    3,     5,     70,    100,    3,    0,     1,    STAT_TARGET_SPDEF--
-296, Mist Ball,                   14,    1,    3,     5,     70,    100,    3,    0,     1,    STAT_TARGET_SPATT--     BALL_AND_BOMB
-297, Feather Dance,                3,    2,    2,    15,      0,    100,    3,    0,     1,    STAT_TARGET_ATT--       DANCE
-298, Teeter Dance,                 1,    2,    2,    20,      0,    100,    3,    0,     5,    DANCE       CAN_CONFUSE
-299, Blaze Kick,                  10,    0,    0,    10,     85,     90,    3,    1,     1,    CAN_BRN     HIGH_CRIT_HIT
-300, Mud Sport,                    5,    2,    2,    15,      0,      0,    3,    0,     7,
-301, Ice Ball,                    15,    0,    2,    20,     30,     90,    3,    0,     1,    CONSECUTIVE     BALL_AND_BOMB       POWERS_UP       VARIABLE_POWER
-302, Needle Arm,                  12,    0,    3,    15,     60,    100,    3,    1,     1,    MINIMIZED_TARGET_DMG++      CAN_FLINCH
-303, Slack Off,                    1,    2,    2,    10,      0,      0,    3,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-304, Hyper Voice,                  1,    1,    0,    10,     90,    100,    3,    0,     4,    SOUND_BASED
-305, Poison Fang,                  4,    0,    3,    15,     50,    100,    3,    1,     1,    BITING      CAN_PSN
-306, Crush Claw,                   1,    0,    0,    10,     75,     95,    3,    2,     1,   STAT_TARGET_DEF--
-307, Blast Burn,                  10,    1,    2,     5,    150,     90,    3,    0,     1,    RECHARGES
-308, Hydro Cannon,                11,    1,    2,     5,    150,     90,    3,    0,     1,    RECHARGES
-309, Meteor Mash,                  9,    0,    0,    10,     90,     90,    3,    0,     1,    STAT_USERS_ATT++        PUNCHING
-310, Astonish,                     8,    0,    2,    15,     30,    100,    3,    1,     1,    MINIMIZED_TARGET_DMG++      CAN_FLINCH
-311, Weather Ball,                 1,    1,    2,    10,     50,    100,    3,    0,     1,    BALL_AND_BOMB       CAN_CHANGE_TYPE     POWERS_UP       VARIABLE_POWER
-312, Aromatherapy,                12,    2,    3,     5,      0,      0,    3,    0,     9,    CAN_HEAL_NON_VOL_STAT
-313, Fake Tears,                  17,    2,    2,    20,      0,    100,    3,    0,     1,    STAT_TARGET_SPDEF--
-314, Air Cutter,                   3,    1,    0,    25,     60,     95,    3,    0,     4,    HIGH_CRIT_HIT
-315, Overheat,                    10,    1,    2,     5,    130,     90,    3,    0,     1,    STAT_USERS_SPATT--
-316, Odor Sleuth,                  1,    2,    3,    40,      0,      0,    3,    0,     1,    BYPASS_ACC_CHECK     REMOVES_SOME_TYPE_IMMUNITIES
-317, Rock Tomb,                    6,    0,    3,    15,     60,     95,    3,    0,     1,    STAT_TARGET_SPD--
-318, Silver Wind,                  7,    1,    2,     5,     60,    100,    3,    0,     1,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
-319, Metal Sound,                  9,    2,    3,    40,      0,    85,     3,    0,     1,    STAT_TARGET_SPDEF--     SOUND_BASED
-320, Grass Whistle,               12,    2,    3,    15,      0,    55,     3,    0,     1,    SOUND_BASED     CAN_SLP
-321, Tickle,                       1,    2,    2,    20,      0,    100,    3,    0,     1,    STAT_TARGET_ATT--       STAT_TARGET_DEF--
-322, Cosmic Power,                14,    2,    2,    20,      0,      0,    3,    0,     9,    STAT_USERS_DEF++        STAT_USERS_SPDEF++
-323, Water Spout,                 11,    1,    2,     5,    150,    100,    3,    0,     4,    VARIABLE_POWER
-324, Signal Beam,                  7,    1,    2,    15,     75,    100,    3,    0,     1,    CAN_CONFUSE
-325, Shadow Punch,                 8,    0,    3,    20,     60,      0,    3,    1,     1,    PUNCHING        BYPASS_ACC_CHECK
-326, Extrasensory,                14,    1,    0,    20,     80,    100,    3,    0,     1,    MINIMIZED_TARGET_DMG++      CAN_FLINCH
-327, Sky Uppercut,                 2,    0,    0,    15,     85,     90,    3,    1,     1,    PUNCHING        CAN_HIT_SEMI_INVULNERABLE
-328, Sand Tomb,                    5,    0,    3,    15,     35,     85,    3,    0,     1,    BINDING        TRAPPING
-329, Sheer Cold,                  15,    1,    2,     5,      0,      0,    3,    0,     1,    OHKO        DIRECT_DAMAGE
-330, Muddy Water,                 11,    1,    4,    10,     90,     85,    3,    0,     4,    STAT_TARGET_ACC--
-331, Bullet Seed,                 12,    0,    0,    30,     25,    100,    3,    0,     1,    BALL_AND_BOMB       MULTI_STRIKE
-332, Aerial Ace,                   3,    0,    0,    20,     60,      0,    3,    1,     2,    BYPASS_ACC_CHECK
-333, Icicle Spear,                15,    0,    2,    30,     25,    100,    3,    0,     1,    MULTI_STRIKE
-334, Iron Defense,                 9,    2,    4,    15,      0,      0,    3,    0,     9,    STAT_USERS_DEF++
-335, Block,                        1,    2,    2,     5,      0,      0,    3,    0,     1,    BYPASS_ACC_CHECK        TRAPPING
-336, Howl,                         1,    2,    0,    40,      0,      0,    3,    0,     9,    STAT_USERS_ATT++
-337, Dragon Claw,                 16,    0,    0,    15,     80,    100,    3,    1,     1,
-338, Frenzy Plant,                12,    1,    0,     5,    150,     90,    3,    0,     1,    RECHARGES
-339, Bulk Up,                      2,    2,    0,    20,      0,      0,    3,    0,     9,    STAT_USERS_ATT++        STAT_USERS_DEF++
-340, Bounce,                       3,    0,    2,     5,     85,     85,    3,    1,     2,    CAN_PAR     HAS_SEMI_INVULNERABLE TURN      CHARGES
-341, Mud Shot,                     5,    1,    4,    15,     55,     95,    3,    0,     1,    STAT_TARGET_SPD--
-342, Poison Tail,                  4,    0,    3,    25,     50,    100,    3,    1,     1,    CAN_PSN     HIGH_CRIT_HIT
-343, Covet,                        1,    0,    2,    25,     60,    100,    3,    0,     1,
-344, Volt Tackle,                 13,    0,    0,    15,    120,    100,    3,    1,     1,    CAN_PAR     HAVE_RECOIL
-345, Magical Leaf,                12,    1,    2,    20,     60,      0,    3,    0,     1,    BYPASS_ACC_CHECK
-346, Water Sport,                 11,    2,    2,    15,      0,      0,    3,    0,     7,
-347, Calm Mind,                   14,    2,    3,    20,      0,      0,    3,    0,     9,    STAT_USERS_SPATT++      STAT_USERS_SPDEF++
-348, Leaf Blade,                  12,    0,    0,    15,     90,    100,    3,    0,     1,    HIGH_CRIT_HIT
-349, Dragon Dance,                16,    2,    0,    20,      0,      0,    3,    0,     9,    STAT_USERS_ATT++        STAT_USERS_SPD++        DANCE
-350, Rock Blast,                   6,    0,    4,    10,     25,     90,    3,    0,     1,    BALL_AND_BOMB       MULTI_STRIKE
-351, Shock Wave,                  13,    1,    0,    20,     60,      0,    3,    0,     1,    BYPASS_ACC_CHECK
-352, Water Pulse,                 11,    1,    2,    20,     60,    100,    3,    0,     2,    AURA_AND_PULSE      CAN_CONFUSE
-353, Doom Desire,                  9,    1,    2,     5,    140,    100,    3,    0,     1,
-354, Psycho Boost,                14,    1,    3,     5,    140,     90,    3,    0,     1,    STAT_USERS_SPATT--
-355, Roost,                        3,    2,    3,    10,      0,      0,    4,    0,     9,    CHANGES_POKE_TYPE       HEALS_USER_IMMEDIATELY       RESTORES_HP
-356, Gravity,                     14,    2,    3,     5,      0,      0,    4,    0,     7,    REMOVES_SOME_TYPE_IMMUNITIES
-357, Miracle Eye,                 14,    2,    3,    40,      0,      0,    4,    0,     1,    BYPASS_ACC_CHECK        REMOVES_SOME_TYPE_IMMUNITIES
-358, Wake-Up Slap,                 2,    0,    4,    10,     70,    100,    4,    1,     1,    CAN_HEAL_NON_VOL_STAT       POWERS_UP       VARIABLE_POWER
-359, Hammer Arm,                   2,    0,    4,    10,    100,     90,    4,    1,     1,    STAT_USERS_SPD--        PUNCHING
-360, Gyro Ball,                    9,    0,    0,     5,      0,    100,    4,    0,     1,    BALL_AND_BOMB       VARIABLE_POWER
-361, Healing Wish,                14,    2,    2,    10,      0,      0,    4,    0,     9,    CAUSES_USER_TO_FAINT        RESTORES_HP
-362, Brine,                       11,    1,    4,    10,     65,    100,    4,    0,     1,    POWERS_UP       VARIABLE_POWER
-363, Natural Gift,                 1,    0,    3,    15,      0,    100,    4,    0,     1,    CAN_CHANGE_TYPE     VARIABLE_POWER
-364, Feint,                        1,    0,    3,    10,     30,    100,    4,    0,     1,    PRIORITY++      BREAK_THROUGH_PROTECTION
-365, Pluck,                        3,    0,    2,    20,     60,    100,    4,    1,     2,
-366, Tailwind,                     3,    2,    0,    15,      0,      0,    4,    0,    10,
-367, Acupressure,                  1,    2,    4,    30,      0,      0,    4,    0,     3,    STAT_TARGETS_ACC++      STAT_TARGETS_ATT++      STAT_TARGETS_DEF++      STAT_TARGETS_EVA++      STAT_TARGETS_SPATK++        STAT_TARGETS_SPDEF++        STAT_TARGETS_SPD++      STAT_USERS_ACC++        STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_EVA++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
-368, Metal Burst,                  9,    0,    0,    10,      0,    100,    4,    0,     9,    DIRECT_DAMAGE
-369, U-turn,                       7,    0,    2,    20,     70,    100,    4,    1,     1,    SWITCHES_USER_OUT
-370, Close Combat,                 2,    0,    4,     5,    120,    100,    4,    1,     1,    STAT_USERS_DEF--        STAT_USERS_SPDEF--
-371, Payback,                     17,    0,    4,    10,     50,    100,    4,    1,     1,    POWERS_UP       VARIABLE_POWER
-372, Assurance,                   17,    0,    3,    10,     60,    100,    4,    1,     1,    POWERS_UP       VARIABLE_POWER
-373, Embargo,                     17,    2,    3,    15,      0,    100,    4,    0,     1,
-374, Fling,                       17,    0,    2,    10,      0,    100,    4,    0,     1,    CAN_FLINCH      CAN_BRN     CAN_PAR     CAN_PSN     VARIABLE_POWER
-375, Psycho Shift,                14,    2,    3,    10,      0,    100,    4,    0,     1,    CAN_HEAL_NON_VOL_STAT       CAN_BRN     CAN_PAR     CAN_PSN     CAN_SLP
-376, Trump Card,                   1,    1,    0,     5,      0,      0,    4,    1,     1,    BYPASS_ACC_CHECK        VARIABLE_POWER
-377, Heal Block,                  14,    2,    3,    15,      0,    100,    4,    0,     4,
-378, Wring Out,                    1,    1,    4,     5,      0,    100,    4,    1,     1,    VARIABLE_POWER
-379, Power Trick,                 14,    2,    3,    10,      0,      0,    4,    0,     9,
-380, Gastro Acid,                  4,    2,    4,    10,      0,    100,    4,    0,     1,    AFFECTS_ABILITIES
-381, Lucky Chant,                  1,    2,    2,    30,      0,      0,    4,    0,    10,
-382, Me First,                     1,    2,    3,    20,      0,      0,    4,    0,     0,    CALLS_OTHER_MOVES       BYPASS_ACC_CHECK
-383, Copycat,                      1,    2,    2,    20,      0,      0,    4,    0,     9,    CALLS_OTHER_MOVES
-384, Power Swap,                  14,    2,    3,    10,      0,      0,    4,    0,     1,    BYPASS_ACC_CHECK
-385, Guard Swap,                  14,    2,    3,    10,      0,      0,    4,    0,     1,    BYPASS_ACC_CHECK
-386, Punishment,                  17,    0,    0,     5,      0,    100,    4,    1,     1,    VARIABLE_POWER
-387, Last Resort,                  1,    0,    2,     5,    140,    100,    4,    1,     1,
-388, Worry Seed,                  12,    2,    3,    10,      0,    100,    4,    0,     1,    ABILITY_CHANGING
-389, Sucker Punch,                17,    0,    3,     5,     70,    100,    4,    1,     1,    PRIORITY++
-390, Toxic Spikes,                 4,    2,    3,    20,      0,      0,    4,    0,     6,    CAN_PSN     ENTRY_HAZARD
-391, Heart Swap,                  14,    2,    3,    10,      0,      0,    4,    0,     1,    BYPASS_ACC_CHECK
-392, Aqua Ring,                   11,    2,    2,    20,      0,      0,    4,    0,     9,    RESTORES_HP
-393, Magnet Rise,                 13,    2,    3,    10,      0,      0,    4,    0,     9,
-394, Flare Blitz,                 10,    0,    0,    15,    120,    100,    4,    1,     1,    CAN_THAW_USER       CAN_BRN     HAVE_RECOIL
-395, Force Palm,                   2,    0,    0,    10,     60,    100,    4,    1,     1,    CAN_PAR
-396, Aura Sphere,                  2,    1,    2,    20,     80,      0,    4,    0,     2,    AURA_AND_PULSE      BALL_AND_BOMB       BYPASS_ACC_CHECK
-397, Rock Polish,                  6,    2,    4,    20,      0,      0,    4,    0,     9,    STAT_USERS_SPD++
-398, Poison Jab,                   4,    0,    4,    20,     80,    100,    4,    1,     1,    CAN_PSN
-399, Dark Pulse,                  17,    1,    0,    15,     80,    100,    4,    0,     2,    AURA_AND_PULSE      CAN_FLINCH
-400, Night Slash,                 17,    0,    0,    15,     70,    100,    4,    1,     1,    HIGH_CRIT_HIT
-401, Aqua Tail,                   11,    0,    2,    10,     90,     90,    4,    1,     1,
-402, Seed Bomb,                   12,    0,    4,    15,     80,    100,    4,    0,     1,    BALL_AND_BOMB
-403, Air Slash,                    3,    1,    0,    15,     75,     95,    4,    0,     2,    CAN_FLINCH
-404, X-Scissor,                    7,    0,    0,    15,     80,    100,    4,    1,     1,
-405, Bug Buzz,                     7,    1,    2,    10,     90,    100,    4,    0,     1,    STAT_TARGET_SPDEF--     SOUND_BASED
-406, Dragon Pulse,                16,    1,    2,    10,     85,    100,    4,    0,     2,    AURA_AND_PULSE
-407, Dragon Rush,                 16,    0,    4,    10,    100,     75,    4,    1,     1,    MINIMIZED_TARGET_DMG++      CAN_FLINCH      BYPASS_ACC_CHECK
-408, Power Gem,                    6,    1,    2,    20,     80,    100,    4,    0,     1,
-409, Drain Punch,                  2,    0,    4,    10,     75,    100,    4,    1,     1,    HP_DRAINING_DAMAGE        RESTORES_HP      PUNCHING
-410, Vacuum Wave,                  2,    1,    0,    30,     40,    100,    4,    0,     1,    PRIORITY++
-411, Focus Blast,                  2,    1,    0,     5,    120,     70,    4,    0,     1,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
-412, Energy Ball,                 12,    1,    2,    10,     90,    100,    4,    0,     1,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
-413, Brave Bird,                   3,    0,    0,    15,    120,    100,    4,    1,     2,    HAVE_RECOIL
-414, Earth Power,                  5,    1,    2,    10,     90,    100,    4,    0,     1,    STAT_TARGET_SPDEF--
-415, Switcheroo,                  17,    2,    3,    10,      0,    100,    4,    0,     1,
-416, Giga Impact,                  1,    0,    4,     5,    150,     90,    4,    1,     1,    RECHARGES
-417, Nasty Plot,                  17,    2,    3,    20,      0,      0,    4,    0,     9,    STAT_USERS_SPATT++
-418, Bullet Punch,                 9,    0,    4,    30,     40,    100,    4,    1,     1,    PRIORITY++      PUNCHING
-419, Avalanche,                   15,    0,    2,    10,     60,    100,    4,    0,     1,    PRIORITY--      POWERS_UP       VARIABLE_POWER
-420, Ice Shard,                   15,    0,    2,    30,     40,    100,    4,    0,     1,    PRIORITY++
-421, Shadow Claw,                  8,    0,    0,    15,     70,    100,    4,    1,     1,    HIGH_CRIT_HIT
-422, Thunder Fang,                13,    0,    0,    15,     65,     95,    4,    1,     1,    BITING      CAN_FLINCH      CAN_PAR
-423, Ice Fang,                    15,    0,    0,    15,     65,     95,    4,    1,     1,    BITING      CAN_FLINCH      CAN_FRZ
-424, Fire Fang,                   10,    0,    0,    15,     65,     95,    4,    1,     1,    BITING      CAN_FLINCH      CAN_BRN
-425, Shadow Sneak,                 8,    0,    3,    30,     40,    100,    4,    1,     1,    PRIORITY++
-426, Mud Bomb,                     5,    1,    2,    10,     65,     85,    4,    0,     1,    STAT_TARGET_ACC--       BALL_AND_BOMB
-427, Psycho Cut,                  14,    0,    0,    20,     70,    100,    4,    0,     1,    HIGH_CRIT_HIT
-428, Zen Headbutt,                14,    0,    3,    15,     80,     90,    4,    1,     1,    CAN_FLINCH
-429, Mirror Shot,                  9,    1,    2,    10,     65,     85,    4,    0,     1,    STAT_TARGET_ACC--
-430, Flash Cannon,                 9,    1,    2,    10,     80,    100,    4,    0,     1,    STAT_TARGET_SPDEF--
-431, Rock Climb,                   1,    0,    4,    20,     90,     85,    4,    1,     1,    CAN_CONFUSE
-432, Defog,                        3,    2,    0,    15,      0,      0,    4,    0,     1,    STAT_TARGET_EVA--       BYPASS_ACC_CHECK        WEATHER_CHANGING
-433, Trick Room,                  14,    2,    3,     5,      0,      0,    4,    0,     7,    PRIORITY--
-434, Draco Meteor,                16,    1,    2,     5,    130,     90,    4,    0,     1,    STAT_USERS_SPATT--
-435, Discharge,                   13,    1,    2,    15,     80,    100,    4,    0,     5,    CAN_PAR
-436, Lava Plume,                  10,    1,    4,    15,     80,    100,    4,    0,     5,    CAN_BRN
-437, Leaf Storm,                  12,    1,    2,     5,    130,     90,    4,    0,     1,    STAT_USERS_SPATT--
-438, Power Whip,                  12,    0,    4,    10,    120,     85,    4,    1,     1,
-439, Rock Wrecker,                 6,    0,    4,     5,    150,     90,    4,    0,     1,    BALL_AND_BOMB       RECHARGES
-440, Cross Poison,                 4,    0,    0,    20,     70,    100,    4,    1,     1,    CAN_PSN     HIGH_CRIT_HIT
-441, Gunk Shot,                    4,    0,    4,     5,    120,     80,    4,    0,     1,    CAN_PSN
-442, Iron Head,                    9,    0,    4,    15,     80,    100,    4,    1,     1,    CAN_FLINCH
-443, Magnet Bomb,                  9,    0,    0,    20,     60,      0,    4,    0,     1,    BALL_AND_BOMB       BYPASS_ACC_CHECK
-444, Stone Edge,                   6,    0,    4,     5,    100,     80,    4,    0,     1,    HIGH_CRIT_HIT
-445, Captivate,                    1,    2,    2,    20,      0,    100,    4,    0,     4,    STAT_TARGET_SPATT--
-446, Stealth Rock,                 6,    2,    0,    20,      0,      0,    4,    0,     6,    ENTRY_HAZARD
-447, Grass Knot,                  12,    1,    2,    20,      0,    100,    4,    1,     1,    AFFECTED_BY_WEIGHT      VARIABLE_POWER
-448, Chatter,                      3,    1,    2,    20,     65,    100,    4,    0,     2,    SOUND_BASED     CAN_CONFUSE
-449, Judgment,                     1,    1,    2,    10,    100,    100,    4,    0,     1,    CAN_CHANGE_TYPE
-450, Bug Bite,                     7,    0,    2,    20,     60,    100,    4,    1,     1,
-451, Charge Beam,                 13,    1,    2,    10,     50,     90,    4,    0,     1,    STAT_USERS_SPATT++
-452, Wood Hammer,                 12,    0,    4,    15,    120,    100,    4,    1,     1,    HAVE_RECOIL
-453, Aqua Jet,                    11,    0,    0,    20,     40,    100,    4,    1,     1,    PRIORITY++
-454, Attack Order,                 7,    0,    3,    15,     90,    100,    4,    0,     1,    HIGH_CRIT_HIT
-455, Defend Order,                 7,    2,    3,    10,      0,      0,    4,    0,     9,    STAT_USERS_DEF++        STAT_USERS_SPDEF++
-456, Heal Order,                   7,    2,    3,    10,      0,      0,    4,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-457, Head Smash,                   6,    0,    4,     5,    150,     80,    4,    1,     1,    HAVE_RECOIL
-458, Double Hit,                   1,    0,    0,    10,     35,     90,    4,    1,     1,    MULTI_STRIKE
-459, Roar of Time,                16,    1,    2,     5,    150,     90,    4,    0,     1,    RECHARGES
-460, Spacial Rend,                16,    1,    2,     5,    100,     95,    4,    0,     1,    HIGH_CRIT_HIT
-461, Lunar Dance,                 14,    2,    2,    10,      0,      0,    4,    0,     9,    DANCE       CAUSES_USER_TO_FAINT      RESTORES_HP
-462, Crush Grip,                   1,    0,    4,     5,      0,    100,    4,    1,     1,    VARIABLE_POWER
-463, Magma Storm,                 10,    1,    4,     5,    100,     75,    4,    0,     1,    BINDING        TRAPPING
-464, Dark Void,                   17,    2,    3,    10,      0,     50,    4,    0,     4,    CAN_SLP
-465, Seed Flare,                  12,    1,    2,     5,    120,     85,    4,    0,     1,    STAT_TARGET_SPDEF--
-466, Ominous Wind,                 8,    1,    2,     5,     60,    100,    4,    0,     1,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
-467, Shadow Force,                 8,    0,    0,     5,    120,    100,    4,    1,     1,    MINIMIZED_TARGET_DMG++      BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK        HAS_SEMI_INVULNERABLE TURN      CHARGES
-468, Hone Claws,                  17,    2,    2,    15,      0,      0,    5,    1,     9,    STAT_USERS_ACC++        STAT_USERS_ATT++
-469, Wide Guard,                   6,    2,    4,    10,      0,      0,    5,    0,    10,    PRIORITY++      PROTECTION
-470, Guard Split,                 14,    2,    3,    10,      0,      0,    5,    0,     1,    BYPASS_ACC_CHECK
-471, Power Split,                 14,    2,    3,    10,      0,      0,    5,    0,     1,    BYPASS_ACC_CHECK
-472, Wonder Room,                 14,    2,    3,    10,      0,      0,    5,    0,     7,    PRIORITY--
-473, Psyshock,                    14,    1,    2,    10,     80,    100,    5,    0,     1,    USES_STATS_FROM_DIFF_CAT
-474, Venoshock,                    4,    1,    2,    10,     65,    100,    5,    0,     1,    POWERS_UP       VARIABLE_POWER
-475, Autotomize,                   9,    2,    2,    15,      0,      0,    5,    0,     9,    AFFECTED_BY_WEIGHT      STAT_USERS_SPD++
-476, Rage Powder,                  7,    2,    3,    20,      0,      0,    5,    0,     9,    PRIORITY++      POWDER_AND_SPORE        MAKES_TARGET_CENTER_OF_ATTENTION
-477, Telekinesis,                 14,    2,    3,    15,      0,      0,    5,    0,     1,    BYPASS_ACC_CHECK
-478, Magic Room,                  14,    2,    3,    10,      0,      0,    5,    0,     7,    PRIORITY--
-479, Smack Down,                   6,    0,    4,    15,     50,    100,    5,    0,     1,    CAN_HIT_SEMI_INVULNERABLE       REMOVES_SOME_TYPE_IMMUNITIES
-480, Storm Throw,                  2,    0,    0,    10,     60,    100,    5,    1,     1,    PERFECT_CRIT_HIT
-481, Flame Burst,                 10,    1,    2,    15,     70,    100,    5,    0,     1,
-482, Sludge Wave,                  4,    1,    4,    10,     95,    100,    5,    0,     5,    CAN_PSN
-483, Quiver Dance,                 7,    2,    2,    20,      0,      0,    5,    0,     9,    STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++        DANCE
-484, Heavy Slam,                   9,    0,    4,    10,      0,    100,    5,    1,     1,    AFFECTED_BY_WEIGHT      MINIMIZED_TARGET_DMG++      VARIABLE_POWER
-485, Synchronoise,                14,    1,    3,    10,    120,    100,    5,    0,     5,
-486, Electro Ball,                13,    1,    0,    10,      0,    100,    5,    0,     1,    BALL_AND_BOMB       VARIABLE_POWER
-487, Soak,                        11,    2,    2,    20,      0,    100,    5,    0,     1,    CHANGES_POKE_TYPE
-488, Flame Charge,                10,    0,    0,    20,     50,    100,    5,    1,     1,    STAT_USERS_SPD++
-489, Coil,                         4,    2,    4,    20,      0,      0,    5,    0,     9,    STAT_USERS_ACC++        STAT_USERS_ATT++        STAT_USERS_DEF++
-490, Low Sweep,                    2,    0,    3,    20,     65,    100,    5,    1,     1,    STAT_TARGET_SPD--
-491, Acid Spray,                   4,    1,    2,    20,     40,    100,    5,    0,     1,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
-492, Foul Play,                   17,    0,    3,    15,     95,    100,    5,    1,     1,
-493, Simple Beam,                  1,    2,    2,    15,      0,    100,    5,    0,     1,    ABILITY_CHANGING
-494, Entrainment,                  1,    2,    2,    15,      0,    100,    5,    0,     1,    ABILITY_CHANGING
-495, After You,                    1,    2,    2,    15,      0,      0,    5,    0,     1,    BYPASS_ACC_CHECK
-496, Round,                        1,    1,    2,    15,     60,    100,    5,    0,     1,    SOUND_BASED     POWERS_UP       VARIABLE_POWER
-497, Echoed Voice,                 1,    1,    2,    15,     40,    100,    5,    0,     1,    SOUND_BASED     POWERS_UP       VARIABLE_POWER
-498, Chip Away,                    1,    0,    4,    20,     70,    100,    5,    1,     1,
-499, Clear Smog,                   4,    1,    2,    15,     50,      0,    5,    0,     1,    BYPASS_ACC_CHECK
-500, Stored Power,                14,    1,    3,    10,     20,    100,    5,    0,     1,    VARIABLE_POWER
-501, Quick Guard,                  2,    2,    0,    15,      0,      0,    5,    0,    10,    PRIORITY++      PROTECTION
-502, Ally Switch,                 14,    2,    3,    15,      0,      0,    5,    0,     9,    PRIORITY++
-503, Scald,                       11,    1,    4,    15,     80,    100,    5,    0,     1,    CAN_THAW_USER       CAN_HEAL_NON_VOL_STAT       CAN_BRN
-504, Shell Smash,                  1,    2,    4,    15,      0,      0,    5,    0,     9,    STAT_USERS_DEF--        STAT_USERS_SPDEF--      STAT_USERS_ATT++        STAT_USERS_SPATT++      STAT_USERS_SPD++
-505, Heal Pulse,                  14,    2,    2,    10,      0,      0,    5,    0,     2,    AURA_AND_PULSE      BYPASS_ACC_CHECK        RESTORES_HP
-506, Hex,                          8,    1,    3,    10,     65,    100,    5,    0,     1,    POWERS_UP       VARIABLE_POWER
-507, Sky Drop,                     3,    0,    4,    10,     60,    100,    5,    1,     2,    AFFECTED_BY_WEIGHT      HAS_SEMI_INVULNERABLE TURN      CHARGES
-508, Shift Gear,                   9,    2,    3,    10,      0,      0,    5,    0,     9,    STAT_USERS_ATT++        STAT_USERS_SPD++
-509, Circle Throw,                 2,    0,    0,    10,     60,     90,    5,    1,     1,    PRIORITY--      SWITCHES_TARGET_OUT
-510, Incinerate,                  10,    1,    4,    15,     60,    100,    5,    0,     4,
-511, Quash,                       17,    2,    3,    15,      0,    100,    5,    0,     1,
-512, Acrobatics,                   3,    0,    0,    15,     55,    100,    5,    1,     2,    POWERS_UP       VARIABLE_POWER
-513, Reflect Type,                 1,    2,    3,    15,      0,      0,    5,    0,     1,    BYPASS_ACC_CHECK        CHANGES_POKE_TYPE
-514, Retaliate,                    1,    0,    0,     5,     70,    100,    5,    1,     1,    POWERS_UP       VARIABLE_POWER
-515, Final Gambit,                 2,    1,    4,     5,      0,    100,    5,    0,     1,    CAUSES_USER_TO_FAINT        DIRECT_DAMAGE
-516, Bestow,                       1,    2,    2,    15,      0,      0,    5,    0,     1,    BYPASS_ACC_CHECK
-517, Inferno,                     10,    1,    2,     5,    100,     50,    5,    0,     1,    CAN_BRN
-518, Water Pledge,                11,    1,    2,    10,     80,    100,    5,    0,     1,    POWERS_UP       VARIABLE_POWER
-519, Fire Pledge,                 10,    1,    2,    10,     80,    100,    5,    0,     1,    POWERS_UP       VARIABLE_POWER
-520, Grass Pledge,                12,    1,    2,    10,     80,    100,    5,    0,     1,    POWERS_UP       VARIABLE_POWER
-521, Volt Switch,                 13,    1,    0,    20,     70,    100,    5,    0,     1,    SWITCHES_USER_OUT
-522, Struggle Bug,                 7,    1,    2,    20,     50,    100,    5,    0,     4,    STAT_TARGET_SPATT--
-523, Bulldoze,                     5,    0,    4,    20,     60,    100,    5,    0,     5,    STAT_TARGET_SPD--
-524, Frost Breath,                15,    1,    2,    10,     60,     90,    5,    0,     1,    PERFECT_CRIT_HIT
-525, Dragon Tail,                 16,    0,    4,    10,     60,     90,    5,    1,     1,    PRIORITY--      SWITCHES_TARGET_OUT
-526, Work Up,                      1,    2,    4,    30,      0,      0,    5,    0,     9,    STAT_USERS_ATT++        STAT_USERS_SPATT++
-527, Electroweb,                  13,    1,    2,    15,     55,     95,    5,    0,     4,    STAT_TARGET_SPD--
-528, Wild Charge,                 13,    0,    4,    15,     90,    100,    5,    1,     1,    HAVE_RECOIL
-529, Drill Run,                    5,    0,    4,    10,     80,     95,    5,    1,     1,    HIGH_CRIT_HIT
-530, Dual Chop,                   16,    0,    4,    15,     40,     90,    5,    1,     1,    MULTI_STRIKE
-531, Heart Stamp,                 14,    0,    2,    25,     60,    100,    5,    1,     1,    CAN_FLINCH
-532, Horn Leech,                  12,    0,    4,    10,     75,    100,    5,    0,     1,    HP_DRAINING_DAMAGE      RESTORES_HP
-533, Sacred Sword,                 2,    0,    0,    15,     90,    100,    5,    1,     1,
-534, Razor Shell,                 11,    0,    0,    10,     75,     95,    5,    1,     1,    STAT_TARGET_DEF--
-535, Heat Crash,                  10,    0,    4,    10,      0,    100,    5,    1,     1,    AFFECTED_BY_WEIGHT      MINIMIZED_TARGET_DMG++      BYPASS_ACC_CHECK        VARIABLE_POWER
-536, Leaf Tornado,                12,    1,    0,    10,     65,     90,    5,    0,     1,    STAT_TARGET_ACC--
-537, Steamroller,                  7,    0,    4,    20,     65,    100,    5,    1,     1,    MINIMIZED_TARGET_DMG++      CAN_FLINCH      BYPASS_ACC_CHECK
-538, Cotton Guard,                12,    2,    2,    10,      0,      0,    5,    0,     9,    STAT_USERS_DEF++
-539, Night Daze,                  17,    1,    0,    10,     85,     95,    5,    0,     1,    STAT_TARGET_ACC--
-540, Psystrike,                   14,    1,    0,    10,    100,    100,    5,    0,     1,    USES_STATS_FROM_DIFF_CAT
-541, Tail Slap,                    1,    0,    2,    10,     25,     85,    5,    1,     1,    MULTI_STRIKE
-542, Hurricane,                    3,    1,    4,    10,    110,     70,    5,    0,     2,    CAN_CONFUSE     CAN_HIT_SEMI_INVULNERABLE       BYPASS_ACC_CHECK
-543, Head Charge,                  1,    0,    4,    15,    120,    100,    5,    1,     1,    HAVE_RECOIL
-544, Gear Grind,                   9,    0,    3,    15,     50,     85,    5,    1,     1,    MULTI_STRIKE
-545, Searing Shot,                10,    1,    0,     5,    100,    100,    5,    0,     5,    BALL_AND_BOMB       CAN_BRN
-546, Techno Blast,                 1,    1,    0,     5,    120,    100,    5,    0,     1,    CAN_CHANGE_TYPE
-547, Relic Song,                   1,    1,    2,    10,     75,    100,    5,    0,     4,    SOUND_BASED     CAN_SLP
-548, Secret Sword,                 2,    1,    2,    10,     85,    100,    5,    0,     1,    USES_STATS_FROM_DIFF_CAT
-549, Glaciate,                    15,    1,    2,    10,     65,     95,    5,    0,     4,    STAT_TARGET_SPD--
-550, Bolt Strike,                 13,    0,    2,     5,    130,     85,    5,    1,     1,    CAN_PAR
-551, Blue Flare,                  10,    1,    2,     5,    130,     85,    5,    0,     1,    CAN_BRN
-552, Fiery Dance,                 10,    1,    2,    10,     80,    100,    5,    0,     1,    STAT_USERS_SPATT++      DANCE
-553, Freeze Shock,                15,    0,    2,     5,    140,     90,    5,    0,     1,    CAN_PAR     CHARGES
-554, Ice Burn,                    15,    1,    2,     5,    140,     90,    5,    0,     1,    CAN_BRN     CHARGES
-555, Snarl,                       17,    1,    4,    15,     55,     95,    5,    0,     4,    STAT_TARGET_SPATT--     SOUND_BASED
-556, Icicle Crash,                15,    0,    2,    10,     85,     90,    5,    0,     1,    CAN_FLINCH
-557, V-create,                    10,    0,    0,     5,    180,     95,    5,    1,     1,    STAT_USERS_DEF--        STAT_USERS_SPDEF--      STAT_USERS_SPD--
-558, Fusion Flare,                10,    1,    2,     5,    100,    100,    5,    0,     1,    CAN_THAW_USER       POWERS_UP       VARIABLE_POWER
-559, Fusion Bolt,                 13,    0,    0,     5,    100,    100,    5,    0,     1,    POWERS_UP       VARIABLE_POWER
-560, Flying Press,                 2,    0,    4,    10,    100,     95,    6,    1,     1,    UNIQUE_TYPE_EFFECTIVENESS       MINIMIZED_TARGET_DMG++      BYPASS_ACC_CHECK        SPECIAL_TYPE_EFFECTIVENESS
-561, Mat Block,                    2,    2,    0,    10,      0,      0,    6,    0,    10,    PROTECTION
-562, Belch,                        4,    1,    4,    10,    120,     90,    6,    0,     1,
-563, Rototiller,                   5,    2,    4,    10,      0,      0,    6,    0,     7,    STAT_TARGETS_ATT++      STAT_TARGETS_SPATK++
-564, Sticky Web,                   7,    2,    4,    20,      0,      0,    6,    0,     6,    STAT_TARGET_SPD--       ENTRY_HAZARD
-565, Fell Stinger,                 7,    0,    0,    25,     50,    100,    6,    1,     1,    STAT_USERS_ATT++
-566, Phantom Force,                8,    0,    0,    10,     90,    100,    6,    1,     1,    MINIMIZED_TARGET_DMG++      BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK        HAS_SEMI_INVULNERABLE TURN      CHARGES
-567, Trick-or-Treat,               8,    2,    2,    20,      0,    100,    6,    0,     1,    CHANGES_POKE_TYPE
-568, Noble Roar,                   1,    2,    4,    30,      0,    100,    6,    0,     1,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     SOUND_BASED     BYPASS_ACC_CHECK
-569, Ion Deluge,                  13,    2,    2,    25,      0,      0,    6,    0,     7,    MODIFIES_TARGETS_MOVE_TYPE      PRIORITY++
-570, Parabolic Charge,            13,    1,    3,    20,     65,    100,    6,    0,     5,    HP_DRAINING_DAMAGE        RESTORES_HP
-571, Forest's Curse,              12,    2,    3,    20,      0,    100,    6,    0,     1,    CHANGES_POKE_TYPE
-572, Petal Blizzard,              12,    0,    2,    15,     90,    100,    6,    0,     5,
-573, Freeze-Dry,                  15,    1,    2,    20,     70,    100,    6,    0,     1,    UNIQUE_TYPE_EFFECTIVENESS       CAN_FRZ     SPECIAL_TYPE_EFFECTIVENESS
-574, Disarming Voice,             13,    1,    2,    15,     40,      0,    6,    0,     4,    SOUND_BASED     BYPASS_ACC_CHECK
-575, Parting Shot,                17,    2,    0,    20,      0,    100,    6,    0,     1,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     SOUND_BASED     SWITCHES_USER_OUT
-576, Topsy-Turvy,                 17,    2,    3,    20,      0,      0,    6,    0,     1,    BYPASS_ACC_CHECK
-577, Draining Kiss,               13,    1,    2,    10,     50,    100,    6,    1,     1,    HP_DRAINING_DAMAGE        RESTORES_HP
-578, Crafty Shield,               13,    2,    3,    10,      0,      0,    6,    0,    10,    PRIORITY++      PROTECTION
-579, Flower Shield,               13,    2,    2,    10,      0,      0,    6,    0,     7,    STAT_TARGETS_DEF++      STAT_USERS_DEF++
-580, Grassy Terrain,              12,    2,    2,    10,      0,      0,    6,    0,     7,    CHANGES_TERRAIN     RESTORES_HP
-581, Misty Terrain,               13,    2,    2,    10,      0,      0,    6,    0,     7,    CHANGES_TERRAIN
-582, Electrify,                   13,    2,    3,    20,      0,      0,    6,    0,     1,    MODIFIES_TARGETS_MOVE_TYPE      BYPASS_ACC_CHECK
-583, Play Rough,                  13,    0,    2,    10,     90,     90,    6,    1,     1,    STAT_TARGET_ATT--
-584, Fairy Wind,                  13,    1,    2,    30,     40,    100,    6,    0,     1,
-585, Moonblast,                   13,    1,    2,    15,     95,    100,    6,    0,     1,    STAT_TARGET_SPATT--
-586, Boomburst,                    1,    1,    4,    10,    140,    100,    6,    0,     5,    SOUND_BASED
-587, Fairy Lock,                  13,    2,    3,    10,      0,      0,    6,    0,     7,    TRAPPING
-588, King's Shield,                9,    2,    0,    10,      0,      0,    6,    0,     9,    PRIORITY++      STAT_TARGET_ATT--       PROTECTION
-589, Play Nice,                    1,    2,    2,    20,      0,      0,    6,    0,     1,    STAT_TARGET_ATT--       BYPASS_ACC_CHECK
-590, Confide,                      1,    2,    2,    20,      0,      0,    6,    0,     1,    STAT_TARGET_SPATT--     SOUND_BASED     BYPASS_ACC_CHECK
-591, Diamond Storm,                6,    0,    2,     5,    100,     95,    6,    0,     4,    STAT_USERS_DEF++
-592, Steam Eruption,              11,    1,    2,     5,    110,     95,    6,    0,     1,    CAN_THAW_USER       CAN_HEAL_NON_VOL_STAT       CAN_BRN
-593, Hyperspace Hole,             14,    1,    3,     5,     80,      0,    6,    0,     1,    BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK
-594, Water Shuriken,              11,    1,    0,    20,     15,    100,    6,    0,     1,    PRIORITY++      MULTI_STRIKE
-595, Mystical Fire,               10,    1,    2,    10,     75,    100,    6,    0,     1,    STAT_TARGET_SPATT--
-596, Spiky Shield,                12,    2,    4,    10,      0,      0,    6,    0,     9,    PRIORITY++      PROTECTION
-597, Aromatic Mist,               13,    2,    2,    20,      0,      0,    6,    0,     8,    STAT_TARGETS_SPDEF++        STAT_USERS_SPDEF++
-598, Eerie Impulse,               13,    2,    3,    15,      0,    100,    6,    0,     1,    STAT_TARGET_SPATT--
-599, Venom Drench,                 4,    2,    3,    20,      0,    100,    6,    0,     4,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     STAT_TARGET_SPD--
-600, Powder,                       7,    2,    3,    20,      0,    100,    6,    0,     1,    PRIORITY++      POWDER_AND_SPORE        BYPASS_ACC_CHECK
-601, Geomancy,                    13,    2,    2,    10,      0,      0,    6,    0,     9,    STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++        CHARGES
-602, Magnetic Flux,               13,    2,    3,    20,      0,      0,    6,    0,    10,    STAT_TARGETS_DEF++      STAT_TARGETS_SPDEF++
-603, Happy Hour,                   1,    2,    2,    30,      0,      0,    6,    0,    10,
-604, Electric Terrain,            13,    2,    3,    10,      0,      0,    6,    0,     7,    CHANGES_TERRAIN
-605, Dazzling Gleam,              13,    1,    2,    10,     80,    100,    6,    0,     4,
-606, Celebrate,                    1,    2,    2,    40,      0,      0,    6,    0,     9,    NO_EFFECT
-607, Hold Hands,                   1,    2,    2,    40,      0,      0,    6,    0,     8,    NO_EFFECT
-608, Baby-Doll Eyes,              13,    2,    2,    30,      0,    100,    6,    0,     1,    PRIORITY++      STAT_TARGET_ATT--
-609, Nuzzle,                      13,    0,    2,    20,     20,    100,    6,    1,     1,    CAN_PAR
-610, Hold Back,                    1,    0,    0,    40,     40,    100,    6,    1,     1,
-611, Infestation,                  7,    1,    2,    20,     20,    100,    6,    1,     1,    BINDING        TRAPPING
-612, Power-Up Punch,               2,    0,    4,    20,     40,    100,    6,    1,     1,    STAT_USERS_ATT++        PUNCHING
-613, Oblivion Wing,                3,    1,    0,    10,     80,    100,    6,    0,     2,    HP_DRAINING_DAMAGE        RESTORES_HP
-614, Thousand Arrows,              5,    0,    2,    10,     90,    100,    6,    0,     4,    UNIQUE_TYPE_EFFECTIVENESS       CAN_HIT_SEMI_INVULNERABLE       SPECIAL_TYPE_EFFECTIVENESS      REMOVES_SOME_TYPE_IMMUNITIES
-615, Thousand Waves,               5,    0,    4,    10,     90,    100,    6,    0,     4,    TRAPPING
-616, Land's Wrath,                 5,    0,    2,    10,     90,    100,    6,    0,     4,
-617, Light of Ruin,               13,    1,    2,     5,    140,     90,    6,    0,     1,    HAVE_RECOIL
-618, Origin Pulse,                11,    1,    2,    10,    110,     85,    6,    0,     4,    AURA_AND_PULSE
-619, Precipice Blades,             5,    0,    0,    10,    120,     85,    6,    0,     4,
-620, Dragon Ascent,                3,    0,    2,     5,    120,    100,    6,    1,     2,    STAT_USERS_DEF--        STAT_USERS_SPDEF--
-621, Hyperspace Fury,             17,    0,    4,     5,    100,      0,    6,    0,     1,    STAT_USERS_DEF--        BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK
-622, Breakneck Blitz,              1,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-623, Breakneck Blitz,              1,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-624, All-Out Pummeling,            2,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-625, All-Out Pummeling,            2,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-626, Supersonic Skystrike,         3,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-627, Supersonic Skystrike,         3,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-628, Acid Downpour,                4,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-629, Acid Downpour,                4,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-630, Tectonic Rage,                5,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-631, Tectonic Rage,                5,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-632, Continental Crush,            6,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-633, Continental Crush,            6,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-634, Savage Spin-Out,              7,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-635, Savage Spin-Out,              7,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-636, Never-Ending Nightmare,       8,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-637, Never-Ending Nightmare,       8,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-638, Corkscrew Crash,              9,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-639, Corkscrew Crash,              9,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-640, Inferno Overdrive,           10,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-641, Inferno Overdrive,           10,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-642, Hydro Vortex,                11,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-643, Hydro Vortex,                11,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-644, Bloom Doom,                  12,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-645, Bloom Doom,                  12,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-646, Gigavolt Havoc,              13,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-647, Gigavolt Havoc,              13,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-648, Shattered Psyche,            14,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-649, Shattered Psyche,            14,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-650, Subzero Slammer,             15,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-651, Subzero Slammer,             15,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-652, Devastating Drake,           16,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-653, Devastating Drake,           16,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-654, Black Hole Eclipse,          17,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-655, Black Hole Eclipse,          17,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-656, Twinkle Tackle,              13,    0,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-657, Twinkle Tackle,              13,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-658, Catastropika,                13,    0,    5,     1,    210,      0,    7,    1,     1,    BYPASS_ACC_CHECK
-659, Shore Up,                     5,    2,    5,    10,      0,      0,    7,    0,     9,    HEALS_USER_IMMEDIATELY       RESTORES_HP
-660, First Impression,             7,    0,    5,    10,     90,    100,    7,    0,     1,    PRIORITY++
-661, Baneful Bunker,               4,    2,    5,    10,      0,      0,    7,    0,     9,    PRIORITY++      CAN_PSN     PROTECTION
-662, Spirit Shackle,               8,    0,    5,    10,     80,    100,    7,    0,     1,    TRAPPING
-663, Darkest Lariat,              17,    0,    5,    10,     85,    100,    7,    1,     1,
-664, Sparkling Aria,              11,    1,    5,    10,     90,    100,    7,    0,     5,    SOUND_BASED     CAN_HEAL_NON_VOL_STAT
-665, Ice Hammer,                  15,    0,    5,    10,    100,     90,    7,    1,     1,    STAT_USERS_SPD--        PUNCHING
-666, Floral Healing,              13,    2,    5,    10,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK        RESTORES_HP
-667, High Horsepower,              5,    0,    5,    10,     95,     95,    7,    1,     1,
-668, Strength Sap,                12,    2,    5,    10,      0,    100,    7,    0,     1,    STAT_TARGET_ATT--       HEALS_USER_IMMEDIATELY       RESTORES_HP
-669, Solar Blade,                 12,    0,    5,    10,    125,    100,    7,    1,     1,    CHARGES
-670, Leafage,                     12,    0,    5,    40,     40,    100,    7,    0,     1,
-671, Spotlight,                    1,    2,    5,    15,      0,      0,    7,    0,     1,    PRIORITY++      MAKES_TARGET_CENTER_OF_ATTENTION
-672, Toxic Thread,                 4,    2,    5,    20,      0,    100,    7,    0,     1,    STAT_TARGET_SPD--       CAN_PSN
-673, Laser Focus,                  1,    2,    5,    30,      0,      0,    7,    0,     9,
-674, Gear Up,                      9,    2,    5,    20,      0,      0,    7,    0,    10,    STAT_TARGETS_ATT++      STAT_TARGETS_SPATK++
-675, Throat Chop,                 17,    0,    5,    15,     80,    100,    7,    1,     1,
-676, Pollen Puff,                  7,    1,    5,    15,     90,    100,    7,    0,     1,    BALL_AND_BOMB       RESTORES_HP
-677, Anchor Shot,                  9,    0,    5,    20,     80,    100,    7,    1,     1,    TRAPPING
-678, Psychic Terrain,             14,    2,    5,    10,      0,      0,    7,    0,     7,    CHANGES_TERRAIN
-679, Lunge,                        7,    0,    5,    15,     80,    100,    7,    1,     1,    STAT_TARGET_ATT--
-680, Fire Lash,                   10,    0,    5,    15,     80,    100,    7,    1,     1,    STAT_TARGET_DEF--
-681, Power Trip,                  17,    0,    5,    10,     20,    100,    7,    1,     1,    VARIABLE_POWER
-682, Burn Up,                     10,    1,    5,     5,    130,    100,    7,    0,     1,    CAN_THAW_USER       CHANGES_POKE_TYPE
-683, Speed Swap,                  14,    2,    5,    10,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-684, Smart Strike,                 9,    0,    5,    10,     70,      0,    7,    1,     1,    BYPASS_ACC_CHECK
-685, Purify,                       4,    2,    5,    20,      0,      0,    7,    0,     1,    CAN_HEAL_NON_VOL_STAT       HEALS_USER_IMMEDIATELY       RESTORES_HP
-686, Revelation Dance,             1,    1,    5,    15,     90,    100,    7,    0,     1,    DANCE       CAN_CHANGE_TYPE
-687, Core Enforcer,               16,    1,    5,    10,    100,    100,    7,    0,     4,    AFFECTS_ABILITIES
-688, Trop Kick,                   12,    0,    5,    15,     70,    100,    7,    1,     1,    STAT_TARGET_ATT--
-689, Instruct,                    14,    2,    5,    15,      0,      0,    7,    0,     1,
-690, Beak Blast,                   3,    0,    5,    15,    100,    100,    7,    0,     1,    PRIORITY--      BALL_AND_BOMB       CAN_BRN
-691, Clanging Scales,             16,    1,    5,     5,    110,    100,    7,    0,     4,    STAT_USERS_DEF--        SOUND_BASED
-692, Dragon Hammer,               16,    0,    5,    15,     90,    100,    7,    1,     1,
-693, Brutal Swing,                17,    0,    5,    20,     60,    100,    7,    1,     5,
-694, Aurora Veil,                 15,    2,    5,    20,      0,      0,    7,    0,    10,
-695, Sinister Arrow Raid,          8,    0,    5,     1,    180,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-696, Malicious Moonsault,         17,    0,    5,     1,    180,      0,    7,    1,     1,    MINIMIZED_TARGET_DMG++      BYPASS_ACC_CHECK        POWERS_UP       VARIABLE_POWER
-697, Oceanic Operetta,            11,    1,    5,     1,    195,      0,    7,    0,     1,    BYPASS_ACC_CHECK
-698, Guardian of Alola,           13,    1,    5,     1,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK        DIRECT_DAMAGE
-699, Soul-Stealing 7-Star Strike,  8,    0,    5,     1,    195,      0,    7,    1,     1,    BYPASS_ACC_CHECK
-700, Stoked Sparksurfer,          13,    1,    5,     1,    175,      0,    7,    0,     1,    CAN_PAR     BYPASS_ACC_CHECK
-701, Pulverizing Pancake,          1,    0,    5,     1,    210,      0,    7,    1,     1,    BYPASS_ACC_CHECK
-702, Extreme Evoboost,             1,    2,    5,     1,      0,      0,    7,    0,     9,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
-703, Genesis Supernova,           14,    1,    5,     1,    185,      0,    7,    0,     1,    CHANGES_TERRAIN
-704, Shell Trap,                  10,    1,    5,     5,    150,    100,    7,    0,     4,    PRIORITY--
-705, Fleur Cannon,                13,    1,    5,     5,    130,     90,    7,    0,     1,    STAT_USERS_SPATT--
-706, Psychic Fangs,               14,    0,    5,    10,     85,    100,    7,    1,     1,    BITING
-707, Stomping Tantrum,             5,    0,    5,    10,     75,    100,    7,    1,     1,    POWERS_UP       VARIABLE_POWER
-708, Shadow Bone,                  8,    0,    5,    10,     85,    100,    7,    0,     1,    STAT_TARGET_DEF--
-709, Accelerock,                   6,    0,    5,    20,     40,    100,    7,    1,     1,    PRIORITY++
-710, Liquidation,                 11,    0,    5,    10,     85,    100,    7,    1,     1,    STAT_TARGET_DEF--
-711, Prismatic Laser,              4,    1,    5,    10,    160,    100,    7,    0,     1,    RECHARGES
-712, Spectral Thief,               8,    0,    5,    10,     90,    100,    7,    1,     1,
-713, Sunsteel Strike,              9,    0,    5,     5,    100,    100,    7,    1,     1,    IGNORES_ABILITIES
-714, Moongeist Beam,               8,    1,    5,     5,    100,    100,    7,    0,     1,    IGNORES_ABILITIES
-715, Tearful Look,                 1,    2,    5,    20,      0,      0,    7,    0,     1,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--
-716, Zing Zap,                    13,    0,    5,    10,     80,    100,    7,    1,     1,    CAN_FLINCH
-717, Nature's Madness,            13,    1,    5,    10,      0,     90,    7,    0,     1,    DIRECT_DAMAGE
-718, Multi-Attack,                 1,    0,    5,    10,     90,    100,    7,    1,     1,    CAN_CHANGE_TYPE
-719, 10,000,000, Volt Thunderbolt,13,    1,    5,     1,    195,      0,    7,    0,     1,    BYPASS_ACC_CHECK        HIGH_CRIT_HIT
-720, Mind Blown,                  10,    1,    5,     5,    150,    100,    7,    0,     5,    EXPLOSIVE       COST_HP
-721, Plasma Fists,                13,    0,    5,    15,    100,    100,    7,    1,     1,    PUNCHING
-722, Photon Geyser,               14,    1,    5,     5,    100,    100,    7,    0,     1,    IGNORES_ABILITIES       USES_STATS_FROM_DIFF_CAT
-723, Light That Burns the Sky,    14,    1,    5,     1,    200,      0,    7,    0,     1,    IGNORES_ABILITIES       USES_STATS_FROM_DIFF_CAT
-724, Searing Sunraze Smash,        9,    1,    5,     1,    200,      0,    7,    1,     1,    IGNORES_ABILITIES
-725, Menacing Moonraze Maelstrom,  8,    1,    5,     1,    200,      0,    7,    0,     1,    IGNORES_ABILITIES
-726, Let's Snuggle Forever,       13,    0,    5,     1,    190,      0,    7,    1,     1,
-727, Splintered Stormshards,       6,    0,    5,     1,    190,      0,    7,    0,     1,
-728, Clangorous Soulblaze,        16,    1,    5,     1,    185,      0,    7,    0,     4,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++        SOUND_BASED
-729, Zippy Zap,                   13,    0,    5,    15,     50,    100,    7,    0,     1,    PRIORITY++      PERFECT_CRIT_HIT
-730, Splishy Splash,              11,    1,    5,    15,     90,    100,    7,    0,     4,    CAN_PAR
-731, Floaty Fall,                  3,    0,    5,    15,     90,     95,    7,    0,     1,
-732, Pika Papow,                  13,    1,    5,    20,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK        VARIABLE_POWER
-733, Bouncy Bubble,               11,    1,    5,    15,     90,    100,    7,    0,     4,    HP_DRAINING_DAMAGE        RESTORES_HP      BYPASS_ACC_CHECK
-734, Buzzy Buzz,                  13,    1,    5,    15,     90,    100,    7,    0,     1,    CAN_PAR     BYPASS_ACC_CHECK
-735, Sizzly Slide,                10,    0,    5,    15,     90,    100,    7,    0,     1,    CAN_BRN     BYPASS_ACC_CHECK
-736, Glitzy Glow,                 14,    1,    5,    15,     90,    100,    7,    0,     1,    BYPASS_ACC_CHECK
-737, Baddy Bad,                   17,    1,    5,    15,     90,    100,    7,    0,     1,    BYPASS_ACC_CHECK
-738, Sappy Seed,                  12,    0,    5,    15,     90,    100,    7,    0,     1,    BYPASS_ACC_CHECK
-739, Freezy Frost,                15,    1,    5,    15,     90,    100,    7,    0,     1,    BYPASS_ACC_CHECK
-740, Sparkly Swirl,               13,    1,    5,    15,     90,    100,    7,    0,     1,    BYPASS_ACC_CHECK
-741, Veevee Volley,                1,    0,    5,    20,      0,      0,    7,    0,     1,    BYPASS_ACC_CHECK        VARIABLE_POWER
-742, Double Iron Bash,             9,    0,    5,     5,     60,    100,    7,    1,     1,    CAN_FLINCH      MULTI_STRIKE
+001, Pound,                        1,    0,    4,    35,     40,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+002, Karate Chop,                  2,    0,    4,    25,     50,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,         HIGH_CRIT_HIT
+003, Double Slap,                  1,    0,    2,    10,     15,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,         MULTI_STRIKE
+004, Comet Punch,                  1,    0,    4,    15,     18,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,         PUNCHING        MULTI_STRIKE
+005, Mega Punch,                   1,    0,    4,    20,     80,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,         PUNCHING
+006, Pay Day,                      1,    0,    3,    20,     40,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,
+007, Fire Punch,                  10,    0,    4,    15,     75,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,         PUNCHING        CAN_BRN
+008, Ice Punch,                   15,    0,    2,    15,     75,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,         PUNCHING        CAN_FRZ
+009, Thunder Punch,               13,    0,    0,    15,     75,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,         PUNCHING        CAN_PAR
+010, Scratch,                      1,    0,    4,    35,     40,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+011, Vice Grip,                    1,    0,    4,    30,     55,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+012, Guillotine,                   1,    0,    0,     5,      0,      0,    1,    1,     1,     0,    0000000 0000000,      0,    0,         OHKO        DIRECT_DAMAGE
+013, Razor Wind,                   1,    1,    0,    10,     80,    100,    1,    0,     4,     0,    0000000 0000000,      0,    0,         CHARGES     HIGH_CRIT_HIT
+014, Swords Dance,                 1,    2,    2,    20,      0,      0,    1,    0,     9,     0,    0000000 1000000,    100,    2,        STAT_USERS_ATT++        DANCE
+015, Cut,                          1,    0,    0,    30,     50,     95,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+016, Gust,                         3,    1,    3,    35,     40,    100,    1,    0,     2,     0,    0000000 0000000,      0,    0,        CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
+017, Wing Attack,                  3,    0,    0,    35,     60,    100,    1,    1,     2,     0,    0000000 0000000,      0,    0,
+018, Whirlwind,                    1,    2,    3,    20,      0,      0,    1,    0,     1,    -6,    0000000 0000000,      0,    0,              CAN_HIT_SEMI_INVULNERABLE       BYPASS_ACC_CHECK        SWITCHES_TARGET_OUT
+019, Fly,                          3,    0,    3,    15,     90,     95,    1,    1,     2,     0,    0000000 0000000,      0,    0,        HAS_SEMI_INVULNERABLE TURN      CHARGES
+020, Bind,                         1,    0,    4,    20,     15,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,        BINDING        TRAPPING        TRAPPING
+021, Slam,                         1,    0,    4,    20,     80,     75,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+022, Vine Whip,                   12,    0,    0,    25,     45,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+023, Stomp,                        1,    0,    4,    20,     65,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        MINIMIZED_TARGET_DMG++      CAN_FLINCH      BYPASS_ACC_CHECK        POWERS_UP       VARIABLE_POWER
+024, Double Kick,                  2,    0,    0,    30,     30,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        MULTI_STRIKE
+025, Mega Kick,                    1,    0,    0,     5,    120,     75,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+026, Jump Kick,                    2,    0,    0,    10,    100,     95,    1,    1,     1,     0,    0000000 0000000,      0,    0,        HAVE_RECOIL
+027, Rolling Kick,                 2,    0,    0,    15,     60,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,        CAN_FLINCH
+028, Sand Attack,                  5,    2,    2,    15,      0,    100,    1,    0,     1,     0,    1000000 0000000,    100,    1,        STAT_TARGET_ACC--
+029, Headbutt,                     1,    0,    4,    15,     70,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        CAN_FLINCH
+030, Horn Attack,                  1,    0,    0,    25,     65,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+031, Fury Attack,                  1,    0,    0,    20,     15,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,        MULTI_STRIKE
+032, Horn Drill,                   1,    0,    0,     5,      0,      0,    1,    1,     1,     0,    0000000 0000000,      0,    0,        OHKO        DIRECT_DAMAGE
+033, Tackle,                       1,    0,    4,    35,     40,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+034, Body Slam,                    1,    0,    4,    15,     85,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        MINIMIZED_TARGET_DMG++      CAN_PAR     BYPASS_ACC_CHECK
+035, Wrap,                         1,    0,    4,    20,     15,     90,    1,    1,     1,     0,    0000000 0000000,      0,    0,        BINDING        TRAPPING
+036, Take Down,                    1,    0,    4,    20,     90,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,        HAVE_RECOIL
+037, Thrash,                       1,    0,    4,    10,    120,    100,    1,    1,     9,     0,    0000000 0000000,      0,    0,        CONSECUTIVE
+038, Double-Edge,                  1,    0,    4,    15,    120,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        HAVE_RECOIL
+039, Tail Whip,                    1,    2,    2,    30,      0,    100,    1,    0,     4,     0,    0100000 0000000,    100,    1,        STAT_TARGET_DEF--
+040, Poison Sting,                 4,    0,    3,    35,     15,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PSN
+041, Twineedle,                    7,    0,    0,    20,     25,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PSN     MULTI_STRIKE
+042, Pin Missile,                  7,    0,    0,    20,     25,     95,    1,    0,     1,     0,    0000000 0000000,      0,    0,        MULTI_STRIKE
+043, Leer,                         1,    2,    0,    30,      0,    100,    1,    0,     4,     0,    0100000 0000000,    100,    1,        STAT_TARGET_DEF--
+044, Bite,                        17,    0,    4,    25,     60,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        BITING      CAN_FLINCH
+045, Growl,                        1,    2,    2,    40,      0,    100,    1,    0,     4,     0,    1000000 0000000,    100,    1,        STAT_TARGET_ATT--       SOUND_BASED
+046, Roar,                         1,    2,    0,    20,      0,      0,    1,    0,     1,    -6,    0000000 0000000,      0,    0,              SOUND_BASED     BYPASS_ACC_CHECK        SWITCHES_TARGET_OUT
+047, Sing,                         1,    2,    2,    15,      0,     55,    1,    1,     1,     0,    0000000 0000000,      0,    0,        SOUND_BASED     CAN_SLP
+048, Supersonic,                   1,    2,    3,    20,      0,     55,    1,    0,     1,     0,    0000000 0000000,      0,    0,        SOUND_BASED     CAN_CONFUSE
+049, Sonic Boom,                   1,    1,    0,    20,     20,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,        SET_DAMAGE      DIRECT_DAMAGE
+050, Disable,                      1,    2,    3,    20,      0,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,
+051, Acid,                         4,    1,    3,    30,     40,    100,    1,    0,     4,     0,    0001000 0000000,     10,    1,        STAT_TARGET_SPDEF--
+052, Ember,                       10,    1,    2,    25,     40,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_BRN
+053, Flamethrower,                10,    1,    2,    15,     90,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_BRN
+054, Mist,                        15,    2,    2,    30,      0,      0,    1,    0,    10,     0,    0000000 0000000,      0,    0,
+055, Water Gun,                   11,    1,    2,    25,     40,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,
+056, Hydro Pump,                  11,    1,    2,     5,    110,     80,    1,    0,     1,     0,    0000000 0000000,      0,    0,
+057, Surf,                        11,    1,    2,    15,     90,    100,    1,    0,     4,     0,    0000000 0000000,      0,    0,        CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
+058, Ice Beam,                    15,    1,    2,    10,     90,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_FRZ
+059, Blizzard,                    15,    1,    2,     5,    110,     70,    1,    0,     4,     0,    0000000 0000000,      0,    0,        CAN_FRZ     BYPASS_ACC_CHECK
+060, Psybeam,                     14,    1,    2,    20,     65,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_CONFUSE
+061, Bubble Beam,                 11,    1,    2,    20,     65,    100,    1,    0,     1,     0,    0000100 0000000,     10,    1,        STAT_TARGET_SPD--
+062, Aurora Beam,                 15,    1,    2,    20,     65,    100,    1,    0,     1,     0,    1000000 0000000,     10,    1,        STAT_TARGET_ATT--
+063, Hyper Beam,                   1,    1,    0,     5,    150,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,        RECHARGES
+064, Peck,                         3,    0,    0,    35,     35,    100,    1,    1,     2,     0,    0000000 0000000,      0,    0,
+065, Drill Peck,                   3,    0,    0,    20,     80,    100,    1,    1,     2,     0,    0000000 0000000,      0,    0,
+066, Submission,                   2,    0,    0,    20,     80,     80,    1,    1,     1,     0,    0000000 0000000,      0,    0,        HAVE_RECOIL
+067, Low Kick,                     2,    0,    4,    20,      0,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        AFFECTED_BY_WEIGHT      CAN_FLINCH      VARIABLE_POWER
+068, Counter,                      2,    0,    4,    20,      0,    100,    1,    1,     9,    -5,    0000000 0000000,      0,    0,              DIRECT_DAMAGE
+069, Seismic Toss,                 2,    0,    4,    20,      0,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        DIRECT_DAMAGE
+070, Strength,                     1,    0,    4,    15,     80,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,
+071, Absorb,                      12,    1,    3,    15,     40,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        HP_DRAINING_DAMAGE        RESTORES_HP
+072, Mega Drain,                  12,    1,    3,    10,     75,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        HP_DRAINING_DAMAGE        RESTORES_HP
+073, Leech Seed,                  12,    2,    3,    10,      0,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,        HP_DRAINING_DAMAGE        RESTORES_HP
+074, Growth,                       1,    2,    2,    20,      0,      0,    1,    1,     9,     0,    0000000 1010000,    100,    1,        STAT_USERS_ATT++        STAT_USERS_SPATT++
+075, Razor Leaf,                  12,    0,    0,    25,     55,     95,    1,    0,     4,     0,    0000000 0000000,      0,    0,        HIGH_CRIT_HIT
+076, Solar Beam,                  12,    1,    0,    10,    200,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CHARGES
+077, Poison Powder,                4,    2,    3,    35,      0,     75,    1,    0,     1,     0,    0000000 0000000,      0,    0,        POWDER_AND_SPORE        CAN_PSN
+078, Stun Spore,                  12,    2,    3,    30,      0,     75,    1,    0,     1,     0,    0000000 0000000,      0,    0,        POWDER_AND_SPORE        CAN_PAR
+079, Sleep Powder,                12,    2,    3,    15,      0,     75,    1,    0,     1,     0,    0000000 0000000,      0,    0,        POWDER_AND_SPORE        CAN_SLP
+080, Petal Dance,                 12,    1,    2,    10,    120,    100,    1,    1,     9,     0,    0000000 0000000,      0,    0,        CONSECUTIVE     DANCE
+081, String Shot,                  7,    2,    3,    40,      0,     95,    1,    0,     4,     0,    0000100 0000000,    100,    2,        STAT_TARGET_SPD--
+082, Dragon Rage,                 16,    1,    0,    10,     40,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        SET_DAMAGE      DIRECT_DAMAGE
+083, Fire Spin,                   10,    1,    2,    15,     35,     85,    1,    0,     1,     0,    0000000 0000000,      0,    0,        BINDING        TRAPPING
+084, Thunder Shock,               13,    1,    0,    30,     40,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PAR
+085, Thunderbolt,                 13,    1,    0,    15,     90,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PAR
+086, Thunder Wave,                13,    2,    0,    20,      0,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PAR
+087, Thunder,                     13,    1,    0,    10,    110,     70,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_HIT_SEMI_INVULNERABLE       CAN_PAR     BYPASS_ACC_CHECK
+088, Rock Throw,                   6,    0,    4,    15,     50,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,
+089, Earthquake,                   5,    0,    4,    10,    100,    100,    1,    0,     5,     0,    0000000 0000000,      0,    0,        CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
+090, Fissure,                      5,    0,    4,     5,      0,      0,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_HIT_SEMI_INVULNERABLE       OHKO        DIRECT_DAMAGE
+091, Dig,                          5,    0,    4,    10,     80,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        HAS_SEMI_INVULNERABLE TURN      CHARGES
+092, Toxic,                        4,    2,    3,    10,      0,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_HIT_SEMI_INVULNERABLE       CAN_PSN     BYPASS_ACC_CHECK
+093, Confusion,                   14,    1,    3,    25,     50,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_CONFUSE
+094, Psychic,                     14,    1,    3,    10,     90,    100,    1,    0,     1,     0,    0001000 0000000,     10,    1,        STAT_TARGET_SPDEF--
+095, Hypnosis,                    14,    2,    3,    20,      0,     60,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_SLP
+096, Meditate,                    14,    2,    2,    40,      0,      0,    1,    0,     9,     0,    0000000 1000000,    100,    1,        STAT_USERS_ATT++
+097, Agility,                     14,    2,    0,    30,      0,      0,    1,    0,     9,     0,    0000000 0000100,    100,    2,        STAT_USERS_SPD++
+098, Quick Attack,                 1,    0,    0,    30,     40,    100,    1,    1,     1,     1,    0000000 0000000,      0,    0,
+099, Rage,                         1,    0,    4,    20,     20,    100,    1,    1,     1,     0,    0000000 1000000,    100,    1,        STAT_USERS_ATT++    UNIQUE_MOVE_EFFECT
+100, Teleport,                    14,    2,    0,    20,      0,      0,    1,    0,     9,    -6,    0000000 0000000,      0,    0,              SWITCHES_USER_OUT
+101, Night Shade,                  8,    1,    3,    15,      0,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        DIRECT_DAMAGE
+102, Mimic,                        1,    2,    2,    10,      0,      0,    1,    0,     1,     0,    0000000 0000000,      0,    0,        BYPASS_ACC_CHECK
+103, Screech,                      1,    2,    3,    40,      0,     85,    1,    0,     1,     0,    0100000 0000000,    100,    2,        STAT_TARGET_DEF--       SOUND_BASED
+104, Double Team,                  1,    2,    0,    15,      0,      0,    1,    0,     9,     0,    0000000 0000010,    100,    1,        STAT_USERS_EVA++
+105, Recover,                      1,    2,    3,    10,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,        HEALS_USER_IMMEDIATELY       RESTORES_HP
+106, Harden,                       1,    2,    4,    30,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,        STAT_USERS_DEF++
+107, Minimize,                     1,    2,    2,    10,      0,      0,    1,    0,     9,     0,    0000000 0000010,    100,    2,        STAT_USERS_EVA++
+108, Smokescreen,                  1,    2,    3,    20,      0,    100,    1,    0,     1,     0,    0000001 0000000,    100,    1,        STAT_TARGET_ACC--
+109, Confuse Ray,                  8,    2,    3,    10,      0,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_CONFUSE
+110, Withdraw,                    11,    2,    2,    40,      0,      0,    1,    0,     9,     0,    0000000 0100000,    100,    1,        STAT_USERS_DEF++
+111, Defense Curl,                 1,    2,    2,    40,      0,      0,    1,    0,     9,     0,    0000000 0100000,    100,    1,        STAT_USERS_DEF++
+112, Barrier,                     14,    2,    0,    20,      0,      0,    1,    0,     9,     0,    0000000 0100000,    100,    2,        STAT_USERS_DEF++
+113, Light Screen,                14,    2,    2,    30,      0,      0,    1,    0,    10,     0,    0000000 0000000,      0,    0,
+114, Haze,                        15,    2,    2,    30,      0,      0,    1,    0,     7,     0,    0000000 0000000,      0,    0,
+115, Reflect,                     14,    2,    3,    20,      0,      0,    1,    0,    10,     0,    0000000 0000000,      0,    0,
+116, Focus Energy,                 1,    2,    0,    30,      0,      0,    1,    1,     9,     0,    0000000 0000000,      0,    0,
+117, Bide,                         1,    0,    4,    10,      0,      0,    1,    1,     9,     1,    0000000 0000000,      0,    0,              BYPASS_ACC_CHECK        DIRECT_DAMAGE
+118, Metronome,                    1,    2,    2,    10,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,        CALLS_OTHER_MOVES
+119, Mirror Move,                  3,    2,    3,    20,      0,      0,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CALLS_OTHER_MOVES
+120, Self-Destruct,                1,    0,    2,     5,    200,    100,    1,    0,     5,     0,    0000000 0000000,      0,    0,        EXPLOSIVE       CAUSES_USER_TO_FAINT
+121, Egg Bomb,                     1,    0,    2,    10,    100,     75,    1,    0,     1,     0,    0000000 0000000,      0,    0,        BALL_AND_BOMB
+122, Lick,                         8,    0,    2,    30,     30,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        CAN_PAR
+123, Smog,                         4,    1,    4,    20,     30,     70,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PSN
+124, Sludge,                       4,    1,    4,    20,     65,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_PSN
+125, Bone Club,                    5,    0,    4,    20,     65,     85,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_FLINCH
+126, Fire Blast,                  10,    1,    2,     5,    110,     85,    1,    0,     1,     0,    0000000 0000000,      0,    0,        CAN_BRN
+127, Waterfall,                   11,    0,    4,    15,     80,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,        CAN_FLINCH
+128, Clamp,                       11,    0,    4,    15,     35,     85,    1,    1,     1,     0,    0000000 0000000,      0,    0,        BINDING        TRAPPING
+129, Swift,                        1,    1,    0,    20,     60,      0,    1,    0,     4,     0,    0000000 0000000,      0,    0,        BYPASS_ACC_CHECK
+130, Skull Bash,                   1,    0,    4,    10,    130,    100,    1,    1,     1,     0,    0000000 0100000,    100,    1,        STAT_USERS_DEF++        CHARGES
+131, Spike Cannon,                 1,    0,    0,    15,     20,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,        MULTI_STRIKE
+132, Constrict,                    1,    0,    4,    35,     10,    100,    1,    1,     1,     0,    0000100 0000000,     10,    1,        STAT_TARGET_SPD--
+133, Amnesia,                     14,    2,    2,    20,      0,      0,    1,    0,     9,     0,    0000000 0001000,    100,    2,        STAT_USERS_SPDEF++
+134, Kinesis,                     14,    2,    3,    15,      0,     80,    1,    0,     1,     0,    0000001 0000000,    100,    1,    STAT_TARGET_ACC--
+135, Soft-Boiled,                  1,    2,    2,    10,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+136, High Jump Kick,               2,    0,    0,    10,    130,     90,    1,    1,     1,     0,    0000000 0000000,      0,    0,    HAVE_RECOIL
+137, Glare,                        1,    2,    4,    30,      0,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_PAR
+138, Dream Eater,                 14,    1,    3,    15,    100,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,   HP_DRAINING_DAMAGE        RESTORES_HP
+139, Poison Gas,                   4,    2,    3,    40,      0,     90,    1,    0,     4,     0,    0000000 0000000,      0,    0,    CAN_PSN
+140, Barrage,                      1,    0,    2,    20,     15,     85,    1,    0,     1,     0,    0000000 0000000,      0,    0,    BALL_AND_BOMB       MULTI_STRIKE
+141, Leech Life,                   7,    0,    3,    10,     80,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,    HP_DRAINING_DAMAGE        RESTORES_HP
+142, Lovely Kiss,                  1,    2,    2,    10,      0,     75,    1,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_SLP
+143, Sky Attack,                   3,    0,    0,     5,    200,     90,    1,    0,     2,     0,    0000000 0000000,      0,    0,    CAN_FLINCH      CHARGES     HIGH_CRIT_HIT
+144, Transform,                    1,    2,    3,    10,      0,      0,    1,    0,     1,     0,    0000000 0000000,      0,    0,    ABILITY_CHANGING        BYPASS_ACC_CHECK        CHANGES_POKE_TYPE
+145, Bubble,                      11,    1,    2,    30,     40,    100,    1,    0,     4,     0,    0000100 0000000,     10,    1,    STAT_TARGET_SPD--
+146, Dizzy Punch,                  1,    0,    2,    10,     70,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,    PUNCHING        CAN_CONFUSE
+147, Spore,                       12,    2,    2,    15,      0,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,    POWDER_AND_SPORE        CAN_SLP
+148, Flash,                        1,    2,    2,    20,      0,    100,    1,    0,     1,     0,    0000001 0000000,    100,    1,    STAT_TARGET_ACC--
+149, Psywave,                     14,    1,    3,    15,      0,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,    DIRECT_DAMAGE
+150, Splash,                       1,    2,    2,    40,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,    NO_EFFECT
+151, Acid Armor,                   4,    2,    4,    20,      0,      0,    1,    0,     9,     0,    0000000 0100000,    100,    2,    STAT_USERS_DEF++
+152, Crabhammer,                  11,    0,    4,    10,    100,     90,    1,    1,     1,     0,    0000000 0000000,      0,    0,    HIGH_CRIT_HIT
+153, Explosion,                    1,    0,    2,     5,    250,    100,    1,    0,     5,     0,    0000000 0000000,      0,    0,    EXPLOSIVE       CAUSES_USER_TO_FAINT
+154, Fury Swipes,                  1,    0,    4,    15,     18,     80,    1,    1,     1,     0,    0000000 0000000,      0,    0,    MULTI_STRIKE
+155, Bonemerang,                   5,    0,    4,    10,     50,     90,    1,    0,     1,     0,    0000000 0000000,      0,    0,    MULTI_STRIKE
+156, Rest,                        14,    2,    2,    10,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,    CAN_HEAL_NON_VOL_STAT       CAN_SLP     HEALS_USER_IMMEDIATELY       RESTORES_HP
+157, Rock Slide,                   6,    0,    4,    10,     75,     90,    1,    0,     4,     0,    0000000 0000000,      0,    0,    CAN_FLINCH
+158, Hyper Fang,                   1,    0,    0,    15,     80,     90,    1,    1,     1,     0,    0000000 0000000,      0,    0,    BITING      CAN_FLINCH
+159, Sharpen,                      1,    2,    2,    30,      0,      0,    1,    0,     9,     0,    0000000 1000000,    100,    1,    STAT_USERS_ATT++
+160, Conversion,                   1,    2,    2,    30,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,    CHANGES_POKE_TYPE
+161, Tri Attack,                   1,    1,    2,    10,     80,    100,    1,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_BRN     CAN_FRZ     CAN_PAR
+162, Super Fang,                   1,    0,    4,    10,      0,     90,    1,    1,     1,     0,    0000000 0000000,      0,    0,    DIRECT_DAMAGE
+163, Slash,                        1,    0,    0,    20,     70,    100,    1,    1,     1,     0,    0000000 0000000,      0,    0,    HIGH_CRIT_HIT
+164, Substitute,                   1,    2,    2,    10,      0,      0,    1,    0,     9,     0,    0000000 0000000,      0,    0,    COST_HP
+165, Struggle,                     1,    0,    4,     1,     50,      0,    1,    1,     0,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        HAVE_RECOIL
+166, Sketch,                       1,    2,    3,     1,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK
+167, Triple Kick,                  2,    0,    0,    10,     10,     90,    2,    1,     1,     0,    0000000 0000000,      0,    0,    POWERS_UP       VARIABLE_POWER      MULTI_STRIKE
+168, Thief,                       17,    0,    4,    25,     60,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,
+169, Spider Web,                   7,    2,    3,    10,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        TRAPPING
+170, Mind Reader,                  1,    2,    3,     5,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK
+171, Nightmare,                    8,    2,    3,    15,      0,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK
+172, Flame Wheel,                 10,    0,    2,    25,     60,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,    CAN_THAW_USER       CAN_BRN
+173, Snore,                        1,    1,    2,    15,     50,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    SOUND_BASED     CAN_FLINCH
+174, Curse,                        8,    2,    4,    10,      0,      0,    2,    0,     9,     0,    0000100 1100000,    100,    1,    STAT_USERS_SPD--        STAT_USERS_ATT++        STAT_USERS_DEF++        COST_HP
+175, Flail,                        1,    0,    2,    15,      0,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER
+176, Conversion 2,                 1,    2,    2,    30,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        CHANGES_POKE_TYPE
+177, Aeroblast,                    3,    1,    0,     5,    100,     95,    2,    0,     2,     0,    0000000 0000000,      0,    0,    HIGH_CRIT_HIT
+178, Cotton Spore,                12,    2,    2,    40,      0,    100,    2,    0,     4,     0,    0000100 0000000,    100,    2,    STAT_TARGET_SPD--       POWDER_AND_SPORE
+179, Reversal,                     2,    0,    0,    15,      0,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER
+180, Spite,                        8,    2,    4,    10,      0,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,
+181, Powder Snow,                 15,    1,    2,    25,     40,    100,    2,    0,     4,     0,    0000000 0000000,      0,    0,    CAN_FRZ
+182, Protect,                      1,    2,    2,    10,      0,      0,    2,    0,     9,     4,    0000000 0000000,      0,    0,          PROTECTION
+183, Mach Punch,                   2,    0,    0,    30,     40,    100,    2,    1,     1,     1,    0000000 0000000,      0,    0,          PUNCHING
+184, Scary Face,                   1,    2,    4,    10,      0,    100,    2,    0,     1,     0,    0000100 0000000,    100,    2,    STAT_TARGET_SPD--
+185, Feint Attack,                17,    0,    3,    20,     60,      0,    2,    1,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK
+186, Sweet Kiss,                  13,    2,    2,    10,      0,     75,    2,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_CONFUSE
+187, Belly Drum,                   1,    2,    2,    10,      0,      0,    2,    0,     9,     0,    0000000 1000000,    100,   20,    STAT_USERS_ATT++        COST_HP
+188, Sludge Bomb,                  4,    1,    4,    10,     90,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BALL_AND_BOMB       CAN_PSN
+189, Mud-Slap,                     5,    1,    2,    10,     20,    100,    2,    0,     1,     0,    0000001 0000000,    100,    1,    STAT_TARGET_ACC--
+190, Octazooka,                   11,    1,    4,    10,     65,     85,    2,    0,     1,     0,    0000001 0000000,     50,    1,    STAT_TARGET_ACC--       BALL_AND_BOMB
+191, Spikes,                       5,    2,    3,    20,      0,      0,    2,    0,     6,     0,    0000000 0000000,      0,    0,    ENTRY_HAZARD
+192, Zap Cannon,                  13,    1,    0,     5,    120,     50,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BALL_AND_BOMB       CAN_PAR
+193, Foresight,                    1,    2,    3,    40,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        REMOVES_SOME_TYPE_IMMUNITIES
+194, Destiny Bond,                 8,    2,    3,     5,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,
+195, Perish Song,                  1,    2,    2,     5,      0,      0,    2,    0,     7,     0,    0000000 0000000,      0,    0,    SOUND_BASED     CAUSES_USER_TO_FAINT
+196, Icy Wind,                    15,    1,    2,    15,     55,     95,    2,    0,     4,     0,    0000100 0000000,    100,    1,    STAT_TARGET_SPD--
+197, Detect,                       2,    2,    0,     5,      0,      0,    2,    0,     9,     4,    0000000 0000000,      0,    0,          PROTECTION
+198, Bone Rush,                    5,    0,    4,    10,     25,     90,    2,    0,     1,     0,    0000000 0000000,      0,    0,    MULTI_STRIKE
+199, Lock-On,                      1,    2,    3,     5,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK
+200, Outrage,                     16,    0,    0,    10,    120,    100,    2,    1,     9,     0,    0000000 0000000,      0,    0,    CONSECUTIVE
+201, Sandstorm,                    6,    2,    4,    10,      0,      0,    2,    0,     7,     0,    0000000 0000000,      0,    0,    WEATHER_CHANGING
+202, Giga Drain,                  12,    1,    3,    10,     75,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    HP_DRAINING_DAMAGE        RESTORES_HP
+203, Endure,                       1,    2,    4,    10,      0,      0,    2,    0,     9,     4,    0000000 0000000,      0,    0,
+204, Charm,                       13,    2,    2,    20,      0,    100,    2,    0,     1,     0,    1000000 0000000,    100,    2,    STAT_TARGET_ATT--
+205, Rollout,                      6,    0,    2,    20,     30,     90,    2,    1,     1,     0,    0000000 0000000,      0,    0,    CONSECUTIVE     POWERS_UP       VARIABLE_POWER
+206, False Swipe,                  1,    0,    0,    40,     40,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,
+207, Swagger,                      1,    2,    2,    15,      0,     85,    2,    0,     1,     0,    0000000 1000000,    100,    2,    STAT_TARGETS_ATT++      CAN_CONFUSE
+208, Milk Drink,                   1,    2,    2,    10,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+209, Spark,                       13,    0,    0,    20,     65,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_PAR
+210, Fury Cutter,                  7,    0,    0,    20,     40,     95,    2,    1,     1,     0,    0000000 0000000,      0,    0,    POWERS_UP       VARIABLE_POWER
+211, Steel Wing,                   9,    0,    0,    25,     70,     90,    2,    1,     1,     0,    0000000 0100000,     10,    1,    STAT_USERS_DEF++
+212, Mean Look,                    1,    2,    2,     5,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        TRAPPING
+213, Attract,                      1,    2,    2,    15,      0,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,
+214, Sleep Talk,                   1,    2,    2,    10,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    CALLS_OTHER_MOVES
+215, Heal Bell,                    1,    2,    2,     5,      0,      0,    2,    0,    10,     0,    0000000 0000000,      0,    0,    SOUND_BASED     CAN_HEAL_NON_VOL_STAT
+216, Return,                       1,    0,    2,    20,      0,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER
+217, Present,                      1,    0,    2,    15,      0,     90,    2,    0,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER      RESTORES_HP
+218, Frustration,                  1,    0,    2,    20,      0,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER
+219, Safeguard,                    1,    2,    2,    25,      0,      0,    2,    0,    10,     0,    0000000 0000000,      0,    0,
+220, Pain Split,                   1,    2,    3,    20,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        RESTORES_HP
+221, Sacred Fire,                 10,    0,    2,     5,    100,     95,    2,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_THAW_USER       CAN_BRN
+222, Magnitude,                    5,    0,    4,    30,      0,    100,    2,    0,     5,     0,    0000000 0000000,      0,    0,    CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER      VARIABLE_POWER
+223, Dynamic Punch,                2,    0,    0,     5,    100,     50,    2,    1,     1,     0,    0000000 0000000,      0,    0,    PUNCHING        CAN_CONFUSE
+224, Megahorn,                     7,    0,    0,    10,    120,     85,    2,    1,     1,     0,    0000000 0000000,      0,    0,
+225, Dragon Breath,               16,    1,    0,    20,     60,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_PAR
+226, Baton Pass,                   1,    2,    2,    40,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    SWITCHES_USER_OUT
+227, Encore,                       1,    2,    2,     5,      0,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,
+228, Pursuit,                     17,    0,    3,    20,     40,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,    BYPASS_ACC_CHECK        POWERS_UP       VARIABLE_POWER
+229, Rapid Spin,                   1,    0,    0,    40,     20,    100,    2,    1,     1,     0,    0000000 0000000,      0,    0,
+230, Sweet Scent,                  1,    2,    2,    20,      0,    100,    2,    0,     4,     0,    0000010 0000000,    100,    2,    STAT_TARGET_EVA--
+231, Iron Tail,                    9,    0,    0,    15,    100,     75,    2,    1,     1,     0,    0100000 0000000,     30,    1,    STAT_TARGET_DEF--
+232, Metal Claw,                   9,    0,    0,    35,     50,     95,    2,    1,     1,     0,    0000000 1000000,     10,    1,    STAT_USERS_ATT++
+233, Vital Throw,                  2,    0,    0,    10,     70,      0,    2,    1,     1,    -1,    0000000 0000000,      0,    0,          BYPASS_ACC_CHECK
+234, Morning Sun,                  1,    2,    2,     5,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+235, Synthesis,                   12,    2,    3,     5,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+236, Moonlight,                   13,    2,    2,     5,      0,      0,    2,    0,     9,     0,    0000000 0000000,      0,    0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+237, Hidden Power,                 1,    1,    3,    15,     60,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_CHANGE_TYPE     VARIABLE_POWER
+238, Cross Chop,                   2,    0,    0,     5,    100,     80,    2,    1,     1,     0,    0000000 0000000,      0,    0,    HIGH_CRIT_HIT
+239, Twister,                     16,    1,    0,    20,     40,    100,    2,    0,     4,     0,    0000000 0000000,      0,    0,    CAN_FLINCH      CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
+240, Rain Dance,                  11,    2,    2,     5,      0,      0,    2,    0,     7,     0,    0000000 0000000,      0,    0,    WEATHER_CHANGING
+241, Sunny Day,                   10,    2,    2,     5,      0,      0,    2,    0,     7,     0,    0000000 0000000,      0,    0,    WEATHER_CHANGING
+242, Crunch,                      17,    0,    4,    15,     80,    100,    2,    1,     1,     0,    0101000 0000000,     20,    1,    STAT_TARGET_DEF--       STAT_TARGET_SPDEF--     BITING
+243, Mirror Coat,                 14,    1,    2,    20,      0,    100,    2,    0,     9,    -5,    0000000 0000000,      0,    0,          DIRECT_DAMAGE
+244, Psych Up,                     1,    2,    3,    10,      0,      0,    2,    0,     1,     0,    0000000 0000000,      0,    0,     BYPASS_ACC_CHECK
+245, Extreme Speed,                1,    0,    0,     5,     80,    100,    2,    1,     1,     2,    0000000 0000000,      0,    0,
+246, Ancient Power,                6,    1,    4,     5,     60,    100,    2,    0,     1,     0,    0000000 1111100,     10,    1,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
+247, Shadow Ball,                  8,    1,    3,    15,     80,    100,    2,    0,     1,     0,    0001000 0000000,     20,    1,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
+248, Future Sight,                14,    1,    3,    10,    120,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,
+249, Rock Smash,                   2,    0,    4,    15,     40,    100,    2,    0,     1,     0,    0100000 0000000,     50,    1,    STAT_TARGET_DEF--
+250, Whirlpool,                   11,    1,    2,    15,     35,     85,    2,    0,     1,     0,    0000000 0000000,      0,    0,    BINDING        TRAPPING     CAN_HIT_SEMI_INVULNERABLE       POWERS_UP       VARIABLE_POWER
+251, Beat Up,                     17,    0,    3,    10,      0,    100,    2,    0,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER      MULTI_STRIKE
+252, Fake Out,                     1,    0,    2,    10,     40,    100,    3,    0,     1,     3,    0000000 0000000,      0,    0,          CAN_FLINCH
+253, Uproar,                       1,    1,    2,    10,     90,    100,    3,    0,     9,     0,    0000000 0000000,      0,    0,    CONSECUTIVE     SOUND_BASED     CAN_HEAL_NON_VOL_STAT
+254, Stockpile,                    1,    2,    4,    20,      0,      0,    3,    0,     9,     0,    0000000 0101000,    100,    1,    STAT_USERS_DEF++        STAT_USERS_SPDEF++
+255, Spit Up,                      1,    1,    4,    10,      0,    100,    3,    0,     1,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER
+256, Swallow,                      1,    2,    4,    10,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,
+257, Heat Wave,                   10,    1,    2,    10,     95,     90,    3,    0,     4,     0,    0000000 0000000,      0,    0,    CAN_BRN
+258, Hail,                        15,    2,    2,    10,      0,      0,    3,    0,     7,     0,    0000000 0000000,      0,    0,    WEATHER_CHANGING
+259, Torment,                     17,    2,    4,    15,      0,    100,    3,    0,     1,     0,    0000000 0000000,      0,    0,
+260, Flatter,                     17,    2,    3,    15,      0,    100,    3,    0,     1,     0,    0000000 0010000,    100,    1,    STAT_TARGETS_SPATK++        CAN_CONFUSE
+261, Will-O-Wisp,                 10,    2,    2,    15,      0,     85,    3,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_BRN
+262, Memento,                     17,    2,    4,    10,      0,    100,    3,    0,     1,     0,    1010000 0000000,    100,    2,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     CAUSES_USER_TO_FAINT
+263, Facade,                       1,    0,    2,    20,     70,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    POWERS_UP       VARIABLE_POWER
+264, Focus Punch,                  2,    0,    4,    20,    150,    100,    3,    1,     1,    -3,    0000000 0000000,      0,    0,          PUNCHING
+265, Smelling Salts,               1,    0,    4,    10,     70,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    CAN_HEAL_NON_VOL_STAT       POWERS_UP       VARIABLE_POWER
+266, Follow Me,                    1,    2,    2,    20,      0,      0,    3,    0,     9,     2,    0000000 0000000,      0,    0,          MAKES_TARGET_CENTER_OF_ATTENTION
+267, Nature Power,                 1,    2,    2,    20,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    CALLS_OTHER_MOVES       VARIES_WITH_ENVIRONMENT
+268, Charge,                      13,    2,    3,    20,      0,      0,    3,    0,     9,     0,    0000000 0001000,    100,    1,    STAT_USERS_SPDEF++
+269, Taunt,                       17,    2,    3,    20,      0,    100,    3,    0,     1,     0,    0000000 0000000,      0,    0,
+270, Helping Hand,                 1,    2,    3,    20,      0,      0,    3,    0,     8,     5,    0000000 0000000,      0,    0,          CAN_HIT_SEMI_INVULNERABLE
+271, Trick,                       14,    2,    3,    10,      0,    100,    3,    0,     1,     0,    0000000 0000000,      0,    0,
+272, Role Play,                   14,    2,    2,    10,      0,      0,    3,    0,     1,     0,    0000000 0000000,      0,    0,    ABILITY_CHANGING        BYPASS_ACC_CHECK
+273, Wish,                         1,    2,    2,    10,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    RESTORES_HP
+274, Assist,                       1,    2,    2,    20,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    CALLS_OTHER_MOVES
+275, Ingrain,                     12,    2,    3,    20,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    RESTORES_HP     TRAPPING
+276, Superpower,                   2,    0,    4,     5,    120,    100,    3,    0,     1,     0,    1100000 0000000,    100,    1,    STAT_USERS_ATT--        STAT_USERS_DEF--
+277, Magic Coat,                  14,    2,    2,    15,      0,      0,    3,    0,     9,     4,    0000000 0000000,      0,    0,
+278, Recycle,                      1,    2,    3,    10,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,
+279, Revenge,                      2,    0,    4,    10,     60,    100,    3,    1,     1,    -4,    0000000 0000000,      0,    0,          POWERS_UP       VARIABLE_POWER
+280, Brick Break,                  2,    0,    0,    15,     75,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,
+281, Yawn,                         1,    2,    2,    10,      0,      0,    3,    0,     1,     0,    0000000 0000000,      0,    0,    CAN_SLP     BYPASS_ACC_CHECK
+282, Knock Off,                   17,    0,    3,    20,     65,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,
+283, Endeavor,                     1,    0,    4,     5,      0,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    DIRECT_DAMAGE
+284, Eruption,                    10,    1,    2,     5,    150,    100,    3,    0,     4,     0,    0000000 0000000,      0,    0,    VARIABLE_POWER
+285, Skill Swap,                  14,    2,    3,    10,      0,      0,    3,    0,     1,     0,    0000000 0000000,      0,    0,    ABILITY_CHANGING        BYPASS_ACC_CHECK
+286, Imprison,                    14,    2,    3,    10,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,
+287, Refresh,                      1,    2,    2,    20,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    CAN_HEAL_NON_VOL_STAT
+288, Grudge,                       8,    2,    4,     5,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,
+289, Snatch,                      17,    2,    3,    10,      0,      0,    3,    0,     9,     4,    0000000 0000000,      0,    0,
+290, Secret Power,                 1,    0,    3,    20,     70,    100,    3,    0,     1,     0,    1110101 0000000,     30,    1,    STAT_TARGET_ACC--       STAT_TARGET_ATT--       STAT_TARGET_DEF--       STAT_TARGET_SPATT--     STAT_TARGET_SPD--       CAN_FLINCH      CAN_CONFUSE     CAN_BRN     CAN_FRZ     CAN_PAR     CAN_PSN     CAN_SLP     VARIES_WITH_ENVIRONMENT
+291, Dive,                        11,    0,    2,    10,     80,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    HAS_SEMI_INVULNERABLE TURN      CHARGES
+292, Arm Thrust,                   2,    0,    4,    20,     15,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    MULTI_STRIKE
+293, Camouflage,                   1,    2,    3,    20,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    CHANGES_POKE_TYPE       VARIES_WITH_ENVIRONMENT
+294, Tail Glow,                    7,    2,    2,    20,      0,      0,    3,    0,     9,     0,    0000000 0010000,    100,    3,    STAT_USERS_SPATT++
+295, Luster Purge,                14,    1,    3,     5,     70,    100,    3,    0,     1,     0,    0001000 0000000,     50,    1,    STAT_TARGET_SPDEF--
+296, Mist Ball,                   14,    1,    3,     5,     70,    100,    3,    0,     1,     0,    0010000 0000000,     50,    1,    STAT_TARGET_SPATT--     BALL_AND_BOMB
+297, Feather Dance,                3,    2,    2,    15,      0,    100,    3,    0,     1,     0,    1000000 0000000,    100,    2,    STAT_TARGET_ATT--       DANCE
+298, Teeter Dance,                 1,    2,    2,    20,      0,    100,    3,    0,     5,     0,    0000000 0000000,      0,    0,    DANCE       CAN_CONFUSE
+299, Blaze Kick,                  10,    0,    0,    10,     85,     90,    3,    1,     1,     0,    0000000 0000000,      0,    0,    CAN_BRN     HIGH_CRIT_HIT
+300, Mud Sport,                    5,    2,    2,    15,      0,      0,    3,    0,     7,     0,    0000000 0000000,      0,    0,
+301, Ice Ball,                    15,    0,    2,    20,     30,     90,    3,    0,     1,     0,    0000000 0000000,      0,    0,    CONSECUTIVE     BALL_AND_BOMB       POWERS_UP       VARIABLE_POWER
+302, Needle Arm,                  12,    0,    3,    15,     60,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    MINIMIZED_TARGET_DMG++      CAN_FLINCH
+303, Slack Off,                    1,    2,    2,    10,      0,      0,    3,    0,     9,     0,    0000000 0000000,      0,    0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+304, Hyper Voice,                  1,    1,    0,    10,     90,    100,    3,    0,     4,     0,    0000000 0000000,      0,    0,    SOUND_BASED
+305, Poison Fang,                  4,    0,    3,    15,     50,    100,    3,    1,     1,     0,    0000000 0000000,      0,    0,    BITING      CAN_PSN
+306, Crush Claw,                   1,    0,    0,    10,     75,     95,    3,    2,     1,     0,    STAT_TARGET_DEF--
+307, Blast Burn,                  10,    1,    2,     5,    150,     90,    3,    0,     1,     0,    RECHARGES
+308, Hydro Cannon,                11,    1,    2,     5,    150,     90,    3,    0,     1,     0,    RECHARGES
+309, Meteor Mash,                  9,    0,    0,    10,     90,     90,    3,    0,     1,     0,    STAT_USERS_ATT++        PUNCHING
+310, Astonish,                     8,    0,    2,    15,     30,    100,    3,    1,     1,     0,    MINIMIZED_TARGET_DMG++      CAN_FLINCH
+311, Weather Ball,                 1,    1,    2,    10,     50,    100,    3,    0,     1,     0,    BALL_AND_BOMB       CAN_CHANGE_TYPE     POWERS_UP       VARIABLE_POWER
+312, Aromatherapy,                12,    2,    3,     5,      0,      0,    3,    0,     9,     0,    CAN_HEAL_NON_VOL_STAT
+313, Fake Tears,                  17,    2,    2,    20,      0,    100,    3,    0,     1,     0,    STAT_TARGET_SPDEF--
+314, Air Cutter,                   3,    1,    0,    25,     60,     95,    3,    0,     4,     0,    HIGH_CRIT_HIT
+315, Overheat,                    10,    1,    2,     5,    130,     90,    3,    0,     1,     0,    STAT_USERS_SPATT--
+316, Odor Sleuth,                  1,    2,    3,    40,      0,      0,    3,    0,     1,     0,    BYPASS_ACC_CHECK     REMOVES_SOME_TYPE_IMMUNITIES
+317, Rock Tomb,                    6,    0,    3,    15,     60,     95,    3,    0,     1,     0,    STAT_TARGET_SPD--
+318, Silver Wind,                  7,    1,    2,     5,     60,    100,    3,    0,     1,     0,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
+319, Metal Sound,                  9,    2,    3,    40,      0,    85,     3,    0,     1,     0,    STAT_TARGET_SPDEF--     SOUND_BASED
+320, Grass Whistle,               12,    2,    3,    15,      0,    55,     3,    0,     1,     0,    SOUND_BASED     CAN_SLP
+321, Tickle,                       1,    2,    2,    20,      0,    100,    3,    0,     1,     0,    STAT_TARGET_ATT--       STAT_TARGET_DEF--
+322, Cosmic Power,                14,    2,    2,    20,      0,      0,    3,    0,     9,     0,    STAT_USERS_DEF++        STAT_USERS_SPDEF++
+323, Water Spout,                 11,    1,    2,     5,    150,    100,    3,    0,     4,     0,    VARIABLE_POWER
+324, Signal Beam,                  7,    1,    2,    15,     75,    100,    3,    0,     1,     0,    CAN_CONFUSE
+325, Shadow Punch,                 8,    0,    3,    20,     60,      0,    3,    1,     1,     0,    PUNCHING        BYPASS_ACC_CHECK
+326, Extrasensory,                14,    1,    0,    20,     80,    100,    3,    0,     1,     0,    MINIMIZED_TARGET_DMG++      CAN_FLINCH
+327, Sky Uppercut,                 2,    0,    0,    15,     85,     90,    3,    1,     1,     0,    PUNCHING        CAN_HIT_SEMI_INVULNERABLE
+328, Sand Tomb,                    5,    0,    3,    15,     35,     85,    3,    0,     1,     0,    BINDING        TRAPPING
+329, Sheer Cold,                  15,    1,    2,     5,      0,      0,    3,    0,     1,     0,    OHKO        DIRECT_DAMAGE
+330, Muddy Water,                 11,    1,    4,    10,     90,     85,    3,    0,     4,     0,    STAT_TARGET_ACC--
+331, Bullet Seed,                 12,    0,    0,    30,     25,    100,    3,    0,     1,     0,    BALL_AND_BOMB       MULTI_STRIKE
+332, Aerial Ace,                   3,    0,    0,    20,     60,      0,    3,    1,     2,     0,    BYPASS_ACC_CHECK
+333, Icicle Spear,                15,    0,    2,    30,     25,    100,    3,    0,     1,     0,    MULTI_STRIKE
+334, Iron Defense,                 9,    2,    4,    15,      0,      0,    3,    0,     9,     0,    STAT_USERS_DEF++
+335, Block,                        1,    2,    2,     5,      0,      0,    3,    0,     1,     0,    BYPASS_ACC_CHECK        TRAPPING
+336, Howl,                         1,    2,    0,    40,      0,      0,    3,    0,     9,     0,    STAT_USERS_ATT++
+337, Dragon Claw,                 16,    0,    0,    15,     80,    100,    3,    1,     1,     0,
+338, Frenzy Plant,                12,    1,    0,     5,    150,     90,    3,    0,     1,     0,    RECHARGES
+339, Bulk Up,                      2,    2,    0,    20,      0,      0,    3,    0,     9,     0,    STAT_USERS_ATT++        STAT_USERS_DEF++
+340, Bounce,                       3,    0,    2,     5,     85,     85,    3,    1,     2,     0,    CAN_PAR     HAS_SEMI_INVULNERABLE TURN      CHARGES
+341, Mud Shot,                     5,    1,    4,    15,     55,     95,    3,    0,     1,     0,    STAT_TARGET_SPD--
+342, Poison Tail,                  4,    0,    3,    25,     50,    100,    3,    1,     1,     0,    CAN_PSN     HIGH_CRIT_HIT
+343, Covet,                        1,    0,    2,    25,     60,    100,    3,    0,     1,     0,
+344, Volt Tackle,                 13,    0,    0,    15,    120,    100,    3,    1,     1,     0,    CAN_PAR     HAVE_RECOIL
+345, Magical Leaf,                12,    1,    2,    20,     60,      0,    3,    0,     1,     0,    BYPASS_ACC_CHECK
+346, Water Sport,                 11,    2,    2,    15,      0,      0,    3,    0,     7,     0,
+347, Calm Mind,                   14,    2,    3,    20,      0,      0,    3,    0,     9,     0,    STAT_USERS_SPATT++      STAT_USERS_SPDEF++
+348, Leaf Blade,                  12,    0,    0,    15,     90,    100,    3,    0,     1,     0,    HIGH_CRIT_HIT
+349, Dragon Dance,                16,    2,    0,    20,      0,      0,    3,    0,     9,     0,    STAT_USERS_ATT++        STAT_USERS_SPD++        DANCE
+350, Rock Blast,                   6,    0,    4,    10,     25,     90,    3,    0,     1,     0,    BALL_AND_BOMB       MULTI_STRIKE
+351, Shock Wave,                  13,    1,    0,    20,     60,      0,    3,    0,     1,     0,    BYPASS_ACC_CHECK
+352, Water Pulse,                 11,    1,    2,    20,     60,    100,    3,    0,     2,     0,    AURA_AND_PULSE      CAN_CONFUSE
+353, Doom Desire,                  9,    1,    2,     5,    140,    100,    3,    0,     1,     0,
+354, Psycho Boost,                14,    1,    3,     5,    140,     90,    3,    0,     1,     0,    STAT_USERS_SPATT--
+355, Roost,                        3,    2,    3,    10,      0,      0,    4,    0,     9,     0,    CHANGES_POKE_TYPE       HEALS_USER_IMMEDIATELY       RESTORES_HP
+356, Gravity,                     14,    2,    3,     5,      0,      0,    4,    0,     7,     0,    REMOVES_SOME_TYPE_IMMUNITIES
+357, Miracle Eye,                 14,    2,    3,    40,      0,      0,    4,    0,     1,     0,    BYPASS_ACC_CHECK        REMOVES_SOME_TYPE_IMMUNITIES
+358, Wake-Up Slap,                 2,    0,    4,    10,     70,    100,    4,    1,     1,     0,    CAN_HEAL_NON_VOL_STAT       POWERS_UP       VARIABLE_POWER
+359, Hammer Arm,                   2,    0,    4,    10,    100,     90,    4,    1,     1,     0,    STAT_USERS_SPD--        PUNCHING
+360, Gyro Ball,                    9,    0,    0,     5,      0,    100,    4,    0,     1,     0,    BALL_AND_BOMB       VARIABLE_POWER
+361, Healing Wish,                14,    2,    2,    10,      0,      0,    4,    0,     9,     0,    CAUSES_USER_TO_FAINT        RESTORES_HP
+362, Brine,                       11,    1,    4,    10,     65,    100,    4,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+363, Natural Gift,                 1,    0,    3,    15,      0,    100,    4,    0,     1,     0,    CAN_CHANGE_TYPE     VARIABLE_POWER
+364, Feint,                        1,    0,    3,    10,     30,    100,    4,    0,     1,     2,          BREAK_THROUGH_PROTECTION
+365, Pluck,                        3,    0,    2,    20,     60,    100,    4,    1,     2,     0,
+366, Tailwind,                     3,    2,    0,    15,      0,      0,    4,    0,    10,     0,
+367, Acupressure,                  1,    2,    4,    30,      0,      0,    4,    0,     3,     0,    STAT_TARGETS_ACC++      STAT_TARGETS_ATT++      STAT_TARGETS_DEF++      STAT_TARGETS_EVA++      STAT_TARGETS_SPATK++        STAT_TARGETS_SPDEF++        STAT_TARGETS_SPD++      STAT_USERS_ACC++        STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_EVA++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
+368, Metal Burst,                  9,    0,    0,    10,      0,    100,    4,    0,     9,     0,    DIRECT_DAMAGE
+369, U-turn,                       7,    0,    2,    20,     70,    100,    4,    1,     1,     0,    SWITCHES_USER_OUT
+370, Close Combat,                 2,    0,    4,     5,    120,    100,    4,    1,     1,     0,    STAT_USERS_DEF--        STAT_USERS_SPDEF--
+371, Payback,                     17,    0,    4,    10,     50,    100,    4,    1,     1,     0,    POWERS_UP       VARIABLE_POWER
+372, Assurance,                   17,    0,    3,    10,     60,    100,    4,    1,     1,     0,    POWERS_UP       VARIABLE_POWER
+373, Embargo,                     17,    2,    3,    15,      0,    100,    4,    0,     1,     0,
+374, Fling,                       17,    0,    2,    10,      0,    100,    4,    0,     1,     0,    CAN_FLINCH      CAN_BRN     CAN_PAR     CAN_PSN     VARIABLE_POWER
+375, Psycho Shift,                14,    2,    3,    10,      0,    100,    4,    0,     1,     0,    CAN_HEAL_NON_VOL_STAT       CAN_BRN     CAN_PAR     CAN_PSN     CAN_SLP
+376, Trump Card,                   1,    1,    0,     5,      0,      0,    4,    1,     1,     0,    BYPASS_ACC_CHECK        VARIABLE_POWER
+377, Heal Block,                  14,    2,    3,    15,      0,    100,    4,    0,     4,     0,
+378, Wring Out,                    1,    1,    4,     5,      0,    100,    4,    1,     1,     0,    VARIABLE_POWER
+379, Power Trick,                 14,    2,    3,    10,      0,      0,    4,    0,     9,     0,
+380, Gastro Acid,                  4,    2,    4,    10,      0,    100,    4,    0,     1,     0,    AFFECTS_ABILITIES
+381, Lucky Chant,                  1,    2,    2,    30,      0,      0,    4,    0,    10,     0,
+382, Me First,                     1,    2,    3,    20,      0,      0,    4,    0,     0,     0,    CALLS_OTHER_MOVES       BYPASS_ACC_CHECK
+383, Copycat,                      1,    2,    2,    20,      0,      0,    4,    0,     9,     0,    CALLS_OTHER_MOVES
+384, Power Swap,                  14,    2,    3,    10,      0,      0,    4,    0,     1,     0,    BYPASS_ACC_CHECK
+385, Guard Swap,                  14,    2,    3,    10,      0,      0,    4,    0,     1,     0,    BYPASS_ACC_CHECK
+386, Punishment,                  17,    0,    0,     5,      0,    100,    4,    1,     1,     0,    VARIABLE_POWER
+387, Last Resort,                  1,    0,    2,     5,    140,    100,    4,    1,     1,     0,
+388, Worry Seed,                  12,    2,    3,    10,      0,    100,    4,    0,     1,     0,    ABILITY_CHANGING
+389, Sucker Punch,                17,    0,    3,     5,     70,    100,    4,    1,     1,     1,    
+390, Toxic Spikes,                 4,    2,    3,    20,      0,      0,    4,    0,     6,     0,    CAN_PSN     ENTRY_HAZARD
+391, Heart Swap,                  14,    2,    3,    10,      0,      0,    4,    0,     1,     0,    BYPASS_ACC_CHECK
+392, Aqua Ring,                   11,    2,    2,    20,      0,      0,    4,    0,     9,     0,    RESTORES_HP
+393, Magnet Rise,                 13,    2,    3,    10,      0,      0,    4,    0,     9,     0,
+394, Flare Blitz,                 10,    0,    0,    15,    120,    100,    4,    1,     1,     0,    CAN_THAW_USER       CAN_BRN     HAVE_RECOIL
+395, Force Palm,                   2,    0,    0,    10,     60,    100,    4,    1,     1,     0,    CAN_PAR
+396, Aura Sphere,                  2,    1,    2,    20,     80,      0,    4,    0,     2,     0,    AURA_AND_PULSE      BALL_AND_BOMB       BYPASS_ACC_CHECK
+397, Rock Polish,                  6,    2,    4,    20,      0,      0,    4,    0,     9,     0,    STAT_USERS_SPD++
+398, Poison Jab,                   4,    0,    4,    20,     80,    100,    4,    1,     1,     0,    CAN_PSN
+399, Dark Pulse,                  17,    1,    0,    15,     80,    100,    4,    0,     2,     0,    AURA_AND_PULSE      CAN_FLINCH
+400, Night Slash,                 17,    0,    0,    15,     70,    100,    4,    1,     1,     0,    HIGH_CRIT_HIT
+401, Aqua Tail,                   11,    0,    2,    10,     90,     90,    4,    1,     1,     0,
+402, Seed Bomb,                   12,    0,    4,    15,     80,    100,    4,    0,     1,     0,    BALL_AND_BOMB
+403, Air Slash,                    3,    1,    0,    15,     75,     95,    4,    0,     2,     0,    CAN_FLINCH
+404, X-Scissor,                    7,    0,    0,    15,     80,    100,    4,    1,     1,     0,
+405, Bug Buzz,                     7,    1,    2,    10,     90,    100,    4,    0,     1,     0,    STAT_TARGET_SPDEF--     SOUND_BASED
+406, Dragon Pulse,                16,    1,    2,    10,     85,    100,    4,    0,     2,     0,    AURA_AND_PULSE
+407, Dragon Rush,                 16,    0,    4,    10,    100,     75,    4,    1,     1,     0,    MINIMIZED_TARGET_DMG++      CAN_FLINCH      BYPASS_ACC_CHECK
+408, Power Gem,                    6,    1,    2,    20,     80,    100,    4,    0,     1,     0,
+409, Drain Punch,                  2,    0,    4,    10,     75,    100,    4,    1,     1,     0,    HP_DRAINING_DAMAGE        RESTORES_HP      PUNCHING
+410, Vacuum Wave,                  2,    1,    0,    30,     40,    100,    4,    0,     1,     1,    
+411, Focus Blast,                  2,    1,    0,     5,    120,     70,    4,    0,     1,     0,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
+412, Energy Ball,                 12,    1,    2,    10,     90,    100,    4,    0,     1,     0,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
+413, Brave Bird,                   3,    0,    0,    15,    120,    100,    4,    1,     2,     0,    HAVE_RECOIL
+414, Earth Power,                  5,    1,    2,    10,     90,    100,    4,    0,     1,     0,    STAT_TARGET_SPDEF--
+415, Switcheroo,                  17,    2,    3,    10,      0,    100,    4,    0,     1,     0,
+416, Giga Impact,                  1,    0,    4,     5,    150,     90,    4,    1,     1,     0,    RECHARGES
+417, Nasty Plot,                  17,    2,    3,    20,      0,      0,    4,    0,     9,     0,    STAT_USERS_SPATT++
+418, Bullet Punch,                 9,    0,    4,    30,     40,    100,    4,    1,     1,     1,          PUNCHING
+419, Avalanche,                   15,    0,    2,    10,     60,    100,    4,    0,     1,    -4,          POWERS_UP       VARIABLE_POWER
+420, Ice Shard,                   15,    0,    2,    30,     40,    100,    4,    0,     1,     1,    
+421, Shadow Claw,                  8,    0,    0,    15,     70,    100,    4,    1,     1,     0,    HIGH_CRIT_HIT
+422, Thunder Fang,                13,    0,    0,    15,     65,     95,    4,    1,     1,     0,    BITING      CAN_FLINCH      CAN_PAR
+423, Ice Fang,                    15,    0,    0,    15,     65,     95,    4,    1,     1,     0,    BITING      CAN_FLINCH      CAN_FRZ
+424, Fire Fang,                   10,    0,    0,    15,     65,     95,    4,    1,     1,     0,    BITING      CAN_FLINCH      CAN_BRN
+425, Shadow Sneak,                 8,    0,    3,    30,     40,    100,    4,    1,     1,     1,    
+426, Mud Bomb,                     5,    1,    2,    10,     65,     85,    4,    0,     1,     0,    STAT_TARGET_ACC--       BALL_AND_BOMB
+427, Psycho Cut,                  14,    0,    0,    20,     70,    100,    4,    0,     1,     0,    HIGH_CRIT_HIT
+428, Zen Headbutt,                14,    0,    3,    15,     80,     90,    4,    1,     1,     0,    CAN_FLINCH
+429, Mirror Shot,                  9,    1,    2,    10,     65,     85,    4,    0,     1,     0,    STAT_TARGET_ACC--
+430, Flash Cannon,                 9,    1,    2,    10,     80,    100,    4,    0,     1,     0,    STAT_TARGET_SPDEF--
+431, Rock Climb,                   1,    0,    4,    20,     90,     85,    4,    1,     1,     0,    CAN_CONFUSE
+432, Defog,                        3,    2,    0,    15,      0,      0,    4,    0,     1,     0,    STAT_TARGET_EVA--       BYPASS_ACC_CHECK        WEATHER_CHANGING
+433, Trick Room,                  14,    2,    3,     5,      0,      0,    4,    0,     7,    -7,    
+434, Draco Meteor,                16,    1,    2,     5,    130,     90,    4,    0,     1,     0,    STAT_USERS_SPATT--
+435, Discharge,                   13,    1,    2,    15,     80,    100,    4,    0,     5,     0,    CAN_PAR
+436, Lava Plume,                  10,    1,    4,    15,     80,    100,    4,    0,     5,     0,    CAN_BRN
+437, Leaf Storm,                  12,    1,    2,     5,    130,     90,    4,    0,     1,     0,    STAT_USERS_SPATT--
+438, Power Whip,                  12,    0,    4,    10,    120,     85,    4,    1,     1,     0,
+439, Rock Wrecker,                 6,    0,    4,     5,    150,     90,    4,    0,     1,     0,    BALL_AND_BOMB       RECHARGES
+440, Cross Poison,                 4,    0,    0,    20,     70,    100,    4,    1,     1,     0,    CAN_PSN     HIGH_CRIT_HIT
+441, Gunk Shot,                    4,    0,    4,     5,    120,     80,    4,    0,     1,     0,    CAN_PSN
+442, Iron Head,                    9,    0,    4,    15,     80,    100,    4,    1,     1,     0,    CAN_FLINCH
+443, Magnet Bomb,                  9,    0,    0,    20,     60,      0,    4,    0,     1,     0,    BALL_AND_BOMB       BYPASS_ACC_CHECK
+444, Stone Edge,                   6,    0,    4,     5,    100,     80,    4,    0,     1,     0,    HIGH_CRIT_HIT
+445, Captivate,                    1,    2,    2,    20,      0,    100,    4,    0,     4,     0,    STAT_TARGET_SPATT--
+446, Stealth Rock,                 6,    2,    0,    20,      0,      0,    4,    0,     6,     0,    ENTRY_HAZARD
+447, Grass Knot,                  12,    1,    2,    20,      0,    100,    4,    1,     1,     0,    AFFECTED_BY_WEIGHT      VARIABLE_POWER
+448, Chatter,                      3,    1,    2,    20,     65,    100,    4,    0,     2,     0,    SOUND_BASED     CAN_CONFUSE
+449, Judgment,                     1,    1,    2,    10,    100,    100,    4,    0,     1,     0,    CAN_CHANGE_TYPE
+450, Bug Bite,                     7,    0,    2,    20,     60,    100,    4,    1,     1,     0,
+451, Charge Beam,                 13,    1,    2,    10,     50,     90,    4,    0,     1,     0,    STAT_USERS_SPATT++
+452, Wood Hammer,                 12,    0,    4,    15,    120,    100,    4,    1,     1,     0,    HAVE_RECOIL
+453, Aqua Jet,                    11,    0,    0,    20,     40,    100,    4,    1,     1,     1,    
+454, Attack Order,                 7,    0,    3,    15,     90,    100,    4,    0,     1,     0,    HIGH_CRIT_HIT
+455, Defend Order,                 7,    2,    3,    10,      0,      0,    4,    0,     9,     0,    STAT_USERS_DEF++        STAT_USERS_SPDEF++
+456, Heal Order,                   7,    2,    3,    10,      0,      0,    4,    0,     9,     0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+457, Head Smash,                   6,    0,    4,     5,    150,     80,    4,    1,     1,     0,    HAVE_RECOIL
+458, Double Hit,                   1,    0,    0,    10,     35,     90,    4,    1,     1,     0,    MULTI_STRIKE
+459, Roar of Time,                16,    1,    2,     5,    150,     90,    4,    0,     1,     0,    RECHARGES
+460, Spacial Rend,                16,    1,    2,     5,    100,     95,    4,    0,     1,     0,    HIGH_CRIT_HIT
+461, Lunar Dance,                 14,    2,    2,    10,      0,      0,    4,    0,     9,     0,    DANCE       CAUSES_USER_TO_FAINT      RESTORES_HP
+462, Crush Grip,                   1,    0,    4,     5,      0,    100,    4,    1,     1,     0,    VARIABLE_POWER
+463, Magma Storm,                 10,    1,    4,     5,    100,     75,    4,    0,     1,     0,    BINDING        TRAPPING
+464, Dark Void,                   17,    2,    3,    10,      0,     50,    4,    0,     4,     0,    CAN_SLP
+465, Seed Flare,                  12,    1,    2,     5,    120,     85,    4,    0,     1,     0,    STAT_TARGET_SPDEF--
+466, Ominous Wind,                 8,    1,    2,     5,     60,    100,    4,    0,     1,     0,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
+467, Shadow Force,                 8,    0,    0,     5,    120,    100,    4,    1,     1,     0,    MINIMIZED_TARGET_DMG++      BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK        HAS_SEMI_INVULNERABLE TURN      CHARGES
+468, Hone Claws,                  17,    2,    2,    15,      0,      0,    5,    1,     9,     0,    STAT_USERS_ACC++        STAT_USERS_ATT++
+469, Wide Guard,                   6,    2,    4,    10,      0,      0,    5,    0,    10,     3,          PROTECTION
+470, Guard Split,                 14,    2,    3,    10,      0,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK
+471, Power Split,                 14,    2,    3,    10,      0,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK
+472, Wonder Room,                 14,    2,    3,    10,      0,      0,    5,    0,     7,     0,    
+473, Psyshock,                    14,    1,    2,    10,     80,    100,    5,    0,     1,     0,    USES_STATS_FROM_DIFF_CAT
+474, Venoshock,                    4,    1,    2,    10,     65,    100,    5,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+475, Autotomize,                   9,    2,    2,    15,      0,      0,    5,    0,     9,     0,    AFFECTED_BY_WEIGHT      STAT_USERS_SPD++
+476, Rage Powder,                  7,    2,    3,    20,      0,      0,    5,    0,     9,     2,          POWDER_AND_SPORE        MAKES_TARGET_CENTER_OF_ATTENTION
+477, Telekinesis,                 14,    2,    3,    15,      0,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK
+478, Magic Room,                  14,    2,    3,    10,      0,      0,    5,    0,     7,     0,    
+479, Smack Down,                   6,    0,    4,    15,     50,    100,    5,    0,     1,     0,    CAN_HIT_SEMI_INVULNERABLE       REMOVES_SOME_TYPE_IMMUNITIES
+480, Storm Throw,                  2,    0,    0,    10,     60,    100,    5,    1,     1,     0,    PERFECT_CRIT_HIT
+481, Flame Burst,                 10,    1,    2,    15,     70,    100,    5,    0,     1,     0,
+482, Sludge Wave,                  4,    1,    4,    10,     95,    100,    5,    0,     5,     0,    CAN_PSN
+483, Quiver Dance,                 7,    2,    2,    20,      0,      0,    5,    0,     9,     0,    STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++        DANCE
+484, Heavy Slam,                   9,    0,    4,    10,      0,    100,    5,    1,     1,     0,    AFFECTED_BY_WEIGHT      MINIMIZED_TARGET_DMG++      VARIABLE_POWER
+485, Synchronoise,                14,    1,    3,    10,    120,    100,    5,    0,     5,     0,
+486, Electro Ball,                13,    1,    0,    10,      0,    100,    5,    0,     1,     0,    BALL_AND_BOMB       VARIABLE_POWER
+487, Soak,                        11,    2,    2,    20,      0,    100,    5,    0,     1,     0,    CHANGES_POKE_TYPE
+488, Flame Charge,                10,    0,    0,    20,     50,    100,    5,    1,     1,     0,    STAT_USERS_SPD++
+489, Coil,                         4,    2,    4,    20,      0,      0,    5,    0,     9,     0,    STAT_USERS_ACC++        STAT_USERS_ATT++        STAT_USERS_DEF++
+490, Low Sweep,                    2,    0,    3,    20,     65,    100,    5,    1,     1,     0,    STAT_TARGET_SPD--
+491, Acid Spray,                   4,    1,    2,    20,     40,    100,    5,    0,     1,     0,    STAT_TARGET_SPDEF--     BALL_AND_BOMB
+492, Foul Play,                   17,    0,    3,    15,     95,    100,    5,    1,     1,     0,
+493, Simple Beam,                  1,    2,    2,    15,      0,    100,    5,    0,     1,     0,    ABILITY_CHANGING
+494, Entrainment,                  1,    2,    2,    15,      0,    100,    5,    0,     1,     0,    ABILITY_CHANGING
+495, After You,                    1,    2,    2,    15,      0,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK
+496, Round,                        1,    1,    2,    15,     60,    100,    5,    0,     1,     0,    SOUND_BASED     POWERS_UP       VARIABLE_POWER
+497, Echoed Voice,                 1,    1,    2,    15,     40,    100,    5,    0,     1,     0,    SOUND_BASED     POWERS_UP       VARIABLE_POWER
+498, Chip Away,                    1,    0,    4,    20,     70,    100,    5,    1,     1,     0,
+499, Clear Smog,                   4,    1,    2,    15,     50,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK
+500, Stored Power,                14,    1,    3,    10,     20,    100,    5,    0,     1,     0,    VARIABLE_POWER
+501, Quick Guard,                  2,    2,    0,    15,      0,      0,    5,    0,    10,     3,          PROTECTION
+502, Ally Switch,                 14,    2,    3,    15,      0,      0,    5,    0,     9,     2,    
+503, Scald,                       11,    1,    4,    15,     80,    100,    5,    0,     1,     0,    CAN_THAW_USER       CAN_HEAL_NON_VOL_STAT       CAN_BRN
+504, Shell Smash,                  1,    2,    4,    15,      0,      0,    5,    0,     9,     0,    STAT_USERS_DEF--        STAT_USERS_SPDEF--      STAT_USERS_ATT++        STAT_USERS_SPATT++      STAT_USERS_SPD++
+505, Heal Pulse,                  14,    2,    2,    10,      0,      0,    5,    0,     2,     0,    AURA_AND_PULSE      BYPASS_ACC_CHECK        RESTORES_HP
+506, Hex,                          8,    1,    3,    10,     65,    100,    5,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+507, Sky Drop,                     3,    0,    4,    10,     60,    100,    5,    1,     2,     0,    AFFECTED_BY_WEIGHT      HAS_SEMI_INVULNERABLE TURN      CHARGES
+508, Shift Gear,                   9,    2,    3,    10,      0,      0,    5,    0,     9,     0,    STAT_USERS_ATT++        STAT_USERS_SPD++
+509, Circle Throw,                 2,    0,    0,    10,     60,     90,    5,    1,     1,    -6,          SWITCHES_TARGET_OUT
+510, Incinerate,                  10,    1,    4,    15,     60,    100,    5,    0,     4,     0,
+511, Quash,                       17,    2,    3,    15,      0,    100,    5,    0,     1,     0,
+512, Acrobatics,                   3,    0,    0,    15,     55,    100,    5,    1,     2,     0,    POWERS_UP       VARIABLE_POWER
+513, Reflect Type,                 1,    2,    3,    15,      0,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK        CHANGES_POKE_TYPE
+514, Retaliate,                    1,    0,    0,     5,     70,    100,    5,    1,     1,     0,    POWERS_UP       VARIABLE_POWER
+515, Final Gambit,                 2,    1,    4,     5,      0,    100,    5,    0,     1,     0,    CAUSES_USER_TO_FAINT        DIRECT_DAMAGE
+516, Bestow,                       1,    2,    2,    15,      0,      0,    5,    0,     1,     0,    BYPASS_ACC_CHECK
+517, Inferno,                     10,    1,    2,     5,    100,     50,    5,    0,     1,     0,    CAN_BRN
+518, Water Pledge,                11,    1,    2,    10,     80,    100,    5,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+519, Fire Pledge,                 10,    1,    2,    10,     80,    100,    5,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+520, Grass Pledge,                12,    1,    2,    10,     80,    100,    5,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+521, Volt Switch,                 13,    1,    0,    20,     70,    100,    5,    0,     1,     0,    SWITCHES_USER_OUT
+522, Struggle Bug,                 7,    1,    2,    20,     50,    100,    5,    0,     4,     0,    STAT_TARGET_SPATT--
+523, Bulldoze,                     5,    0,    4,    20,     60,    100,    5,    0,     5,     0,    STAT_TARGET_SPD--
+524, Frost Breath,                15,    1,    2,    10,     60,     90,    5,    0,     1,     0,   PERFECT_CRIT_HIT
+525, Dragon Tail,                 16,    0,    4,    10,     60,     90,    5,    1,     1,    -6,          SWITCHES_TARGET_OUT
+526, Work Up,                      1,    2,    4,    30,      0,      0,    5,    0,     9,     0,    STAT_USERS_ATT++        STAT_USERS_SPATT++
+527, Electroweb,                  13,    1,    2,    15,     55,     95,    5,    0,     4,     0,    STAT_TARGET_SPD--
+528, Wild Charge,                 13,    0,    4,    15,     90,    100,    5,    1,     1,     0,    HAVE_RECOIL
+529, Drill Run,                    5,    0,    4,    10,     80,     95,    5,    1,     1,     0,    HIGH_CRIT_HIT
+530, Dual Chop,                   16,    0,    4,    15,     40,     90,    5,    1,     1,     0,    MULTI_STRIKE
+531, Heart Stamp,                 14,    0,    2,    25,     60,    100,    5,    1,     1,     0,    CAN_FLINCH
+532, Horn Leech,                  12,    0,    4,    10,     75,    100,    5,    0,     1,     0,    HP_DRAINING_DAMAGE      RESTORES_HP
+533, Sacred Sword,                 2,    0,    0,    15,     90,    100,    5,    1,     1,     0,
+534, Razor Shell,                 11,    0,    0,    10,     75,     95,    5,    1,     1,     0,    STAT_TARGET_DEF--
+535, Heat Crash,                  10,    0,    4,    10,      0,    100,    5,    1,     1,     0,    AFFECTED_BY_WEIGHT      MINIMIZED_TARGET_DMG++      BYPASS_ACC_CHECK        VARIABLE_POWER
+536, Leaf Tornado,                12,    1,    0,    10,     65,     90,    5,    0,     1,     0,    STAT_TARGET_ACC--
+537, Steamroller,                  7,    0,    4,    20,     65,    100,    5,    1,     1,     0,    MINIMIZED_TARGET_DMG++      CAN_FLINCH      BYPASS_ACC_CHECK
+538, Cotton Guard,                12,    2,    2,    10,      0,      0,    5,    0,     9,     0,    STAT_USERS_DEF++
+539, Night Daze,                  17,    1,    0,    10,     85,     95,    5,    0,     1,     0,    STAT_TARGET_ACC--
+540, Psystrike,                   14,    1,    0,    10,    100,    100,    5,    0,     1,     0,    USES_STATS_FROM_DIFF_CAT
+541, Tail Slap,                    1,    0,    2,    10,     25,     85,    5,    1,     1,     0,    MULTI_STRIKE
+542, Hurricane,                    3,    1,    4,    10,    110,     70,    5,    0,     2,     0,    CAN_CONFUSE     CAN_HIT_SEMI_INVULNERABLE       BYPASS_ACC_CHECK
+543, Head Charge,                  1,    0,    4,    15,    120,    100,    5,    1,     1,     0,    HAVE_RECOIL
+544, Gear Grind,                   9,    0,    3,    15,     50,     85,    5,    1,     1,     0,    MULTI_STRIKE
+545, Searing Shot,                10,    1,    0,     5,    100,    100,    5,    0,     5,     0,    BALL_AND_BOMB       CAN_BRN
+546, Techno Blast,                 1,    1,    0,     5,    120,    100,    5,    0,     1,     0,    CAN_CHANGE_TYPE
+547, Relic Song,                   1,    1,    2,    10,     75,    100,    5,    0,     4,     0,    SOUND_BASED     CAN_SLP
+548, Secret Sword,                 2,    1,    2,    10,     85,    100,    5,    0,     1,     0,    USES_STATS_FROM_DIFF_CAT
+549, Glaciate,                    15,    1,    2,    10,     65,     95,    5,    0,     4,     0,    STAT_TARGET_SPD--
+550, Bolt Strike,                 13,    0,    2,     5,    130,     85,    5,    1,     1,     0,    CAN_PAR
+551, Blue Flare,                  10,    1,    2,     5,    130,     85,    5,    0,     1,     0,    CAN_BRN
+552, Fiery Dance,                 10,    1,    2,    10,     80,    100,    5,    0,     1,     0,    STAT_USERS_SPATT++      DANCE
+553, Freeze Shock,                15,    0,    2,     5,    140,     90,    5,    0,     1,     0,    CAN_PAR     CHARGES
+554, Ice Burn,                    15,    1,    2,     5,    140,     90,    5,    0,     1,     0,    CAN_BRN     CHARGES
+555, Snarl,                       17,    1,    4,    15,     55,     95,    5,    0,     4,     0,    STAT_TARGET_SPATT--     SOUND_BASED
+556, Icicle Crash,                15,    0,    2,    10,     85,     90,    5,    0,     1,     0,    CAN_FLINCH
+557, V-create,                    10,    0,    0,     5,    180,     95,    5,    1,     1,     0,    STAT_USERS_DEF--        STAT_USERS_SPDEF--      STAT_USERS_SPD--
+558, Fusion Flare,                10,    1,    2,     5,    100,    100,    5,    0,     1,     0,    CAN_THAW_USER       POWERS_UP       VARIABLE_POWER
+559, Fusion Bolt,                 13,    0,    0,     5,    100,    100,    5,    0,     1,     0,    POWERS_UP       VARIABLE_POWER
+560, Flying Press,                 2,    0,    4,    10,    100,     95,    6,    1,     1,     0,    UNIQUE_TYPE_EFFECTIVENESS       MINIMIZED_TARGET_DMG++      BYPASS_ACC_CHECK        SPECIAL_TYPE_EFFECTIVENESS
+561, Mat Block,                    2,    2,    0,    10,      0,      0,    6,    0,    10,     0,    PROTECTION
+562, Belch,                        4,    1,    4,    10,    120,     90,    6,    0,     1,     0,
+563, Rototiller,                   5,    2,    4,    10,      0,      0,    6,    0,     7,     0,    STAT_TARGETS_ATT++      STAT_TARGETS_SPATK++
+564, Sticky Web,                   7,    2,    4,    20,      0,      0,    6,    0,     6,     0,    STAT_TARGET_SPD--       ENTRY_HAZARD
+565, Fell Stinger,                 7,    0,    0,    25,     50,    100,    6,    1,     1,     0,    STAT_USERS_ATT++
+566, Phantom Force,                8,    0,    0,    10,     90,    100,    6,    1,     1,     0,    MINIMIZED_TARGET_DMG++      BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK        HAS_SEMI_INVULNERABLE TURN      CHARGES
+567, Trick-or-Treat,               8,    2,    2,    20,      0,    100,    6,    0,     1,     0,    CHANGES_POKE_TYPE
+568, Noble Roar,                   1,    2,    4,    30,      0,    100,    6,    0,     1,     0,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     SOUND_BASED     BYPASS_ACC_CHECK
+569, Ion Deluge,                  13,    2,    2,    25,      0,      0,    6,    0,     7,     1,    MODIFIES_TARGETS_MOVE_TYPE      
+570, Parabolic Charge,            13,    1,    3,    20,     65,    100,    6,    0,     5,     0,    HP_DRAINING_DAMAGE        RESTORES_HP
+571, Forest's Curse,              12,    2,    3,    20,      0,    100,    6,    0,     1,     0,    CHANGES_POKE_TYPE
+572, Petal Blizzard,              12,    0,    2,    15,     90,    100,    6,    0,     5,     0,
+573, Freeze-Dry,                  15,    1,    2,    20,     70,    100,    6,    0,     1,     0,    UNIQUE_TYPE_EFFECTIVENESS       CAN_FRZ     SPECIAL_TYPE_EFFECTIVENESS
+574, Disarming Voice,             13,    1,    2,    15,     40,      0,    6,    0,     4,     0,    SOUND_BASED     BYPASS_ACC_CHECK
+575, Parting Shot,                17,    2,    0,    20,      0,    100,    6,    0,     1,     0,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     SOUND_BASED     SWITCHES_USER_OUT
+576, Topsy-Turvy,                 17,    2,    3,    20,      0,      0,    6,    0,     1,     0,    BYPASS_ACC_CHECK
+577, Draining Kiss,               13,    1,    2,    10,     50,    100,    6,    1,     1,     0,    HP_DRAINING_DAMAGE        RESTORES_HP
+578, Crafty Shield,               13,    2,    3,    10,      0,      0,    6,    0,    10,     3,          PROTECTION
+579, Flower Shield,               13,    2,    2,    10,      0,      0,    6,    0,     7,     0,    STAT_TARGETS_DEF++      STAT_USERS_DEF++
+580, Grassy Terrain,              12,    2,    2,    10,      0,      0,    6,    0,     7,     0,    CHANGES_TERRAIN     RESTORES_HP
+581, Misty Terrain,               13,    2,    2,    10,      0,      0,    6,    0,     7,     0,    CHANGES_TERRAIN
+582, Electrify,                   13,    2,    3,    20,      0,      0,    6,    0,     1,     0,    MODIFIES_TARGETS_MOVE_TYPE      BYPASS_ACC_CHECK
+583, Play Rough,                  13,    0,    2,    10,     90,     90,    6,    1,     1,     0,    STAT_TARGET_ATT--
+584, Fairy Wind,                  13,    1,    2,    30,     40,    100,    6,    0,     1,     0,
+585, Moonblast,                   13,    1,    2,    15,     95,    100,    6,    0,     1,     0,    STAT_TARGET_SPATT--
+586, Boomburst,                    1,    1,    4,    10,    140,    100,    6,    0,     5,     0,    SOUND_BASED
+587, Fairy Lock,                  13,    2,    3,    10,      0,      0,    6,    0,     7,     0,    TRAPPING
+588, King's Shield,                9,    2,    0,    10,      0,      0,    6,    0,     9,     4,          STAT_TARGET_ATT--       PROTECTION
+589, Play Nice,                    1,    2,    2,    20,      0,      0,    6,    0,     1,     0,    STAT_TARGET_ATT--       BYPASS_ACC_CHECK
+590, Confide,                      1,    2,    2,    20,      0,      0,    6,    0,     1,     0,    STAT_TARGET_SPATT--     SOUND_BASED     BYPASS_ACC_CHECK
+591, Diamond Storm,                6,    0,    2,     5,    100,     95,    6,    0,     4,     0,    STAT_USERS_DEF++
+592, Steam Eruption,              11,    1,    2,     5,    110,     95,    6,    0,     1,     0,    CAN_THAW_USER       CAN_HEAL_NON_VOL_STAT       CAN_BRN
+593, Hyperspace Hole,             14,    1,    3,     5,     80,      0,    6,    0,     1,     0,    BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK
+594, Water Shuriken,              11,    1,    0,    20,     15,    100,    6,    0,     1,     1,          MULTI_STRIKE
+595, Mystical Fire,               10,    1,    2,    10,     75,    100,    6,    0,     1,     0,    STAT_TARGET_SPATT--
+596, Spiky Shield,                12,    2,    4,    10,      0,      0,    6,    0,     9,     4,          PROTECTION
+597, Aromatic Mist,               13,    2,    2,    20,      0,      0,    6,    0,     8,     0,    STAT_TARGETS_SPDEF++
+598, Eerie Impulse,               13,    2,    3,    15,      0,    100,    6,    0,     1,     0,    STAT_TARGET_SPATT--
+599, Venom Drench,                 4,    2,    3,    20,      0,    100,    6,    0,     4,     0,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--     STAT_TARGET_SPD--
+600, Powder,                       7,    2,    3,    20,      0,    100,    6,    0,     1,     1,          POWDER_AND_SPORE        BYPASS_ACC_CHECK
+601, Geomancy,                    13,    2,    2,    10,      0,      0,    6,    0,     9,     0,    STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++        CHARGES
+602, Magnetic Flux,               13,    2,    3,    20,      0,      0,    6,    0,    10,     0,    STAT_TARGETS_DEF++      STAT_TARGETS_SPDEF++
+603, Happy Hour,                   1,    2,    2,    30,      0,      0,    6,    0,    10,     0,
+604, Electric Terrain,            13,    2,    3,    10,      0,      0,    6,    0,     7,     0,    CHANGES_TERRAIN
+605, Dazzling Gleam,              13,    1,    2,    10,     80,    100,    6,    0,     4,     0,
+606, Celebrate,                    1,    2,    2,    40,      0,      0,    6,    0,     9,     0,    NO_EFFECT
+607, Hold Hands,                   1,    2,    2,    40,      0,      0,    6,    0,     8,     0,    NO_EFFECT
+608, Baby-Doll Eyes,              13,    2,    2,    30,      0,    100,    6,    0,     1,     1,          STAT_TARGET_ATT--
+609, Nuzzle,                      13,    0,    2,    20,     20,    100,    6,    1,     1,     0,    CAN_PAR
+610, Hold Back,                    1,    0,    0,    40,     40,    100,    6,    1,     1,     0,
+611, Infestation,                  7,    1,    2,    20,     20,    100,    6,    1,     1,     0,    BINDING        TRAPPING
+612, Power-Up Punch,               2,    0,    4,    20,     40,    100,    6,    1,     1,     0,    STAT_USERS_ATT++        PUNCHING
+613, Oblivion Wing,                3,    1,    0,    10,     80,    100,    6,    0,     2,     0,    HP_DRAINING_DAMAGE        RESTORES_HP
+614, Thousand Arrows,              5,    0,    2,    10,     90,    100,    6,    0,     4,     0,    UNIQUE_TYPE_EFFECTIVENESS       CAN_HIT_SEMI_INVULNERABLE       SPECIAL_TYPE_EFFECTIVENESS      REMOVES_SOME_TYPE_IMMUNITIES
+615, Thousand Waves,               5,    0,    4,    10,     90,    100,    6,    0,     4,     0,    TRAPPING
+616, Land's Wrath,                 5,    0,    2,    10,     90,    100,    6,    0,     4,     0,
+617, Light of Ruin,               13,    1,    2,     5,    140,     90,    6,    0,     1,     0,    HAVE_RECOIL
+618, Origin Pulse,                11,    1,    2,    10,    110,     85,    6,    0,     4,     0,    AURA_AND_PULSE
+619, Precipice Blades,             5,    0,    0,    10,    120,     85,    6,    0,     4,     0,
+620, Dragon Ascent,                3,    0,    2,     5,    120,    100,    6,    1,     2,     0,    STAT_USERS_DEF--        STAT_USERS_SPDEF--
+621, Hyperspace Fury,             17,    0,    4,     5,    100,      0,    6,    0,     1,     0,    STAT_USERS_DEF--        BREAK_THROUGH_PROTECTION        BYPASS_ACC_CHECK
+622, Breakneck Blitz,              1,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+623, Breakneck Blitz,              1,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+624, All-Out Pummeling,            2,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+625, All-Out Pummeling,            2,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+626, Supersonic Skystrike,         3,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+627, Supersonic Skystrike,         3,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+628, Acid Downpour,                4,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+629, Acid Downpour,                4,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+630, Tectonic Rage,                5,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+631, Tectonic Rage,                5,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+632, Continental Crush,            6,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+633, Continental Crush,            6,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+634, Savage Spin-Out,              7,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+635, Savage Spin-Out,              7,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+636, Never-Ending Nightmare,       8,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+637, Never-Ending Nightmare,       8,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+638, Corkscrew Crash,              9,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+639, Corkscrew Crash,              9,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+640, Inferno Overdrive,           10,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+641, Inferno Overdrive,           10,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+642, Hydro Vortex,                11,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+643, Hydro Vortex,                11,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+644, Bloom Doom,                  12,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+645, Bloom Doom,                  12,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+646, Gigavolt Havoc,              13,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+647, Gigavolt Havoc,              13,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+648, Shattered Psyche,            14,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+649, Shattered Psyche,            14,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+650, Subzero Slammer,             15,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+651, Subzero Slammer,             15,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+652, Devastating Drake,           16,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+653, Devastating Drake,           16,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+654, Black Hole Eclipse,          17,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+655, Black Hole Eclipse,          17,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+656, Twinkle Tackle,              13,    0,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+657, Twinkle Tackle,              13,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+658, Catastropika,                13,    0,    5,     1,    210,      0,    7,    1,     1,     0,    BYPASS_ACC_CHECK
+659, Shore Up,                     5,    2,    5,    10,      0,      0,    7,    0,     9,     0,    HEALS_USER_IMMEDIATELY       RESTORES_HP
+660, First Impression,             7,    0,    5,    10,     90,    100,    7,    0,     1,     2,    
+661, Baneful Bunker,               4,    2,    5,    10,      0,      0,    7,    0,     9,     4,          CAN_PSN     PROTECTION
+662, Spirit Shackle,               8,    0,    5,    10,     80,    100,    7,    0,     1,     0,    TRAPPING
+663, Darkest Lariat,              17,    0,    5,    10,     85,    100,    7,    1,     1,     0,
+664, Sparkling Aria,              11,    1,    5,    10,     90,    100,    7,    0,     5,     0,    SOUND_BASED     CAN_HEAL_NON_VOL_STAT
+665, Ice Hammer,                  15,    0,    5,    10,    100,     90,    7,    1,     1,     0,    STAT_USERS_SPD--        PUNCHING
+666, Floral Healing,              13,    2,    5,    10,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK        RESTORES_HP
+667, High Horsepower,              5,    0,    5,    10,     95,     95,    7,    1,     1,     0,
+668, Strength Sap,                12,    2,    5,    10,      0,    100,    7,    0,     1,     0,    STAT_TARGET_ATT--       HEALS_USER_IMMEDIATELY       RESTORES_HP
+669, Solar Blade,                 12,    0,    5,    10,    125,    100,    7,    1,     1,     0,    CHARGES
+670, Leafage,                     12,    0,    5,    40,     40,    100,    7,    0,     1,     0,
+671, Spotlight,                    1,    2,    5,    15,      0,      0,    7,    0,     1,     3,          MAKES_TARGET_CENTER_OF_ATTENTION
+672, Toxic Thread,                 4,    2,    5,    20,      0,    100,    7,    0,     1,     0,    STAT_TARGET_SPD--       CAN_PSN
+673, Laser Focus,                  1,    2,    5,    30,      0,      0,    7,    0,     9,     0,
+674, Gear Up,                      9,    2,    5,    20,      0,      0,    7,    0,    10,     0,    STAT_TARGETS_ATT++      STAT_TARGETS_SPATK++
+675, Throat Chop,                 17,    0,    5,    15,     80,    100,    7,    1,     1,     0,
+676, Pollen Puff,                  7,    1,    5,    15,     90,    100,    7,    0,     1,     0,    BALL_AND_BOMB       RESTORES_HP
+677, Anchor Shot,                  9,    0,    5,    20,     80,    100,    7,    1,     1,     0,    TRAPPING
+678, Psychic Terrain,             14,    2,    5,    10,      0,      0,    7,    0,     7,     0,    CHANGES_TERRAIN
+679, Lunge,                        7,    0,    5,    15,     80,    100,    7,    1,     1,     0,    STAT_TARGET_ATT--
+680, Fire Lash,                   10,    0,    5,    15,     80,    100,    7,    1,     1,     0,    STAT_TARGET_DEF--
+681, Power Trip,                  17,    0,    5,    10,     20,    100,    7,    1,     1,     0,    VARIABLE_POWER
+682, Burn Up,                     10,    1,    5,     5,    130,    100,    7,    0,     1,     0,    CAN_THAW_USER       CHANGES_POKE_TYPE
+683, Speed Swap,                  14,    2,    5,    10,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+684, Smart Strike,                 9,    0,    5,    10,     70,      0,    7,    1,     1,     0,    BYPASS_ACC_CHECK
+685, Purify,                       4,    2,    5,    20,      0,      0,    7,    0,     1,     0,    CAN_HEAL_NON_VOL_STAT       HEALS_USER_IMMEDIATELY       RESTORES_HP
+686, Revelation Dance,             1,    1,    5,    15,     90,    100,    7,    0,     1,     0,    DANCE       CAN_CHANGE_TYPE
+687, Core Enforcer,               16,    1,    5,    10,    100,    100,    7,    0,     4,     0,    AFFECTS_ABILITIES
+688, Trop Kick,                   12,    0,    5,    15,     70,    100,    7,    1,     1,     0,    STAT_TARGET_ATT--
+689, Instruct,                    14,    2,    5,    15,      0,      0,    7,    0,     1,     0,
+690, Beak Blast,                   3,    0,    5,    15,    100,    100,    7,    0,     1,    -3,          BALL_AND_BOMB       CAN_BRN
+691, Clanging Scales,             16,    1,    5,     5,    110,    100,    7,    0,     4,     0,    STAT_USERS_DEF--        SOUND_BASED
+692, Dragon Hammer,               16,    0,    5,    15,     90,    100,    7,    1,     1,     0,
+693, Brutal Swing,                17,    0,    5,    20,     60,    100,    7,    1,     5,     0,
+694, Aurora Veil,                 15,    2,    5,    20,      0,      0,    7,    0,    10,     0,
+695, Sinister Arrow Raid,          8,    0,    5,     1,    180,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+696, Malicious Moonsault,         17,    0,    5,     1,    180,      0,    7,    1,     1,     0,    MINIMIZED_TARGET_DMG++      BYPASS_ACC_CHECK        POWERS_UP       VARIABLE_POWER
+697, Oceanic Operetta,            11,    1,    5,     1,    195,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+698, Guardian of Alola,           13,    1,    5,     1,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK        DIRECT_DAMAGE
+699, Soul-Stealing 7-Star Strike,  8,    0,    5,     1,    195,      0,    7,    1,     1,     0,    BYPASS_ACC_CHECK
+700, Stoked Sparksurfer,          13,    1,    5,     1,    175,      0,    7,    0,     1,     0,    CAN_PAR     BYPASS_ACC_CHECK
+701, Pulverizing Pancake,          1,    0,    5,     1,    210,      0,    7,    1,     1,     0,    BYPASS_ACC_CHECK
+702, Extreme Evoboost,             1,    2,    5,     1,      0,      0,    7,    0,     9,     0,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++
+703, Genesis Supernova,           14,    1,    5,     1,    185,      0,    7,    0,     1,     0,    CHANGES_TERRAIN
+704, Shell Trap,                  10,    1,    5,     5,    150,    100,    7,    0,     4,    -3,    
+705, Fleur Cannon,                13,    1,    5,     5,    130,     90,    7,    0,     1,     0,    STAT_USERS_SPATT--
+706, Psychic Fangs,               14,    0,    5,    10,     85,    100,    7,    1,     1,     0,    BITING
+707, Stomping Tantrum,             5,    0,    5,    10,     75,    100,    7,    1,     1,     0,    POWERS_UP       VARIABLE_POWER
+708, Shadow Bone,                  8,    0,    5,    10,     85,    100,    7,    0,     1,     0,    STAT_TARGET_DEF--
+709, Accelerock,                   6,    0,    5,    20,     40,    100,    7,    1,     1,     1,    
+710, Liquidation,                 11,    0,    5,    10,     85,    100,    7,    1,     1,     0,    STAT_TARGET_DEF--
+711, Prismatic Laser,              4,    1,    5,    10,    160,    100,    7,    0,     1,     0,    RECHARGES
+712, Spectral Thief,               8,    0,    5,    10,     90,    100,    7,    1,     1,     0,
+713, Sunsteel Strike,              9,    0,    5,     5,    100,    100,    7,    1,     1,     0,    IGNORES_ABILITIES
+714, Moongeist Beam,               8,    1,    5,     5,    100,    100,    7,    0,     1,     0,    IGNORES_ABILITIES
+715, Tearful Look,                 1,    2,    5,    20,      0,      0,    7,    0,     1,     0,    STAT_TARGET_ATT--       STAT_TARGET_SPATT--
+716, Zing Zap,                    13,    0,    5,    10,     80,    100,    7,    1,     1,     0,    CAN_FLINCH
+717, Nature's Madness,            13,    1,    5,    10,      0,     90,    7,    0,     1,     0,    DIRECT_DAMAGE
+718, Multi-Attack,                 1,    0,    5,    10,     90,    100,    7,    1,     1,     0,    CAN_CHANGE_TYPE
+719, 10,000,000, Volt Thunderbolt,13,    1,    5,     1,    195,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK        HIGH_CRIT_HIT
+720, Mind Blown,                  10,    1,    5,     5,    150,    100,    7,    0,     5,     0,    EXPLOSIVE       COST_HP
+721, Plasma Fists,                13,    0,    5,    15,    100,    100,    7,    1,     1,     0,    PUNCHING
+722, Photon Geyser,               14,    1,    5,     5,    100,    100,    7,    0,     1,     0,    IGNORES_ABILITIES       USES_STATS_FROM_DIFF_CAT
+723, Light That Burns the Sky,    14,    1,    5,     1,    200,      0,    7,    0,     1,     0,    IGNORES_ABILITIES       USES_STATS_FROM_DIFF_CAT
+724, Searing Sunraze Smash,        9,    1,    5,     1,    200,      0,    7,    1,     1,     0,    IGNORES_ABILITIES
+725, Menacing Moonraze Maelstrom,  8,    1,    5,     1,    200,      0,    7,    0,     1,     0,    IGNORES_ABILITIES
+726, Let's Snuggle Forever,       13,    0,    5,     1,    190,      0,    7,    1,     1,     0,
+727, Splintered Stormshards,       6,    0,    5,     1,    190,      0,    7,    0,     1,     0,
+728, Clangorous Soulblaze,        16,    1,    5,     1,    185,      0,    7,    0,     4,     0,    STAT_USERS_ATT++        STAT_USERS_DEF++        STAT_USERS_SPATT++      STAT_USERS_SPDEF++      STAT_USERS_SPD++        SOUND_BASED
+729, Zippy Zap,                   13,    0,    5,    15,     50,    100,    7,    0,     1,     0,          PERFECT_CRIT_HIT
+730, Splishy Splash,              11,    1,    5,    15,     90,    100,    7,    0,     4,     0,    CAN_PAR
+731, Floaty Fall,                  3,    0,    5,    15,     90,     95,    7,    0,     1,     0,
+732, Pika Papow,                  13,    1,    5,    20,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK        VARIABLE_POWER
+733, Bouncy Bubble,               11,    1,    5,    15,     90,    100,    7,    0,     4,     0,    HP_DRAINING_DAMAGE        RESTORES_HP      BYPASS_ACC_CHECK
+734, Buzzy Buzz,                  13,    1,    5,    15,     90,    100,    7,    0,     1,     0,    CAN_PAR     BYPASS_ACC_CHECK
+735, Sizzly Slide,                10,    0,    5,    15,     90,    100,    7,    0,     1,     0,    CAN_BRN     BYPASS_ACC_CHECK
+736, Glitzy Glow,                 14,    1,    5,    15,     90,    100,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+737, Baddy Bad,                   17,    1,    5,    15,     90,    100,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+738, Sappy Seed,                  12,    0,    5,    15,     90,    100,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+739, Freezy Frost,                15,    1,    5,    15,     90,    100,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+740, Sparkly Swirl,               13,    1,    5,    15,     90,    100,    7,    0,     1,     0,    BYPASS_ACC_CHECK
+741, Veevee Volley,                1,    0,    5,    20,      0,      0,    7,    0,     1,     0,    BYPASS_ACC_CHECK        VARIABLE_POWER
+742, Double Iron Bash,             9,    0,    5,     5,     60,    100,    7,    1,     1,     0,    CAN_FLINCH      MULTI_STRIKE
 
-
-#, Name, Type, Category, Contest, PP, Power, Accuracy, Generation, Contact, Target
+#, Name, Type, Category, Contest, PP, Power, Accuracy, Generation, Contact, Target, Priority, StatsEffect, Status Chance, Stage Raise
 Z-Moves not taken into account
 
+TODO
+Earthquake same as Surf
 surf 4,5 (Can hit every Pokemon on the field ,excluding the user)
 Nature Power 1,9 (Can target a foe or an ally)
 Conversion 2 1,9 (Changes user's type and may affect anyone adjacent to the user)
@@ -754,3 +754,11 @@ Conversion 2 1,9 (Changes user's type and may affect anyone adjacent to the user
 *Helping Hand 8,9
 *Cotton Spore 1,4
 *Poison Gas 1, 4
+
+
+Moves with unique stat effects to consider
+Rage
+Curse
+Belly Drum
+Stockpile
+Secret Power
