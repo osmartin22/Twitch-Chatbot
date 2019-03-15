@@ -1,11 +1,21 @@
 package ozmar.PokemonBattle.enums;
 
 public enum StatusConditionNonVolatile {
-    NONE,
-    BURN,
-    FREEZE,
-    PARALYSIS,
-    POISON,
-    BADLY_POISONED,
-    SLEEP
+    NONE(0),
+    BURN(1),
+    FREEZE(2),
+    PARALYSIS(3),
+    POISON(4),
+    BADLY_POISONED(5),
+    SLEEP(6);
+
+    private final int id;
+
+    StatusConditionNonVolatile(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
 }

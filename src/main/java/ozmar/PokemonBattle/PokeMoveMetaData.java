@@ -1,8 +1,5 @@
 package ozmar.PokemonBattle;
 
-import ozmar.PokemonBattle.enums.PokeMoveAilment;
-import ozmar.PokemonBattle.enums.PokeMoveCategory;
-
 public class PokeMoveMetaData {
 
 //    PokeMoveAilment moveAilment;
@@ -18,23 +15,23 @@ public class PokeMoveMetaData {
 //    private int minTurns;
 //    private int statChance;
 
-    PokeMoveAilment moveAilment;
-    PokeMoveCategory moveCategory;
-
-    private int critRate;
-    private int drain;
-    private int flinch_chance;
-    private int healing;
-    private int statChance;
-
-    private boolean isMultiStrike;
-    private boolean isConsecutiveMove;
-    private boolean changesWeather;
-    private boolean isBindingMove;
-    private boolean isDecreasedPriority;
-    private boolean modifiesMoveTypes;
-    private boolean isHpDrainingMove;
-    private boolean isIncreasePriority;
-    private boolean isAffectedByWeight;
+//    PokeMoveAilment moveAilment;
+//    PokeMoveCategory moveCategory;
+//
+//    private int critRate;
+//    private int drain;
+//    private int flinch_chance;
+//    private int healing;
+//    private int statChance;
+//
+//    private boolean isMultiStrike;
+//    private boolean isConsecutiveMove;
+//    private boolean changesWeather;
+//    private boolean isBindingMove;
+//    private boolean isDecreasedPriority;
+//    private boolean modifiesMoveTypes;
+//    private boolean isHpDrainingMove;
+//    private boolean isIncreasePriority;
+//    private boolean isAffectedByWeight;
 
 }
