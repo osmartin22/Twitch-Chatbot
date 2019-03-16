@@ -5,6 +5,8 @@ import ozmar.PokemonBattle.PokemonWeather.PokeWeather;
 
 public class PokeBattle {
 
+    //TODO: probably separate this into a Field class that has all the effects of the battle field
+
     Trainer red;
     Trainer blue;
 
@@ -12,6 +14,7 @@ public class PokeBattle {
     PokeTerrain terrain;
     PokeWeather weather;
 
+    // Entry Hazard
 
     // Who's turn
 }
