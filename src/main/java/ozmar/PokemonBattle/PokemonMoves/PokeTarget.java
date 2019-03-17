@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.enums;
+package ozmar.PokemonBattle.PokemonMoves;
 
 public enum PokeTarget {
     ANY_ADJ_FOE_POKE(0),

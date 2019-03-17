@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.PokemonWeather;
+package ozmar.PokemonBattle.PokemonField.PokemonWeather;
 
 public class PokeWeather {
 

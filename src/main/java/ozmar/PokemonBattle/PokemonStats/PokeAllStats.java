@@ -2,35 +2,39 @@ package ozmar.PokemonBattle.PokemonStats;
 
 public class PokeAllStats {
 
-    private int startingHp;
     private int currHp;
+    private int maxHp;
     private final PokeStat attack;
     private final PokeStat defense;
     private final PokeStat specialAttack;
     private final PokeStat specialDefense;
     private final PokeStat speed;
-    private final PokeStat accuracy;
     private final PokeStat evasion;
+    private final PokeStat accuracy;
 
-    public PokeAllStats(int startingHp, PokeStat attack, PokeStat defense, PokeStat specialAttack,
-                        PokeStat specialDefense, PokeStat speed, PokeStat accuracy, PokeStat evasion) {
-        this.startingHp = startingHp;
-        this.currHp = startingHp;
+    public PokeAllStats(int maxHp, PokeStat attack, PokeStat defense, PokeStat specialAttack,
+                        PokeStat specialDefense, PokeStat speed, PokeStat evasion, PokeStat accuracy) {
+        this.currHp = maxHp;
+        this.maxHp = maxHp;
         this.attack = attack;
         this.defense = defense;
         this.specialAttack = specialAttack;
         this.specialDefense = specialDefense;
         this.speed = speed;
-        this.accuracy = accuracy;
         this.evasion = evasion;
+        this.accuracy = accuracy;
     }
 
-    public int getStartingHp() {
-        return startingHp;
+    public int getMaxHp() {
+        return maxHp;
     }
 
     public int getCurrHp() {
         return currHp;
+    }
+
+    public boolean isAlive() {
+        return currHp > 0;
     }
 
     // Damage should be a negative number
@@ -40,7 +44,7 @@ public class PokeAllStats {
         if (tempHp <= 0) {
             return true;
         } else if (tempHp > currHp) {
-            currHp = startingHp;
+            currHp = maxHp;
         }
 
         currHp = tempHp;

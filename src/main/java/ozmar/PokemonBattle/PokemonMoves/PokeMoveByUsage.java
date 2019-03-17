@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.enums;
+package ozmar.PokemonBattle.PokemonMoves;
 
 public enum PokeMoveByUsage {
     NONE(0),

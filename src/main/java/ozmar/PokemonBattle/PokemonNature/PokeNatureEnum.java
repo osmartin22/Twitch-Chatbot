@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.enums;
+package ozmar.PokemonBattle.PokemonNature;
 
 public enum PokeNatureEnum {
     HARDY(1),

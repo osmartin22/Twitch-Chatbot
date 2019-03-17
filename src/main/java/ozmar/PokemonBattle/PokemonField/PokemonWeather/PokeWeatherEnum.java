@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.PokemonWeather;
+package ozmar.PokemonBattle.PokemonField.PokemonWeather;
 
 public enum PokeWeatherEnum {
     CLEAR_SKIES(0),     // This weather is considered the "default" weather with no effects

@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.enums;
+package ozmar.PokemonBattle.PokemonStatusConditions;
 
 public enum StatusConditionVolatile {
     BOUND(0),

@@ -741,7 +741,7 @@
 741, Veevee Volley,                1,    0,    5,    20,      0,      0,    7,    0,     1,     0,    0000000 0000000,      0,    0,  000000,    0,    0,    0,  00000000,    BYPASS_ACC_CHECK        VARIABLE_POWER
 742, Double Iron Bash,             9,    0,    5,     5,     60,    100,    7,    1,     1,     0,    0000000 0000000,      0,    0,  000000,    0,   30,    0,  00000000,    MULTI_STRIKE
 
-#, Name, Type, Category, Contest, PP, Power, Accuracy, Generation, Contact, Target, Priority, Stats Effect, Status Chance, Stage Raise, Non Volatile Status, NV Status Chance, Flinch Chance, Confusion Chance, Moves By Usage Method
+#, Name, Type, Damage Class, Contest, PP, Power, Accuracy, Generation, Contact, Target, Priority,     Stats Effect, Stat Chance, Stage Raise, Non Volatile Status, NV Status Chance, Flinch Chance, Confusion Chance, Moves By Usage Method
 Z-Moves not taken into account
 
 TODO

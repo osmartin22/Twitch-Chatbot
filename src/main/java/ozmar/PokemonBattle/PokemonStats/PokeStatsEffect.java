@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.enums;
+package ozmar.PokemonBattle.PokemonStats;
 
 public enum PokeStatsEffect {
     NONE(0),

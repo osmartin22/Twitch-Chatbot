@@ -1,4 +1,4 @@
-package ozmar.PokemonBattle.PokemonTerrain;
+package ozmar.PokemonBattle.PokemonField.PokemonTerrain;
 
 public enum PokeTerrainEnum {
     NONE(0),

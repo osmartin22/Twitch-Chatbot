@@ -1,7 +1,6 @@
-package ozmar.PokemonBattle;
+package ozmar.PokemonBattle.PokemonNature;
 
 import ozmar.PokemonBattle.PokemonStats.PokeStatTypeEnum;
-import ozmar.PokemonBattle.enums.PokeNatureEnum;
 
 public class PokeNature {
     private PokeNatureEnum nature;
