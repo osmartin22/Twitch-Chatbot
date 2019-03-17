@@ -1,5 +1,7 @@
 package ozmar.PokemonBattle.PokemonType;
 
+import ozmar.PokemonBattle.PokeInfoHelper;
+
 public class PokeType {
     PokeTypeEnum type1;
     PokeTypeEnum type2;
@@ -47,9 +49,9 @@ public class PokeType {
      * @return double
      */
     public double damageReceivedMultiplier(PokeType pokeType) {
-        double multiplier1 = PokeTypeChart.TYPE_CHART[pokeType.getType1().getId()][type1.getId()];
-        double multiplier2 = PokeTypeChart.TYPE_CHART[pokeType.getType2().getId()][type2.getId()];
-        double multiplier3 = PokeTypeChart.TYPE_CHART[pokeType.getType3().getId()][type3.getId()];
+        double multiplier1 = PokeInfoHelper.TYPE_CHART[pokeType.getType1().getId()][type1.getId()];
+        double multiplier2 = PokeInfoHelper.TYPE_CHART[pokeType.getType2().getId()][type2.getId()];
+        double multiplier3 = PokeInfoHelper.TYPE_CHART[pokeType.getType3().getId()][type3.getId()];
 
         return multiplier1 * multiplier2 * multiplier3;
     }

@@ -144,7 +144,7 @@ public class CatchPoke implements CatchPokeInterface {
         poke.setPokemonSpecies(pokemonSpecies.getName());
         poke.setPokemonName(decidePokeName(pokemon));
         poke.setPokemonNickName(poke.getPokemonName());
-        poke.setShiny(isShiny());
+        poke.setShiny(isShiny(pokemonSpecies.getCaptureRate()));
         poke.setNature(nature.getName());
         poke.setGender(pokemonGender);
         poke.setPokemonMoves(new HashSet<>());
@@ -195,11 +195,19 @@ public class CatchPoke implements CatchPokeInterface {
 
     /**
      * Decides if the pokemon will be a shiny
+     * Rarer Pokemon have a higher chance of being shiny
      *
      * @return boolean
      */
-    private boolean isShiny() {
-        return RandomHelper.getRandNumInRange(1, 100) < 16;
+    private boolean isShiny(int captureRate) {
+        boolean isShiny;
+        if (captureRate < 45) {
+            isShiny = RandomHelper.getRandNumInRange(1, 100) < 16;
+        } else {
+            isShiny = RandomHelper.getRandNumInRange(1, 100) < 6;
+        }
+
+        return isShiny;
     }
 
     /**

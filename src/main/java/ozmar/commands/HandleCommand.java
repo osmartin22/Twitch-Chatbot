@@ -283,7 +283,7 @@ public class HandleCommand implements HandleCommandInterface {
             double result = calculator.parse();
 
             // Round to n decimal places, remove decimal if it is a whole number
-            BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_UNNECESSARY);
+            BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_HALF_EVEN);
             Double value = bigDecimal.doubleValue();
             String numOutput = (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
 
@@ -299,7 +299,7 @@ public class HandleCommand implements HandleCommandInterface {
      *
      * @return String
      */
-    @Nonnull
+    @Nullable
     private String wordCountCommand(@Nonnull CommandEvent event) {
         String result;
         String word = event.getCommand().trim();
@@ -325,7 +325,11 @@ public class HandleCommand implements HandleCommandInterface {
                     }
                 } else {
                     word = WordFilter.transformWord(word);
-                    count = db.getWordCountDao().querySpecificWordCount(word);
+                    if (word.length() < 35) {   // Prevent long words to prevent the bot from being timed out
+                        count = db.getWordCountDao().querySpecificWordCount(word);
+                    } else {
+                        return null;
+                    }
                 }
 
                 word = WordFilter.timeoutWordFound(word);
