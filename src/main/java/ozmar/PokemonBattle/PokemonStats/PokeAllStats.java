@@ -39,16 +39,15 @@ public class PokeAllStats {
 
     // Damage should be a negative number
     // Healing should be a positive number
-    public boolean updateCurrHp(int hpChange) {
+    public void updateCurrHp(int hpChange) {
         int tempHp = currHp + hpChange;
         if (tempHp <= 0) {
-            return true;
+            currHp = 0;
         } else if (tempHp > currHp) {
             currHp = maxHp;
         }
 
         currHp = tempHp;
-        return false;
     }
 
     public boolean updateAttackStage(int stageChange) {

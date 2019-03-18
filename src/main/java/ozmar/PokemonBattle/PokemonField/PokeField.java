@@ -8,5 +8,4 @@ public class PokeField {
     private PokeWeather weather;
 
     // Hold field effects
-
 }

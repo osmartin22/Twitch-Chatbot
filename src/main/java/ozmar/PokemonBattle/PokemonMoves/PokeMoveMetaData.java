@@ -11,15 +11,15 @@ public class PokeMoveMetaData {
     private int generation;
     private ContestType contestType;
 
-    private int nonVolatileChance;
-    private Set<StatusConditionNonVolatile> nonVolatileSet;
+    private boolean isContact;
+    private boolean isDirectAttack;
 
     private int flinchChance;
     private int confusionChance;
+    private int nonVolatileChance;
+    private Set<StatusConditionNonVolatile> nonVolatileSet;
 
     private PokeTarget target;
-
-    private boolean isContact;
 
     private int statsStageRaise;
     private int statsEffectChance;

@@ -13,7 +13,7 @@ import java.util.Map;
 public class PokeEntryHazard {
 
     private static final int MAX_HAZARD_STACKS = 3;
-    private Map<PokeEntryHazardEnum, Integer> entryHazardMap;
+    private final Map<PokeEntryHazardEnum, Integer> entryHazardMap;
 
     public PokeEntryHazard() {
         this.entryHazardMap = new HashMap<>();
@@ -102,7 +102,6 @@ public class PokeEntryHazard {
             int damageDealt = (int) (maxHp * damageDealtPercent);
             poke.getPokeStats().updateCurrHp(damageDealt);
         }
-
     }
 
     /**

@@ -1,7 +1,7 @@
 package ozmar.PokemonBattle;
 
 import ozmar.PokemonBattle.PokemonMoves.PokeMove;
-import ozmar.PokemonBattle.PokemonNature.PokeNature;
+import ozmar.PokemonBattle.PokemonNature.PokeNatureEnum;
 import ozmar.PokemonBattle.PokemonStats.PokeAllStats;
 import ozmar.PokemonBattle.PokemonStatusConditions.StatusConditionNonVolatile;
 import ozmar.PokemonBattle.PokemonType.PokeType;
@@ -17,10 +17,12 @@ public class Poke {
     private int weight; // hectograms
 
     private final PokeType type;
-    private final PokeNature nature;      // Natures can not change in battle
+    private final PokeNatureEnum nature;      // Natures can not change in
     private final PokeAllStats pokeStats;
 
     private final List<PokeMove> moveList;
+
+    private boolean isFainted;
 
 
     // Pokemon status conditions;
@@ -30,7 +32,7 @@ public class Poke {
     // ABILITIES GO HERE WHEN IMPLEMENTED
 
     public Poke(int id, int level, String name, String nickname, int height, int weight, PokeType type,
-                PokeNature nature, PokeAllStats pokeStats, List<PokeMove> moveList) {
+                PokeNatureEnum nature, PokeAllStats pokeStats, List<PokeMove> moveList) {
         this.id = id;
         this.level = level;
         this.name = name;
@@ -42,6 +44,7 @@ public class Poke {
         this.pokeStats = pokeStats;
         this.moveList = moveList;
         this.nonVolatile = StatusConditionNonVolatile.NONE;
+        this.isFainted = false;
     }
 
     public int getId() {
@@ -84,7 +87,7 @@ public class Poke {
         return type;
     }
 
-    public PokeNature getNature() {
+    public PokeNatureEnum getNature() {
         return nature;
     }
 
@@ -115,5 +118,13 @@ public class Poke {
 
     public void incrementBadlyPoisonedN() {
         this.badlyPoisonedN++;
+    }
+
+    public boolean isFainted() {
+        if (!isFainted) {
+            isFainted = pokeStats.getCurrHp() == 0;
+        }
+
+        return isFainted;
     }
 }
