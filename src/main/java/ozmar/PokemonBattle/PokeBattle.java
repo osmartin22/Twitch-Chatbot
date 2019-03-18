@@ -2,26 +2,47 @@ package ozmar.PokemonBattle;
 
 import ozmar.PokemonBattle.PokemonField.PokeField;
 import ozmar.PokemonBattle.PokemonField.PokeSide;
+import ozmar.PokemonBattle.PokemonField.PokeTrainerSide;
+import ozmar.PokemonBattle.PokemonMoves.PokeMove;
+import ozmar.PokemonBattle.PokemonTrainer.Trainer;
+import ozmar.PokemonBattle.PokemonTrainer.TrainerInBattle;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 // Pursuit is the only move that goes before the target switches out
 public class PokeBattle {
-    Trainer red;
-    PokeSide redSide;
 
-    Trainer blue;
-    PokeSide blueSide;
-
-    PokeField field;
-
-    // Who's turn
+    private final PokeField field;
+    private Map<Trainer, PokeTrainerSide> trainerSideMap;
 
 
-    public PokeBattle(Trainer red, Trainer blue) {
-        this.red = red;
-        this.blue = blue;
-        this.redSide = new PokeSide();
-        this.blueSide = new PokeSide();
+    public PokeBattle(@Nonnull Trainer red, @Nonnull Poke redPoke, @Nonnull Trainer blue, @Nonnull Poke bluePoke) {
+        this.trainerSideMap = new HashMap<>();
+        initialize(red, redPoke);
+        initialize(blue, bluePoke);
         this.field = new PokeField();
+    }
+
+    private void initialize(@Nonnull Trainer trainer, @Nonnull Poke startingPoke) {
+        PokeInBattle pokeInBattle = new PokeInBattle(startingPoke);
+        TrainerInBattle trainerInBattle = new TrainerInBattle(trainer, pokeInBattle);
+        PokeTrainerSide trainerSide = new PokeTrainerSide(trainerInBattle, new PokeSide());
+        trainerSideMap.put(trainer, trainerSide);
+    }
+
+    /*
+    TODO: Make sure all trainers have either selected to switch their Pokemon or have chosen a move
+     */
+    public void switchPoke(@Nonnull Trainer trainer, Poke poke) {
+        PokeTrainerSide side = trainerSideMap.get(trainer);
+        // Switch Pokemon with the given Poke number
+        // Should check that the pokeNum isn't the same asa the current Poke on the field
+    }
+
+    public void doMove(@Nonnull Trainer trainer, @Nonnull PokeMove move) {
+        // Does the move for the given Pokemon
     }
 
 /*
