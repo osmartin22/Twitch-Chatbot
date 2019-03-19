@@ -1,7 +1,7 @@
 package ozmar.commands;
 
-import ozmar.PokemonBattle.PokemonField.PokeTrainerSide;
-import ozmar.PokemonBattle.PokemonMoves.PokeMove;
+import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
+import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 
 import javax.annotation.Nonnull;
 import java.util.*;
