@@ -5,7 +5,8 @@ public enum PokeMoveDamageClass {
     SPECIAL(1),
     STATUS(2);
 
-    private int id;
+    private final int id;
+    public static final PokeMoveDamageClass[] damageClass = values();
 
     PokeMoveDamageClass(int id) {
         this.id = id;

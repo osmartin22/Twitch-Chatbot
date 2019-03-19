@@ -2,7 +2,7 @@ package ozmar.PokemonBattle.PokemonField.PokemonEntryHazard;
 
 import ozmar.PokemonBattle.Poke;
 import ozmar.PokemonBattle.PokeInBattle;
-import ozmar.PokemonBattle.PokemonStatusConditions.StatusConditionNonVolatile;
+import ozmar.PokemonBattle.PokemonStatusConditions.NonVolatileStatus;
 import ozmar.PokemonBattle.PokemonType.PokeType;
 import ozmar.PokemonBattle.PokemonType.PokeTypeEnum;
 
@@ -198,9 +198,9 @@ public class PokeEntryHazard {
                 !poke.getType().isTypeFound(PokeTypeEnum.STEEL)) {
             int stacks = entryHazardMap.get(PokeEntryHazardEnum.TOXIC_SPIKES);
             if (stacks == 1) {
-                poke.updateNonVolatile(StatusConditionNonVolatile.POISON);
+                poke.updateNonVolatile(NonVolatileStatus.POISON);
             } else {
-                poke.updateNonVolatile(StatusConditionNonVolatile.BADLY_POISONED);
+                poke.updateNonVolatile(NonVolatileStatus.BADLY_POISONED);
             }
         }
     }

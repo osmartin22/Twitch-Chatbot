@@ -28,6 +28,7 @@ public enum PokeNatureEnum {
     SERIOUS(25);
 
     private final int id;
+    public static final PokeNatureEnum[] natures = values();
 
     PokeNatureEnum(int id) {
         this.id = id;

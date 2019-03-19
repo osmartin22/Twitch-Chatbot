@@ -1,7 +1,7 @@
 package ozmar.PokemonBattle.PokemonMoves;
 
 import ozmar.PokemonBattle.PokemonStats.PokeStatsEffect;
-import ozmar.PokemonBattle.PokemonStatusConditions.StatusConditionNonVolatile;
+import ozmar.PokemonBattle.PokemonStatusConditions.NonVolatileStatus;
 import poke_models.contests.ContestType;
 
 import java.util.Set;
@@ -17,7 +17,7 @@ public class PokeMoveMetaData {
     private int flinchChance;
     private int confusionChance;
     private int nonVolatileChance;
-    private Set<StatusConditionNonVolatile> nonVolatileSet;
+    private Set<NonVolatileStatus> nonVolatileSet;
 
     private PokeTarget target;
 

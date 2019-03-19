@@ -1,6 +1,6 @@
 package ozmar.PokemonBattle.PokemonStatusConditions;
 
-public enum StatusConditionVolatile {
+public enum VolatileStatus {
     BOUND(0),
     CANT_ESCAPE(1),
     CONFUSION(2),
@@ -20,7 +20,7 @@ public enum StatusConditionVolatile {
 
     private final int id;
 
-    StatusConditionVolatile(int id) {
+    VolatileStatus(int id) {
         this.id = id;
     }
 

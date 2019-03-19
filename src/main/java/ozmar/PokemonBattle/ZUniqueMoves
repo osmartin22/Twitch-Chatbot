@@ -1,0 +1,29 @@
+Thousand Waves - Prevents the hit pokemon from fleeing as long as the user is still in the battle
+Thousand Arrows - Check move info
+Magnitude = Power is random from 4-10
+Anchor shot - same effect as Thousand Waves
+Assurance - deals double damage if the target received damage on the same turn, (self- inflicted, confusion, etc...)
+Avalanche - damage is doubled if the target has damaged the user
+Beak Blast - User charges up, all Poke that make contact with it are burned, user then attacks (all in 1 turn)
+Beat Up - Strikes for the number of conscious pokemon the target has
+Brick Break - Removes Light Screen, Reflect, and Aurora Veil then inflicts damage
+Chip Away - Ignores the target's Defense and Evasion stat changes
+Facade - Increased power if the target is poisoned, burned, or paralyzed
+False Swipe - Will leave the target with 1 HP if the target would faint, does not fail, breaks substitute
+Feint - Check move info (breaks protection)
+Fell Stinger - Raises the users stats by 3 stages if the target faints
+First Impression - Only works on the first turn the user is out, fails after that
+Flail - Check move info
+Fling - depends on held item
+Flying Press - Check move info
+Foul Play - Uses the targets Attack stat instead of the user's along with Attack stage, uses the user's stats for the rest
+Frustration - Power depends on friendship ---- Power = (255 - Friendship) / 2.5
+Fusion Flare - Power is doubled if Fusion Bolt was used before it
+Fusion Bolt - Power is doubled if Fusion Flare was used before it
+Gyro Ball - Inflicts more damage the user is compared to the target --- Base Power = 25 × min(6, (Target's Current Speed / User's Current Speed))
+Heavy Slam - Power based on the weight difference between the user and target (Double against minimized target)
+Hold Back - same as False Swipe
+Hyperspace Fury - Goes through Protection
+Ice Ball - Attacks for 5 turns doubles in power for each hit, doubled in addition if the user previously used Defense Curl the prior turn
+
+

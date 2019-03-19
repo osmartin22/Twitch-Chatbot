@@ -14,6 +14,7 @@ public enum PokeTarget {
     USER_AND_ALLIES(10);
 
     private final int id;
+    public static final PokeTarget[] target = values();
 
     PokeTarget(int id) {
         this.id = id;

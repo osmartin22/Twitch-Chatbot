@@ -5,16 +5,17 @@ import ozmar.PokemonBattle.PokemonType.PokeTypeEnum;
 public class PokeMove {
     private final int id;
     private final String name;
-    private int maxPp;
+    private final int maxPp;
     private int currPp;
-    private int power;
+    private final int power;
+    private int currPower;
     private int accuracy;
     private int priority;
     private PokeTypeEnum moveType;
     private final PokeMoveDamageClass damageClass;
     private final PokeTarget moveTarget;
 
-    private PokeMoveMetaData metaData;
+    private final PokeMoveMetaData metaData;
 
     public PokeMove(int id, String name, int maxPp, int power, int accuracy, int priority, PokeTypeEnum moveType,
                     PokeMoveDamageClass damageClass, PokeTarget moveTarget, PokeMoveMetaData metaData) {
@@ -23,6 +24,7 @@ public class PokeMove {
         this.maxPp = maxPp;
         this.currPp = maxPp;
         this.power = power;
+        this.currPower = power;
         this.accuracy = accuracy;
         this.priority = priority;
         this.moveType = moveType;
@@ -43,10 +45,6 @@ public class PokeMove {
         return maxPp;
     }
 
-    public void setMaxPp(int maxPp) {
-        this.maxPp = maxPp;
-    }
-
     public int getCurrPp() {
         return currPp;
     }
@@ -59,8 +57,8 @@ public class PokeMove {
         return power;
     }
 
-    public void setPower(int power) {
-        this.power = power;
+    public int getCurrPower() {
+        return currPower;
     }
 
     public int getAccuracy() {
@@ -97,9 +95,5 @@ public class PokeMove {
 
     public PokeMoveMetaData getMetaData() {
         return metaData;
-    }
-
-    public void setMetaData(PokeMoveMetaData metaData) {
-        this.metaData = metaData;
     }
 }

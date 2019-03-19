@@ -32,19 +32,85 @@ public class PokeBattle {
         trainerSideMap.put(trainer, trainerSide);
     }
 
-    /*
-    TODO: Make sure all trainers have either selected to switch their Pokemon or have chosen a move
+
+    public boolean setMove(@Nonnull Trainer trainer, @Nonnull PokeMove move) {
+        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, move);
+        if (isAbleToDoMove) {
+            // Set the pokemon's move
+            // Set status to CHOICE_MOVE
+        }
+
+        return isAbleToDoMove;
+    }
+
+    public boolean setSwitchPoke(@Nonnull Trainer trainer, @Nonnull Poke poke) {
+        boolean isAbleToSwitch = canTrainerSwitchPoke(trainer);
+        if (isAbleToSwitch) {
+            // Set Trainers poke to switch to
+            // Set status to CHOICE_SWITCH
+        }
+
+        return isAbleToSwitch;
+    }
+
+    /**
+     * Checks if the Poke on the field can do the selected move
+     *
+     * @param trainer Trainer choosing the move
+     * @param move    move the Poke will use
+     * @return boolean
      */
-    public void switchPoke(@Nonnull Trainer trainer, Poke poke) {
+    public boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, @Nonnull PokeMove move) {
+        boolean isAbleToDoMove = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        // Switch Pokemon with the given Poke number
-        // Should check that the pokeNum isn't the same asa the current Poke on the field
+        if (side.getTrainerInBattle().getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
+            isAbleToDoMove = side.getTrainerInBattle().isAbleToDoMove(move);
+        }
+        return isAbleToDoMove;
     }
 
-    public void doMove(@Nonnull Trainer trainer, @Nonnull PokeMove move) {
-        // Does the move for the given Pokemon
+    /**
+     * Checks if the Pokemon on the field is prevented from switching out
+     *
+     * @param trainer Trainer switching Poke
+     * @return boolean
+     */
+    public boolean canTrainerSwitchPoke(@Nonnull Trainer trainer) {
+        boolean isAbleToSwitch = false;
+        PokeTrainerSide side = trainerSideMap.get(trainer);
+        if (side.getTrainerInBattle().getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
+            isAbleToSwitch = side.getTrainerInBattle().isAbleToSwitchPoke();
+        }
+
+        return isAbleToSwitch;
     }
 
+    @Nonnull
+    public TrainerChoice getTrainerStatus(@Nonnull Trainer trainer) {
+        PokeTrainerSide side = trainerSideMap.get(trainer);
+        return side.getTrainerInBattle().getCurrStatus();
+    }
+
+    /**
+     * Checks if all trainers are ready, i.e. have chosen to switch their Poke or do a move
+     *
+     * @return boolean
+     */
+    public boolean trainersReady() {
+        boolean trainersReady = true;
+        for (PokeTrainerSide side : trainerSideMap.values()) {
+            if (side.getTrainerInBattle().getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
+                trainersReady = false;
+                break;
+            }
+        }
+
+        return trainersReady;
+    }
+
+    public void doTrainerChoice() {
+        // Execute the trainers choices if trainersReady() == true
+    }
 /*
 Sequence of events
 Users select there Pokemon along with the first Pokemon to send out

@@ -23,6 +23,7 @@ public enum PokeTypeEnum {
     UNKNOWN(19);  // Only to be used for the first type of a Pokemon in rare cases, also known as type "???"
 
     private final int id;
+    public static final PokeTypeEnum[] types = values();
 
     PokeTypeEnum(int id) {
         this.id = id;

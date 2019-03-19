@@ -1,6 +1,6 @@
 package ozmar.PokemonBattle.PokemonStatusConditions;
 
-public enum StatusConditionNonVolatile {
+public enum NonVolatileStatus {
     NONE(0),
     BURN(1),
     FREEZE(2),
@@ -10,8 +10,9 @@ public enum StatusConditionNonVolatile {
     SLEEP(6);
 
     private final int id;
+    public static final NonVolatileStatus[] status = values();
 
-    StatusConditionNonVolatile(int id) {
+    NonVolatileStatus(int id) {
         this.id = id;
     }
 

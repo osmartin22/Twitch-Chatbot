@@ -1,6 +1,6 @@
 package ozmar.PokemonBattle.PokemonStatusConditions;
 
-public enum StatusConditionVolatileBattleStatus {
+public enum VolatileBattleStatus {
     AQUA_RING,
     BRACING,
     CHARGING_TURN,

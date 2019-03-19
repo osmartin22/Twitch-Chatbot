@@ -3,7 +3,7 @@ package ozmar.PokemonBattle;
 import ozmar.PokemonBattle.PokemonMoves.PokeMove;
 import ozmar.PokemonBattle.PokemonNature.PokeNatureEnum;
 import ozmar.PokemonBattle.PokemonStats.PokeAllStats;
-import ozmar.PokemonBattle.PokemonStatusConditions.StatusConditionNonVolatile;
+import ozmar.PokemonBattle.PokemonStatusConditions.NonVolatileStatus;
 import ozmar.PokemonBattle.PokemonType.PokeType;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class Poke {
 
 
     // Pokemon status conditions;
-    private StatusConditionNonVolatile nonVolatile;
+    private NonVolatileStatus nonVolatile;
     private int badlyPoisonedN = 0;
 
     // ABILITIES GO HERE WHEN IMPLEMENTED
@@ -43,7 +43,7 @@ public class Poke {
         this.nature = nature;
         this.pokeStats = pokeStats;
         this.moveList = moveList;
-        this.nonVolatile = StatusConditionNonVolatile.NONE;
+        this.nonVolatile = NonVolatileStatus.NONE;
         this.isFainted = false;
     }
 
@@ -99,13 +99,13 @@ public class Poke {
         return moveList;
     }
 
-    public StatusConditionNonVolatile getNonVolatile() {
+    public NonVolatileStatus getNonVolatile() {
         return nonVolatile;
     }
 
-    public void updateNonVolatile(StatusConditionNonVolatile nonVolatile) {
-        if (this.nonVolatile == StatusConditionNonVolatile.NONE) {
-            if (nonVolatile == StatusConditionNonVolatile.BADLY_POISONED) {
+    public void updateNonVolatile(NonVolatileStatus nonVolatile) {
+        if (this.nonVolatile == NonVolatileStatus.NONE) {
+            if (nonVolatile == NonVolatileStatus.BADLY_POISONED) {
                 this.badlyPoisonedN = 1;
             }
             this.nonVolatile = nonVolatile;
