@@ -14,25 +14,25 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-    /*
-    Capture Rate        Health   Pokeball       Status          Percent of capture
-    255 (Caterpie)          25          1           1           87.193
-    235 (Shinx)             25          1           1           82.004
-    225 (Stunky)            25          1           1           79.391
-    200 (Swirlix)           20          1           1           74.87
-    190 (Buizel)            20          1           1           72.023
-    180 (Honedge)           30          1           1           65.13
-    150 (Clefairy)          30          1           1           56.813
-    140 (Sandygast)         40          1           1           50.545
-    120 (Weepinbell)        40          1           1           45.022
-     90 (Lampent)           50          1.5         1           45.761
-     75 (Azumarill          40          1.5         1           42.897
-     60 (Klang)             40          1.5         1           36.287
-     45 (VilePlume)         40          2           1           36.287
-     30 (Togekiss)          40          2           1.5         36.287
-     25 (Mantyke)           40          2           1.5         31.65
-      3 (Mewtwo)            1           2           2.5         11.89
-     */
+/*
+Capture Rate        Health   Pokeball       Status          Percent of capture
+255 (Caterpie)          25          1           1           87.193
+235 (Shinx)             25          1           1           82.004
+225 (Stunky)            25          1           1           79.391
+200 (Swirlix)           20          1           1           74.87
+190 (Buizel)            20          1           1           72.023
+180 (Honedge)           30          1           1           65.13
+150 (Clefairy)          30          1           1           56.813
+140 (Sandygast)         40          1           1           50.545
+120 (Weepinbell)        40          1           1           45.022
+ 90 (Lampent)           50          1.5         1           45.761
+ 75 (Azumarill          40          1.5         1           42.897
+ 60 (Klang)             40          1.5         1           36.287
+ 45 (VilePlume)         40          2           1           36.287
+ 30 (Togekiss)          40          2           1.5         36.287
+ 25 (Mantyke)           40          2           1.5         31.65
+  3 (Mewtwo)            1           2           2.5         11.89
+ */
 
 public class CatchPoke implements CatchPokeInterface {
     private Pokemon pokemon;
@@ -41,6 +41,7 @@ public class CatchPoke implements CatchPokeInterface {
     private final Set<Integer> specialFormPokemonSet;
     private final Set<String> unreleasedPokemon;
     private Set<Integer> pokemonWithMegaForm;
+    private Set<Integer> legendaryMythicalPokemon;  // Legendary/mythical pokemon that need their catch rate set to 3
     private boolean isUnreleased;
     private int pokeShake;
 
@@ -52,6 +53,7 @@ public class CatchPoke implements CatchPokeInterface {
         pokemonWithMegaForm = new HashSet<>(Arrays.asList(3, 6, 9, 65, 94, 115, 127, 130, 142, 150, 181, 212, 214, 229,
                 248, 257, 282, 306, 310, 354, 359, 445, 448, 15, 18, 80, 208, 260, 302, 319, 323, 334, 362, 373, 376,
                 380, 381, 384, 428, 475, 531, 719));
+        legendaryMythicalPokemon = new HashSet<>(Arrays.asList(384, 716, 717, 789, 790, 791, 792, 800, 151, 251, 489, 492));
     }
 
     /**
@@ -136,7 +138,7 @@ public class CatchPoke implements CatchPokeInterface {
         int pokeVariety = pokemonSpecies.getVarieties().size();
 
         if (pokemonWithMegaForm.contains(pokemonSpecies.getId())) {
-            if (RandomHelper.getRandNumInRange(1, 4) > 3) {
+            if (RandomHelper.getRandNumInRange(1, 10) < 2) {
                 // Skip over the base form and select a Pokemon's mega form, some have more than 1
                 randVariety = RandomHelper.getRandNumInRange(1, pokeVariety - 1);
             } else {
@@ -207,8 +209,9 @@ public class CatchPoke implements CatchPokeInterface {
             output = (StringHelper.startsWithVowel(output)) ? String.format(" caught an %s", output) :
                     String.format(" caught a %s", output);
         } else {
-            output = (StringHelper.startsWithVowel(output)) ? String.format(" let an %s get away", output) :
-                    String.format(" let a %s get away. %s", output, getShakeOutput());
+            output = (StringHelper.startsWithVowel(output)) ? String.format(" let an %s get away. ", output) :
+                    String.format(" let a %s get away. ", output);
+            output += getShakeOutput();
         }
 
         return output;
@@ -273,22 +276,22 @@ public class CatchPoke implements CatchPokeInterface {
         boolean isShiny;
         int randomNum = RandomHelper.getRandNumInRange(1, 100);
         if (captureRate <= 3) {
-            isShiny = randomNum <= 30;
-
-        } else if (captureRate <= 35) {
-            isShiny = randomNum <= 25;
-
-        } else if (captureRate <= 45) {
-            isShiny = randomNum <= 20;
-
-        } else if (captureRate <= 100) {
-            isShiny = randomNum <= 15;
-
-        } else if (captureRate <= 180) {
             isShiny = randomNum <= 10;
 
-        } else {
+        } else if (captureRate <= 35) {
             isShiny = randomNum <= 5;
+
+        } else if (captureRate <= 45) {
+            isShiny = randomNum <= 4;
+
+        } else if (captureRate <= 100) {
+            isShiny = randomNum <= 3;
+
+        } else if (captureRate <= 180) {
+            isShiny = randomNum <= 2;
+
+        } else {
+            isShiny = randomNum <= 1;
         }
 
         return isShiny;
@@ -370,7 +373,11 @@ public class CatchPoke implements CatchPokeInterface {
                 captureRate = 45;
             }
         } else {
-            captureRate = pokemonSpecies.getCaptureRate();
+            if (legendaryMythicalPokemon.contains(pokemonSpecies.getId())) {
+                captureRate = 3;
+            } else {
+                captureRate = pokemonSpecies.getCaptureRate();
+            }
         }
 
         return captureRate;
