@@ -80,7 +80,7 @@ public class PokeCommand implements PokeCommandInterface {
                     output += caughtPokeHelper(event, caughtPokeInfo);
                 }
             } else {
-                output = String.format("%s, Poke not found, replace spaces/punctuation with '-' if it's not working",
+                output = String.format("%s, Poke not found, replace spaces/punctuation in a name with '-' if it's not working",
                         event.getUser().getName());
             }
 

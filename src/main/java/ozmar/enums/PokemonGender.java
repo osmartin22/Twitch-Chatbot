@@ -28,11 +28,11 @@ public enum PokemonGender {
                 break;
 
             case MALE:
-                gender = "male";
+                gender = "(M)";
                 break;
 
             case FEMALE:
-                gender = "female";
+                gender = "(F)";
                 break;
         }
 
