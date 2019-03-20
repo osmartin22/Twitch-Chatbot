@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle.pokemonMoves;
+package ozmar.pokemonBattle.pokemonMoves.enums;
 
 public enum PokeMoveByUsage {
     NONE(0),
@@ -12,6 +12,7 @@ public enum PokeMoveByUsage {
     SOUND_BASED(8);
 
     private final int id;
+    public static final PokeMoveByUsage[] usage = values();
 
     PokeMoveByUsage(int id) {
         this.id = id;

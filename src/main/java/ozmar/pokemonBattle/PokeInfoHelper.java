@@ -17,11 +17,14 @@ public class PokeInfoHelper {
 
     }
 
-    // Left to Right is the type and its effectiveness against the other types
-    // Top down is the type and how other types are effective against it
-    // Order is
-    //    NONE(0), NORMAL(1), FIGHTING(2), FLYING(3), POISON(4), GROUND(5), ROCK(6), BUG(7), GHOST(8), STEEL(9),
-    //    FIRE(10), WATER(11), GRASS(12), ELECTRIC(13), PSYCHIC(14), ICE(15), DRAGON(16), DARK(17), FAIRY(18), UNKNOWN(19);
+    /**
+     * Damage type chart
+     * Left to Right is the type and its effectiveness against the other types
+     * Top down is the type and how effective the other types are against it
+     * Order is
+     * NONE(0), NORMAL(1), FIGHTING(2), FLYING(3), POISON(4), GROUND(5), ROCK(6), BUG(7), GHOST(8), STEEL(9),
+     * FIRE(10), WATER(11), GRASS(12), ELECTRIC(13), PSYCHIC(14), ICE(15), DRAGON(16), DARK(17), FAIRY(18), UNKNOWN(19);
+     */
     public static final double[][] TYPE_CHART = {
 //             0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19
             {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},    // NONE(0)
@@ -46,9 +49,12 @@ public class PokeInfoHelper {
             {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},    // UNKNOWN(19)
     };
 
-    // HARDY(1), BOLD(2), MODEST(3), CALM(4), TIMID(5), LONELY(6), DOCILE(7), MILD(8), GENTLE(9), HASTY(10),
-    // ADAMANT(11), IMPISH(12), BASHFUL(13), CAREFUL(14), RASH(15), JOLLY(16), NAUGHTY(17), LAX(18), QUIRKY(19),
-    // NAIVE(20), BRAVE(21), RELAXED(22), QUIET(23), SASSY(24), SERIOUS(25)
+    /**
+     * Nature chart
+     * HARDY(1), BOLD(2), MODEST(3), CALM(4), TIMID(5), LONELY(6), DOCILE(7), MILD(8), GENTLE(9), HASTY(10),
+     * ADAMANT(11), IMPISH(12), BASHFUL(13), CAREFUL(14), RASH(15), JOLLY(16), NAUGHTY(17), LAX(18), QUIRKY(19),
+     * NAIVE(20), BRAVE(21), RELAXED(22), QUIET(23), SASSY(24), SERIOUS(25)
+     */
     public static final Map<PokeNatureEnum, PokeNature> NATURE_MAP;
 
     static {
@@ -81,6 +87,9 @@ public class PokeInfoHelper {
         NATURE_MAP = Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Multiplier for each stage of the Pokemon stats
+     */
     public static final Map<Integer, Double> STAT_STAGES;
 
     static {
@@ -101,8 +110,11 @@ public class PokeInfoHelper {
         STAT_STAGES = Collections.unmodifiableMap(map);
     }
 
-    // NOTE* Accuracy and Evasion are inverses of each other
-    // -6 accuracy multiplier is the same as +6 evasion multiplier
+    /**
+     * Multiplier for each stage for accuracy and evasion
+     * NOTE* Accuracy and Evasion are inverses of each other
+     * -6 accuracy multiplier is the same as +6 evasion multiplier
+     */
     public static final Map<Integer, Double> EVA_ACC_STAGES;
 
     static {
@@ -123,22 +135,45 @@ public class PokeInfoHelper {
         EVA_ACC_STAGES = Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Calculates a Pokemon's Hp
+     * The formula is
+     * HP = (((2 * BaseHp + IV + (EV/4)) * 100) / 100) + Level + 10
+     * The calculations assume 31 IVs, 0 EVs, and level 100
+     *
+     * @param baseHp base hp to use
+     * @return int
+     */
     public static int calculatePokeHp(int baseHp) {
-        // HP = (((2 * BaseHp + IV + (EV/4)) * 100) / 100) + Level + 10
-        return (int) (((2 * baseHp + 31 + (1 / 4.0)) * 100) / 100) + 100 + 10;
+        return (int) (((2 * baseHp + 31 + (0 / 4.0)) * 100) / 100) + 100 + 10;
     }
 
+    /**
+     * Calculates a Pokemon's stat
+     * These stats can be affected by a Pokemon's nature
+     * The formula is
+     * Stat = ((((2 * BaseStat + IV + (EV/4)) * 100) / 100) + 5) * Nature
+     * The calculations assume 31 IVs, 0 EVs, and level 100
+     * Natures increase a stat by 10% and lower another stat by 10%
+     * Neutral natures raise and lower the same stat which cancels it out
+     *
+     * @param baseStat base stat to use
+     * @param stat     the stat to calculate
+     * @param nature   the nature used in the calculation
+     * @return int
+     */
     public static int calculateOtherStats(int baseStat, @Nonnull PokeStat stat, @Nonnull PokeNatureEnum nature) {
         double natureMultiplier = 1.0;
         PokeNature pokeNature = NATURE_MAP.get(nature);
-        if (stat == pokeNature.getIncreaseStat()) {
-            natureMultiplier = 1.1;
-        } else if (stat == pokeNature.getDecreaseStat()) {
-            natureMultiplier = 0.9;
+        if (pokeNature.getIncreaseStat() != pokeNature.getDecreaseStat()) {
+            if (stat == pokeNature.getIncreaseStat()) {
+                natureMultiplier = 1.1;
+            } else if (stat == pokeNature.getDecreaseStat()) {
+                natureMultiplier = 0.9;
+            }
         }
 
-        // Stat = ((((2 * BaseStat + IV + (EV/4)) * 100) / 100) + 5) * Nature
-        return (int) (((((2 * baseStat + 31 + (1 / 4.0)) * 100) / 100) + 5) * natureMultiplier);
+        return (int) (((((2 * baseStat + 0 + (0 / 4.0)) * 100) / 100) + 5) * natureMultiplier);
     }
 
     // Should pass the target Pokemon (at least their evasion stage)

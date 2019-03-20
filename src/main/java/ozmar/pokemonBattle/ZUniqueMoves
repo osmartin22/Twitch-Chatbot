@@ -1,6 +1,4 @@
-Thousand Waves - Prevents the hit pokemon from fleeing as long as the user is still in the battle
-Thousand Arrows - Check move info
-Magnitude = Power is random from 4-10
+PHYSICAL MOVES
 Anchor shot - same effect as Thousand Waves
 Assurance - deals double damage if the target received damage on the same turn, (self- inflicted, confusion, etc...)
 Avalanche - damage is doubled if the target has damaged the user
@@ -25,5 +23,37 @@ Heavy Slam - Power based on the weight difference between the user and target (D
 Hold Back - same as False Swipe
 Hyperspace Fury - Goes through Protection
 Ice Ball - Attacks for 5 turns doubles in power for each hit, doubled in addition if the user previously used Defense Curl the prior turn
-
-
+Last Resort - All moves must have at least been used once, else it will fail, move usage resets if the user is switched out
+Low Kick - Check move info
+Magnitude - Power is random from 4-10
+Metal Burst - returns 1.5x damage dealt by the foe's last attack. Fails if the user goes second
+Outrage - Check move info
+Payback - Power is doubled if the user goes 2nd or uses an item
+Phantom Force - Check move info
+Plasma Fists - Check move info
+Power Trip
+Present
+Punishment
+Pursuit
+Rage
+Rapid Spin
+Retaliate
+Return
+Revenge
+Reversal
+Rollout
+Sand Tomb
+Shadow Force
+Sky Drop
+Smack Down
+Smelling Salts
+Spectral Thief
+Spirit Shackle
+Struggle
+Sucker Punch
+Super Fang
+Thousand Arrows - Check move info
+Thousand Waves - Prevents the hit pokemon from fleeing as long as the user is still in the battle
+Thrash
+Throat Chop
+Vital Throw

@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle.pokemonMoves;
+package ozmar.pokemonBattle.pokemonMoves.enums;
 
 public enum PokeContestCondition {
     COOL(0),
@@ -9,6 +9,7 @@ public enum PokeContestCondition {
     UNKNOWN(5);
 
     private final int id;
+    public static final PokeContestCondition[] condiitons = values();
 
     PokeContestCondition(int id) {
         this.id = id;

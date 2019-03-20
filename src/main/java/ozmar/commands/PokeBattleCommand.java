@@ -1,6 +1,5 @@
 package ozmar.commands;
 
-import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 
 import javax.annotation.Nonnull;
@@ -10,10 +9,10 @@ import java.util.*;
 //  the package can be used separately outside of the bot
 public class PokeBattleCommand {
 
-    public Map<Integer, String> getListOfCurrPokeMoves(PokeTrainerSide trainerSide) {
-        List<PokeMove> moveList = trainerSide.getTrainerInBattle().getCurrPokeMoves();
-        return getMovesInMap(getMoveNamesRandomly(moveList));
-    }
+//    public Map<Integer, String> getListOfCurrPokeMoves(PokeTrainerSide trainerSide) {
+//        List<PokeMove> moveList = trainerSide.getTrainerInBattle().getCurrPokeMoves();
+//        return getMovesInMap(getMoveNamesRandomly(moveList));
+//    }
 
     private List<String> getMoveNamesRandomly(@Nonnull List<PokeMove> list) {
         List<String> moveNamesList = new ArrayList<>();

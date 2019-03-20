@@ -121,11 +121,11 @@ public class PokemonPoke {
 
         sb.append(nature);
         sb.append(" ");
-        sb.append(gender.getGenderString());
+        sb.append(pokemonName);
         if (gender.getGenderNum() != 0) {
             sb.append(" ");
+            sb.append(gender.getGenderString());
         }
-        sb.append(pokemonName);
 
         return sb.toString();
     }

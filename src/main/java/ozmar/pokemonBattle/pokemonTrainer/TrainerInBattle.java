@@ -9,15 +9,14 @@ import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class TrainerInBattle {
     private final Trainer trainer;
-    private PokeInBattle pokeInBattle;
+    private final PokeInBattle pokeInBattle;
     private TrainerChoice trainerChoice;
     private Poke pokeToSwitchIn;
+    private boolean hasMegaEvolved; // Only one mega evolution is allowed per trainer in a battle
 
 
     public TrainerInBattle(@Nonnull Trainer trainer, @Nonnull PokeInBattle pokeInBattle) {
@@ -25,33 +24,24 @@ public class TrainerInBattle {
         this.pokeInBattle = pokeInBattle;
         this.trainerChoice = TrainerChoice.CHOICE_WAITING;
         this.pokeToSwitchIn = null;
+        this.hasMegaEvolved = false;
     }
 
-    // Should get the pokeList's info, like it's health, nature, stat stages, so the user can see their Pokemon
-    public void getCurrentPokeInfo() {
-        // TODO:
+
+    public boolean hasMegaEvolved() {
+        return hasMegaEvolved;
     }
 
-    public List<PokeMove> getCurrPokeMoves() {
-        // TODO:
-        return new ArrayList<>();
-    }
 
-    // Should get the info of Pokemon not in the battle, along with the moves possibly
-    public void getOtherPokeInfo() {
-        // TODO:
-    }
-
-    // Makes the Pokemon do the selected move (check if the Pokemon knows the move first
-    public void doMove() {
-        // TODO:
-        trainerChoice = TrainerChoice.CHOICE_MOVE;
-    }
-
+    @Nonnull
     public TrainerChoice getCurrStatus() {
         return trainerChoice;
     }
 
+    @Nonnull
+    public Poke getCurrPoke() {
+        return pokeInBattle.getPoke();
+    }
 
     /**
      * Checks if the Pokemon on the field is able to switch out
@@ -77,7 +67,7 @@ public class TrainerInBattle {
         }
 
         trainerChoice = TrainerChoice.CHOICE_SWITCH;
-        return false;
+        return isAbleToSwitch;
     }
 
     /**
@@ -87,13 +77,14 @@ public class TrainerInBattle {
      * @param move move selected
      * @return boolean
      */
-    public boolean isAbleToDoMove(PokeMove move) {
+    public boolean isAbleToDoMove(@Nonnull PokeMove move) {
         boolean isAbleToDoMove = true;
         if (move.getCurrPp() == 0) {
             isAbleToDoMove = false;
         } else {
-
             // Check for any effects that prevent the move from being used
+            pokeInBattle.setMoveToUse(move);
+            trainerChoice = TrainerChoice.CHOICE_MOVE;
         }
 
         // TODO: Check if the Poke can do the selected Move
@@ -101,7 +92,31 @@ public class TrainerInBattle {
         return isAbleToDoMove;
     }
 
+    public void doChoice() {
+        if (trainerChoice == TrainerChoice.CHOICE_SWITCH) {
+            switchPoke();
+        } else {
+            pokeInBattle.doMove();
+            // TODO: For moves that act over multiple turns, keep the status as CHOICE_MOVE instead of resetting
+            //  i.e. charging/recharging or semi invulnerable moves
+        }
+        trainerChoice = TrainerChoice.CHOICE_WAITING;
+    }
+
+    public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
+        this.trainerChoice = TrainerChoice.CHOICE_SWITCH;
+        this.pokeToSwitchIn = pokeToSwitchIn;
+    }
+
     public void switchPoke() {
-        pokeInBattle = new PokeInBattle(pokeToSwitchIn);
+        pokeInBattle.setPoke(pokeToSwitchIn);
+        trainerChoice = TrainerChoice.CHOICE_WAITING;
+        pokeToSwitchIn = null;
+        // TODO: Set the poke on pokeInBattle to the desired Poke
+        //  Check if the statuses should be kept (Baton Pass) or reset
+    }
+
+    public void setMoveToUse(@Nonnull PokeMove moveToUse) {
+        this.pokeInBattle.setMoveToUse(moveToUse);
     }
 }

@@ -1,5 +1,7 @@
 package ozmar.pokemonBattle.pokemon;
 
+import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBinding;
+import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBindingEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonStats.PokeAllStages;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
@@ -25,10 +27,12 @@ public class PokeInBattle {
 
     // Will hold the current move the Pokemon is using
     private PokeMove currMove;      // Necessary for semi invulnerable turn
+    private PokeMove moveToUse;
 
     private final PokeAllStages pokeStages;
     private final Set<VolatileStatus> volatileList;
     private final Set<VolatileBattleStatus> volatileBattleStatusList;
+    private PokeBinding binding;
 
     /*
         Keep track of the type of the move as well(necessary for Conversion 2)
@@ -37,13 +41,19 @@ public class PokeInBattle {
     public PokeInBattle(@Nonnull Poke poke) {
         this.poke = poke;
         this.currMove = null;
+        this.moveToUse = null;
         this.pokeStages = new PokeAllStages();
         this.volatileList = new HashSet<>();
         this.volatileBattleStatusList = new HashSet<>();
+        this.binding = new PokeBinding();
     }
 
     public Poke getPoke() {
         return poke;
+    }
+
+    public void setPoke(Poke poke) {
+        this.poke = poke;
     }
 
     public PokeMove getCurrMove() {
@@ -52,6 +62,19 @@ public class PokeInBattle {
 
     public void setCurrMove(PokeMove currMove) {
         this.currMove = currMove;
+    }
+
+    @Nonnull
+    public PokeMove getMoveToUse() {
+        return moveToUse;
+    }
+
+    public void setMoveToUse(@Nonnull PokeMove moveToUse) {
+        this.moveToUse = moveToUse;
+    }
+
+    public void doMove() {
+        // Do move
     }
 
     public PokeAllStages getPokeStages() {
@@ -64,5 +87,17 @@ public class PokeInBattle {
 
     public Set<VolatileBattleStatus> getVolatileBattleStatusList() {
         return volatileBattleStatusList;
+    }
+
+    public boolean bindPoke(PokeBindingEnum bindingEnum) {
+        return binding.setBinding(bindingEnum);
+    }
+
+    public void doBindingDamage() {
+        binding.doBindingDamage(poke);
+    }
+
+    public void doNonVolatileDamage() {
+        // TODO: Non volatile status damage is done at the end of each turn, not all statuses cause damage
     }
 }

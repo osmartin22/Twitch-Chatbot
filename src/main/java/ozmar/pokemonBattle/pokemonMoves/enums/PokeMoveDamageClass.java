@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle.pokemonMoves;
+package ozmar.pokemonBattle.pokemonMoves.enums;
 
 public enum PokeMoveDamageClass {
     PHYSICAL(0),

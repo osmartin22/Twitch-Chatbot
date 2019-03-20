@@ -1,18 +1,21 @@
 package ozmar.pokemonBattle.pokemonMoves;
 
+import ozmar.pokemonBattle.pokemonMoves.enums.PokeMoveDamageClass;
+import ozmar.pokemonBattle.pokemonMoves.enums.PokeTarget;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 
 public class PokeMove {
     private final int id;
     private final String name;
+    private PokeTypeEnum moveType;
+    private final PokeMoveDamageClass damageClass;
     private final int maxPp;
     private int currPp;
     private final int power;
     private int currPower;
     private int accuracy;
+
     private int priority;
-    private PokeTypeEnum moveType;
-    private final PokeMoveDamageClass damageClass;
     private final PokeTarget moveTarget;
 
     private final PokeMoveMetaData metaData;

@@ -1,8 +1,8 @@
 package ozmar.pokemonBattle.pokemonField.PokemonSideProtection;
 
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
-import ozmar.pokemonBattle.pokemonMoves.PokeMoveDamageClass;
-import ozmar.pokemonBattle.pokemonMoves.PokeTarget;
+import ozmar.pokemonBattle.pokemonMoves.enums.PokeMoveDamageClass;
+import ozmar.pokemonBattle.pokemonMoves.enums.PokeTarget;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
