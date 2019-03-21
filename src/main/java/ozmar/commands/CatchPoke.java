@@ -87,7 +87,8 @@ public class CatchPoke implements CatchPokeInterface {
         regionMap.put("sinnoh", new PokemonRegion("sinnoh", 387, 493));
         regionMap.put("unova", new PokemonRegion("unova", 494, 649));
         regionMap.put("kalos", new PokemonRegion("kalos", 650, 721));
-        regionMap.put("alola", new PokemonRegion("alola", 722, 807));
+        regionMap.put("alola", new PokemonRegion("alola", 722, 809));
+        regionMap.put("galar", new PokemonRegion("galar", 810, 816));   // Unreleased region
         return regionMap;
     }
 
@@ -123,7 +124,7 @@ public class CatchPoke implements CatchPokeInterface {
         int result;
         pokeInput = pokeInput.toLowerCase();
         if (regionMap.containsKey(pokeInput)) {
-            result = initialize(getPokedexNumber(pokeInput), "");
+            result = initialize(getPokedexNumber(pokeInput));
         } else {
             result = initialize(-1, pokeInput);
         }
@@ -226,6 +227,20 @@ public class CatchPoke implements CatchPokeInterface {
                     isRegionChoice = true;
                 } else {
                     pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                }
+                break;
+            case "galar":
+                int index = RandomHelper.getRandNumInRange(1, 3);
+                switch (index) {
+                    case 1:
+                        pokeDexNum = 810;
+                        break;
+                    case 2:
+                        pokeDexNum = 813;
+                        break;
+                    case 3:
+                    default:
+                        pokeDexNum = 816;
                 }
                 break;
         }
