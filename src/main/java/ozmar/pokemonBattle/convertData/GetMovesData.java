@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle;
+package ozmar.pokemonBattle.convertData;
 
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonMoves.PokeMoveMetaData;

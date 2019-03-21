@@ -5,7 +5,6 @@ import ozmar.pokemonBattle.pokemon.PokeInBattle;
 import ozmar.pokemonBattle.pokemonField.PokeField;
 import ozmar.pokemonBattle.pokemonField.PokeSide;
 import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
-import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonTrainer.Trainer;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
 
@@ -34,27 +33,25 @@ public class PokeBattle {
     }
 
 
-    public boolean setMove(@Nonnull Trainer trainer, @Nonnull PokeMove move) {
-        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, move);
+    public boolean setMoveToUse(@Nonnull Trainer trainer, int movePosition) {
+        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, movePosition);
         if (isAbleToDoMove) {
-            // Set the pokemon's move
-            // Set status to CHOICE_MOVE
+            trainerSideMap.get(trainer).setMoveToUse(movePosition);
         }
-
         return isAbleToDoMove;
     }
 
     /**
      * Attempts to set a Pokemon to switch in and returns whether the Pokemon can switch out or not
      *
-     * @param trainer Trainer switching their Poke
-     * @param poke    Poke to switch in
+     * @param trainer      Trainer switching their Poke
+     * @param pokePosition position of the Poke in the Trainer's Poke list
      * @return boolean
      */
-    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, @Nonnull Poke poke) {
+    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, int pokePosition) {
         boolean isAbleToSwitch = canTrainerSwitchPoke(trainer);
         if (isAbleToSwitch) {
-            trainerSideMap.get(trainer).setPokeToSwitchIn(poke);
+            isAbleToSwitch = trainerSideMap.get(trainer).setPokeToSwitchIn(pokePosition);
         }
 
         return isAbleToSwitch;
@@ -69,15 +66,15 @@ public class PokeBattle {
     /**
      * Checks if the Poke on the field can do the selected move
      *
-     * @param trainer Trainer choosing the move
-     * @param move    move the Poke will use
+     * @param trainer      Trainer choosing the move
+     * @param movePosition position of the desired move
      * @return boolean
      */
-    private boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, @Nonnull PokeMove move) {
+    private boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, int movePosition) {
         boolean isAbleToDoMove = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        if (side.getTrainerInBattle().getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToDoMove = side.getTrainerInBattle().isAbleToDoMove(move);
+        if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
+            isAbleToDoMove = side.isAbleToDoMove(movePosition);
         }
         return isAbleToDoMove;
     }
@@ -91,8 +88,8 @@ public class PokeBattle {
     private boolean canTrainerSwitchPoke(@Nonnull Trainer trainer) {
         boolean isAbleToSwitch = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        if (side.getTrainerInBattle().getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToSwitch = side.getTrainerInBattle().isAbleToSwitchPoke();
+        if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
+            isAbleToSwitch = side.isAbleToSwitchPoke();
         }
 
         return isAbleToSwitch;
@@ -101,7 +98,7 @@ public class PokeBattle {
     @Nonnull
     public TrainerChoice getTrainerStatus(@Nonnull Trainer trainer) {
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        return side.getTrainerInBattle().getCurrStatus();
+        return side.getCurrStatus();
     }
 
     /**
@@ -112,7 +109,7 @@ public class PokeBattle {
     public boolean trainersReady() {
         boolean trainersReady = true;
         for (PokeTrainerSide side : trainerSideMap.values()) {
-            if (side.getTrainerInBattle().getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
+            if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
                 trainersReady = false;
                 break;
             }
@@ -127,13 +124,34 @@ public class PokeBattle {
     // NOTE* If both trainers switch out on the same turn, the faster pokemon switches out first
     public void doTrainerChoice() {
         for (PokeTrainerSide side : trainerSideMap.values()) {
-            side.getTrainerInBattle().doChoice();
+            side.doChoice();
         }
         // Execute the trainers choices if trainersReady() == true
     }
 
     private void pursuitisInvolved() {
+/* Idea
+2v2 battles is more complex (Even if I write this for 2v2, I would have to change other parts to work with 2v2)
+1v1 battles
+Check if any of the trainers have selected Pursuit
 
+if(selected pursuit) {
+    Check what the other trainer chose
+    if(other trainer is switching || uses the switching moves) {
+        Do special execution
+        Pursuit 2x damage
+        Poke switches out
+        turn ends
+
+    } else {
+        Proceed as normal
+    }
+} else {
+    proceed as normal
+}
+
+
+ */
     }
 
     private void doNonVolatileStatusDamage() {

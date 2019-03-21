@@ -1,8 +1,9 @@
-package ozmar.pokemonBattle;
+package ozmar.pokemonBattle.convertData;
 
 import javafx.util.Pair;
 import ozmar.PokemonPoke;
 import ozmar.enums.PokemonGender;
+import ozmar.pokemonBattle.PokeInfoHelper;
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonNature.PokeNatureEnum;

@@ -1,5 +1,6 @@
 package ozmar.pokemonBattle.pokemonField;
 
+import ozmar.pokemonBattle.TrainerChoice;
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
@@ -19,11 +20,6 @@ public class PokeTrainerSide {
     }
 
     @Nonnull
-    public TrainerInBattle getTrainerInBattle() {
-        return trainerInBattle;
-    }
-
-    @Nonnull
     public PokeSide getSide() {
         return side;
     }
@@ -33,11 +29,28 @@ public class PokeTrainerSide {
         return trainerInBattle.getCurrPoke();
     }
 
+    @Nonnull
+    public TrainerChoice getCurrStatus() {
+        return trainerInBattle.getCurrStatus();
+    }
+
     public void doChoice() {
         trainerInBattle.doChoice();
     }
 
-    public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
-        trainerInBattle.setPokeToSwitchIn(pokeToSwitchIn);
+    public void setMoveToUse(int movePosition) {
+        trainerInBattle.setMoveToUse(movePosition);
+    }
+
+    public boolean setPokeToSwitchIn(int pokePosition) {
+        return trainerInBattle.setPokeToSwitchIn(pokePosition);
+    }
+
+    public boolean isAbleToDoMove(int movePosition) {
+        return trainerInBattle.isAbleToDoMove(movePosition);
+    }
+
+    public boolean isAbleToSwitchPoke() {
+        return trainerInBattle.isAbleToSwitchPoke();
     }
 }

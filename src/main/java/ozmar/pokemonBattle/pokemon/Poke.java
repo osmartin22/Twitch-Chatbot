@@ -22,8 +22,6 @@ public class Poke {
 
     private final List<PokeMove> moveList;
 
-    private boolean isFainted;
-
 
     // Pokemon status conditions;
     private NonVolatileStatus nonVolatile;
@@ -44,7 +42,6 @@ public class Poke {
         this.pokeStats = pokeStats;
         this.moveList = moveList;
         this.nonVolatile = NonVolatileStatus.NONE;
-        this.isFainted = false;
     }
 
     public int getId() {
@@ -121,10 +118,6 @@ public class Poke {
     }
 
     public boolean isFainted() {
-        if (!isFainted) {
-            isFainted = pokeStats.getCurrHp() == 0;
-        }
-
-        return isFainted;
+        return pokeStats.getCurrHp() == 0;
     }
 }

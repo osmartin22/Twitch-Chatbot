@@ -3,8 +3,8 @@ package PokeBattleTests;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ozmar.pokemonBattle.ConvertIntoPoke;
 import ozmar.pokemonBattle.PokeBattle;
+import ozmar.pokemonBattle.convertData.ConvertIntoPoke;
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemonTrainer.Trainer;
 
@@ -42,12 +42,15 @@ public class PokeBattleTest {
         Assert.assertEquals("bulbasaur", redPokes.get(0).getName());
         Assert.assertEquals("torchic", bluePokes.get(0).getName());
 
-        pokeBattle.setPokeToSwitchIn(trainerRed, redPokes.get(2));
-        pokeBattle.doTrainerChoice();
-        Assert.assertEquals("squirtle", pokeBattle.getCurrPoke(trainerRed).getName());
+        pokeBattle.setPokeToSwitchIn(trainerRed, 2);
+        Assert.assertFalse(pokeBattle.trainersReady());
+        pokeBattle.setPokeToSwitchIn(trainerBlue, 1);
 
-        pokeBattle.setPokeToSwitchIn(trainerBlue, bluePokes.get(1));
+        Assert.assertTrue(pokeBattle.trainersReady());
         pokeBattle.doTrainerChoice();
+        Assert.assertFalse(pokeBattle.trainersReady());
+
+        Assert.assertEquals("squirtle", pokeBattle.getCurrPoke(trainerRed).getName());
         Assert.assertEquals("treecko", pokeBattle.getCurrPoke(trainerBlue).getName());
     }
 }

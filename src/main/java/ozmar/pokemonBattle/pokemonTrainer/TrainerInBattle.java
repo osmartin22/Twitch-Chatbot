@@ -74,11 +74,12 @@ public class TrainerInBattle {
      * Checks if the Pokemon on the field can do the selected move
      * i.e. Enough PP, or another effect prevents the move from being used
      *
-     * @param move move selected
+     * @param movePosition position of the selected move
      * @return boolean
      */
-    public boolean isAbleToDoMove(@Nonnull PokeMove move) {
+    public boolean isAbleToDoMove(int movePosition) {
         boolean isAbleToDoMove = true;
+        PokeMove move = pokeInBattle.getPoke().getMoveList().get(movePosition);
         if (move.getCurrPp() == 0) {
             isAbleToDoMove = false;
         } else {
@@ -103,9 +104,16 @@ public class TrainerInBattle {
         trainerChoice = TrainerChoice.CHOICE_WAITING;
     }
 
-    public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
-        this.trainerChoice = TrainerChoice.CHOICE_SWITCH;
-        this.pokeToSwitchIn = pokeToSwitchIn;
+    public boolean setPokeToSwitchIn(int pokePosition) {
+        boolean canSwitchIn = false;
+        Poke pokeToSwitchIn = trainer.getPokeList().get(pokePosition);
+        if (!pokeToSwitchIn.isFainted()) {
+            this.trainerChoice = TrainerChoice.CHOICE_SWITCH;
+            this.pokeToSwitchIn = pokeToSwitchIn;
+            canSwitchIn = true;
+        }
+
+        return canSwitchIn;
     }
 
     public void switchPoke() {
@@ -116,7 +124,8 @@ public class TrainerInBattle {
         //  Check if the statuses should be kept (Baton Pass) or reset
     }
 
-    public void setMoveToUse(@Nonnull PokeMove moveToUse) {
-        this.pokeInBattle.setMoveToUse(moveToUse);
+    public void setMoveToUse(int movePosition) {
+        this.pokeInBattle.setMoveToUse(pokeInBattle.getPoke().getMoveList().get(movePosition));
+        this.trainerChoice = TrainerChoice.CHOICE_MOVE;
     }
 }
