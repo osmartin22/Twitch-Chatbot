@@ -24,7 +24,7 @@ public class PokeCommand implements PokeCommandInterface {
     private final DatabaseHandlerInterface db;
     private final CatchPokeInterface catchPoke;
     private final int MAX_POKE_OWNED = 6;
-    private final int MAX_POKEDEX_INDEX = 807;
+    private final int MAX_POKEDEX_INDEX = 812;
     private final Map<Long, CaughtPokeHelper> caughtPokes;
     private final ScheduledExecutorService caughtPokeTimer = Executors.newScheduledThreadPool(1);
     private final Map<Long, Long> replacePokes;
@@ -49,11 +49,7 @@ public class PokeCommand implements PokeCommandInterface {
     @Nonnull
     @Override
     public String catchPokeCommand(@Nonnull CommandEvent event) {
-        String input = event.getCommand().trim().toLowerCase();
-
-        // Shortest Pokemon name is 3 letters long (Mew, Muk)
-//        String pokeInput = (input.length() < 3) ? "" : StringHelper.getFirstWord(input);
-        String pokeInput = StringHelper.getFirstWord(input);
+        String pokeInput = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
 
         String output;
         if (pokeInput.equals("missingno")) {
@@ -62,10 +58,6 @@ public class PokeCommand implements PokeCommandInterface {
         } else {
             CaughtPokeInfo caughtPokeInfo = null;
             Integer pokedexIndex = getPokedexIndex(pokeInput);
-            if (pokedexIndex != null && (pokedexIndex < 1 || pokedexIndex > 807)) {
-                pokeInput = getUnReleasedPokeName(pokedexIndex);
-                pokedexIndex = null;
-            }
 
             // Attempt to catch MissingNo if a specific Pokemon was not requested
             if (pokeInput.isEmpty() || catchPoke.getRegionNames().contains(pokeInput)) {
@@ -78,7 +70,13 @@ public class PokeCommand implements PokeCommandInterface {
                     if (!pokeInput.isEmpty()) {
                         initializeResult = catchPoke.initialize(pokeInput);
                     } else {
-                        initializeResult = catchPoke.initialize(RandomHelper.getRandNumInRange(1, MAX_POKEDEX_INDEX));
+                        int randomIndex = RandomHelper.getRandNumInRange(1, MAX_POKEDEX_INDEX);
+                        if (randomIndex == 811) {
+                            randomIndex = 813;
+                        } else if (randomIndex == 812) {
+                            randomIndex = 816;
+                        }
+                        initializeResult = catchPoke.initialize(randomIndex);
                     }
                 } else {
                     initializeResult = catchPoke.initialize(pokedexIndex);
@@ -88,21 +86,52 @@ public class PokeCommand implements PokeCommandInterface {
             }
 
             if (initializeResult != -1) {
-                if (caughtPokeInfo == null) {
-                    caughtPokeInfo = catchPoke.attemptCatch();
-                }
-                output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
-
-                if (caughtPokeInfo.isCaptured()) {
-                    output += caughtPokeHelper(event, caughtPokeInfo);
-                }
+                output = getCatchPokeResult(caughtPokeInfo, event);
             } else {
-                output = String.format("%s, Poke not found, replace spaces/punctuation in a name with '-' if it's not working",
-                        event.getUser().getName());
+                output = getCatchPokeErrorOutput(pokedexIndex, event.getUser().getName());
             }
-
         }
 
+        return output;
+    }
+
+    /**
+     * Gets the result string for the Pokemon that were found and ran away or were caught
+     *
+     * @param caughtPokeInfo info about the captured Pokemon
+     * @param event          info about the user
+     * @return String
+     */
+    @Nonnull
+    private String getCatchPokeResult(@Nullable CaughtPokeInfo caughtPokeInfo, @Nonnull CommandEvent event) {
+        String output;
+        if (caughtPokeInfo == null) {
+            caughtPokeInfo = catchPoke.attemptCatch();
+        }
+        output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
+
+        if (caughtPokeInfo.isCaptured()) {
+            output += caughtPokeHelper(event.getUser().getId(), caughtPokeInfo);
+        }
+        return output;
+    }
+
+    /**
+     * Gets the output when a Pokemon was not found
+     *
+     * @param pokedexIndex index of a Pokemon
+     * @param username     name of the user
+     * @return String
+     */
+    @Nonnull
+    private String getCatchPokeErrorOutput(@Nullable Integer pokedexIndex, @Nonnull String username) {
+        String output;
+        if (pokedexIndex != null) {
+            output = String.format("%s, Id not found in the national Pokedex. Try 1-810, 813, or 816", username);
+        } else {
+            output = String.format("%s, Poke Species not found, replace spaces/punctuation in a name with" +
+                    " '-' if it's not working", username);
+        }
         return output;
     }
 
@@ -124,53 +153,19 @@ public class PokeCommand implements PokeCommandInterface {
         return num;
     }
 
-
-    /**
-     * Gets the name of the Pokemon from the index
-     * These Pokemon have been announced but are not part of the PokeApi
-     *
-     * @param index index of the Poke
-     * @return String
-     */
-    @Nonnull
-    private String getUnReleasedPokeName(int index) {
-        String name;
-        switch (index) {
-            case 808:
-                name = "meltan";
-                break;
-            case 809:
-                name = "melmetal";
-                break;
-            case 810:
-                name = "grookey";
-                break;
-            case 813:
-                name = "scorbunny";
-                break;
-            case 816:
-                name = "sobble";
-                break;
-            default:
-                name = "";
-        }
-        return name;
-    }
-
     /**
      * Checks if the user already has the max number of Pokemon
      * If they have less than the max, the caught Pokemon is saved to the db
      * If they have more than the max, the user must specify if they want the Pokemon and the caught
      * Pokemon is stored in a buffer
      *
-     * @param event    info about the user
+     * @param userId   Twitch id of the user
      * @param pokeInfo info about the captured Pokemon
      * @return string
      */
     @Nonnull
-    private String caughtPokeHelper(@Nonnull CommandEvent event, @Nonnull CaughtPokeInfo pokeInfo) {
+    private String caughtPokeHelper(long userId, @Nonnull CaughtPokeInfo pokeInfo) {
         String output = "";
-        long userId = event.getUser().getId();
         int pokeCount = db.getPokemonDao().getUsersPokemonCount(userId);
         if (pokeCount < MAX_POKE_OWNED) {
             db.getPokemonDao().insertPokemon(userId, pokeInfo.getPoke());

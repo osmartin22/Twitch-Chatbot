@@ -40,7 +40,7 @@ public class CatchPoke implements CatchPokeInterface {
     private PokemonSpecies pokemonSpecies;
     private Nature nature;
     private final Set<Integer> specialFormPokemonSet;   // Pokemon with other appearances that PokeApi treats differently
-    private final Set<String> unreleasedPokemon;    // Pokemon announced but not on PokeApi
+    private final Map<Integer, String> unreleasedPokemon;    // Pokemon announced but not on PokeApi
     private final Set<Integer> legendaryMythicalPokemon;  // Legendary/mythical pokemon that need their catch rate set to 3
     private final Set<Integer> pokemonWithMegaForm;
     private final List<Integer> pokemonWithAlolaForm;
@@ -52,16 +52,26 @@ public class CatchPoke implements CatchPokeInterface {
 
     public CatchPoke() {
         specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
-        unreleasedPokemon = new HashSet<>(Arrays.asList("meltan", "melmetal", "grookey", "scorbunny", "sobble"));
         legendaryMythicalPokemon = new HashSet<>(Arrays.asList(384, 716, 717, 789, 790, 791, 792, 800, 151, 251, 489, 492));
         pokemonWithMegaForm = new HashSet<>(Arrays.asList(3, 6, 9, 65, 94, 115, 127, 130, 142, 150, 181, 212, 214, 229,
                 248, 257, 282, 306, 310, 354, 359, 445, 448, 15, 18, 80, 208, 260, 302, 319, 323, 334, 362, 373, 376,
                 380, 381, 384, 428, 475, 531, 719));
         pokemonWithAlolaForm = new ArrayList<>(Arrays.asList(19, 20, 26, 27, 37, 38, 50, 51, 52, 53, 74, 75, 76,
                 88, 89, 103, 105));
+        unreleasedPokemon = initializeUnreleasedPoke();
         regionMap = initializeRegionalList();
         isUnreleased = false;
         isRegionChoice = false;
+    }
+
+    private Map<Integer, String> initializeUnreleasedPoke() {
+        Map<Integer, String> map = new HashMap<>();
+        map.put(808, "meltan");
+        map.put(809, "melmetal");
+        map.put(810, "grookey");
+        map.put(813, "scorbunny");
+        map.put(816, "sobble");
+        return map;
     }
 
     /**
@@ -90,7 +100,14 @@ public class CatchPoke implements CatchPokeInterface {
      */
     @Override
     public int initialize(int pokeId) {
-        return initialize(pokeId, "");
+        int result;
+        if (unreleasedPokemon.containsKey(pokeId)) {
+            result = initialize(-1, unreleasedPokemon.get(pokeId));
+        } else {
+            result = initialize(pokeId, "");
+        }
+
+        return result;
     }
 
     /**
@@ -103,12 +120,15 @@ public class CatchPoke implements CatchPokeInterface {
      */
     @Override
     public int initialize(@Nonnull String pokeInput) {
+        int result;
         pokeInput = pokeInput.toLowerCase();
         if (regionMap.containsKey(pokeInput)) {
-            return initialize(getPokedexNumber(pokeInput), "");
+            result = initialize(getPokedexNumber(pokeInput), "");
+        } else {
+            result = initialize(-1, pokeInput);
         }
 
-        return initialize(-1, pokeInput);
+        return result;
     }
 
     /**
@@ -121,7 +141,7 @@ public class CatchPoke implements CatchPokeInterface {
      */
     private int initialize(int pokeId, String pokeInput) {
         try {
-            isUnreleased = unreleasedPokemon.contains(pokeInput);
+            isUnreleased = unreleasedPokemon.containsValue(pokeInput);
             if (pokeInput.isEmpty()) {
                 pokemonSpecies = PokemonSpecies.getById(pokeId);
             } else {
