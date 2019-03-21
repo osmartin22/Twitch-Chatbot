@@ -20,8 +20,13 @@ public class StringHelper {
      */
     @Nonnull
     public static String getFirstWord(@Nonnull String word) {
+
         if (word.contains(" ")) {
             word = word.substring(0, word.indexOf(" "));
+
+            // Necessary since people use Chatterino which adds this character at times
+        } else if (word.contains("\u206D")) {
+            word = word.substring(0, word.indexOf("\u206D"));
         }
 
         return word;
