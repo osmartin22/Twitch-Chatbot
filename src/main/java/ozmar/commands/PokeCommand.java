@@ -22,11 +22,12 @@ import java.util.concurrent.TimeUnit;
 public class PokeCommand implements PokeCommandInterface {
 
     private final DatabaseHandlerInterface db;
-    private CatchPokeInterface catchPoke;
+    private final CatchPokeInterface catchPoke;
     private final int MAX_POKE_OWNED = 6;
-    private Map<Long, CaughtPokeHelper> caughtPokes;
+    private final int MAX_POKEDEX_INDEX = 807;
+    private final Map<Long, CaughtPokeHelper> caughtPokes;
     private final ScheduledExecutorService caughtPokeTimer = Executors.newScheduledThreadPool(1);
-    private Map<Long, Long> replacePokes;
+    private final Map<Long, Long> replacePokes;
     private final ScheduledExecutorService replacePokeTimer = Executors.newScheduledThreadPool(1);
 
 
@@ -51,24 +52,39 @@ public class PokeCommand implements PokeCommandInterface {
         String input = event.getCommand().trim().toLowerCase();
 
         // Shortest Pokemon name is 3 letters long (Mew, Muk)
-        String pokeName = (input.length() < 3) ? "" : StringHelper.getFirstWord(input);
+//        String pokeInput = (input.length() < 3) ? "" : StringHelper.getFirstWord(input);
+        String pokeInput = StringHelper.getFirstWord(input);
 
         String output;
-        if (pokeName.equals("missingno")) {
-            output = String.format("%s, use just '!catchpoke' for MissingNo moon2WUT", event.getUser().getName());
+        if (pokeInput.equals("missingno")) {
+            output = String.format("%s, use '!catchpoke' or '!catchpoke <region>' for that one moon2WUT",
+                    event.getUser().getName());
         } else {
-
             CaughtPokeInfo caughtPokeInfo = null;
-            int initializeResult;
-            if (pokeName.isEmpty()) {
+            Integer pokedexIndex = getPokedexIndex(pokeInput);
+            if (pokedexIndex != null && (pokedexIndex < 1 || pokedexIndex > 807)) {
+                pokeInput = getUnReleasedPokeName(pokedexIndex);
+                pokedexIndex = null;
+            }
+
+            // Attempt to catch MissingNo if a specific Pokemon was not requested
+            if (pokeInput.isEmpty() || catchPoke.getRegionNames().contains(pokeInput)) {
                 caughtPokeInfo = catchPoke.catchMissingNo();
-                if (caughtPokeInfo != null) {
-                    initializeResult = 1;
+            }
+
+            int initializeResult;
+            if (caughtPokeInfo == null) {
+                if (pokedexIndex == null) {
+                    if (!pokeInput.isEmpty()) {
+                        initializeResult = catchPoke.initialize(pokeInput);
+                    } else {
+                        initializeResult = catchPoke.initialize(RandomHelper.getRandNumInRange(1, MAX_POKEDEX_INDEX));
+                    }
                 } else {
-                    initializeResult = catchPoke.initialize(RandomHelper.getRandNumInRange(1, 807));
+                    initializeResult = catchPoke.initialize(pokedexIndex);
                 }
             } else {
-                initializeResult = catchPoke.initialize(pokeName);
+                initializeResult = 1;
             }
 
             if (initializeResult != -1) {
@@ -76,6 +92,7 @@ public class PokeCommand implements PokeCommandInterface {
                     caughtPokeInfo = catchPoke.attemptCatch();
                 }
                 output = event.getUser().getName() + caughtPokeInfo.getCatchResultString();
+
                 if (caughtPokeInfo.isCaptured()) {
                     output += caughtPokeHelper(event, caughtPokeInfo);
                 }
@@ -89,6 +106,67 @@ public class PokeCommand implements PokeCommandInterface {
         return output;
     }
 
+    /**
+     * Converts the given string to an int
+     * -1 is returned if it fails
+     *
+     * @param index string
+     * @return int
+     */
+    private Integer getPokedexIndex(@NonNull String index) {
+        Integer num;
+        try {
+            num = Integer.parseInt(index);
+        } catch (NumberFormatException e) {
+            num = null;
+        }
+
+        return num;
+    }
+
+
+    /**
+     * Gets the name of the Pokemon from the index
+     * These Pokemon have been announced but are not part of the PokeApi
+     *
+     * @param index index of the Poke
+     * @return String
+     */
+    @Nonnull
+    private String getUnReleasedPokeName(int index) {
+        String name;
+        switch (index) {
+            case 808:
+                name = "meltan";
+                break;
+            case 809:
+                name = "melmetal";
+                break;
+            case 810:
+                name = "grookey";
+                break;
+            case 813:
+                name = "scorbunny";
+                break;
+            case 816:
+                name = "sobble";
+                break;
+            default:
+                name = "";
+        }
+        return name;
+    }
+
+    /**
+     * Checks if the user already has the max number of Pokemon
+     * If they have less than the max, the caught Pokemon is saved to the db
+     * If they have more than the max, the user must specify if they want the Pokemon and the caught
+     * Pokemon is stored in a buffer
+     *
+     * @param event    info about the user
+     * @param pokeInfo info about the captured Pokemon
+     * @return string
+     */
     @Nonnull
     private String caughtPokeHelper(@Nonnull CommandEvent event, @Nonnull CaughtPokeInfo pokeInfo) {
         String output = "";
@@ -97,7 +175,7 @@ public class PokeCommand implements PokeCommandInterface {
         if (pokeCount < MAX_POKE_OWNED) {
             db.getPokemonDao().insertPokemon(userId, pokeInfo.getPoke());
         } else {
-            saveCatch(userId, pokeInfo);
+            saveCatchToBuffer(userId, pokeInfo);
             output = ", use !replacepoke [Num], or '!replacepoke help'";
         }
 
@@ -145,7 +223,7 @@ public class PokeCommand implements PokeCommandInterface {
     @Override
     public String replacePoke(@Nonnull CommandEvent event) {
         long userId = event.getUser().getId();
-        CaughtPokeInfo pokeInfo = getSavedCatch(userId);
+        CaughtPokeInfo pokeInfo = getCatchFromBuffer(userId);
 
         String output = null;
         if (pokeInfo != null) {
@@ -165,7 +243,7 @@ public class PokeCommand implements PokeCommandInterface {
                         pokeNum = Integer.valueOf(StringHelper.getFirstWord(input));
                         if (pokeNum > 0 && pokeNum <= MAX_POKE_OWNED) {
                             db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke(), pokeNum);
-                            removeCatch(userId);
+                            removeCatchFromBuffer(userId);
                         }
                     } catch (NumberFormatException e) {
                         // No output if wrong input
@@ -177,6 +255,9 @@ public class PokeCommand implements PokeCommandInterface {
         return output;
     }
 
+    /**
+     * Class to help store the caught Pokemon in a buffer
+     */
     private class CaughtPokeHelper {
         private long timeStored;
         private CaughtPokeInfo pokeInfo;
@@ -187,17 +268,17 @@ public class PokeCommand implements PokeCommandInterface {
         }
     }
 
-    private void saveCatch(long userId, @NonNull CaughtPokeInfo pokeInfo) {
+    private void saveCatchToBuffer(long userId, @NonNull CaughtPokeInfo pokeInfo) {
         CaughtPokeHelper helper = new CaughtPokeHelper(System.currentTimeMillis(), pokeInfo);
         caughtPokes.put(userId, helper);
     }
 
-    private void removeCatch(long userId) {
+    private void removeCatchFromBuffer(long userId) {
         caughtPokes.remove(userId);
     }
 
     @Nullable
-    private CaughtPokeInfo getSavedCatch(long userId) {
+    private CaughtPokeInfo getCatchFromBuffer(long userId) {
         CaughtPokeHelper helper = caughtPokes.get(userId);
         if (helper != null) {
             return helper.pokeInfo;
@@ -206,13 +287,21 @@ public class PokeCommand implements PokeCommandInterface {
         return null;
     }
 
+    /**
+     * Timer to remove caught Pokemon from the buffer after a set time
+     * Users that have not saved their Pokemon will lose their chance to keep it
+     */
     private void startCaughtPokeTimer() {
-        final long removeTimer = 240000;
+        final long removeTimer = 120000;
         final Runnable clearUnclaimedPokes = () -> caughtPokes.entrySet()
                 .removeIf(entry -> System.currentTimeMillis() - entry.getValue().timeStored > removeTimer);
         caughtPokeTimer.scheduleAtFixedRate(clearUnclaimedPokes, 60, 60, TimeUnit.SECONDS);
     }
 
+    /**
+     * Timer to help prevent users spamming the '!replacepoke help' command
+     * Users of the command are put in this buffer and are then removed after a set time
+     */
     private void startReplacePokeTimer() {
         final long removeTimer = 60000;
         final Runnable removeUser = () -> replacePokes.entrySet()

@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /*
+Capture chance chart
 Capture Rate        Health   Pokeball       Status          Percent of capture
 255 (Caterpie)          25          1           1           87.193
 235 (Shinx)             25          1           1           82.004
@@ -38,22 +39,46 @@ public class CatchPoke implements CatchPokeInterface {
     private Pokemon pokemon;
     private PokemonSpecies pokemonSpecies;
     private Nature nature;
-    private final Set<Integer> specialFormPokemonSet;
-    private final Set<String> unreleasedPokemon;
-    private Set<Integer> pokemonWithMegaForm;
-    private Set<Integer> legendaryMythicalPokemon;  // Legendary/mythical pokemon that need their catch rate set to 3
-    private boolean isUnreleased;
+    private final Set<Integer> specialFormPokemonSet;   // Pokemon with other appearances that PokeApi treats differently
+    private final Set<String> unreleasedPokemon;    // Pokemon announced but not on PokeApi
+    private final Set<Integer> legendaryMythicalPokemon;  // Legendary/mythical pokemon that need their catch rate set to 3
+    private final Set<Integer> pokemonWithMegaForm;
+    private final List<Integer> pokemonWithAlolaForm;
+    private final Map<String, PokemonRegion> regionMap;
+
     private int pokeShake;
+    private boolean isUnreleased;
+    private boolean isRegionChoice;
 
     public CatchPoke() {
-        // unown=201, burmy=412, shellos=422, gastrodon=423, deerling=585, sawsbuck=586, vivillon=666
-        // flabebe=669, floette=670, florges=671, furfrou=676
         specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
         unreleasedPokemon = new HashSet<>(Arrays.asList("meltan", "melmetal", "grookey", "scorbunny", "sobble"));
+        legendaryMythicalPokemon = new HashSet<>(Arrays.asList(384, 716, 717, 789, 790, 791, 792, 800, 151, 251, 489, 492));
         pokemonWithMegaForm = new HashSet<>(Arrays.asList(3, 6, 9, 65, 94, 115, 127, 130, 142, 150, 181, 212, 214, 229,
                 248, 257, 282, 306, 310, 354, 359, 445, 448, 15, 18, 80, 208, 260, 302, 319, 323, 334, 362, 373, 376,
                 380, 381, 384, 428, 475, 531, 719));
-        legendaryMythicalPokemon = new HashSet<>(Arrays.asList(384, 716, 717, 789, 790, 791, 792, 800, 151, 251, 489, 492));
+        pokemonWithAlolaForm = new ArrayList<>(Arrays.asList(19, 20, 26, 27, 37, 38, 50, 51, 52, 53, 74, 75, 76,
+                88, 89, 103, 105));
+        regionMap = initializeRegionalList();
+        isUnreleased = false;
+        isRegionChoice = false;
+    }
+
+    /**
+     * Gets a Map containing the region and the indexes they have from the National Pokedex
+     *
+     * @return Map
+     */
+    private Map<String, PokemonRegion> initializeRegionalList() {
+        Map<String, PokemonRegion> regionMap = new HashMap<>();
+        regionMap.put("kanto", new PokemonRegion("kanto", 1, 151));
+        regionMap.put("johto", new PokemonRegion("johto", 152, 251));
+        regionMap.put("hoenn", new PokemonRegion("hoenn", 252, 386));
+        regionMap.put("sinnoh", new PokemonRegion("sinnoh", 387, 493));
+        regionMap.put("unova", new PokemonRegion("unova", 494, 649));
+        regionMap.put("kalos", new PokemonRegion("kalos", 650, 721));
+        regionMap.put("alola", new PokemonRegion("alola", 722, 807));
+        return regionMap;
     }
 
     /**
@@ -69,27 +94,35 @@ public class CatchPoke implements CatchPokeInterface {
     }
 
     /**
-     * Initializes Pokemon specific objects from the api or cache using the pokemon name
-     * On failure of creating the objects, -1 is returned to inform a failure
+     * Initializes Pokemon specific objects from the api or cache using the input string
+     * If the input is a region name, a random index corresponding to the region is used for initialization
+     * Else the initialization attempts to use the string directly
      *
-     * @param pokeName name of pokemon to get
+     * @param pokeInput input string to use for initialization
      * @return int
      */
     @Override
-    public int initialize(@Nonnull String pokeName) {
-        return initialize(-1, pokeName);
+    public int initialize(@Nonnull String pokeInput) {
+        pokeInput = pokeInput.toLowerCase();
+        if (regionMap.containsKey(pokeInput)) {
+            return initialize(getPokedexNumber(pokeInput), "");
+        }
+
+        return initialize(-1, pokeInput);
     }
 
     /**
-     * @param pokeId   id of the pokemon
-     * @param pokeName name of the pokemon
+     * Initializes the Pokemon objects with the given data
+     * Initialization defaults to the input string and then to the input int if the input string is empty
+     *
+     * @param pokeId    id of the pokemon
+     * @param pokeInput input
      * @return int
      */
-    private int initialize(int pokeId, String pokeName) {
-        pokeName = pokeName.toLowerCase();
+    private int initialize(int pokeId, String pokeInput) {
         try {
-            isUnreleased = unreleasedPokemon.contains(pokeName);
-            if (pokeName.isEmpty()) {
+            isUnreleased = unreleasedPokemon.contains(pokeInput);
+            if (pokeInput.isEmpty()) {
                 pokemonSpecies = PokemonSpecies.getById(pokeId);
             } else {
                 if (isUnreleased) {
@@ -97,17 +130,27 @@ public class CatchPoke implements CatchPokeInterface {
                     // Modify the parts that are used so that it imitates the unreleased Pokemon
                     pokemonSpecies = PokemonSpecies.getById(150);
                     pokemon = Pokemon.getById(150);
-                    pokemon.setName(pokeName);
+                    pokemon.setName(pokeInput);
                     PokemonForm tempPokeForm = new PokemonForm();
-                    tempPokeForm.setName(pokeName);
+                    tempPokeForm.setName(pokeInput);
                     pokemon.setForms(Collections.singletonList(tempPokeForm));
                 } else {
-                    pokemonSpecies = PokemonSpecies.getByName(pokeName);
+                    pokemonSpecies = PokemonSpecies.getByName(pokeInput);
                 }
             }
 
             if (pokemonSpecies != null && !isUnreleased) {
-                PokemonSpeciesVariety pokemonSpeciesVariety = getRandomVariety();
+                PokemonSpeciesVariety pokemonSpeciesVariety;
+
+                if (pokemonWithAlolaForm.contains(pokemonSpecies.getId())) {
+                    if (isRegionChoice) {
+                        pokemonSpeciesVariety = pokemonSpecies.getVarieties().get(1);
+                    } else {
+                        pokemonSpeciesVariety = pokemonSpecies.getVarieties().get(0);
+                    }
+                } else {
+                    pokemonSpeciesVariety = getRandomVariety();
+                }
                 pokemon = Pokemon.getByName(pokemonSpeciesVariety.getPokemon().getName());
             }
 
@@ -123,6 +166,57 @@ public class CatchPoke implements CatchPokeInterface {
         }
 
         return 1;
+    }
+
+    /**
+     * Gets a random index for the desired region
+     *
+     * @param regionName region to choose from
+     * @return int
+     */
+    private int getPokedexNumber(@Nonnull String regionName) {
+        int pokeDexNum = 1;
+        PokemonRegion region = regionMap.get(regionName);
+        switch (region.regionName) {
+            case "kanto":
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                break;
+            case "johto":
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                break;
+            case "hoenn":
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                break;
+            case "sinnoh":
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                break;
+            case "unova":
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                break;
+            case "kalos":
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                break;
+            case "alola":
+                // Alola region is the only region that has unique variants of some Pokemon
+                int indexEnd = region.indexEnd + pokemonWithAlolaForm.size();
+                int randomIndex = RandomHelper.getRandNumInRange(region.indexStart, indexEnd);
+                if (randomIndex > region.indexEnd) {
+                    randomIndex -= region.indexEnd;
+                    pokeDexNum = pokemonWithAlolaForm.get(randomIndex - 1);
+                    isRegionChoice = true;
+                } else {
+                    pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+                }
+                break;
+        }
+
+        return pokeDexNum;
+    }
+
+    @NonNull
+    @Override
+    public Set<String> getRegionNames() {
+        return new HashSet<>(regionMap.keySet());
     }
 
     /**
@@ -164,6 +258,7 @@ public class CatchPoke implements CatchPokeInterface {
         boolean isCaptured = isCaptured(pokemon, pokemonSpecies);
         String catchResult = getCaptureResult(poke, isCaptured);
         pokeShake = 0;
+        isRegionChoice = false;
         return new CaughtPokeInfo(poke, isCaptured, isUnreleased, catchResult);
     }
 
@@ -500,5 +595,20 @@ public class CatchPoke implements CatchPokeInterface {
         }
 
         return null;
+    }
+
+    /**
+     * Class to help contain the pokedex index for a region
+     */
+    private class PokemonRegion {
+        String regionName;
+        int indexStart;
+        int indexEnd;
+
+        public PokemonRegion(String regionName, int indexStart, int indexEnd) {
+            this.regionName = regionName;
+            this.indexStart = indexStart;
+            this.indexEnd = indexEnd;
+        }
     }
 }
