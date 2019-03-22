@@ -25,7 +25,6 @@ public class Poke {
 
     // Pokemon status conditions;
     private NonVolatileStatus nonVolatile;
-    private int badlyPoisonedN = 0;
 
     // ABILITIES GO HERE WHEN IMPLEMENTED
 
@@ -102,19 +101,8 @@ public class Poke {
 
     public void updateNonVolatile(NonVolatileStatus nonVolatile) {
         if (this.nonVolatile == NonVolatileStatus.NONE) {
-            if (nonVolatile == NonVolatileStatus.BADLY_POISONED) {
-                this.badlyPoisonedN = 1;
-            }
             this.nonVolatile = nonVolatile;
         }
-    }
-
-    public int getBadlyPoisonedN() {
-        return badlyPoisonedN;
-    }
-
-    public void incrementBadlyPoisonedN() {
-        this.badlyPoisonedN++;
     }
 
     public boolean isFainted() {

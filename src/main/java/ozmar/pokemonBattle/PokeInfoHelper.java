@@ -173,7 +173,7 @@ public class PokeInfoHelper {
             }
         }
 
-        return (int) (((((2 * baseStat + 0 + (0 / 4.0)) * 100) / 100) + 5) * natureMultiplier);
+        return (int) (((((2 * baseStat + 31 + (0 / 4.0)) * 100) / 100) + 5) * natureMultiplier);
     }
 
     // Should pass the target Pokemon (at least their evasion stage)

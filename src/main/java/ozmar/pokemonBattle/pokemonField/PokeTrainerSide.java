@@ -1,7 +1,7 @@
 package ozmar.pokemonBattle.pokemonField;
 
 import ozmar.pokemonBattle.TrainerChoice;
-import ozmar.pokemonBattle.pokemon.Poke;
+import ozmar.pokemonBattle.pokemon.PokeInBattle;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
 
@@ -25,8 +25,8 @@ public class PokeTrainerSide {
     }
 
     @Nonnull
-    public Poke getCurrPoke() {
-        return trainerInBattle.getCurrPoke();
+    public PokeInBattle getPokeInBattle(int fieldPosition) {
+        return trainerInBattle.getPokeInBattle(fieldPosition);
     }
 
     @Nonnull
@@ -34,23 +34,27 @@ public class PokeTrainerSide {
         return trainerInBattle.getCurrStatus();
     }
 
-    public void doChoice() {
-        trainerInBattle.doChoice();
+    public void doChoice(int fieldPosition) {
+        trainerInBattle.doChoice(fieldPosition);
     }
 
-    public void setMoveToUse(int movePosition) {
-        trainerInBattle.setMoveToUse(movePosition);
+    public void setMoveToUse(int movePosition, int fieldPosition) {
+        trainerInBattle.setMoveToUse(movePosition, fieldPosition);
     }
 
     public boolean setPokeToSwitchIn(int pokePosition) {
         return trainerInBattle.setPokeToSwitchIn(pokePosition);
     }
 
-    public boolean isAbleToDoMove(int movePosition) {
-        return trainerInBattle.isAbleToDoMove(movePosition);
+    public boolean isAbleToDoMove(int movePosition, int fieldPosition) {
+        return trainerInBattle.isAbleToDoMove(movePosition, fieldPosition);
     }
 
-    public boolean isAbleToSwitchPoke() {
-        return trainerInBattle.isAbleToSwitchPoke();
+    public boolean isAbleToSwitchPoke(int fieldPosition) {
+        return trainerInBattle.isAbleToSwitchPoke(fieldPosition);
+    }
+
+    public void doNonVolatileStatusEffect() {
+
     }
 }

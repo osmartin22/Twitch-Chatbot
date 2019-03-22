@@ -8,7 +8,9 @@ import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 // TODO: Create a class that holds information pertaining to what was modified in a pokemon
@@ -33,6 +35,21 @@ public class PokeInBattle {
     private final Set<VolatileStatus> volatileList;
     private final Set<VolatileBattleStatus> volatileBattleStatusList;
     private PokeBinding binding;
+    private int badlyPoisonedN;     // Used for the badly poisoned status effect
+
+    /*
+     Moves that copy other moves
+     Mimic copies the last used move of the target and disappears after the user switches out
+     Sketch copies the move permanently and is gone forever
+         Replace the move entirely and forget Sketch
+     Transform copies everything about the target i.e. moves, stats, stat stages, species, current form, all moves have 5 PP
+
+     Other moves that copy only copy the move for the attacking phase
+
+     To handle mimic
+     Map containing moves copied
+     */
+    private final Map<Integer, PokeMove> copiedMoves;
 
     /*
         Keep track of the type of the move as well(necessary for Conversion 2)
@@ -46,6 +63,7 @@ public class PokeInBattle {
         this.volatileList = new HashSet<>();
         this.volatileBattleStatusList = new HashSet<>();
         this.binding = new PokeBinding();
+        this.copiedMoves = new HashMap<>();
     }
 
     public Poke getPoke() {
@@ -75,6 +93,7 @@ public class PokeInBattle {
 
     public void doMove() {
         // Do move
+        // Moves in the copiedMovesMap have priority before the Poke's original moves
     }
 
     public PokeAllStages getPokeStages() {
@@ -100,4 +119,10 @@ public class PokeInBattle {
     public void doNonVolatileDamage() {
         // TODO: Non volatile status damage is done at the end of each turn, not all statuses cause damage
     }
+
+    public void copyMove(int movePosition, PokeMove moveToCopy) {
+        copiedMoves.put(movePosition, moveToCopy);
+    }
+
+
 }

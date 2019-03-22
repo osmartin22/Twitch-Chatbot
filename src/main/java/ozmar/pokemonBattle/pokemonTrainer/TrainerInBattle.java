@@ -9,11 +9,13 @@ import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class TrainerInBattle {
     private final Trainer trainer;
-    private final PokeInBattle pokeInBattle;
+    private final List<PokeInBattle> pokeInBattleList;
     private TrainerChoice trainerChoice;
     private Poke pokeToSwitchIn;
     private boolean hasMegaEvolved; // Only one mega evolution is allowed per trainer in a battle
@@ -21,7 +23,8 @@ public class TrainerInBattle {
 
     public TrainerInBattle(@Nonnull Trainer trainer, @Nonnull PokeInBattle pokeInBattle) {
         this.trainer = trainer;
-        this.pokeInBattle = pokeInBattle;
+        this.pokeInBattleList = new ArrayList<>(1);
+        this.pokeInBattleList.add(pokeInBattle);
         this.trainerChoice = TrainerChoice.CHOICE_WAITING;
         this.pokeToSwitchIn = null;
         this.hasMegaEvolved = false;
@@ -39,17 +42,19 @@ public class TrainerInBattle {
     }
 
     @Nonnull
-    public Poke getCurrPoke() {
-        return pokeInBattle.getPoke();
+    public PokeInBattle getPokeInBattle(int fieldPosition) {
+        return pokeInBattleList.get(fieldPosition);
     }
 
     /**
      * Checks if the Pokemon on the field is able to switch out
      *
+     * @param fieldPosition position on the field the pokemon is in
      * @return boolean
      */
-    public boolean isAbleToSwitchPoke() {
+    public boolean isAbleToSwitchPoke(int fieldPosition) {
         boolean isAbleToSwitch = true;
+        PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
         Set<VolatileBattleStatus> set = pokeInBattle.getVolatileBattleStatusList();
         if (set.contains(VolatileBattleStatus.CHARGING_TURN) || set.contains(VolatileBattleStatus.SEMI_INVULNERABLE) ||
                 set.contains(VolatileBattleStatus.ROOTING) || set.contains(VolatileBattleStatus.RECHARGING) ||
@@ -75,16 +80,17 @@ public class TrainerInBattle {
      * i.e. Enough PP, or another effect prevents the move from being used
      *
      * @param movePosition position of the selected move
+     * @param fieldPosition position on the field the pokemon is in
      * @return boolean
      */
-    public boolean isAbleToDoMove(int movePosition) {
+    public boolean isAbleToDoMove(int movePosition, int fieldPosition) {
         boolean isAbleToDoMove = true;
-        PokeMove move = pokeInBattle.getPoke().getMoveList().get(movePosition);
+        PokeMove move = pokeInBattleList.get(fieldPosition).getPoke().getMoveList().get(movePosition);
         if (move.getCurrPp() == 0) {
             isAbleToDoMove = false;
         } else {
             // Check for any effects that prevent the move from being used
-            pokeInBattle.setMoveToUse(move);
+            pokeInBattleList.get(fieldPosition).setMoveToUse(move);
             trainerChoice = TrainerChoice.CHOICE_MOVE;
         }
 
@@ -93,11 +99,11 @@ public class TrainerInBattle {
         return isAbleToDoMove;
     }
 
-    public void doChoice() {
+    public void doChoice(int fieldPosition) {
         if (trainerChoice == TrainerChoice.CHOICE_SWITCH) {
-            switchPoke();
+            switchPoke(fieldPosition);
         } else {
-            pokeInBattle.doMove();
+            pokeInBattleList.get(fieldPosition).doMove();
             // TODO: For moves that act over multiple turns, keep the status as CHOICE_MOVE instead of resetting
             //  i.e. charging/recharging or semi invulnerable moves
         }
@@ -116,16 +122,23 @@ public class TrainerInBattle {
         return canSwitchIn;
     }
 
-    public void switchPoke() {
-        pokeInBattle.setPoke(pokeToSwitchIn);
+    public void switchPoke(int fieldPosition) {
+        pokeInBattleList.get(fieldPosition).setPoke(pokeToSwitchIn);
         trainerChoice = TrainerChoice.CHOICE_WAITING;
         pokeToSwitchIn = null;
         // TODO: Set the poke on pokeInBattle to the desired Poke
         //  Check if the statuses should be kept (Baton Pass) or reset
     }
 
-    public void setMoveToUse(int movePosition) {
-        this.pokeInBattle.setMoveToUse(pokeInBattle.getPoke().getMoveList().get(movePosition));
+    public void setMoveToUse(int movePosition, int fieldPosition) {
+        PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
+        pokeInBattle.setMoveToUse(pokeInBattle.getPoke().getMoveList().get(movePosition));
         this.trainerChoice = TrainerChoice.CHOICE_MOVE;
+    }
+
+    public void doNonVolatileStatusEffect() {
+        for (PokeInBattle poke : pokeInBattleList) {
+            // For each Pokemon in the battle, do their status effect
+        }
     }
 }

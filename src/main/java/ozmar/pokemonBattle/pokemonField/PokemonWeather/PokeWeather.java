@@ -5,9 +5,9 @@ public class PokeWeather {
     private PokeWeatherEnum weather;
     private int turnsRemaining; // TODO: Not sure if the turn the move is used is counted as a turn
 
-    public PokeWeather(PokeWeatherEnum weather, int turnsRemaining) {
-        this.weather = weather;
-        this.turnsRemaining = turnsRemaining;
+    public PokeWeather() {
+        this.weather = PokeWeatherEnum.CLEAR_SKIES;
+        this.turnsRemaining = 0;
     }
 
     public PokeWeatherEnum getWeather() {

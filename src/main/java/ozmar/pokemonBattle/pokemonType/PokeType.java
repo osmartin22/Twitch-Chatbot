@@ -1,15 +1,14 @@
 package ozmar.pokemonBattle.pokemonType;
 
 import ozmar.pokemonBattle.PokeInfoHelper;
+import reactor.util.annotation.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PokeType {
-    List<PokeTypeEnum> typesList;
-    PokeTypeEnum type1;
-    PokeTypeEnum type2;
-    PokeTypeEnum type3;
+    private final List<PokeTypeEnum> typesList;
 
     // Pokemon all start with a max of 2 types at the start of a battle
     // Can gain a 3rd through certain moves
@@ -63,7 +62,7 @@ public class PokeType {
      * @param type type wanting to find
      * @return boolean
      */
-    public boolean isTypeFound(PokeTypeEnum type) {
+    public boolean isTypeFound(@NonNull PokeTypeEnum type) {
         if (type != PokeTypeEnum.NONE) {
             for (PokeTypeEnum typeEnum : typesList) {
                 if (typeEnum == type) {
@@ -84,7 +83,7 @@ public class PokeType {
     public boolean moveWillHaveStab(PokeTypeEnum moveType) {
         boolean hasStab = false;
         if (moveType != PokeTypeEnum.NONE && moveType != PokeTypeEnum.UNKNOWN) {
-            hasStab = type1 == moveType || type2 == moveType || type3 == moveType;
+            hasStab = typesList.get(0) == moveType || typesList.get(1) == moveType || typesList.get(2) == moveType;
         }
 
         return hasStab;
@@ -96,18 +95,18 @@ public class PokeType {
      * @param pokeType contains all of the  types of the given Pokemon
      * @return double
      */
-    public double damageReceivedMultiplier(PokeType pokeType) {
-        double multiplier1 = PokeInfoHelper.TYPE_CHART[pokeType.getType1().getId()][type1.getId()];
-        double multiplier2 = PokeInfoHelper.TYPE_CHART[pokeType.getType2().getId()][type2.getId()];
-        double multiplier3 = PokeInfoHelper.TYPE_CHART[pokeType.getType3().getId()][type3.getId()];
+    public double damageReceivedMultiplier(@Nonnull PokeType pokeType) {
+        double multiplier1 = PokeInfoHelper.TYPE_CHART[pokeType.getType1().getId()][typesList.get(0).getId()];
+        double multiplier2 = PokeInfoHelper.TYPE_CHART[pokeType.getType2().getId()][typesList.get(1).getId()];
+        double multiplier3 = PokeInfoHelper.TYPE_CHART[pokeType.getType3().getId()][typesList.get(2).getId()];
 
         return multiplier1 * multiplier2 * multiplier3;
     }
 
-    public double damageReceivedMultiplier(PokeTypeEnum pokeTypeEnum) {
-        double multiplier1 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][type1.getId()];
-        double multiplier2 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][type2.getId()];
-        double multiplier3 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][type3.getId()];
+    public double damageReceivedMultiplier(@NonNull PokeTypeEnum pokeTypeEnum) {
+        double multiplier1 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][typesList.get(0).getId()];
+        double multiplier2 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][typesList.get(1).getId()];
+        double multiplier3 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][typesList.get(2).getId()];
 
         return multiplier1 * multiplier2 * multiplier3;
     }

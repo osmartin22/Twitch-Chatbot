@@ -5,9 +5,9 @@ public class PokeTerrain {
     private PokeTerrainEnum terrain;
     private int turnsRemaining; // TODO: Not sure if the turn the move is used is counted as a turn
 
-    public PokeTerrain(PokeTerrainEnum terrain, int turnsRemaining) {
-        this.terrain = terrain;
-        this.turnsRemaining = turnsRemaining;
+    public PokeTerrain() {
+        this.terrain = PokeTerrainEnum.NONE;
+        this.turnsRemaining = 0;
     }
 
     public PokeTerrainEnum getTerrain() {

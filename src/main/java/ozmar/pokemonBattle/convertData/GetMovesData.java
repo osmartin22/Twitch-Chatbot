@@ -12,26 +12,17 @@ import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class GetMovesData {
 
-    private ClassLoader loader;
-    private InputStream is;
-    private BufferedReader bufferedReader;
-
     public GetMovesData() {
 
-    }
-
-    public void createInputStream() {
-        loader = Thread.currentThread().getContextClassLoader();
-        is = loader.getResourceAsStream("ZMoves_Data.txt");
     }
 
     public void close() {
@@ -48,24 +39,34 @@ public class GetMovesData {
         return null;
     }
 
-    public PokeMove test(@Nonnull String name) {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("MovesData.txt"))) {
-            String testLine;
-            boolean lineFound = false;
-            while (!lineFound) {
-                testLine = bufferedReader.readLine();
-                if (testLine.contains("Razor Wind")) {
-                    String[] array = testLine.split(",");
-                    lineFound = true;
+    public PokeMove getMove(@Nonnull String name) {
+        PokeMove pokeMove = null;
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        InputStream is = loader.getResourceAsStream("MovesData.txt");
+
+        if (is != null) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is))) {
+                boolean lineFound = false;
+                while (!lineFound) {
+                    String line = bufferedReader.readLine();
+                    if (line.contains(name)) {
+                        line = line.trim();
+
+                        String[] array = line.split(",");
+                        String[] temp = new String[array.length];
+                        for (int i = 0; i < array.length; i++) {
+                            temp[i] = array[i].trim();
+                        }
+                        pokeMove = createMove(temp);
+                        lineFound = true;
+                    }
                 }
+            } catch (IOException e) {
+                pokeMove = null;
             }
-
-
-        } catch (IOException e) {
-
         }
 
-        return null;
+        return pokeMove;
     }
 
     public PokeMove createMove(@Nonnull String[] moveData) {

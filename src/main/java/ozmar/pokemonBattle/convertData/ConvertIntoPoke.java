@@ -83,6 +83,7 @@ public class ConvertIntoPoke {
         return new Pair<>(pokeType1, pokeType2);
     }
 
+    // TODO: Temp method
     public Poke createPoke(@Nonnull String pokemonName) {
         PokemonPoke pokemonPoke = new PokemonPoke();
         pokemonPoke.setId(1);
@@ -91,7 +92,7 @@ public class ConvertIntoPoke {
         pokemonPoke.setPokemonNickName(pokemonName);
         pokemonPoke.setShiny(true);
         pokemonPoke.setGender(PokemonGender.MALE);
-        pokemonPoke.setNature("calm");
+        pokemonPoke.setNature("adamant");
         pokemonPoke.setPokemonMoves(new HashSet<>());
         return getPoke(pokemonPoke);
     }

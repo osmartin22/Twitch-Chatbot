@@ -17,12 +17,15 @@ public class PokeBattle {
 
     private final PokeField field;
     private Map<Trainer, PokeTrainerSide> trainerSideMap;
+    private final PokeBattleCalculator calculator;
+    // Maybe a last used move and last pokemon that attacked for the entire battle
 
     public PokeBattle(@Nonnull Trainer red, @Nonnull Poke redPoke, @Nonnull Trainer blue, @Nonnull Poke bluePoke) {
         this.trainerSideMap = new HashMap<>();
         initialize(red, redPoke);
         initialize(blue, bluePoke);
         this.field = new PokeField();
+        this.calculator = new PokeBattleCalculator();
     }
 
     private void initialize(@Nonnull Trainer trainer, @Nonnull Poke startingPoke) {
@@ -33,23 +36,34 @@ public class PokeBattle {
     }
 
 
-    public boolean setMoveToUse(@Nonnull Trainer trainer, int movePosition) {
-        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, movePosition);
+    /**
+     * Attempts to set a Pokemon's move
+     * Failing to set a move returns false
+     *
+     * @param trainer       Trainer choosing the move
+     * @param movePosition  Position of the move in the Pokemon's move list
+     * @param fieldPosition Position in the field the Pokemon is in
+     * @return boolean
+     */
+    public boolean setMoveToUse(@Nonnull Trainer trainer, int movePosition, int fieldPosition) {
+        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, movePosition, fieldPosition);
         if (isAbleToDoMove) {
-            trainerSideMap.get(trainer).setMoveToUse(movePosition);
+            trainerSideMap.get(trainer).setMoveToUse(movePosition, fieldPosition);
         }
         return isAbleToDoMove;
     }
 
     /**
-     * Attempts to set a Pokemon to switch in and returns whether the Pokemon can switch out or not
+     * Attempts to set a Pokemon to switch in
+     * Failing to be able to switch returns false
      *
-     * @param trainer      Trainer switching their Poke
-     * @param pokePosition position of the Poke in the Trainer's Poke list
+     * @param trainer       Trainer switching their Poke
+     * @param pokePosition  Position of the Poke in the Trainer's Poke list
+     * @param fieldPosition Position on the field the Poke is in
      * @return boolean
      */
-    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, int pokePosition) {
-        boolean isAbleToSwitch = canTrainerSwitchPoke(trainer);
+    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, int pokePosition, int fieldPosition) {
+        boolean isAbleToSwitch = canTrainerSwitchPoke(trainer, fieldPosition);
         if (isAbleToSwitch) {
             isAbleToSwitch = trainerSideMap.get(trainer).setPokeToSwitchIn(pokePosition);
         }
@@ -58,23 +72,24 @@ public class PokeBattle {
     }
 
     @Nonnull
-    public Poke getCurrPoke(@Nonnull Trainer trainer) {
+    public PokeInBattle getPokeInBattle(@Nonnull Trainer trainer, int fieldPosition) {
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        return side.getCurrPoke();
+        return side.getPokeInBattle(fieldPosition);
     }
 
     /**
      * Checks if the Poke on the field can do the selected move
      *
-     * @param trainer      Trainer choosing the move
-     * @param movePosition position of the desired move
+     * @param trainer       Trainer choosing the move
+     * @param movePosition  Position of the desired move
+     * @param fieldPosition Position on the field the pokemon is in
      * @return boolean
      */
-    private boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, int movePosition) {
+    private boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, int movePosition, int fieldPosition) {
         boolean isAbleToDoMove = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
         if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToDoMove = side.isAbleToDoMove(movePosition);
+            isAbleToDoMove = side.isAbleToDoMove(movePosition, fieldPosition);
         }
         return isAbleToDoMove;
     }
@@ -82,14 +97,15 @@ public class PokeBattle {
     /**
      * Checks if the Pokemon on the field is prevented from switching out
      *
-     * @param trainer Trainer switching Poke
+     * @param trainer       Trainer switching Poke
+     * @param fieldPosition position on the field the pokemon is in
      * @return boolean
      */
-    private boolean canTrainerSwitchPoke(@Nonnull Trainer trainer) {
+    private boolean canTrainerSwitchPoke(@Nonnull Trainer trainer, int fieldPosition) {
         boolean isAbleToSwitch = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
         if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToSwitch = side.isAbleToSwitchPoke();
+            isAbleToSwitch = side.isAbleToSwitchPoke(fieldPosition);
         }
 
         return isAbleToSwitch;
@@ -122,19 +138,15 @@ public class PokeBattle {
     //  Pursuit activates if the Poke manually switches out,
     //  or uses U-turn, Volt Switch, or Parting Shot and would attack second
     // NOTE* If both trainers switch out on the same turn, the faster pokemon switches out first
-    public void doTrainerChoice() {
+    public void doTrainerChoice(int fieldPosition) {
         for (PokeTrainerSide side : trainerSideMap.values()) {
-            side.doChoice();
+            side.doChoice(fieldPosition);
         }
         // Execute the trainers choices if trainersReady() == true
     }
 
     private void pursuitisInvolved() {
-/* Idea
-2v2 battles is more complex (Even if I write this for 2v2, I would have to change other parts to work with 2v2)
-1v1 battles
-Check if any of the trainers have selected Pursuit
-
+/*
 if(selected pursuit) {
     Check what the other trainer chose
     if(other trainer is switching || uses the switching moves) {
@@ -149,12 +161,14 @@ if(selected pursuit) {
 } else {
     proceed as normal
 }
-
-
  */
     }
 
-    private void doNonVolatileStatusDamage() {
+    /**
+     * Checks each Pokemon and does any effects that occur after each Pokemon
+     * has attempted to switch out or do a move
+     */
+    private void doPostTurnEffects() {
 
     }
 }
