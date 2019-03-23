@@ -7,12 +7,15 @@ import ozmar.pokemonBattle.pokemonField.PokeSide;
 import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
 import ozmar.pokemonBattle.pokemonTrainer.Trainer;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
+import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-// Pursuit is the only move that goes before the target switches out
+
 public class PokeBattle {
 
     private final PokeField field;
@@ -40,15 +43,14 @@ public class PokeBattle {
      * Attempts to set a Pokemon's move
      * Failing to set a move returns false
      *
-     * @param trainer       Trainer choosing the move
-     * @param movePosition  Position of the move in the Pokemon's move list
-     * @param fieldPosition Position in the field the Pokemon is in
+     * @param trainer   Trainer choosing the move
+     * @param positions Positions required to set a move
      * @return boolean
      */
-    public boolean setMoveToUse(@Nonnull Trainer trainer, int movePosition, int fieldPosition) {
-        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, movePosition, fieldPosition);
+    public boolean setMoveToUse(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
+        boolean isAbleToDoMove = canTrainersPokeUseMove(trainer, positions);
         if (isAbleToDoMove) {
-            trainerSideMap.get(trainer).setMoveToUse(movePosition, fieldPosition);
+            trainerSideMap.get(trainer).setMoveToUse(positions);
         }
         return isAbleToDoMove;
     }
@@ -57,39 +59,46 @@ public class PokeBattle {
      * Attempts to set a Pokemon to switch in
      * Failing to be able to switch returns false
      *
-     * @param trainer       Trainer switching their Poke
-     * @param pokePosition  Position of the Poke in the Trainer's Poke list
-     * @param fieldPosition Position on the field the Poke is in
+     * @param trainer   Trainer switching their Poke
+     * @param positions Position required to switch a Poke
      * @return boolean
      */
-    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, int pokePosition, int fieldPosition) {
-        boolean isAbleToSwitch = canTrainerSwitchPoke(trainer, fieldPosition);
+    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
+        boolean isAbleToSwitch = canTrainerSwitchPoke(trainer, positions);
         if (isAbleToSwitch) {
-            isAbleToSwitch = trainerSideMap.get(trainer).setPokeToSwitchIn(pokePosition);
+            isAbleToSwitch = trainerSideMap.get(trainer).setPokeToSwitchIn(positions);
         }
 
         return isAbleToSwitch;
     }
 
+    /**
+     * Gets the Pokemon at the given position for the given trainer
+     *
+     * @param trainer   trainer to ger Pokemon from
+     * @param positions Positions required for get a Poke
+     * @return PokeInBattle
+     */
     @Nonnull
-    public PokeInBattle getPokeInBattle(@Nonnull Trainer trainer, int fieldPosition) {
+    public PokeInBattle getPokeInBattle(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        return side.getPokeInBattle(fieldPosition);
+        TrainerInBattle trainerInBattle = side.getTrainerInBattle(positions);
+
+        return side.getTrainerInBattle(positions).getPokeInBattle(positions);
     }
 
     /**
      * Checks if the Poke on the field can do the selected move
      *
-     * @param trainer       Trainer choosing the move
-     * @param movePosition  Position of the desired move
-     * @param fieldPosition Position on the field the pokemon is in
+     * @param trainer   Trainer choosing the move
+     * @param positions Positions required to check moves
      * @return boolean
      */
-    private boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, int movePosition, int fieldPosition) {
+    private boolean canTrainersPokeUseMove(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
         boolean isAbleToDoMove = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToDoMove = side.isAbleToDoMove(movePosition, fieldPosition);
+        if (side.getTrainerChoice(positions) == TrainerChoice.CHOICE_WAITING) {
+            isAbleToDoMove = side.isAbleToDoMove(positions);
         }
         return isAbleToDoMove;
     }
@@ -97,24 +106,23 @@ public class PokeBattle {
     /**
      * Checks if the Pokemon on the field is prevented from switching out
      *
-     * @param trainer       Trainer switching Poke
-     * @param fieldPosition position on the field the pokemon is in
+     * @param trainer   Trainer switching Poke
+     * @param positions Position on the field the pokemon is in
      * @return boolean
      */
-    private boolean canTrainerSwitchPoke(@Nonnull Trainer trainer, int fieldPosition) {
+    private boolean canTrainerSwitchPoke(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
         boolean isAbleToSwitch = false;
         PokeTrainerSide side = trainerSideMap.get(trainer);
-        if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToSwitch = side.isAbleToSwitchPoke(fieldPosition);
+        if (side.getTrainerChoice(positions) == TrainerChoice.CHOICE_WAITING) {
+            isAbleToSwitch = side.isAbleToSwitchPoke(positions);
         }
 
         return isAbleToSwitch;
     }
 
     @Nonnull
-    public TrainerChoice getTrainerStatus(@Nonnull Trainer trainer) {
-        PokeTrainerSide side = trainerSideMap.get(trainer);
-        return side.getCurrStatus();
+    public TrainerChoice getTrainerStatus(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
+        return trainerSideMap.get(trainer).getTrainerChoice(positions);
     }
 
     /**
@@ -123,45 +131,36 @@ public class PokeBattle {
      * @return boolean
      */
     public boolean trainersReady() {
-        boolean trainersReady = true;
         for (PokeTrainerSide side : trainerSideMap.values()) {
-            if (side.getCurrStatus() == TrainerChoice.CHOICE_WAITING) {
-                trainersReady = false;
-                break;
+            List<TrainerInBattle> trainerInBattleList = side.getTrainerInBattleList();
+            for (TrainerInBattle trainerInBattle : trainerInBattleList) {
+                List<PokeInBattle> pokeInBattleList = trainerInBattle.getPokeInBattleList();
+                for (PokeInBattle pokeInBattle : pokeInBattleList) {
+                    if (pokeInBattle.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+                        return false;
+                    }
+                }
             }
         }
 
-        return trainersReady;
+        return true;
     }
 
     // TODO: Check if one of the Pokemon will use pursuit before switching out
     //  Pursuit activates if the Poke manually switches out,
     //  or uses U-turn, Volt Switch, or Parting Shot and would attack second
     // NOTE* If both trainers switch out on the same turn, the faster pokemon switches out first
-    public void doTrainerChoice(int fieldPosition) {
+    public void doTrainerChoice(@NonNull PositionHelper positions) {
+//        Set<>
+        List<PokeInBattle> pokesWithPursuit = new ArrayList<>();
         for (PokeTrainerSide side : trainerSideMap.values()) {
-            side.doChoice(fieldPosition);
+//            for(TrainerInBattle trainerInBattle : side)
+        }
+
+        for (PokeTrainerSide side : trainerSideMap.values()) {
+            side.doChoice(positions);
         }
         // Execute the trainers choices if trainersReady() == true
-    }
-
-    private void pursuitisInvolved() {
-/*
-if(selected pursuit) {
-    Check what the other trainer chose
-    if(other trainer is switching || uses the switching moves) {
-        Do special execution
-        Pursuit 2x damage
-        Poke switches out
-        turn ends
-
-    } else {
-        Proceed as normal
-    }
-} else {
-    proceed as normal
-}
- */
     }
 
     /**

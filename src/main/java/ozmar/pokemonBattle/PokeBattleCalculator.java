@@ -12,8 +12,6 @@ import ozmar.utils.RandomHelper;
 import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
 
     /*
     Damage calculations
@@ -41,20 +39,38 @@ import java.util.Map;
 
 public class PokeBattleCalculator {
 
-    private final Map<Integer, Double> critChance;
-
     public PokeBattleCalculator() {
-        this.critChance = new HashMap<>(4);
-        this.critChance.put(0, 1 / 24.0);   // Stage 0 = Normal Crit
-        this.critChance.put(1, 1 / 8.0);    // Stage 1 = High Crit
-        this.critChance.put(2, 1 / 2.0);    // Stage 2 = 10,000,00 Volt Thunderbolt
-        this.critChance.put(3, 1.0);        // Stage 3+
+
     }
 
-    public int calculateDamage(PokeInBattle attacker, PokeInBattle target, PokeMove move, PokeWeatherEnum weather) {
+    /*
+    Accuracy formula
+    T = MoveAccuracy * Adjusted_stages * Other_mods
+     P = moveACC * (attackerACC / targetEVA
+     */
+    public boolean willMoveHit(int attackerAccStage, int targetEvaStage, @NonNull PokeMove move) {
+        int newAccuracy;
+        if (move.getAccuracy() == 0) {
+            // TODO: Moves with 0 accuracy can potentially bypass accuracy checks
+            //  Bypassing accuracy should be checked outside this class.
+            newAccuracy = 100;
+        } else {
+            double accValue = PokeInfoHelper.STAT_STAGES.get(attackerAccStage);
+            double evaValue = PokeInfoHelper.STAT_STAGES.get(targetEvaStage);
+            newAccuracy = (int) (move.getAccuracy() * (accValue / evaValue));
+        }
+        return RandomHelper.getRandNumInRange(1, 100) <= newAccuracy;
+    }
+
+    public int calculateDamage(@NonNull PokeInBattle attacker, @NonNull PokeInBattle target, PokeWeatherEnum weather) {
+        return calculateDamage(attacker, target, attacker.getMoveToUse(), weather);
+    }
+
+    public int calculateDamage(@NonNull PokeInBattle attacker, @NonNull PokeInBattle target,
+                               @NonNull PokeMove move, @NonNull PokeWeatherEnum weather) {
         boolean isSpecial = move.getDamageClass() == PokeMoveDamageClass.SPECIAL;
 
-        double critMultiplier = getCritMultiplier();
+        double critMultiplier = getCritMultiplier(attacker.getCritStage(), move);
         boolean isCrit = critMultiplier != 1;
 
         int a = ((2 * attacker.getPoke().getLevel()) / 5) + 2;
@@ -137,8 +153,28 @@ public class PokeBattleCalculator {
         return weatherMultiplier;
     }
 
-    // TODO: Handle moves that have high crit and perfect crit
-    private double getCritMultiplier() {
-        return RandomHelper.getRandNumInRange(1, 24) == 1 ? 1.5 : 1;
+
+    private double getCritMultiplier(int critStage, @NonNull PokeMove move) {
+        double critMultiplier;
+        int totalCritStage = critStage + move.getMetaData().getCritStage();
+        totalCritStage = (totalCritStage > 3) ? 3 : totalCritStage;
+
+        switch (totalCritStage) {
+            case 0:
+            default:
+                critMultiplier = RandomHelper.getRandNumInRange(1, 24) == 1 ? 1.5 : 1;
+                break;
+            case 1:
+                critMultiplier = RandomHelper.getRandNumInRange(1, 8) == 1 ? 1.5 : 1.0;
+                break;
+            case 2:
+                critMultiplier = RandomHelper.getRandNumInRange(1, 2) == 1 ? 1.5 : 1.0;
+                break;
+            case 3:
+                critMultiplier = 1.5;
+                break;
+        }
+
+        return critMultiplier;
     }
 }

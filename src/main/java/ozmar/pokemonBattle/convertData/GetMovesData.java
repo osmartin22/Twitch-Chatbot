@@ -9,6 +9,7 @@ import ozmar.pokemonBattle.pokemonMoves.enums.PokeTarget;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatsEffect;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
+import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -85,17 +86,34 @@ public class GetMovesData {
         Set<PokeStatsEffect> statsEffectSet = convertToStatsList(moveData[12]);
         int statChance = convertToNum(moveData[13]);
         int stageRaise = convertToNum(moveData[14]);
-        NonVolatileStatus nonVolatileStatus = NonVolatileStatus.status[convertToNum(moveData[15])];
+        Set<NonVolatileStatus> nonVolatileStatusSet = convertToNonVolatileList(moveData[15]);
         int nonVolatileChance = convertToNum(moveData[16]);
         int flinchChance = convertToNum(moveData[17]);
         int confusionChance = convertToNum(moveData[18]);
         Set<PokeMoveByUsage> moveByUsages = convertToUsageList(moveData[19]);
         boolean isDirectAttack = convertToNum(moveData[20]) == 1;
+        int critStage = convertToNum(moveData[21]);
 
         PokeMoveMetaData metaData = new PokeMoveMetaData(generation, condition, isContact, isDirectAttack, flinchChance
-                , confusionChance, nonVolatileChance, nonVolatileStatus, target, stageRaise, statChance, statsEffectSet,
-                moveByUsages);
+                , confusionChance, nonVolatileChance, nonVolatileStatusSet, target, stageRaise, statChance, statsEffectSet,
+                moveByUsages, critStage);
         return new PokeMove(id, moveName, pp, power, accuracy, priority, type, damageClass, target, metaData);
+    }
+
+    @NonNull
+    private Set<NonVolatileStatus> convertToNonVolatileList(@NonNull String nonVolatile) {
+        Set<NonVolatileStatus> set = new HashSet<>();
+        for (int i = 0; i < nonVolatile.length(); i++) {
+            if (nonVolatile.charAt(i) == '1') {
+                set.add(NonVolatileStatus.status[i + 1]);
+            }
+        }
+
+        if (set.isEmpty()) {
+            set.add(NonVolatileStatus.NONE);
+        }
+
+        return set;
     }
 
     @Nonnull

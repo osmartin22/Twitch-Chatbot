@@ -1,22 +1,32 @@
 package ozmar.pokemonBattle.pokemonField;
 
+import ozmar.pokemonBattle.PokeRules;
+import ozmar.pokemonBattle.PositionHelper;
 import ozmar.pokemonBattle.TrainerChoice;
-import ozmar.pokemonBattle.pokemon.PokeInBattle;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
+import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PokeTrainerSide {
     private final PokeSide side;
-    private final TrainerInBattle trainerInBattle;
+
+    private final List<TrainerInBattle> trainerInBattleList;
+
+    private final PokeRules pokeRules;
 
     private PokeMove lastUsedMove;
 
     public PokeTrainerSide(@Nonnull TrainerInBattle trainerInBattle, @Nonnull PokeSide side) {
-        this.trainerInBattle = trainerInBattle;
+        this.trainerInBattleList = new ArrayList<>();
+        this.trainerInBattleList.add(trainerInBattle);
+
         this.side = side;
         this.lastUsedMove = null;
+        this.pokeRules = new PokeRules();
     }
 
     @Nonnull
@@ -24,34 +34,37 @@ public class PokeTrainerSide {
         return side;
     }
 
-    @Nonnull
-    public PokeInBattle getPokeInBattle(int fieldPosition) {
-        return trainerInBattle.getPokeInBattle(fieldPosition);
+    public List<TrainerInBattle> getTrainerInBattleList() {
+        return trainerInBattleList;
+    }
+
+    public TrainerInBattle getTrainerInBattle(@NonNull PositionHelper positions) {
+        return trainerInBattleList.get(positions.getTrainer());
     }
 
     @Nonnull
-    public TrainerChoice getCurrStatus() {
-        return trainerInBattle.getCurrStatus();
+    public TrainerChoice getTrainerChoice(@NonNull PositionHelper positions) {
+        return trainerInBattleList.get(positions.getTrainer()).getTrainerChoice(positions);
     }
 
-    public void doChoice(int fieldPosition) {
-        trainerInBattle.doChoice(fieldPosition);
+    public void doChoice(@NonNull PositionHelper positions) {
+        trainerInBattleList.get(positions.getTrainer()).doTrainerChoice(positions);
     }
 
-    public void setMoveToUse(int movePosition, int fieldPosition) {
-        trainerInBattle.setMoveToUse(movePosition, fieldPosition);
+    public void setMoveToUse(@NonNull PositionHelper positions) {
+        trainerInBattleList.get(positions.getTrainer()).setMoveToUse(positions);
     }
 
-    public boolean setPokeToSwitchIn(int pokePosition) {
-        return trainerInBattle.setPokeToSwitchIn(pokePosition);
+    public boolean setPokeToSwitchIn(@NonNull PositionHelper positions) {
+        return trainerInBattleList.get(positions.getTrainer()).setPokeToSwitchIn(positions);
     }
 
-    public boolean isAbleToDoMove(int movePosition, int fieldPosition) {
-        return trainerInBattle.isAbleToDoMove(movePosition, fieldPosition);
+    public boolean isAbleToDoMove(@NonNull PositionHelper positions) {
+        return trainerInBattleList.get(positions.getTrainer()).isAbleToDoMove(positions);
     }
 
-    public boolean isAbleToSwitchPoke(int fieldPosition) {
-        return trainerInBattle.isAbleToSwitchPoke(fieldPosition);
+    public boolean isAbleToSwitchPoke(@NonNull PositionHelper positions) {
+        return trainerInBattleList.get(positions.getTrainer()).isAbleToSwitchPoke(positions);
     }
 
     public void doNonVolatileStatusEffect() {

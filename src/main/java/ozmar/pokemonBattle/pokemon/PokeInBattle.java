@@ -1,11 +1,14 @@
 package ozmar.pokemonBattle.pokemon;
 
+import ozmar.pokemonBattle.TrainerChoice;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBinding;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBindingEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonStats.PokeAllStages;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
+import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
+import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -36,6 +39,10 @@ public class PokeInBattle {
     private final Set<VolatileBattleStatus> volatileBattleStatusList;
     private PokeBinding binding;
     private int badlyPoisonedN;     // Used for the badly poisoned status effect
+    private int critStage;
+
+    private TrainerChoice trainerChoice;
+    private Poke pokeToSwitchIn;
 
     /*
      Moves that copy other moves
@@ -52,6 +59,16 @@ public class PokeInBattle {
     private final Map<Integer, PokeMove> copiedMoves;
 
     /*
+    Object to handle mega evolutions
+    Mega evolved pokemon will become this object
+    This object will then take any attacks or execute any attacks
+    When the Pokemon switches out or faints, this object combines with the original Poke object
+    This object will then be sent to garbage collection as it is no longer needed
+    NOTE* Can maybe be used for a Pokemon's alternate form as well
+     */
+    private Poke megaForm;
+
+    /*
         Keep track of the type of the move as well(necessary for Conversion 2)
      */
 
@@ -64,13 +81,19 @@ public class PokeInBattle {
         this.volatileBattleStatusList = new HashSet<>();
         this.binding = new PokeBinding();
         this.copiedMoves = new HashMap<>();
+        this.critStage = 0;
+        this.trainerChoice = TrainerChoice.CHOICE_WAITING;
+        this.pokeToSwitchIn = null;
     }
 
     public Poke getPoke() {
+        if (megaForm != null) {
+            return megaForm;
+        }
         return poke;
     }
 
-    public void setPoke(Poke poke) {
+    public void setPoke(@NonNull Poke poke) {
         this.poke = poke;
     }
 
@@ -78,7 +101,7 @@ public class PokeInBattle {
         return currMove;
     }
 
-    public void setCurrMove(PokeMove currMove) {
+    public void setCurrMove(@NonNull PokeMove currMove) {
         this.currMove = currMove;
     }
 
@@ -89,11 +112,6 @@ public class PokeInBattle {
 
     public void setMoveToUse(@Nonnull PokeMove moveToUse) {
         this.moveToUse = moveToUse;
-    }
-
-    public void doMove() {
-        // Do move
-        // Moves in the copiedMovesMap have priority before the Poke's original moves
     }
 
     public PokeAllStages getPokeStages() {
@@ -108,21 +126,46 @@ public class PokeInBattle {
         return volatileBattleStatusList;
     }
 
-    public boolean bindPoke(PokeBindingEnum bindingEnum) {
+    public int getCritStage() {
+        return critStage;
+    }
+
+    public void updateCritHitStage(int critHitStage) {
+        this.critStage += critHitStage;
+    }
+
+    public boolean bindPoke(@NonNull PokeBindingEnum bindingEnum) {
         return binding.setBinding(bindingEnum);
-    }
-
-    public void doBindingDamage() {
-        binding.doBindingDamage(poke);
-    }
-
-    public void doNonVolatileDamage() {
-        // TODO: Non volatile status damage is done at the end of each turn, not all statuses cause damage
     }
 
     public void copyMove(int movePosition, PokeMove moveToCopy) {
         copiedMoves.put(movePosition, moveToCopy);
     }
 
+    public TrainerChoice getTrainerChoice() {
+        return trainerChoice;
+    }
 
+    public void setTrainerChoice(@NonNull TrainerChoice trainerChoice) {
+        this.trainerChoice = trainerChoice;
+    }
+
+    public Poke getPokeToSwitchIn() {
+        return pokeToSwitchIn;
+    }
+
+    public void setPokeToSwitchIn(@NonNull Poke pokeToSwitchIn) {
+        this.pokeToSwitchIn = pokeToSwitchIn;
+    }
+
+    // TODO: Check if the stats should be kept when switching (Baton Pass, U-Turn)
+    public void switchPoke() {
+        this.poke = pokeToSwitchIn;
+        this.megaForm = null;
+        this.pokeToSwitchIn = null;
+    }
+
+    public boolean isTypeFound(@NonNull PokeTypeEnum type) {
+        return poke.getType().isTypeFound(type);
+    }
 }
