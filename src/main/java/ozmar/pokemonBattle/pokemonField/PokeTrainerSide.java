@@ -3,7 +3,6 @@ package ozmar.pokemonBattle.pokemonField;
 import ozmar.pokemonBattle.PokeRules;
 import ozmar.pokemonBattle.PositionHelper;
 import ozmar.pokemonBattle.TrainerChoice;
-import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
 import reactor.util.annotation.NonNull;
 
@@ -18,14 +17,17 @@ public class PokeTrainerSide {
 
     private final PokeRules pokeRules;
 
-    private PokeMove lastUsedMove;
+    public PokeTrainerSide(@NonNull List<TrainerInBattle> trainerInBattleList, @NonNull PokeSide side) {
+        this.side = side;
+        this.trainerInBattleList = trainerInBattleList;
+        this.pokeRules = new PokeRules();
+    }
 
     public PokeTrainerSide(@Nonnull TrainerInBattle trainerInBattle, @Nonnull PokeSide side) {
         this.trainerInBattleList = new ArrayList<>();
         this.trainerInBattleList.add(trainerInBattle);
 
         this.side = side;
-        this.lastUsedMove = null;
         this.pokeRules = new PokeRules();
     }
 

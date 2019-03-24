@@ -75,7 +75,6 @@ public class PokeBattleCalculator {
 
         int a = ((2 * attacker.getPoke().getLevel()) / 5) + 2;
         double b = getAttackerStat(attacker, isSpecial, isCrit) / getDefenderStat(target, isSpecial, isCrit);
-        System.out.println(b);
         double c = a * move.getPower() * b;
         double modifier = getModifierMultiplier(attacker, target, move, weather);
 

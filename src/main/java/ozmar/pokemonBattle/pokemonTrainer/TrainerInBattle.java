@@ -21,12 +21,12 @@ public class TrainerInBattle {
     private boolean hasMegaEvolved; // Only one mega evolution is allowed per trainer in a battle
 
 
-    public TrainerInBattle(@Nonnull Trainer trainer, @Nonnull PokeInBattle pokeInBattle) {
+    public TrainerInBattle(@Nonnull Trainer trainer) {
         this.trainer = trainer;
         this.hasMegaEvolved = false;
 
         this.pokeInBattleList = new ArrayList<>(1); // Currently only 1v1 battles
-        this.pokeInBattleList.add(pokeInBattle);
+        this.pokeInBattleList.add(new PokeInBattle(trainer.getPokeList().get(0)));
     }
 
 
@@ -111,7 +111,7 @@ public class TrainerInBattle {
         Poke pokeToSwitchIn = trainer.getPokeList().get(positions.getPoke());
         if (!pokeToSwitchIn.isFainted()) {
             PokeInBattle pokeInBattle = pokeInBattleList.get(positions.getField());
-            pokeInBattle.setPoke(pokeToSwitchIn);
+            pokeInBattle.setPokeToSwitchIn(pokeToSwitchIn);
             pokeInBattle.setTrainerChoice(TrainerChoice.CHOICE_SWITCH);
             canSwitchIn = true;
         }
