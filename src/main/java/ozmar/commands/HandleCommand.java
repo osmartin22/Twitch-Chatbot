@@ -110,8 +110,10 @@ public class HandleCommand implements HandleCommandInterface {
                 result = wordCountCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
-                result = messageCountCommand(commandEvent);
+                if (commandEvent.getUser().getName().equals("namedauto")) {
+                    command = commandsList.get(count);
+                    result = messageCountCommand(commandEvent);
+                }
 
             } else if (isCommandHelper(++count, commandEvent)) {
                 if (commandEvent.getUser().getName().equals("namedauto")) {

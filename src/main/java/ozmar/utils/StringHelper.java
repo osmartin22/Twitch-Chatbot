@@ -1,7 +1,5 @@
 package ozmar.utils;
 
-import reactor.util.annotation.NonNull;
-
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,7 +58,7 @@ public class StringHelper {
     }
 
 
-    public static boolean startsWithVowel(@NonNull String input) {
+    public static boolean startsWithVowel(@Nonnull String input) {
         if (input.length() > 0) {
             char firstChar = input.charAt(0);
             return firstChar == 'a' || firstChar == 'e' || firstChar == 'i' || firstChar == 'o' || firstChar == 'u';

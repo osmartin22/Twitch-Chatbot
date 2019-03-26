@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle;
+package ozmar.pokemonBattle.pokemonBattleHelpers;
 
 public class PokeRules {
 

@@ -1,99 +1,98 @@
 package ozmar.pokemonBattle;
 
 import ozmar.pokemonBattle.pokemon.PokeInBattle;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokeBattleCalculator;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
+import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
 import ozmar.pokemonBattle.pokemonField.PokeField;
-import ozmar.pokemonBattle.pokemonField.PokeSide;
+import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
 import ozmar.pokemonBattle.pokemonMoves.enums.PokeMoveDamageClass;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
 import ozmar.pokemonBattle.pokemonTrainer.Trainer;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class PokeBattle {
 
     private final PokeField field;
     private final PokeBattleCalculator calculator;
-    // Maybe a last used move and last pokemon that attacked for the entire battle
+    private final List<PokeTrainerSide> sideList;
 
-    private final Map<Trainer, TrainerInBattle> trainerInBattleMap;
-    private final Map<TrainerInBattle, PokeSide> pokeSideMap;
-    // Maybe create a Map<PokeSide, List<TrainerInBattle> if getting a certain side is necessary
-
-    public PokeBattle(@NonNull List<List<Trainer>> trainerList) {
+    public PokeBattle(@Nonnull List<List<Trainer>> listList) {
         this.field = new PokeField();
         this.calculator = new PokeBattleCalculator();
-        trainerInBattleMap = new HashMap<>();
-        pokeSideMap = new HashMap<>();
-        initialize(trainerList);
-    }
+        this.sideList = new ArrayList<>();
 
-    public void initialize(@NonNull List<List<Trainer>> lists) {
-        for (List<Trainer> trainers : lists) {
-            PokeSide pokeSide = new PokeSide();
-            for (Trainer trainer : trainers) {
-                TrainerInBattle trainerInBattle = new TrainerInBattle(trainer);
-                trainerInBattleMap.put(trainer, trainerInBattle);
-                pokeSideMap.put(trainerInBattle, pokeSide);
+        for (int i = 0; i < listList.size(); i++) {
+            List<Trainer> trainerList = listList.get(i);
+            for (int j = 0; j < trainerList.size(); j++) {
+                TrainerInBattle tb = new TrainerInBattle(trainerList.get(j), j);
+                this.sideList.add(new PokeTrainerSide(tb, i));
             }
         }
     }
 
-    public boolean setMoveToUse(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
-        TrainerInBattle trainerInBattle = trainerInBattleMap.get(trainer);
-        boolean isAbleToDoMove = canTrainersPokeUseMove(trainerInBattle, positions);
+    public boolean setMoveToUse(int sidePosition, int trainerPosition, int fieldPosition, int movePosition,
+                                @Nonnull PokeTargetPosition targetPosition) {
+        TrainerInBattle trainerInBattle = sideList.get(sidePosition).getTrainerInBattle(trainerPosition);
+        boolean isAbleToDoMove = canTrainersPokeUseMove(trainerInBattle, fieldPosition, movePosition, targetPosition);
         if (isAbleToDoMove) {
-            trainerInBattle.setMoveToUse(positions);
+            trainerInBattle.setMoveToUse(fieldPosition, movePosition, targetPosition);
         }
         return isAbleToDoMove;
     }
 
-    private boolean canTrainersPokeUseMove(@Nonnull TrainerInBattle trainerInBattle, @NonNull PositionHelper positions) {
+    private boolean canTrainersPokeUseMove(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition, int movePosition,
+                                           @Nonnull PokeTargetPosition targetPosition) {
         boolean isAbleToDoMove = false;
-        if (trainerInBattle.getTrainerChoice(positions) == TrainerChoice.CHOICE_WAITING) {
-            isAbleToDoMove = trainerInBattle.isAbleToDoMove(positions);
+        PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
+        if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+            isAbleToDoMove = trainerInBattle.isAbleToDoMove(fieldPosition, movePosition, targetPosition);
         }
         return isAbleToDoMove;
     }
 
-    public boolean setPokeToSwitchIn(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
-        TrainerInBattle trainerInBattle = trainerInBattleMap.get(trainer);
-        boolean isAbleToSwitch = canTrainerSwitchPoke(trainerInBattle, positions);
+    public boolean setPokeToSwitchIn(int sidePosition, int trainerPosition, int fieldPosition, int pokePosition) {
+        TrainerInBattle trainerInBattle = sideList.get(sidePosition).getTrainerInBattle(trainerPosition);
+        boolean isAbleToSwitch = canTrainerSwitchPoke(trainerInBattle, fieldPosition);
         if (isAbleToSwitch) {
-            isAbleToSwitch = trainerInBattle.setPokeToSwitchIn(positions);
+            isAbleToSwitch = trainerInBattle.setPokeToSwitchIn(fieldPosition, pokePosition);
         }
 
         return isAbleToSwitch;
     }
 
-    private boolean canTrainerSwitchPoke(@Nonnull TrainerInBattle trainerInBattle, @NonNull PositionHelper positions) {
+    private boolean canTrainerSwitchPoke(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition) {
         boolean isAbleToSwitch = false;
-        if (trainerInBattle.getTrainerChoice(positions) == TrainerChoice.CHOICE_WAITING) {
-            isAbleToSwitch = trainerInBattle.isAbleToSwitchPoke(positions);
+        PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
+        if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+            isAbleToSwitch = trainerInBattle.isAbleToSwitchPoke(fieldPosition);
         }
 
         return isAbleToSwitch;
     }
 
     @Nonnull
-    public PokeInBattle getPokeInBattle(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
-        return trainerInBattleMap.get(trainer).getPokeInBattle(positions);
+    public PokeInBattle getPokeInBattle(int sidePosition, int trainerPosition, int fieldPosition) {
+        return sideList.get(sidePosition).getTrainerInBattle(trainerPosition).getPokeInBattle(fieldPosition);
     }
 
     @Nonnull
-    public TrainerChoice getTrainerStatus(@Nonnull Trainer trainer, @NonNull PositionHelper positions) {
-        return trainerInBattleMap.get(trainer).getTrainerChoice(positions);
+    public TrainerChoice getTrainerStatus(int sidePosition, int trainerPosition, int fieldPosition) {
+        TrainerInBattle tb = sideList.get(sidePosition).getTrainerInBattle(trainerPosition);
+        return tb.getPokeInBattle(fieldPosition).getTrainerChoice();
     }
 
     public boolean trainersReady() {
-        for (TrainerInBattle trainerInBattle : trainerInBattleMap.values()) {
-            List<PokeInBattle> pokeInBattleList = trainerInBattle.getPokeInBattleList();
-            for (PokeInBattle pokeInBattle : pokeInBattleList) {
-                if (pokeInBattle.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+        for (PokeTrainerSide pSide : sideList) {
+            List<TrainerInBattle> tbList = pSide.getTrainerInBattleList();
+            for (TrainerInBattle tb : tbList) {
+                if (tb.getPokeInBattle(0).getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
                     return false;
                 }
             }
@@ -102,93 +101,50 @@ public class PokeBattle {
         return true;
     }
 
-
-    // TODO: Check if one of the Pokemon will use pursuit before switching out
-    //  Pursuit activates if the Poke manually switches out,
-    //  or uses U-turn, Volt Switch, or Parting Shot and would attack second
-    // NOTE* If both trainers switch out on the same turn, the faster pokemon switches out first
+    // This method only works for 1v1 battles and is currently only a basic version of actual Pokemon moves
+    // This method DOES NOT take into account Pursuit attacking before a Pokemon switches
+    // This method DOES NOT afflict statuses
     public void doTrainerChoice() {
 
-        // Below code only works for 1v1
-        // Pursuit effect not coded yet
-        List<PokeInBattle> pokesWithPursuit = new ArrayList<>();
-        List<PokeInBattle> pokesSwitching = new ArrayList<>();
-        List<PokeInBattle> pokesAttacking = new ArrayList<>();
-        getChoicesInList(pokesWithPursuit, pokesSwitching, pokesAttacking);
-
-        // TODO: Make pursuit attack first before any opponent pokemon are switching
-        for (PokeInBattle p : pokesSwitching) {
-            p.switchPoke();
-            p.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
-        }
-
-
-        // The below code only works for 1v1 battles
-        PokeInBattle p1 = null;
-        PokeInBattle p2 = null;
-        if (pokesAttacking.size() > 0) {
-            p1 = pokesAttacking.get(0);
-            if (pokesAttacking.size() == 2) {
-                p2 = pokesAttacking.get(1);
+        List<PokeInBattle> pbList = new ArrayList<>();
+        for (PokeTrainerSide pSide : sideList) {
+            List<TrainerInBattle> tbList = sideList.get(pSide.getSideId()).getTrainerInBattleList();
+            for (TrainerInBattle tb : tbList) {
+                pbList.add(tb.getPokeInBattle(0));
             }
         }
 
-        int damageDone;
-        if (p1 != null) {
-            damageDone = doMove(p1, p2);
-//            p2.getPoke().getPokeStats().updateCurrHp(damageDone);
-            System.out.println(p1.getPoke().getName() + " DamageDone: " + damageDone);
-        }
-
-        if (p2 != null) {
-            damageDone = doMove(p2, p1);
-            System.out.println(p2.getPoke().getName() + " DamageDone : " + damageDone);
-        }
-    }
-
-    public void tempDo() {
-        List<TrainerInBattle> trainerInBattleList = new ArrayList<>(trainerInBattleMap.values());
-        List<PokeInBattle> pokeInBattleList = new ArrayList<>();
-        PositionHelper positionHelper = new PositionHelper();
-        pokeInBattleList.add(trainerInBattleList.get(0).getPokeInBattle(positionHelper));
-        pokeInBattleList.add(trainerInBattleList.get(1).getPokeInBattle(positionHelper));
-        pokeInBattleList.sort(Comparator.comparingInt((PokeInBattle p)
+        pbList.sort(Comparator.comparingInt((PokeInBattle p)
                 -> p.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD)).reversed());
 
-        for (PokeInBattle pokeInBattle : pokeInBattleList) {
-            if (pokeInBattle.getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
-
+        for (PokeInBattle pb : pbList) {
+            if (pb.getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
+                pb.switchPoke();
+                pb.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
             }
         }
 
-    }
-
-    private void getChoicesInList(@NonNull List<PokeInBattle> pokesWithPursuit, @NonNull List<PokeInBattle> pokesSwitching,
-                                  @NonNull List<PokeInBattle> pokesAttacking) {
-        for (TrainerInBattle trainerInBattle : trainerInBattleMap.values()) {
-            List<PokeInBattle> pokeInBattleList = trainerInBattle.getPokeInBattleList();
-            for (PokeInBattle pokeInBattle : pokeInBattleList) {
-
-                if (pokeInBattle.getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
-                    pokesSwitching.add(pokeInBattle);
-                } else if (pokeInBattle.getMoveToUse().getName().equals("Pursuit")) {
-                    pokesWithPursuit.add(pokeInBattle);
-                } else {
-                    pokesAttacking.add(pokeInBattle);
-                }
+        for (PokeInBattle pb : pbList) {
+            if (pb.getTrainerChoice() == TrainerChoice.CHOICE_MOVE &&
+                    pb.getMoveToUse().getDamageClass() != PokeMoveDamageClass.STATUS) {
+                System.out.println(pb.getMoveToUse().getName());
+                System.out.println(pb.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD));
+                int damageDone = doMove(pb);
+                System.out.println(damageDone);
+                pb.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
             }
         }
-
-        pokesWithPursuit.sort(Comparator.comparingInt((PokeInBattle p)
-                -> p.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD)).reversed());
-        pokesSwitching.sort(Comparator.comparingInt((PokeInBattle p)
-                -> p.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD)).reversed());
-        pokesAttacking.sort(Comparator.comparingInt((PokeInBattle p)
-                -> p.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD)).reversed());
     }
 
-    private int doMove(@NonNull PokeInBattle attacker, @NonNull PokeInBattle target) {
+
+    private int doMove(@Nonnull PokeInBattle attacker) {
         int damageDone = 0;
+
+        PokeTargetPosition targetPosition = attacker.getTargetPosition();
+        PokeInBattle target = sideList.get(targetPosition.getSidePosition())
+                .getTrainerInBattle(targetPosition.getTrainerPosition())
+                .getPokeInBattle(targetPosition.getFieldPosition());
+
         if (attacker.getMoveToUse().getDamageClass() == PokeMoveDamageClass.STATUS) {
             damageDone = -1;
         } else {
@@ -202,9 +158,5 @@ public class PokeBattle {
 
         attacker.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
         return damageDone;
-    }
-
-    private void doPostTurnEffects() {
-
     }
 }

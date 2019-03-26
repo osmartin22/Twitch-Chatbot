@@ -8,7 +8,6 @@ import ozmar.commands.interfaces.PokeCommandInterface;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.StringHelper;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -142,7 +141,7 @@ public class PokeCommand implements PokeCommandInterface {
      * @param index string
      * @return int
      */
-    private Integer getPokedexIndex(@NonNull String index) {
+    private Integer getPokedexIndex(@Nonnull String index) {
         Integer num;
         try {
             num = Integer.parseInt(index);
@@ -257,13 +256,13 @@ public class PokeCommand implements PokeCommandInterface {
         private long timeStored;
         private CaughtPokeInfo pokeInfo;
 
-        CaughtPokeHelper(long timeStored, @NonNull CaughtPokeInfo pokeInfo) {
+        CaughtPokeHelper(long timeStored, @Nonnull CaughtPokeInfo pokeInfo) {
             this.timeStored = timeStored;
             this.pokeInfo = pokeInfo;
         }
     }
 
-    private void saveCatchToBuffer(long userId, @NonNull CaughtPokeInfo pokeInfo) {
+    private void saveCatchToBuffer(long userId, @Nonnull CaughtPokeInfo pokeInfo) {
         CaughtPokeHelper helper = new CaughtPokeHelper(System.currentTimeMillis(), pokeInfo);
         caughtPokes.put(userId, helper);
     }

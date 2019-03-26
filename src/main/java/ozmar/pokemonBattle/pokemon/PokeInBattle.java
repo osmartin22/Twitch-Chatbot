@@ -1,6 +1,7 @@
 package ozmar.pokemonBattle.pokemon;
 
-import ozmar.pokemonBattle.TrainerChoice;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
+import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBinding;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBindingEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
@@ -8,7 +9,6 @@ import ozmar.pokemonBattle.pokemonStats.PokeAllStages;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ import java.util.Set;
 //  the other objects can stay since stages can be passed, they should have a reset method
 public class PokeInBattle {
 
+    private final int position;
     private Poke poke;
 
     // TODO: Have a isSemiInvulnerable, isCharging, and isRecharging flag
@@ -43,6 +44,10 @@ public class PokeInBattle {
 
     private TrainerChoice trainerChoice;
     private Poke pokeToSwitchIn;
+
+    private boolean isFlinched;
+
+    private PokeTargetPosition targetPosition;
 
     /*
      Moves that copy other moves
@@ -72,7 +77,8 @@ public class PokeInBattle {
         Keep track of the type of the move as well(necessary for Conversion 2)
      */
 
-    public PokeInBattle(@Nonnull Poke poke) {
+    public PokeInBattle(@Nonnull Poke poke, int position) {
+        this.position = position;
         this.poke = poke;
         this.currMove = null;
         this.moveToUse = null;
@@ -84,6 +90,7 @@ public class PokeInBattle {
         this.critStage = 0;
         this.trainerChoice = TrainerChoice.CHOICE_WAITING;
         this.pokeToSwitchIn = null;
+        this.isFlinched = false;
     }
 
     public Poke getPoke() {
@@ -93,7 +100,7 @@ public class PokeInBattle {
         return poke;
     }
 
-    public void setPoke(@NonNull Poke poke) {
+    public void setPoke(@Nonnull Poke poke) {
         this.poke = poke;
     }
 
@@ -101,7 +108,7 @@ public class PokeInBattle {
         return currMove;
     }
 
-    public void setCurrMove(@NonNull PokeMove currMove) {
+    public void setCurrMove(@Nonnull PokeMove currMove) {
         this.currMove = currMove;
     }
 
@@ -110,8 +117,9 @@ public class PokeInBattle {
         return moveToUse;
     }
 
-    public void setMoveToUse(@Nonnull PokeMove moveToUse) {
+    public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokeTargetPosition targetPosition) {
         this.moveToUse = moveToUse;
+        this.targetPosition = targetPosition;
     }
 
     public PokeAllStages getPokeStages() {
@@ -134,7 +142,7 @@ public class PokeInBattle {
         this.critStage += critHitStage;
     }
 
-    public boolean bindPoke(@NonNull PokeBindingEnum bindingEnum) {
+    public boolean bindPoke(@Nonnull PokeBindingEnum bindingEnum) {
         return binding.setBinding(bindingEnum);
     }
 
@@ -146,7 +154,7 @@ public class PokeInBattle {
         return trainerChoice;
     }
 
-    public void setTrainerChoice(@NonNull TrainerChoice trainerChoice) {
+    public void setTrainerChoice(@Nonnull TrainerChoice trainerChoice) {
         this.trainerChoice = trainerChoice;
     }
 
@@ -154,7 +162,7 @@ public class PokeInBattle {
         return pokeToSwitchIn;
     }
 
-    public void setPokeToSwitchIn(@NonNull Poke pokeToSwitchIn) {
+    public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
         this.pokeToSwitchIn = pokeToSwitchIn;
     }
 
@@ -165,7 +173,23 @@ public class PokeInBattle {
         this.pokeToSwitchIn = null;
     }
 
-    public boolean isTypeFound(@NonNull PokeTypeEnum type) {
+    public boolean isTypeFound(@Nonnull PokeTypeEnum type) {
         return poke.getType().isTypeFound(type);
+    }
+
+    public boolean isFlinched() {
+        return isFlinched;
+    }
+
+    public void setFlinched(boolean flinched) {
+        isFlinched = flinched;
+    }
+
+    public PokeTargetPosition getTargetPosition() {
+        return targetPosition;
+    }
+
+    public void setTargetPosition(PokeTargetPosition targetPosition) {
+        this.targetPosition = targetPosition;
     }
 }

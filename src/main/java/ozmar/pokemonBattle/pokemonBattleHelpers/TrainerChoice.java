@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle;
+package ozmar.pokemonBattle.pokemonBattleHelpers;
 
 public enum TrainerChoice {
     CHOICE_WAITING(0),

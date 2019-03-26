@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle;
+package ozmar.pokemonBattle.pokemonBattleHelpers;
 
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;

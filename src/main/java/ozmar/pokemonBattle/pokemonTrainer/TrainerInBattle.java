@@ -1,14 +1,13 @@
 package ozmar.pokemonBattle.pokemonTrainer;
 
-import ozmar.pokemonBattle.PositionHelper;
-import ozmar.pokemonBattle.TrainerChoice;
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemon.PokeInBattle;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
+import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -16,17 +15,19 @@ import java.util.List;
 import java.util.Set;
 
 public class TrainerInBattle {
+    private final int position;
     private final Trainer trainer;
     private final List<PokeInBattle> pokeInBattleList;
     private boolean hasMegaEvolved; // Only one mega evolution is allowed per trainer in a battle
 
 
-    public TrainerInBattle(@Nonnull Trainer trainer) {
+    public TrainerInBattle(@Nonnull Trainer trainer, int position) {
+        this.position = position;
         this.trainer = trainer;
         this.hasMegaEvolved = false;
 
         this.pokeInBattleList = new ArrayList<>(1); // Currently only 1v1 battles
-        this.pokeInBattleList.add(new PokeInBattle(trainer.getPokeList().get(0)));
+        this.pokeInBattleList.add(new PokeInBattle(trainer.getPokeList().get(0), position));
     }
 
 
@@ -39,24 +40,13 @@ public class TrainerInBattle {
     }
 
     @Nonnull
-    public TrainerChoice getTrainerChoice(@NonNull PositionHelper positions) {
-        return pokeInBattleList.get(positions.getField()).getTrainerChoice();
+    public PokeInBattle getPokeInBattle(int fieldPosition) {
+        return pokeInBattleList.get(fieldPosition);
     }
 
-    @Nonnull
-    public PokeInBattle getPokeInBattle(@NonNull PositionHelper positions) {
-        return pokeInBattleList.get(positions.getField());
-    }
-
-    /**
-     * Checks if the Pokemon on the field is able to switch out
-     *
-     * @param positions position on the field the pokemon is in
-     * @return boolean
-     */
-    public boolean isAbleToSwitchPoke(@NonNull PositionHelper positions) {
+    public boolean isAbleToSwitchPoke(int fieldPosition) {
         boolean isAbleToSwitch = true;
-        PokeInBattle pokeInBattle = pokeInBattleList.get(positions.getField());
+        PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
         Set<VolatileBattleStatus> set = pokeInBattle.getVolatileBattleStatusList();
         if (set.contains(VolatileBattleStatus.CHARGING_TURN) || set.contains(VolatileBattleStatus.SEMI_INVULNERABLE) ||
                 set.contains(VolatileBattleStatus.ROOTING) || set.contains(VolatileBattleStatus.RECHARGING) ||
@@ -73,27 +63,20 @@ public class TrainerInBattle {
             }
         }
 
-        pokeInBattleList.get(positions.getField()).setTrainerChoice(TrainerChoice.CHOICE_SWITCH);
+        pokeInBattleList.get(fieldPosition).setTrainerChoice(TrainerChoice.CHOICE_SWITCH);
         return isAbleToSwitch;
     }
 
-    /**
-     * Checks if the Pokemon on the field can do the selected move
-     * i.e. Enough PP, or another effect prevents the move from being used
-     *
-     * @param positions position of the field and move to get the Poke from
-     * @return boolean
-     */
-    public boolean isAbleToDoMove(@NonNull PositionHelper positions) {
+    public boolean isAbleToDoMove(int fieldPosition, int movePosition, @Nonnull PokeTargetPosition targetPosition) {
         boolean isAbleToDoMove = true;
-        PokeInBattle pokeInBattle = pokeInBattleList.get(positions.getField());
-        PokeMove move = pokeInBattle.getPoke().getMoveList().get(positions.getMove());
+        PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
+        PokeMove move = pokeInBattle.getPoke().getMoveList().get(movePosition);
         if (move.getCurrPp() == 0) {
             isAbleToDoMove = false;
         } else {
             // Check for any effects that prevent the move from being used
-            pokeInBattle.setMoveToUse(move);
-            pokeInBattleList.get(positions.getField()).setTrainerChoice(TrainerChoice.CHOICE_MOVE);
+            pokeInBattle.setMoveToUse(move, targetPosition);
+            pokeInBattleList.get(fieldPosition).setTrainerChoice(TrainerChoice.CHOICE_MOVE);
         }
 
         // TODO: Check if the Poke can do the selected Move
@@ -102,15 +85,15 @@ public class TrainerInBattle {
     }
 
 
-    public void doTrainerChoice(@NonNull PositionHelper positions) {
+//    public void doTrainerChoice(@Nonnull PositionHelper positions) {
+//
+//    }
 
-    }
-
-    public boolean setPokeToSwitchIn(@NonNull PositionHelper positions) {
+    public boolean setPokeToSwitchIn(int fieldPosition, int pokePosition) {
         boolean canSwitchIn = false;
-        Poke pokeToSwitchIn = trainer.getPokeList().get(positions.getPoke());
+        Poke pokeToSwitchIn = trainer.getPokeList().get(pokePosition);
         if (!pokeToSwitchIn.isFainted()) {
-            PokeInBattle pokeInBattle = pokeInBattleList.get(positions.getField());
+            PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
             pokeInBattle.setPokeToSwitchIn(pokeToSwitchIn);
             pokeInBattle.setTrainerChoice(TrainerChoice.CHOICE_SWITCH);
             canSwitchIn = true;
@@ -119,14 +102,14 @@ public class TrainerInBattle {
         return canSwitchIn;
     }
 
-    public void switchPoke(@NonNull PositionHelper positions) {
-        PokeInBattle pokeInBattle = pokeInBattleList.get(positions.getField());
+    public void switchPoke(int fieldPosition) {
+        PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
         pokeInBattle.switchPoke();
         pokeInBattle.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
     }
 
-    public void setMoveToUse(@NonNull PositionHelper positions) {
-        PokeInBattle pokeInBattle = pokeInBattleList.get(positions.getField());
-        pokeInBattle.setMoveToUse(pokeInBattle.getPoke().getMoveList().get(positions.getMove()));
+    public void setMoveToUse(int fieldPosition, int movePosition, @Nonnull PokeTargetPosition targetPosition) {
+        PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
+        pokeInBattle.setMoveToUse(pokeInBattle.getPoke().getMoveList().get(movePosition), targetPosition);
     }
 }

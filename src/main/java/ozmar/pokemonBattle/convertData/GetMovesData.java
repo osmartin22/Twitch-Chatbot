@@ -9,7 +9,6 @@ import ozmar.pokemonBattle.pokemonMoves.enums.PokeTarget;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatsEffect;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -100,8 +99,8 @@ public class GetMovesData {
         return new PokeMove(id, moveName, pp, power, accuracy, priority, type, damageClass, target, metaData);
     }
 
-    @NonNull
-    private Set<NonVolatileStatus> convertToNonVolatileList(@NonNull String nonVolatile) {
+    @Nonnull
+    private Set<NonVolatileStatus> convertToNonVolatileList(@Nonnull String nonVolatile) {
         Set<NonVolatileStatus> set = new HashSet<>();
         for (int i = 0; i < nonVolatile.length(); i++) {
             if (nonVolatile.charAt(i) == '1') {

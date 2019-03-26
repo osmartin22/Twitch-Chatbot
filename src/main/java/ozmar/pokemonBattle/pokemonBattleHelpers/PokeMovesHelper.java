@@ -1,4 +1,4 @@
-package ozmar.pokemonBattle;
+package ozmar.pokemonBattle.pokemonBattleHelpers;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -1,6 +1,7 @@
 package ozmar;
 
-import reactor.util.annotation.NonNull;
+
+import javax.annotation.Nonnull;
 
 public class CaughtPokeInfo {
 
@@ -9,15 +10,15 @@ public class CaughtPokeInfo {
     private boolean isUnreleased;
     private String catchResultString;
 
-    public CaughtPokeInfo(@NonNull PokemonPoke poke, boolean isCaptured, boolean isUnreleased,
-                          @NonNull String catchResultString) {
+    public CaughtPokeInfo(@Nonnull PokemonPoke poke, boolean isCaptured, boolean isUnreleased,
+                          @Nonnull String catchResultString) {
         this.poke = poke;
         this.isCaptured = isCaptured;
         this.isUnreleased = isUnreleased;
         this.catchResultString = catchResultString;
     }
 
-    @NonNull
+    @Nonnull
     public PokemonPoke getPoke() {
         return poke;
     }
@@ -30,7 +31,7 @@ public class CaughtPokeInfo {
         return isUnreleased;
     }
 
-    @NonNull
+    @Nonnull
     public String getCatchResultString() {
         return catchResultString;
     }

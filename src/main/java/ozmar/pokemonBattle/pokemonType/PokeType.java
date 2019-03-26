@@ -1,7 +1,6 @@
 package ozmar.pokemonBattle.pokemonType;
 
-import ozmar.pokemonBattle.PokeInfoHelper;
-import reactor.util.annotation.NonNull;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokeInfoHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class PokeType {
      * @param type type wanting to find
      * @return boolean
      */
-    public boolean isTypeFound(@NonNull PokeTypeEnum type) {
+    public boolean isTypeFound(@Nonnull PokeTypeEnum type) {
         if (type != PokeTypeEnum.NONE) {
             for (PokeTypeEnum typeEnum : typesList) {
                 if (typeEnum == type) {
@@ -103,7 +102,7 @@ public class PokeType {
         return multiplier1 * multiplier2 * multiplier3;
     }
 
-    public double damageReceivedMultiplier(@NonNull PokeTypeEnum pokeTypeEnum) {
+    public double damageReceivedMultiplier(@Nonnull PokeTypeEnum pokeTypeEnum) {
         double multiplier1 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][typesList.get(0).getId()];
         double multiplier2 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][typesList.get(1).getId()];
         double multiplier3 = PokeInfoHelper.TYPE_CHART[pokeTypeEnum.getId()][typesList.get(2).getId()];

@@ -8,7 +8,6 @@ import ozmar.enums.PokemonGender;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.StringHelper;
 import poke_models.pokemon.*;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -248,7 +247,7 @@ public class CatchPoke implements CatchPokeInterface {
         return pokeDexNum;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public Set<String> getRegionNames() {
         return new HashSet<>(regionMap.keySet());
@@ -286,7 +285,7 @@ public class CatchPoke implements CatchPokeInterface {
      *
      * @return CaughtPokeInfo
      */
-    @NonNull
+    @Nonnull
     @Override
     public CaughtPokeInfo attemptCatch() {
         PokemonPoke poke = getPokeResult();
@@ -302,7 +301,7 @@ public class CatchPoke implements CatchPokeInterface {
      *
      * @return PokemonPoke
      */
-    @NonNull
+    @Nonnull
     private PokemonPoke getPokeResult() {
         PokemonPoke poke = new PokemonPoke();
 
@@ -332,8 +331,8 @@ public class CatchPoke implements CatchPokeInterface {
      * @param poke Pokemon info
      * @return String
      */
-    @NonNull
-    private String getCaptureResult(@NonNull PokemonPoke poke, boolean isCaptured) {
+    @Nonnull
+    private String getCaptureResult(@Nonnull PokemonPoke poke, boolean isCaptured) {
         String output = poke.getPokeString();
         if (isCaptured) {
             output = (StringHelper.startsWithVowel(output)) ? String.format(" caught an %s", output) :
@@ -467,7 +466,7 @@ public class CatchPoke implements CatchPokeInterface {
      *
      * @return boolean
      */
-    private boolean isCaptured(@NonNull Pokemon pokemon, @NonNull PokemonSpecies pokemonSpecies) {
+    private boolean isCaptured(@Nonnull Pokemon pokemon, @Nonnull PokemonSpecies pokemonSpecies) {
         int hpMax = pokemon.getStats().get(5).getBaseStat();
         int captureRate = getCaptureRate(pokemon, pokemonSpecies);
 
@@ -493,7 +492,7 @@ public class CatchPoke implements CatchPokeInterface {
      *
      * @return int
      */
-    private int getCaptureRate(@NonNull Pokemon pokemon, @NonNull PokemonSpecies pokemonSpecies) {
+    private int getCaptureRate(@Nonnull Pokemon pokemon, @Nonnull PokemonSpecies pokemonSpecies) {
         int captureRate;
         if (isUnreleased) {
             String name = pokemon.getName();
@@ -611,7 +610,7 @@ public class CatchPoke implements CatchPokeInterface {
     @Nullable
     @Override
     public CaughtPokeInfo catchMissingNo() {
-        boolean caught = RandomHelper.getRandNumInRange(1, 807) == 117;
+        boolean caught = RandomHelper.getRandNumInRange(1, 300) == 117;
         if (caught) {
             Nature nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
 

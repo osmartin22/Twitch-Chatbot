@@ -1,9 +1,9 @@
 package ozmar.commands.interfaces;
 
 import ozmar.CaughtPokeInfo;
-import reactor.util.annotation.NonNull;
 import reactor.util.annotation.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public interface CatchPokeInterface {
@@ -12,12 +12,12 @@ public interface CatchPokeInterface {
 
     int initialize(String pokeInput);
 
-    @NonNull
+    @Nonnull
     CaughtPokeInfo attemptCatch();
 
     @Nullable
     CaughtPokeInfo catchMissingNo();
 
-    @NonNull
+    @Nonnull
     Set<String> getRegionNames();
 }

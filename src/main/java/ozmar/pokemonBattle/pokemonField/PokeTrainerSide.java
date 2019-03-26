@@ -1,34 +1,32 @@
 package ozmar.pokemonBattle.pokemonField;
 
-import ozmar.pokemonBattle.PokeRules;
-import ozmar.pokemonBattle.PositionHelper;
-import ozmar.pokemonBattle.TrainerChoice;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
-import reactor.util.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PokeTrainerSide {
+    private final int sideId;
     private final PokeSide side;
-
     private final List<TrainerInBattle> trainerInBattleList;
 
-    private final PokeRules pokeRules;
-
-    public PokeTrainerSide(@NonNull List<TrainerInBattle> trainerInBattleList, @NonNull PokeSide side) {
-        this.side = side;
+    public PokeTrainerSide(@Nonnull List<TrainerInBattle> trainerInBattleList, int sideId) {
+        this.sideId = sideId;
+        this.side = new PokeSide(sideId);
         this.trainerInBattleList = trainerInBattleList;
-        this.pokeRules = new PokeRules();
     }
 
-    public PokeTrainerSide(@Nonnull TrainerInBattle trainerInBattle, @Nonnull PokeSide side) {
-        this.trainerInBattleList = new ArrayList<>();
-        this.trainerInBattleList.add(trainerInBattle);
+    public PokeTrainerSide(@Nonnull TrainerInBattle trainerInBattle, int sideId) {
+        this.sideId = sideId;
+        this.side = new PokeSide(sideId);
+        this.trainerInBattleList = new ArrayList<>(Collections.singletonList(trainerInBattle));
+    }
 
-        this.side = side;
-        this.pokeRules = new PokeRules();
+    public int getSideId() {
+        return sideId;
     }
 
     @Nonnull
@@ -40,36 +38,29 @@ public class PokeTrainerSide {
         return trainerInBattleList;
     }
 
-    public TrainerInBattle getTrainerInBattle(@NonNull PositionHelper positions) {
-        return trainerInBattleList.get(positions.getTrainer());
+    public TrainerInBattle getTrainerInBattle(int trainerPosition) {
+        return trainerInBattleList.get(trainerPosition);
     }
 
-    @Nonnull
-    public TrainerChoice getTrainerChoice(@NonNull PositionHelper positions) {
-        return trainerInBattleList.get(positions.getTrainer()).getTrainerChoice(positions);
+//    public void doChoice(@int trainerPosition, int fieldPosition) {
+//        trainerInBattleList.get(trainerPosition).doTrainerChoice(fieldPosition);
+//    }
+
+    public void setMoveToUse(int trainerPosition, int fieldPosition, int movePosition,
+                             @Nonnull PokeTargetPosition targetPosition) {
+        trainerInBattleList.get(trainerPosition).setMoveToUse(fieldPosition, movePosition, targetPosition);
     }
 
-    public void doChoice(@NonNull PositionHelper positions) {
-        trainerInBattleList.get(positions.getTrainer()).doTrainerChoice(positions);
+    public boolean setPokeToSwitchIn(int trainerPosition, int fieldPosition, int pokePosition) {
+        return trainerInBattleList.get(trainerPosition).setPokeToSwitchIn(fieldPosition, pokePosition);
     }
 
-    public void setMoveToUse(@NonNull PositionHelper positions) {
-        trainerInBattleList.get(positions.getTrainer()).setMoveToUse(positions);
+    public boolean isAbleToDoMove(int trainerPosition, int fieldPosition, int movePosition,
+                                  @Nonnull PokeTargetPosition targetPosition) {
+        return trainerInBattleList.get(trainerPosition).isAbleToDoMove(fieldPosition, movePosition, targetPosition);
     }
 
-    public boolean setPokeToSwitchIn(@NonNull PositionHelper positions) {
-        return trainerInBattleList.get(positions.getTrainer()).setPokeToSwitchIn(positions);
-    }
-
-    public boolean isAbleToDoMove(@NonNull PositionHelper positions) {
-        return trainerInBattleList.get(positions.getTrainer()).isAbleToDoMove(positions);
-    }
-
-    public boolean isAbleToSwitchPoke(@NonNull PositionHelper positions) {
-        return trainerInBattleList.get(positions.getTrainer()).isAbleToSwitchPoke(positions);
-    }
-
-    public void doNonVolatileStatusEffect() {
-
+    public boolean isAbleToSwitchPoke(int trainerPosition, int fieldPosition) {
+        return trainerInBattleList.get(trainerPosition).isAbleToSwitchPoke(fieldPosition);
     }
 }
