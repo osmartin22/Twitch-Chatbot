@@ -36,7 +36,8 @@ public class PokeMoveMetaData {
 
     private final int statsStageRaise;
     private final int statsEffectChance;
-    private final Set<PokeStatsEffect> statsEffectSet;
+    private final Set<PokeStatsEffect> userStatsEffect;
+    private final Set<PokeStatsEffect> targetStatsEffect;
 
     private final Set<PokeMoveByUsage> moveByUsageSet;
 
@@ -45,7 +46,8 @@ public class PokeMoveMetaData {
     public PokeMoveMetaData(int generation, PokeContestCondition contestCondition, boolean isContact, boolean isDirectAttack,
                             int flinchChance, int confusionChance, int nonVolatileChance,
                             NonVolatileStatus nonVolatileStatus, PokeTarget target, int statsStageRaise,
-                            int statsEffectChance, Set<PokeStatsEffect> statsEffectSet, Set<PokeMoveByUsage> moveByUsageSet,
+                            int statsEffectChance, Set<PokeStatsEffect> userStatsEffect, Set<PokeStatsEffect> targetStatsEffect,
+                            Set<PokeMoveByUsage> moveByUsageSet,
                             int critStage) {
         this.generation = generation;
         this.contestCondition = contestCondition;
@@ -58,7 +60,8 @@ public class PokeMoveMetaData {
         this.target = target;
         this.statsStageRaise = statsStageRaise;
         this.statsEffectChance = statsEffectChance;
-        this.statsEffectSet = statsEffectSet;
+        this.userStatsEffect = userStatsEffect;
+        this.targetStatsEffect = targetStatsEffect;
         this.moveByUsageSet = moveByUsageSet;
         this.critStage = critStage;
     }
@@ -107,8 +110,12 @@ public class PokeMoveMetaData {
         return statsEffectChance;
     }
 
-    public Set<PokeStatsEffect> getStatsEffectSet() {
-        return statsEffectSet;
+    public Set<PokeStatsEffect> getUserStatsEffect() {
+        return userStatsEffect;
+    }
+
+    public Set<PokeStatsEffect> getTargetStatsEffect() {
+        return targetStatsEffect;
     }
 
     public Set<PokeMoveByUsage> getMoveByUsageSet() {

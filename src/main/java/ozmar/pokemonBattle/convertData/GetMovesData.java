@@ -82,20 +82,21 @@ public class GetMovesData {
         boolean isContact = convertToNum(moveData[9]) == 0;
         PokeTarget target = PokeTarget.target[convertToNum(moveData[10])];
         int priority = convertToNum(moveData[11]);
-        Set<PokeStatsEffect> statsEffectSet = convertToStatsList(moveData[12]);
-        int statChance = convertToNum(moveData[13]);
-        int stageRaise = convertToNum(moveData[14]);
-        NonVolatileStatus nonVolatileStatus = NonVolatileStatus.status[convertToNum(moveData[15])];
-        int nonVolatileChance = convertToNum(moveData[16]);
-        int flinchChance = convertToNum(moveData[17]);
-        int confusionChance = convertToNum(moveData[18]);
-        Set<PokeMoveByUsage> moveByUsages = convertToUsageList(moveData[19]);
-        boolean isDirectAttack = convertToNum(moveData[20]) == 1;
-        int critStage = convertToNum(moveData[21]);
+        Set<PokeStatsEffect> userStatsEffectSet = convertToStatsList(moveData[12]);
+        Set<PokeStatsEffect> targetStatsEffectSet = convertToStatsList(moveData[13]);
+        int statChance = convertToNum(moveData[14]);
+        int stageRaise = convertToNum(moveData[15]);
+        NonVolatileStatus nonVolatileStatus = NonVolatileStatus.status[convertToNum(moveData[16])];
+        int nonVolatileChance = convertToNum(moveData[17]);
+        int flinchChance = convertToNum(moveData[18]);
+        int confusionChance = convertToNum(moveData[19]);
+        Set<PokeMoveByUsage> moveByUsages = convertToUsageList(moveData[20]);
+        boolean isDirectAttack = convertToNum(moveData[21]) == 1;
+        int critStage = convertToNum(moveData[22]);
 
         PokeMoveMetaData metaData = new PokeMoveMetaData(generation, condition, isContact, isDirectAttack, flinchChance
-                , confusionChance, nonVolatileChance, nonVolatileStatus, target, stageRaise, statChance, statsEffectSet,
-                moveByUsages, critStage);
+                , confusionChance, nonVolatileChance, nonVolatileStatus, target, stageRaise, statChance, userStatsEffectSet,
+                targetStatsEffectSet, moveByUsages, critStage);
         return new PokeMove(id, moveName, pp, power, accuracy, priority, type, damageClass, target, metaData);
     }
 

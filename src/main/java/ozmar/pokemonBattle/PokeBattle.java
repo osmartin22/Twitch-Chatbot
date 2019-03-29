@@ -78,4 +78,8 @@ public class PokeBattle {
     public void doTrainerChoices() {
         pokeBattleHandler.doTrainerChoices();
     }
+
+    public void postAttackPhase() {
+
+    }
 }

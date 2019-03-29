@@ -118,29 +118,17 @@ public class PokeBattleHandler {
         if (attacker.getMoveToUse().getDamageClass() == PokeMoveDamageClass.STATUS) {
             damageDone = -1;
         } else {
-            boolean willMoveHit = calculator.willMoveHit(attacker.getPokeStages().getStateStage(PokeStatStage.ACC_STAGE),
-                    target.getPokeStages().getStateStage(PokeStatStage.EVA_STAGE), move);
+            boolean willMoveHit = willMoveHit(attacker, target, move);
 
             if (willMoveHit) {
                 attacker.setLastUsedMove(attacker.getMoveToUse());
                 damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
-                NonVolatileStatus status = move.getMetaData().getNonVolatileStatus();
-                if (status != NonVolatileStatus.NONE) {
-                    if (status == NonVolatileStatus.MULTIPLE) {
-                        // Only a handful of moves go here
-                    } else {
-                        if (calculator.willEffectHit(move.getMetaData().getNonVolatileChance())) {
-                            target.getPoke().updateNonVolatile(status);
-                        }
-                    }
-                }
 
-                boolean willFlinch = calculator.willEffectHit(move.getMetaData().getFlinchChance());
-                if (willFlinch) {
-                    // Target flinches and can no longer attack its turn
-                    System.out.println(target.getPoke().getName() + " was flinched");
-                    target.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
-                }
+                inflictNonVolatile(target, move);
+
+                inflictFlinch(target, move);
+            } else {
+                // Move missed
             }
         }
 
@@ -165,6 +153,36 @@ public class PokeBattleHandler {
         return sideList.get(pb.getSidePosition())
                 .getTrainerInBattle(pb.getTrainerPosition())
                 .getPokeInBattle(pb.getFieldPosition());
+    }
+
+    private boolean willMoveHit(@Nonnull PokeInBattle attacker, @Nonnull PokeInBattle target, @Nonnull PokeMove move) {
+        return calculator.willMoveHit(attacker.getPokeStages().getStateStage(PokeStatStage.ACC_STAGE),
+                target.getPokeStages().getStateStage(PokeStatStage.EVA_STAGE), move);
+    }
+
+    private void inflictNonVolatile(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
+        NonVolatileStatus status = move.getMetaData().getNonVolatileStatus();
+        if (status != NonVolatileStatus.NONE) {
+            if (status == NonVolatileStatus.MULTIPLE) {
+                // Only a handful of moves go here
+            } else {
+                if (calculator.willEffectHit(move.getMetaData().getNonVolatileChance())) {
+                    target.getPoke().updateNonVolatile(status);
+                }
+            }
+        }
+    }
+
+    private void inflictFlinch(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
+        // Flinch only occurs on Pokemon that have not yet attacked
+        if (target.getTrainerChoice() == TrainerChoice.CHOICE_MOVE) {
+            boolean willFlinch = calculator.willEffectHit(move.getMetaData().getFlinchChance());
+            if (willFlinch) {
+                // Target flinches and can no longer attack its turn
+                System.out.println(target.getPoke().getName() + " was flinched");
+                target.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
+            }
+        }
     }
 }
 
