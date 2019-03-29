@@ -51,12 +51,12 @@ public class PokeBattleTest {
         List<List<Trainer>> listList = new ArrayList<>();
         listList.add(new ArrayList<>(Collections.singleton(trainerRed)));
         listList.add(new ArrayList<>(Collections.singleton(trainerBlue)));
-        pokeBattle = new PokeBattle(listList);
+        pokeBattle = new PokeBattle(listList, 1);
     }
 
     private static void createMoves(List<Poke> pokeList) {
         PokeMove m1 = movesData.getMove("Pound");
-        PokeMove m2 = movesData.getMove("Leer");
+        PokeMove m2 = movesData.getMove("Quick Attack");
         PokeMove m3 = movesData.getMove("Swift");
         PokeMove m4 = movesData.getMove("Thunder");
         for (Poke poke : pokeList) {
@@ -85,7 +85,7 @@ public class PokeBattleTest {
         Assert.assertFalse(pokeBattle.setPokeToSwitchIn(1, 0, 0, 2));
 
         Assert.assertTrue(pokeBattle.trainersReady());
-        pokeBattle.doTrainerChoice();
+        pokeBattle.doTrainerChoices();
 
         Assert.assertEquals("squirtle", pokeBattle.getPokeInBattle(0, 0, 0).getPoke().getName());
         Assert.assertEquals("charmander", pokeBattle.getPokeInBattle(1, 0, 0).getPoke().getName());
@@ -93,23 +93,38 @@ public class PokeBattleTest {
 
     @Test
     public void test() {
-        PokeTargetPosition targetPosition;
-        targetPosition = new PokeTargetPosition(1, 0, 0);
-        Assert.assertTrue(pokeBattle.setMoveToUse(0, 0, 0, 0, targetPosition));
+        for (int i = 0; i < 10; i++) {
+            PokeTargetPosition targetPosition;
+            targetPosition = new PokeTargetPosition(1, 0, 0);
+            Assert.assertTrue(pokeBattle.setMoveToUse(0, 0, 0, 1, targetPosition));
 
-        targetPosition = new PokeTargetPosition(0, 0, 0);
-        Assert.assertTrue(pokeBattle.setMoveToUse(1, 0, 0, 0, targetPosition));
+            targetPosition = new PokeTargetPosition(0, 0, 0);
+            Assert.assertTrue(pokeBattle.setMoveToUse(1, 0, 0, 1, targetPosition));
 
-        pokeBattle.doTrainerChoice();
+            PokeInBattle redPoke = pokeBattle.getPokeInBattle(0, 0, 0);
+            PokeInBattle bluePoke = pokeBattle.getPokeInBattle(1, 0, 0);
 
+//            System.out.println(redPoke.getPoke().getName());
+//            System.out.println(redPoke.getPoke().getPokeStats().getCurrHp());
+//            System.out.println(bluePoke.getPoke().getName());
+//            System.out.println(bluePoke.getPoke().getPokeStats().getCurrHp());
+            pokeBattle.doTrainerChoices();
+
+//            System.out.println("AFTER");
+//            System.out.println(redPoke.getPoke().getPokeStats().getCurrHp());
+//            System.out.println("Red Fainted: " + redPoke.getPoke().isFainted());
+//            System.out.println(bluePoke.getPoke().getPokeStats().getCurrHp());
+//            System.out.println("Blue Fainted: " + redPoke.getPoke().isFainted());
+            System.out.println();
+        }
     }
 
     @Test
     public void damageTest() {
         GetMovesData movesData = new GetMovesData();
         PokeBattleCalculator calculator = new PokeBattleCalculator();
-        PokeInBattle pokeInBattleRed = new PokeInBattle(trainerRed.getPokeList().get(0), 0);
-        PokeInBattle pokeInBattleBlue = new PokeInBattle(trainerBlue.getPokeList().get(0), 0);
+        PokeInBattle pokeInBattleRed = new PokeInBattle(trainerRed.getPokeList().get(0), 0, 0, 0);
+        PokeInBattle pokeInBattleBlue = new PokeInBattle(trainerBlue.getPokeList().get(0), 0, 0, 0);
         PokeMove move = movesData.getMove("Pound,");
         pokeInBattleRed.getPokeStages().modifyStage(PokeStatStage.ATK_STAGE, -2);
         pokeInBattleBlue.getPokeStages().modifyStage(PokeStatStage.DEF_STAGE, 2);

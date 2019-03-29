@@ -15,4 +15,16 @@ public class PokeSide {
         this.entryHazard = new PokeEntryHazard();
         this.protection = new PokeSideProtection();
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public PokeEntryHazard getEntryHazard() {
+        return entryHazard;
+    }
+
+    public PokeSideProtection getProtection() {
+        return protection;
+    }
 }

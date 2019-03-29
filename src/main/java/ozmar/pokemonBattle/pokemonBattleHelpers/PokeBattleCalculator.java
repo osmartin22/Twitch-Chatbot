@@ -1,5 +1,6 @@
 package ozmar.pokemonBattle.pokemonBattleHelpers;
 
+import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemon.PokeInBattle;
 import ozmar.pokemonBattle.pokemonField.PokemonWeather.PokeWeatherEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
@@ -176,7 +177,36 @@ public class PokeBattleCalculator {
         return critMultiplier;
     }
 
-    private boolean willEffectHit(int effectChance) {
+    public boolean willEffectHit(int effectChance) {
         return RandomHelper.getRandNumInRange(1, 100) <= effectChance;
+    }
+
+    public boolean statusPreventsMove(@Nonnull PokeInBattle pokeInBattle) {
+        boolean isPrevented = false;
+        Poke poke = pokeInBattle.getPoke();
+        if (poke.getNonVolatile() == NonVolatileStatus.FREEZE) {
+            if (PokeMovesHelper.CAN_THAW_USER_MOVES.contains(pokeInBattle.getMoveToUse().getName())) {
+                poke.updateNonVolatile(NonVolatileStatus.NONE);
+            } else {
+                if (RandomHelper.getRandNumInRange(1, 100) <= 20) {
+                    poke.updateNonVolatile(NonVolatileStatus.NONE);
+                } else {
+                    isPrevented = true;
+                }
+            }
+
+        } else if (poke.getNonVolatile() == NonVolatileStatus.PARALYSIS) {
+            isPrevented = RandomHelper.getRandNumInRange(1, 100) <= 25;
+
+        } else if (poke.getNonVolatile() == NonVolatileStatus.SLEEP) {
+            if (poke.getSleepCounter() == 0) {
+                poke.updateNonVolatile(NonVolatileStatus.NONE);
+            } else {
+                isPrevented = true;
+                poke.decrementSleepCounter();
+            }
+        }
+
+        return isPrevented;
     }
 }

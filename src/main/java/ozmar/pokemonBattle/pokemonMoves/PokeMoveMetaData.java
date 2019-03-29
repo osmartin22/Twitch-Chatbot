@@ -30,7 +30,7 @@ public class PokeMoveMetaData {
     private final int flinchChance;
     private final int confusionChance;
     private final int nonVolatileChance;
-    private final Set<NonVolatileStatus> nonVolatileStatusSet;
+    private final NonVolatileStatus nonVolatileStatus;
 
     private final PokeTarget target;
 
@@ -44,7 +44,7 @@ public class PokeMoveMetaData {
 
     public PokeMoveMetaData(int generation, PokeContestCondition contestCondition, boolean isContact, boolean isDirectAttack,
                             int flinchChance, int confusionChance, int nonVolatileChance,
-                            Set<NonVolatileStatus> nonVolatileStatusSet, PokeTarget target, int statsStageRaise,
+                            NonVolatileStatus nonVolatileStatus, PokeTarget target, int statsStageRaise,
                             int statsEffectChance, Set<PokeStatsEffect> statsEffectSet, Set<PokeMoveByUsage> moveByUsageSet,
                             int critStage) {
         this.generation = generation;
@@ -54,7 +54,7 @@ public class PokeMoveMetaData {
         this.flinchChance = flinchChance;
         this.confusionChance = confusionChance;
         this.nonVolatileChance = nonVolatileChance;
-        this.nonVolatileStatusSet = nonVolatileStatusSet;
+        this.nonVolatileStatus = nonVolatileStatus;
         this.target = target;
         this.statsStageRaise = statsStageRaise;
         this.statsEffectChance = statsEffectChance;
@@ -91,8 +91,8 @@ public class PokeMoveMetaData {
         return nonVolatileChance;
     }
 
-    public Set<NonVolatileStatus> getNonVolatileStatusSet() {
-        return nonVolatileStatusSet;
+    public NonVolatileStatus getNonVolatileStatus() {
+        return nonVolatileStatus;
     }
 
     public PokeTarget getTarget() {

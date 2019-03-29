@@ -24,7 +24,9 @@ import java.util.Set;
 //  the other objects can stay since stages can be passed, they should have a reset method
 public class PokeInBattle {
 
-    private final int position;
+    private final int sidePosition;
+    private final int trainerPosition;
+    private final int fieldPosition;
     private Poke poke;
 
     // TODO: Have a isSemiInvulnerable, isCharging, and isRecharging flag
@@ -34,6 +36,7 @@ public class PokeInBattle {
     // Will hold the current move the Pokemon is using
     private PokeMove currMove;      // Necessary for semi invulnerable turn
     private PokeMove moveToUse;
+    private PokeMove lastUsedMove;
 
     private final PokeAllStages pokeStages;
     private final Set<VolatileStatus> volatileList;
@@ -77,8 +80,10 @@ public class PokeInBattle {
         Keep track of the type of the move as well(necessary for Conversion 2)
      */
 
-    public PokeInBattle(@Nonnull Poke poke, int position) {
-        this.position = position;
+    public PokeInBattle(@Nonnull Poke poke, int sidePosition, int trainerPosition, int fieldPosition) {
+        this.sidePosition = sidePosition;
+        this.trainerPosition = trainerPosition;
+        this.fieldPosition = fieldPosition;
         this.poke = poke;
         this.currMove = null;
         this.moveToUse = null;
@@ -93,6 +98,19 @@ public class PokeInBattle {
         this.isFlinched = false;
     }
 
+    public int getSidePosition() {
+        return sidePosition;
+    }
+
+    public int getTrainerPosition() {
+        return trainerPosition;
+    }
+
+    public int getFieldPosition() {
+        return fieldPosition;
+    }
+
+    @Nonnull
     public Poke getPoke() {
         if (megaForm != null) {
             return megaForm;
@@ -104,6 +122,7 @@ public class PokeInBattle {
         this.poke = poke;
     }
 
+    @Nonnull
     public PokeMove getCurrMove() {
         return currMove;
     }
@@ -122,14 +141,17 @@ public class PokeInBattle {
         this.targetPosition = targetPosition;
     }
 
+    @Nonnull
     public PokeAllStages getPokeStages() {
         return pokeStages;
     }
 
+    @Nonnull
     public Set<VolatileStatus> getVolatileList() {
         return volatileList;
     }
 
+    @Nonnull
     public Set<VolatileBattleStatus> getVolatileBattleStatusList() {
         return volatileBattleStatusList;
     }
@@ -146,10 +168,11 @@ public class PokeInBattle {
         return binding.setBinding(bindingEnum);
     }
 
-    public void copyMove(int movePosition, PokeMove moveToCopy) {
+    public void copyMove(int movePosition, @Nonnull PokeMove moveToCopy) {
         copiedMoves.put(movePosition, moveToCopy);
     }
 
+    @Nonnull
     public TrainerChoice getTrainerChoice() {
         return trainerChoice;
     }
@@ -185,11 +208,20 @@ public class PokeInBattle {
         isFlinched = flinched;
     }
 
+    @Nonnull
     public PokeTargetPosition getTargetPosition() {
         return targetPosition;
     }
 
-    public void setTargetPosition(PokeTargetPosition targetPosition) {
+    public void setTargetPosition(@Nonnull PokeTargetPosition targetPosition) {
         this.targetPosition = targetPosition;
+    }
+
+    public PokeMove getLastUsedMove() {
+        return lastUsedMove;
+    }
+
+    public void setLastUsedMove(PokeMove lastUsedMove) {
+        this.lastUsedMove = lastUsedMove;
     }
 }

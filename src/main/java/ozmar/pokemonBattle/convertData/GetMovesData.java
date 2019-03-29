@@ -85,7 +85,7 @@ public class GetMovesData {
         Set<PokeStatsEffect> statsEffectSet = convertToStatsList(moveData[12]);
         int statChance = convertToNum(moveData[13]);
         int stageRaise = convertToNum(moveData[14]);
-        Set<NonVolatileStatus> nonVolatileStatusSet = convertToNonVolatileList(moveData[15]);
+        NonVolatileStatus nonVolatileStatus = NonVolatileStatus.status[convertToNum(moveData[15])];
         int nonVolatileChance = convertToNum(moveData[16]);
         int flinchChance = convertToNum(moveData[17]);
         int confusionChance = convertToNum(moveData[18]);
@@ -94,25 +94,9 @@ public class GetMovesData {
         int critStage = convertToNum(moveData[21]);
 
         PokeMoveMetaData metaData = new PokeMoveMetaData(generation, condition, isContact, isDirectAttack, flinchChance
-                , confusionChance, nonVolatileChance, nonVolatileStatusSet, target, stageRaise, statChance, statsEffectSet,
+                , confusionChance, nonVolatileChance, nonVolatileStatus, target, stageRaise, statChance, statsEffectSet,
                 moveByUsages, critStage);
         return new PokeMove(id, moveName, pp, power, accuracy, priority, type, damageClass, target, metaData);
-    }
-
-    @Nonnull
-    private Set<NonVolatileStatus> convertToNonVolatileList(@Nonnull String nonVolatile) {
-        Set<NonVolatileStatus> set = new HashSet<>();
-        for (int i = 0; i < nonVolatile.length(); i++) {
-            if (nonVolatile.charAt(i) == '1') {
-                set.add(NonVolatileStatus.status[i + 1]);
-            }
-        }
-
-        if (set.isEmpty()) {
-            set.add(NonVolatileStatus.NONE);
-        }
-
-        return set;
     }
 
     @Nonnull

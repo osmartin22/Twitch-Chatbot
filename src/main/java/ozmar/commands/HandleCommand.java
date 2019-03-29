@@ -289,7 +289,7 @@ public class HandleCommand implements HandleCommandInterface {
             // Round to n decimal places, remove decimal if it is a whole number
             BigDecimal bigDecimal = BigDecimal.valueOf(result).setScale(10, BigDecimal.ROUND_HALF_EVEN);
             Double value = bigDecimal.doubleValue();
-            String numOutput = (result % 1 == 0) ? String.valueOf(value.intValue()) : String.valueOf(value);
+            String numOutput = (result % 1 == 0) ? String.valueOf(value.longValue()) : String.valueOf(value);
 
             return String.format("%s, %s", event.getUser().getName(), numOutput);
 

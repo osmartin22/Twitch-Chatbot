@@ -7,7 +7,8 @@ public enum NonVolatileStatus {
     PARALYSIS(3),
     POISON(4),
     BADLY_POISONED(5),
-    SLEEP(6);
+    SLEEP(6),
+    MULTIPLE(7);    // Tri Attack, Secret Power, Fling, Psycho Shift, Toxic Spikes
 
     private final int id;
     public static final NonVolatileStatus[] status = values();

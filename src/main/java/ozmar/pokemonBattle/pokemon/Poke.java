@@ -26,6 +26,8 @@ public class Poke {
     // Pokemon status conditions;
     private NonVolatileStatus nonVolatile;
 
+    private int sleepCounter;
+    private boolean isDrowsy;
     // ABILITIES GO HERE WHEN IMPLEMENTED
 
     public Poke(int id, int level, String name, String nickname, int height, int weight, PokeType type,
@@ -107,5 +109,21 @@ public class Poke {
 
     public boolean isFainted() {
         return pokeStats.getCurrHp() == 0;
+    }
+
+    public int getSleepCounter() {
+        return sleepCounter;
+    }
+
+    public void decrementSleepCounter() {
+        this.sleepCounter--;
+    }
+
+    public boolean isDrowsy() {
+        return isDrowsy;
+    }
+
+    public void setDrowsy(boolean drowsy) {
+        isDrowsy = drowsy;
     }
 }
