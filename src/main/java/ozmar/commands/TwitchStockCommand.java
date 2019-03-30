@@ -1,6 +1,5 @@
 package ozmar.commands;
 
-import com.github.twitch4j.chat.events.CommandEvent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ozmar.commands.interfaces.TwitchStockCommandInterface;
 import ozmar.utils.StringHelper;
+import twitch4j_packages.chat.events.CommandEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

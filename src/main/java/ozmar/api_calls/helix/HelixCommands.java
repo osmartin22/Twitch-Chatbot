@@ -1,10 +1,10 @@
 package ozmar.api_calls.helix;
 
-import com.github.twitch4j.helix.TwitchHelix;
-import com.github.twitch4j.helix.domain.FollowList;
-import com.github.twitch4j.helix.domain.StreamList;
-import com.github.twitch4j.helix.domain.UserList;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
+import twitch4j_packages.helix.TwitchHelix;
+import twitch4j_packages.helix.domain.FollowList;
+import twitch4j_packages.helix.domain.StreamList;
+import twitch4j_packages.helix.domain.UserList;
 
 import javax.annotation.Nullable;
 import java.util.List;

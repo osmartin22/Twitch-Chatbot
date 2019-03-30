@@ -1,7 +1,7 @@
 package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
-import com.github.twitch4j.common.events.channel.ChannelChangeTitleEvent;
+import twitch4j_packages.common.events.channel.ChannelChangeTitleEvent;
 
 public class ChannelChangeTitle {
     @EventSubscriber

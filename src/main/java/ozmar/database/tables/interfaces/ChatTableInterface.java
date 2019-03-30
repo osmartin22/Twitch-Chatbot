@@ -1,7 +1,7 @@
 package ozmar.database.tables.interfaces;
 
-import com.github.twitch4j.helix.domain.User;
 import ozmar.user.ChatUser;
+import twitch4j_packages.helix.domain.User;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

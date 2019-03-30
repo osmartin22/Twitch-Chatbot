@@ -11,9 +11,9 @@ import ozmar.pokemonBattle.pokemonStats.PokeAllStats;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import ozmar.pokemonBattle.pokemonType.PokeType;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
-import poke_models.pokemon.Pokemon;
-import poke_models.pokemon.PokemonStat;
-import poke_models.pokemon.PokemonType;
+import poke_api_packages.poke_models.pokemon.Pokemon;
+import poke_api_packages.poke_models.pokemon.PokemonStat;
+import poke_api_packages.poke_models.pokemon.PokemonType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

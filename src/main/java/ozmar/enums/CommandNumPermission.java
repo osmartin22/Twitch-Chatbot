@@ -1,6 +1,6 @@
 package ozmar.enums;
 
-import com.github.twitch4j.common.enums.CommandPermission;
+import twitch4j_packages.common.enums.CommandPermission;
 
 import javax.annotation.Nonnull;
 import java.util.Set;

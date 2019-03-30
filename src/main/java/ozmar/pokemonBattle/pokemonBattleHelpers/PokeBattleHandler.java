@@ -9,7 +9,9 @@ import ozmar.pokemonBattle.pokemonMoves.enums.PokeMoveDamageClass;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
+import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
+import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class PokeBattleHandler {
 
                 int attackAcc = pb.getPokeStages().getStateStage(PokeStatStage.ACC_STAGE);
                 int targetEva = pb.getPokeStages().getStateStage(PokeStatStage.EVA_STAGE);
-                if (!calculator.statusPreventsMove(pb)) {
+                if (!calculator.nvStatusPreventsMove(pb)) {
                     if (calculator.willMoveHit(attackAcc, targetEva, pb.getMoveToUse())) {
                         int damageDone = doMove(pb);
                         System.out.println(pb.getPoke().getName() + " Damage Done: " + damageDone);
@@ -118,17 +120,21 @@ public class PokeBattleHandler {
         if (attacker.getMoveToUse().getDamageClass() == PokeMoveDamageClass.STATUS) {
             damageDone = -1;
         } else {
-            boolean willMoveHit = willMoveHit(attacker, target, move);
 
-            if (willMoveHit) {
-                attacker.setLastUsedMove(attacker.getMoveToUse());
-                damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
+            boolean isMovePrevented = isMovePrevented(attacker);
+            if (!isMovePrevented) {
+                boolean moveWillHit = willMoveHit(attacker, target, move);
+                if (moveWillHit) {
+                    attacker.setLastUsedMove(attacker.getMoveToUse());
+                    damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
 
-                inflictNonVolatile(target, move);
-
-                inflictFlinch(target, move);
+                    inflictNonVolatile(target, move);
+                    inflictFlinch(target, move);
+                } else {
+                    // Move Missed
+                }
             } else {
-                // Move missed
+                // Pokemon prevented from attacking
             }
         }
 
@@ -184,5 +190,37 @@ public class PokeBattleHandler {
             }
         }
     }
+
+    private boolean inflictConfusion(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
+        boolean isConfused = false;
+        boolean willConfuse = RandomHelper.getRandNumInRange(1, 100) <= move.getMetaData().getConfusionChance();
+        if (willConfuse) {
+            isConfused = target.addVolatileStatusTEMP(VolatileStatus.CONFUSION);
+        }
+
+        return isConfused;
+    }
+
+
+    private boolean isMovePrevented(@Nonnull PokeInBattle attacker) {
+        boolean nvStatusPrevented = calculator.nvStatusPreventsMove(attacker);
+        boolean confusionPrevented = calculator.confusionActivates(attacker);
+        return nvStatusPrevented || confusionPrevented;
+    }
+
+    private void inflictStatuses(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
+
+    }
+
+    /*
+    VOLATILE STATUS
+    Binding/Bound
+    Confusion 1-4
+    Encore 3
+    Healing Block 5
+    Perish Song 3
+    Taunt 3
+    Telekinesis 3
+     */
 }
 

@@ -1,14 +1,14 @@
 package ozmar.commands;
 
-import com.github.twitch4j.chat.events.CommandEvent;
-import com.github.twitch4j.helix.domain.FollowList;
-import com.github.twitch4j.helix.domain.StreamList;
-import com.github.twitch4j.helix.domain.UserList;
 import ozmar.commands.interfaces.TwitchCallCommandInterface;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.setup.Bot;
 import ozmar.utils.StringHelper;
 import ozmar.utils.TimeHelper;
+import twitch4j_packages.chat.events.CommandEvent;
+import twitch4j_packages.helix.domain.FollowList;
+import twitch4j_packages.helix.domain.StreamList;
+import twitch4j_packages.helix.domain.UserList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

@@ -8,6 +8,7 @@ import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Set;
 
 public class PokeRules {
@@ -46,10 +47,10 @@ public class PokeRules {
         }
 
         if (isAbleToSwitch) {
-            Set<VolatileStatus> statusSet = pokeInBattle.getVolatileList();
-            if (statusSet.contains(VolatileStatus.CANT_ESCAPE)) {
+            Map<VolatileStatus, Integer> statusMap = pokeInBattle.getVolatileStatusMap();
+            if (statusMap.containsKey(VolatileStatus.CANT_ESCAPE)) {
                 isAbleToSwitch = false;
-            } else if (statusSet.contains(VolatileStatus.BOUND) && !pokeInBattle.isTypeFound(PokeTypeEnum.GHOST)) {
+            } else if (statusMap.containsKey(VolatileStatus.BOUND) && !pokeInBattle.isTypeFound(PokeTypeEnum.GHOST)) {
                 isAbleToSwitch = false;
             }
         }

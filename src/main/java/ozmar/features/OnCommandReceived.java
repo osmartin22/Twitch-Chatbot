@@ -1,9 +1,9 @@
 package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
-import com.github.twitch4j.chat.events.CommandEvent;
 import javafx.util.Pair;
 import ozmar.commands.interfaces.HandleCommandInterface;
+import twitch4j_packages.chat.events.CommandEvent;
 
 import java.util.Deque;
 import java.util.concurrent.Executors;

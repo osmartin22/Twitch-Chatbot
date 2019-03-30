@@ -1,7 +1,5 @@
 package ozmar.commands;
 
-import com.github.twitch4j.chat.events.CommandEvent;
-import com.github.twitch4j.common.enums.CommandPermission;
 import javafx.util.Pair;
 import ozmar.WordFilter;
 import ozmar.buffer.interfaces.RecentChattersInterface;
@@ -10,6 +8,8 @@ import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.enums.CommandNumPermission;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.StringHelper;
+import twitch4j_packages.chat.events.CommandEvent;
+import twitch4j_packages.common.enums.CommandPermission;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

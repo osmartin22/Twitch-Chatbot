@@ -2,8 +2,8 @@ package ozmar.features;
 
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
-import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import ozmar.enums.SubPlan;
+import twitch4j_packages.chat.events.channel.SubscriptionEvent;
 
 public class ChannelNotificationOnSubscription {
 

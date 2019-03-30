@@ -1,10 +1,10 @@
 package ozmar.timers;
 
-import com.github.twitch4j.helix.domain.UserList;
 import org.apache.commons.collections4.ListUtils;
 import ozmar.api_calls.RequestChat;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.setup.Bot;
+import twitch4j_packages.helix.domain.UserList;
 
 import java.util.List;
 import java.util.concurrent.Executors;

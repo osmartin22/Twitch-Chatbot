@@ -9,6 +9,7 @@ import ozmar.pokemonBattle.pokemonStats.PokeAllStages;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
+import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -20,8 +21,6 @@ import java.util.Set;
 //  this would then be returned and looked at to see if any output should be displayed
 //  i.e. A Poke's stats and status was affected, these things should be displayed to the user whenever they change
 
-// TODO: Whenever a Pokemon switches, only the Poke should change
-//  the other objects can stay since stages can be passed, they should have a reset method
 public class PokeInBattle {
 
     private final int sidePosition;
@@ -39,7 +38,9 @@ public class PokeInBattle {
     private PokeMove lastUsedMove;
 
     private final PokeAllStages pokeStages;
-    private final Set<VolatileStatus> volatileList;
+
+    private final Map<VolatileStatus, Integer> volatileStatusMap;
+
     private final Set<VolatileBattleStatus> volatileBattleStatusList;
     private PokeBinding binding;
     private int badlyPoisonedN;     // Used for the badly poisoned status effect
@@ -88,7 +89,9 @@ public class PokeInBattle {
         this.currMove = null;
         this.moveToUse = null;
         this.pokeStages = new PokeAllStages();
-        this.volatileList = new HashSet<>();
+
+        this.volatileStatusMap = new HashMap<>();
+
         this.volatileBattleStatusList = new HashSet<>();
         this.binding = new PokeBinding();
         this.copiedMoves = new HashMap<>();
@@ -147,13 +150,50 @@ public class PokeInBattle {
     }
 
     @Nonnull
-    public Set<VolatileStatus> getVolatileList() {
-        return volatileList;
+    public Map<VolatileStatus, Integer> getVolatileStatusMap() {
+        return volatileStatusMap;
     }
+
+    public boolean addVolatileStatusTEMP(@Nonnull VolatileStatus volatileStatus) {
+        boolean inflictedStatus = false;
+        int turnsLeft = volatileStatusMap.getOrDefault(volatileStatus, -1);
+        if (turnsLeft == -1) {
+            inflictedStatus = true;
+            switch (volatileStatus) {
+                case CONFUSION:
+                    volatileStatusMap.put(volatileStatus, RandomHelper.getRandNumInRange(1, 4));
+                    break;
+                case ENCORE:
+                    volatileStatusMap.put(volatileStatus, 3);
+                    break;
+                case HEAL_BLOCK:
+                    volatileStatusMap.put(volatileStatus, 5);
+                    break;
+                case PERISH_SONG:
+                    volatileStatusMap.put(volatileStatus, 3);
+                    break;
+                case TAUNT:
+                    volatileStatusMap.put(volatileStatus, 3);
+                    break;
+                case TELEKINESIS:
+                    volatileStatusMap.put(volatileStatus, 3);
+                    break;
+            }
+        }
+
+        return inflictedStatus;
+    }
+
+
+
 
     @Nonnull
     public Set<VolatileBattleStatus> getVolatileBattleStatusList() {
         return volatileBattleStatusList;
+    }
+
+    public void addVolatileBattleStatus(@Nonnull VolatileBattleStatus status) {
+        volatileBattleStatusList.add(status);
     }
 
     public int getCritStage() {
@@ -194,6 +234,7 @@ public class PokeInBattle {
         this.poke = pokeToSwitchIn;
         this.megaForm = null;
         this.pokeToSwitchIn = null;
+        // TODO: Reset statuses, possibly change method to pass a boolean to decide if stats should be kept
     }
 
     public boolean isTypeFound(@Nonnull PokeTypeEnum type) {

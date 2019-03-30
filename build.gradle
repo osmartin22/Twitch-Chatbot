@@ -2,6 +2,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.2'
     id 'java'
     id 'application'
+    id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 
 apply plugin: 'idea'
@@ -17,10 +18,15 @@ repositories {
     jcenter()
     mavenCentral()
     maven { url "https://oss.jfrog.org/artifactory/libs-release" }
+    maven { url "https://dl.bintray.com/philippheuer/maven" }
+}
+
+lombok {
+    version = '1.18.0'
+    sha256 = ""
 }
 
 dependencies {
-    implementation group: 'com.github.twitch4j', name: 'twitch4j', version: '1.0.0-alpha.7'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.8'
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.23.1'
     implementation group: 'org.springframework', name: 'spring-context', version: '5.1.4.RELEASE'
@@ -29,4 +35,55 @@ dependencies {
     implementation group: 'com.vdurmont', name: 'emoji-java', version: '4.0.0'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // GraphQL
+    implementation group: 'com.apollographql.apollo', name: 'apollo-runtime', version: '1.0.0-alpha3'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '16.0.3'
+
+    // Logging
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    // Apache Commons
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
+
+    // Event Dispatcher
+    implementation group: 'com.github.philippheuer.events4j', name: 'events4j', version: '0.4.0'
+
+    // Credential Manager
+    implementation group: 'com.github.philippheuer.credentialmanager', name: 'credentialmanager', version: '0.0.20'
+    implementation group: 'com.github.philippheuer.credentialmanager', name: 'credentialmanager-ews', version: '0.0.13'
+
+    // HTTP Client
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.11.0'
+
+    // Rate Limiting
+    implementation group: 'com.github.vladimir-bukhtoyarov', name: 'bucket4j-core', version: '4.1.1'
+
+    // Http Client
+    implementation group: 'io.github.openfeign', name: 'feign-okhttp', version: '10.1.0'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '10.1.0'
+    implementation group: 'io.github.openfeign', name: 'feign-slf4j', version: '10.1.0'
+    implementation group: 'io.github.openfeign', name: 'feign-hystrix', version: '10.1.0'
+
+    // Hystrix
+    implementation group: 'com.netflix.hystrix', name: 'hystrix-core', version: '1.5.18'
+
+    // Jackson (JSON)
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.9.8'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.8'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
+
+    // WebSocket
+    implementation group: 'com.neovisionaries', name: 'nv-websocket-client', version: '2.6'
+
+    // Testing
+    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
+    implementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
+
+    // Lombok
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.2'
 }

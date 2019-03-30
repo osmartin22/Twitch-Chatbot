@@ -1,12 +1,12 @@
 package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
-import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
-import com.github.twitch4j.common.events.domain.EventUser;
 import ozmar.WordFilter;
 import ozmar.buffer.interfaces.ChatDataBufferInterface;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.buffer.interfaces.WordCountBufferInterface;
+import twitch4j_packages.chat.events.channel.ChannelMessageEvent;
+import twitch4j_packages.common.events.domain.EventUser;
 
 import javax.annotation.Nonnull;
 import java.util.List;

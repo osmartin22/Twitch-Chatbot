@@ -8,6 +8,7 @@ import ozmar.pokemonBattle.pokemonMoves.enums.PokeMoveDamageClass;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
+import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 import ozmar.utils.RandomHelper;
 
@@ -181,7 +182,7 @@ public class PokeBattleCalculator {
         return RandomHelper.getRandNumInRange(1, 100) <= effectChance;
     }
 
-    public boolean statusPreventsMove(@Nonnull PokeInBattle pokeInBattle) {
+    public boolean nvStatusPreventsMove(@Nonnull PokeInBattle pokeInBattle) {
         boolean isPrevented = false;
         Poke poke = pokeInBattle.getPoke();
         if (poke.getNonVolatile() == NonVolatileStatus.FREEZE) {
@@ -208,5 +209,15 @@ public class PokeBattleCalculator {
         }
 
         return isPrevented;
+    }
+
+    public boolean confusionActivates(@Nonnull PokeInBattle pokeInBattle) {
+        boolean confusionActivates = false;
+        if (pokeInBattle.getVolatileStatusMap().containsKey(VolatileStatus.CONFUSION)) {
+            confusionActivates = RandomHelper.getRandNumInRange(1, 3) == 1;
+            // TODO: Inflict pokemon with a 40 power typeless physical attack
+        }
+
+        return confusionActivates;
     }
 }

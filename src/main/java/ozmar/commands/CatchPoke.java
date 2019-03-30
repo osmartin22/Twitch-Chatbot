@@ -7,7 +7,7 @@ import ozmar.commands.interfaces.CatchPokeInterface;
 import ozmar.enums.PokemonGender;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.StringHelper;
-import poke_models.pokemon.*;
+import poke_api_packages.poke_models.pokemon.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

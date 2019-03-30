@@ -1,9 +1,9 @@
 package ozmar.database.tables;
 
-import com.github.twitch4j.helix.domain.User;
 import ozmar.database.tables.interfaces.ChatTableInterface;
 import ozmar.user.ChatUser;
 import ozmar.utils.RandomHelper;
+import twitch4j_packages.helix.domain.User;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

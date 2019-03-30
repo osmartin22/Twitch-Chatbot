@@ -1,6 +1,5 @@
 package ozmar.commands;
 
-import com.github.twitch4j.chat.events.CommandEvent;
 import ozmar.CaughtPokeInfo;
 import ozmar.PokemonPoke;
 import ozmar.commands.interfaces.CatchPokeInterface;
@@ -8,6 +7,7 @@ import ozmar.commands.interfaces.PokeCommandInterface;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.StringHelper;
+import twitch4j_packages.chat.events.CommandEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
