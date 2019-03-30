@@ -1,8 +1,11 @@
 package poke_api_packages.poke_api;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.*;
 
 // responsible for cache responses from online API, and therefore helping with speeds and limit api calls (300 per day)
+@Slf4j
 class Database {
 
     private static Database db = null;
@@ -26,7 +29,7 @@ class Database {
         try {
             DriverManager.getConnection(DB_NAME);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("Failed creating db: {}", e.getMessage());
         }
     }
 
@@ -44,7 +47,7 @@ class Database {
             // create a new table
             stmt.execute(sql);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("Failed creating table: {}", e.getMessage());
         }
     }
 
@@ -54,7 +57,7 @@ class Database {
         try {
             conn = DriverManager.getConnection(DB_NAME);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("Failed getting connection to db: {}", e.getMessage());
         }
         return conn;
     }
@@ -70,7 +73,7 @@ class Database {
             pstmt.executeUpdate();
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("Failed inserting into db: {}", e.getMessage());
             return false;
         }
     }
@@ -93,7 +96,7 @@ class Database {
             }
             return null;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            log.error("Failed getting URL from db: {}", e.getMessage());
             return null;
         }
     }

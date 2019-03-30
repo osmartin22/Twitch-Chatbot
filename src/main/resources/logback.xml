@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true">
+
+    <!-- Log File Configurations -->
+    <appender name="BOT_COMMANDS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+
+        <file>logs/botCommands.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>botCommands.%i.log</fileNamePattern>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>50MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="CHAT_LIST" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+
+        <file>logs/chatList.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>chatList.%i.log</fileNamePattern>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>50MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="ON_EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+
+        <file>logs/onEvent.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>onEvent.%i.log</fileNamePattern>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>50MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="LIB_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+
+        <file>logs/libError.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>libError.%i.log</fileNamePattern>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="POKE_API" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+
+        <file>logs/pokeAPI.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>pokeAPI.%i.log</fileNamePattern>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- Logger Names -->
+    <logger name="com.github.philippheuer.events4j" level="ERROR">
+        <appender-ref ref="LIB_ERROR"/>
+    </logger>
+
+    <logger name="com.netflix" level="ERROR">
+        <appender-ref ref="LIB_ERROR"/>
+    </logger>
+
+    <logger name="twitch4j_packages" level="ERROR">
+        <appender-ref ref="LIB_ERROR"/>
+    </logger>
+
+    <logger name="org.springframework" level="ERROR">
+        <appender-ref ref="LIB_ERROR"/>
+    </logger>
+
+    <logger name="ozmar.commands" level="INFO">
+        <appender-ref ref="BOT_COMMANDS"/>
+    </logger>
+
+    <logger name="ozmar.timers" level="INFO">
+        <appender-ref ref="CHAT_LIST"/>
+    </logger>
+
+    <logger name="ozmar.features" level="INFO">
+        <appender-ref ref="ON_EVENT"/>
+    </logger>
+
+    <logger name="poke_api_packages" level="INFO">
+        <appender-ref ref="POKE_API"/>
+    </logger>
+
+    <!--
+     Appender Configuration [Console]
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                    %d{HH:mm:ss.SSS} [%thread] %highlight([%-5level]) %logger{25} - %msg%n
+                </pattern>
+            </encoder>
+        </appender>
+        -->
+</configuration>

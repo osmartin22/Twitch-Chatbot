@@ -2,6 +2,7 @@ package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
 import javafx.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 import ozmar.commands.interfaces.HandleCommandInterface;
 import twitch4j_packages.chat.events.CommandEvent;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class OnCommandReceived {
 
     private final HandleCommandInterface handleCommand;
@@ -32,8 +34,7 @@ public class OnCommandReceived {
         String output = handleCommand.decideCommand();
 
         if (output != null) {
-            System.out.println(event);
-            System.out.println();
+            log.info("{}\n", event);
             long currTime = System.currentTimeMillis();
             if (currTime - lastSentMessage > OUTPUT_COOLDOWN && outputQueue.isEmpty()) {
                 if (fixedRateTimer != null) {

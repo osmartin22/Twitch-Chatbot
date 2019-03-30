@@ -1,5 +1,6 @@
 package ozmar.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import ozmar.commands.interfaces.LootBoxInterface;
 import ozmar.enums.Rarity;
 import ozmar.utils.RandomHelper;
@@ -9,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+@Slf4j
 public class LootBox implements LootBoxInterface {
 
     // Legendary    5%      1-5
@@ -64,7 +66,7 @@ public class LootBox implements LootBoxInterface {
             }
             line = br.readLine();
         } catch (IOException e) {
-            System.out.println("Failed opening commands file: " + e.getMessage());
+            log.error("Failed opening loot file: {}", e.getMessage());
             line = "";
         }
 

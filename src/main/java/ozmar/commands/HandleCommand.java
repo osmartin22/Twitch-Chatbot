@@ -1,6 +1,7 @@
 package ozmar.commands;
 
 import javafx.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 import ozmar.WordFilter;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 // TODO: Write command to update command cooldowns or permissions while the bot is running
 // To add/delete commands without recompiling would require rewriting part of the twitch4j library
 public class HandleCommand implements HandleCommandInterface {
@@ -76,7 +78,6 @@ public class HandleCommand implements HandleCommandInterface {
     public String decideCommand() {
         String result = null;
         Command command = null;
-
         if (commandsEnabled) {
 
             int count = -1;
@@ -92,7 +93,7 @@ public class HandleCommand implements HandleCommandInterface {
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = commandsList.get(count);
                 result = twitchCalls.uptime(commandEvent);
-                System.out.println(result);
+                log.info("Not Sent: {}", result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -102,7 +103,7 @@ public class HandleCommand implements HandleCommandInterface {
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = commandsList.get(count);
                 result = twitchCalls.followage(commandEvent);
-                System.out.println(result);
+                log.info("Not Sent: {}", result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -128,13 +129,13 @@ public class HandleCommand implements HandleCommandInterface {
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = commandsList.get(count);
                 result = flipCoinCommand(commandEvent);
-                System.out.println(result);
+                log.info("Not Sent: {}", result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = commandsList.get(count);
                 result = openLootCommand(commandEvent);
-                System.out.println(result);
+                log.info("Not Sent: {}", result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -171,7 +172,7 @@ public class HandleCommand implements HandleCommandInterface {
             command.incrementUsage();
             db.getCommandsDao().updateCommandUsage(command);
             cooldownMap.put(command.getId(), new Pair<>(command, System.currentTimeMillis()));
-            System.out.println(result);
+            log.info(result);
         }
 
         return result;
@@ -522,11 +523,11 @@ public class HandleCommand implements HandleCommandInterface {
                 result = String.format("Failed to update command %s", commandName);
             }
         } catch (NumberFormatException e) {
-            System.out.println("New cooldown was not a number: " + e.getMessage());
+            log.error("New cooldown was not a number: {}", e.getMessage());
             result = String.format("Failed to update command %s", commandName);
         }
 
-        System.out.println(result);
+        log.info("Not Sent: {}", result);
     }
 
     private void disableCommands() {

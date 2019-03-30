@@ -1,8 +1,10 @@
 package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
+import lombok.extern.slf4j.Slf4j;
 import twitch4j_packages.chat.events.channel.FollowEvent;
 
+@Slf4j
 public class ChannelNotificationOnFollow {
     @EventSubscriber
     public void onFollow(FollowEvent event) {
@@ -12,7 +14,7 @@ public class ChannelNotificationOnFollow {
                 event.getChannel().getName()
         );
 
-        System.out.println("OnFollow: " + message);
+        log.info("OnFollow: {}", message);
 //        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

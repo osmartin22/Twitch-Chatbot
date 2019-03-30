@@ -1,9 +1,11 @@
 package ozmar.features;
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
+import lombok.extern.slf4j.Slf4j;
 import ozmar.enums.SubPlan;
 import twitch4j_packages.chat.events.channel.GiftSubscriptionsEvent;
 
+@Slf4j
 public class ChannelNotificationOnGiftSubscription {
     @EventSubscriber
     public void onGiftSubscription(GiftSubscriptionsEvent event) {
@@ -29,7 +31,7 @@ public class ChannelNotificationOnGiftSubscription {
             );
         }
 
-        System.out.println("OnGiftSub: " + message);
+        log.info("OnGiftSub: {}", message);
         event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
     }
 }

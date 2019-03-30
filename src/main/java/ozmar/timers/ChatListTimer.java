@@ -1,5 +1,6 @@
 package ozmar.timers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import ozmar.api_calls.RequestChat;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
@@ -12,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ChatListTimer {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -36,7 +38,7 @@ public class ChatListTimer {
                 try {
                     userList = Bot.helixCommands.getUsersList(null, list);
                 } catch (Exception e) {
-                    System.out.println("Getting user info timed out" + e.getMessage());
+                    log.error("Getting user info timed out: {}", e.getMessage());
                     continue;   // Skip list, will be called the next time the timer occurs
                 }
 
@@ -46,8 +48,8 @@ public class ChatListTimer {
                 }
             }
 
-            System.out.println(String.format("ChatterCount: %s, Saved %s/%s users from %s partitions",
-                    originalChatterCount, usersSavedCount, userNameList.size(), partition.size()));
+            log.info("ChatterCount: {}, Saved {}/{} users from {} partitions",
+                    originalChatterCount, usersSavedCount, userNameList.size(), partition.size());
         };
 
         final ScheduledFuture<?> fixedRateTimer =

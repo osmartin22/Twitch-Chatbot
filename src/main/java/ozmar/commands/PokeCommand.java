@@ -1,5 +1,6 @@
 package ozmar.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import ozmar.CaughtPokeInfo;
 import ozmar.PokemonPoke;
 import ozmar.commands.interfaces.CatchPokeInterface;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class PokeCommand implements PokeCommandInterface {
 
     private final DatabaseHandlerInterface db;
@@ -238,9 +240,12 @@ public class PokeCommand implements PokeCommandInterface {
                         if (pokeNum > 0 && pokeNum <= MAX_POKE_OWNED) {
                             db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke(), pokeNum);
                             removeCatchFromBuffer(userId);
+                            log.info("Replaced Poke for ID:{}, UserName:{}",
+                                    event.getUser().getId(), event.getUser().getName());
                         }
                     } catch (NumberFormatException e) {
-                        // No output if wrong input
+                        log.error("Replace Poke fail for ID:{}, UserName:{}, : {}",
+                                event.getUser().getId(), event.getUser().getName(), e.getMessage());
                     }
                 }
             }

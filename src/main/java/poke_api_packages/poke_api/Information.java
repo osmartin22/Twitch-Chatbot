@@ -1,11 +1,14 @@
 package poke_api_packages.poke_api;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
 // responsible for grabbing the information from either the online api or the local db (cache)
+@Slf4j
 public class Information {
 
     private static String get(BufferedReader bufferedReader) {
@@ -46,8 +49,9 @@ public class Information {
             if (Client.CACHE) {
                 if (Database.getInstance().insert(targetURL, str)) {
 //                    System.out.println("SAVED TO DB");
+                    log.info("Saved to db: {}, {}", targetURL, str);
                 } else {
-                    System.out.println("ERROR SAVING TO DB");
+                    log.error("Error saving to db");
                 }
             }
 
@@ -55,10 +59,11 @@ public class Information {
         } catch (Exception e) {
             //e.printStackTrace();
             if ((str = Database.getInstance().getByUrl(targetURL)) != null) {
-                System.out.println("URL REQUEST FAILED, FALLING BACK TO CACHE: " + e.getMessage());
+                log.error("URL request failed, falling back to cache: {}", e.getMessage());
                 return str;
             }
-            System.out.println("COULDN'T REACH API: " + e.getMessage());
+
+            log.info("Couldn't reach the API: {}", e.getMessage());
             return "";
         }
     }

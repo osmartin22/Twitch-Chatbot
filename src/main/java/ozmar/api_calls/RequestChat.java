@@ -3,6 +3,7 @@ package ozmar.api_calls;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 public class RequestChat {
 
     // tmi.twitch.tv/group/user/channel_name/chatters
@@ -38,7 +39,7 @@ public class RequestChat {
             chatList = parseChatUsers(parser);
 
         } catch (IOException e) {
-            System.out.println("Failed to query the chat list " + e.getMessage());
+            log.error("Failed to query the chat list: {}", e.getMessage());
         }
 
         return new ArrayList<>(chatList);
@@ -83,7 +84,7 @@ public class RequestChat {
             }
 
         } catch (Exception e) {
-            System.out.println("Failed to parse " + e.getMessage());
+            log.error("Failed to parse: {}", e.getMessage());
         }
 
         return chatUserList;
@@ -96,7 +97,7 @@ public class RequestChat {
                 list.add(jsonParser.getText());
             }
         } catch (IOException e) {
-            System.out.println("Failed to parse " + e.getMessage());
+            log.error("Failed to parse: {}", e.getMessage());
         }
     }
 }

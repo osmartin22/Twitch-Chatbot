@@ -2,9 +2,11 @@ package ozmar.features;
 
 
 import com.github.philippheuer.events4j.annotation.EventSubscriber;
+import lombok.extern.slf4j.Slf4j;
 import ozmar.enums.SubPlan;
 import twitch4j_packages.chat.events.channel.SubscriptionEvent;
 
+@Slf4j
 public class ChannelNotificationOnSubscription {
 
     private long lastMessage = 0;
@@ -23,13 +25,9 @@ public class ChannelNotificationOnSubscription {
                 );
 
                 event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
-                System.out.print("Sent: ");
             }
-            System.out.println("OnSub: " + event.getUser().getName() + " subscribed with a " + plan.getSubPlanName());
-
-        } else {
-            System.out.println("OnSub: IGNORED " + event.getUser().getName() + plan.getSubPlanName());
         }
 
+        log.info("OnSub: UserName: {}, Tier: {}", event.getUser().getName(), plan.getSubPlanName());
     }
 }
