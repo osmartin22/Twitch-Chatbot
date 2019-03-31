@@ -34,7 +34,6 @@ public class OnCommandReceived {
         String output = handleCommand.decideCommand();
 
         if (output != null) {
-            log.info("{}\n", event);
             long currTime = System.currentTimeMillis();
             if (currTime - lastSentMessage > OUTPUT_COOLDOWN && outputQueue.isEmpty()) {
                 if (fixedRateTimer != null) {

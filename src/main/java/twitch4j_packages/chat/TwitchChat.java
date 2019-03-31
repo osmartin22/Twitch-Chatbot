@@ -434,13 +434,36 @@ public class TwitchChat {
         Optional<String> prefix = Optional.empty();
         Optional<String> commandWithoutPrefix = Optional.empty();
 
+//        Command is "!command"
+//        This command will respond to !command or !cOmmANd but not to !commandUselessInfo
+        String prefixTemp = event.getMessage();
+        prefixTemp = prefixTemp.replaceAll("\u206D", "");   // Remove character from Chatterino
+
+        if (prefixTemp.contains(" ")) {
+            prefixTemp = prefixTemp.substring(0, prefixTemp.indexOf(" "));
+        }
+        prefixTemp = prefixTemp.toLowerCase();
+
+        for (String commandPrefix : this.commandPrefixes) {
+            if (commandPrefix.equals(prefixTemp)) {
+                prefix = Optional.ofNullable(commandPrefix);
+                commandWithoutPrefix = Optional.ofNullable(event.getMessage().substring(prefixTemp.length()));
+            }
+        }
+
+        // ORIGINAL
         // try to find a `command` based on the prefix
+        /*
+//        Command is "!command"
+//        This command will respond to !command or !commandUselessInfo but not to !COMMAND
+//        The second one can cause overlap for other bots that use similar commands
         for (String commandPrefix : this.commandPrefixes) {
             if (event.getMessage().startsWith(commandPrefix)) {
                 prefix = Optional.ofNullable(commandPrefix);
                 commandWithoutPrefix = Optional.ofNullable(event.getMessage().substring(commandPrefix.length()));
             }
         }
+        */
 
         // is command?
         if (commandWithoutPrefix.isPresent()) {

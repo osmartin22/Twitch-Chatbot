@@ -94,6 +94,7 @@ public class HandleCommand implements HandleCommandInterface {
                 command = commandsList.get(count);
                 result = twitchCalls.uptime(commandEvent);
                 log.info("Not Sent: {}", result);
+                log.info(commandEvent.toString());
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -104,6 +105,7 @@ public class HandleCommand implements HandleCommandInterface {
                 command = commandsList.get(count);
                 result = twitchCalls.followage(commandEvent);
                 log.info("Not Sent: {}", result);
+                log.info(commandEvent.toString());
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -130,12 +132,14 @@ public class HandleCommand implements HandleCommandInterface {
                 command = commandsList.get(count);
                 result = flipCoinCommand(commandEvent);
                 log.info("Not Sent: {}", result);
+                log.info(commandEvent.toString());
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = commandsList.get(count);
                 result = openLootCommand(commandEvent);
                 log.info("Not Sent: {}", result);
+                log.info(commandEvent.toString());
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -172,7 +176,10 @@ public class HandleCommand implements HandleCommandInterface {
             command.incrementUsage();
             db.getCommandsDao().updateCommandUsage(command);
             cooldownMap.put(command.getId(), new Pair<>(command, System.currentTimeMillis()));
-            log.info(result);
+            if (result != null) {
+                log.info(result);
+                log.info(commandEvent.toString());
+            }
         }
 
         return result;
