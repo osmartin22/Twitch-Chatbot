@@ -11,9 +11,9 @@ import ozmar.features.OnChatChannelMessage;
 public class OnChatChannelMessageConfig {
 
     @Bean
-    OnChatChannelMessage onChatChannelMessageBean(WordCountBufferInterface wordCountBuffer,
-                                                  ChatDataBufferInterface chatDataBuffer,
-                                                  RecentChattersInterface recentChatters) {
+    public OnChatChannelMessage onChatChannelMessageBean(WordCountBufferInterface wordCountBuffer,
+                                                         ChatDataBufferInterface chatDataBuffer,
+                                                         RecentChattersInterface recentChatters) {
         return new OnChatChannelMessage(wordCountBuffer, chatDataBuffer, recentChatters);
     }
 }

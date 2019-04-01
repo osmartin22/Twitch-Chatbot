@@ -8,7 +8,7 @@ import ozmar.features.ChannelNotificationOnSubscription;
 public class ChannelNotificationOnSubscriptionConfig {
 
     @Bean
-    ChannelNotificationOnSubscription channelNotificationOnSubscriptionBean() {
+    public ChannelNotificationOnSubscription channelNotificationOnSubscriptionBean() {
         return new ChannelNotificationOnSubscription();
     }
 }

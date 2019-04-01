@@ -30,13 +30,15 @@ public class Bot {
     private final ChannelNotificationOnSubscription channelNotificationOnSubscription;
     private final OnChatChannelMessage onChatChannelMessage;
     private final OnCommandReceived onCommandReceived;
+    private final OnPrivateMessageReceived onPrivateMessageReceived;
 
     public Bot(DatabaseHandlerInterface db, ChannelNotificationOnCheer channelNotificationOnCheer,
                ChannelNotificationOnDonation channelNotificationOnDonation,
                ChannelNotificationOnFollow channelNotificationOnFollow,
                ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscription,
                ChannelNotificationOnSubscription channelNotificationOnSubscription,
-               OnChatChannelMessage onChatChannelMessage, OnCommandReceived onCommandReceived) {
+               OnChatChannelMessage onChatChannelMessage, OnCommandReceived onCommandReceived,
+               OnPrivateMessageReceived onPrivateMessageReceived) {
         this.db = db;
         this.channelNotificationOnCheer = channelNotificationOnCheer;
         this.channelNotificationOnDonation = channelNotificationOnDonation;
@@ -45,6 +47,7 @@ public class Bot {
         this.channelNotificationOnSubscription = channelNotificationOnSubscription;
         this.onChatChannelMessage = onChatChannelMessage;
         this.onCommandReceived = onCommandReceived;
+        this.onPrivateMessageReceived = onPrivateMessageReceived;
     }
 
     public void initialize() {
@@ -63,7 +66,7 @@ public class Bot {
                 .withClientId(configuration.getApi().get("twitch_client_id"))
                 .withClientSecret(configuration.getApi().get("twitch_client_secret"))
                 .withEnablePubSub(true)
-                .withEnableGraphQL(true)
+                .withEnableGraphQL(false)
                 .withEnableKraken(true);
 
         // Add commands to clientBuilder
@@ -73,6 +76,9 @@ public class Bot {
 
         twitchClient = clientBuilder.build();
         twitchClient.getEventManager().registerListener(this);
+
+        // Let the bot see whispers that it receives
+        twitchClient.getPubSub().listenForWhisperEvents(credential, 412769033L);
 
         TwitchHelix twitchHelixClient = TwitchHelixBuilder.builder()
                 .withClientId(configuration.getApi().get("twitch_client_id"))
@@ -88,8 +94,8 @@ public class Bot {
 //        twitchClient.getEventManager().onEvent(ChannelMessageEvent.class).subscribe(event -> {
 //            System.out.println("[" + event.getChannel().getName() + "] " + event.getUser().getName() + ": " + event.getMessage());
 //        });
-
-        twitchClient.getEventManager().registerListener(new ChannelChangeTitle());
+        twitchClient.getPubSub().getEventManager().registerListener(onPrivateMessageReceived);
+//        twitchClient.getEventManager().registerListener(new ChannelChangeTitle());
         twitchClient.getEventManager().registerListener(channelNotificationOnCheer);
         twitchClient.getEventManager().registerListener(channelNotificationOnDonation);
         twitchClient.getEventManager().registerListener(channelNotificationOnFollow);

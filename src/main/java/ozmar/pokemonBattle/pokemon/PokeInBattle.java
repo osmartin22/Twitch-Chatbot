@@ -154,7 +154,7 @@ public class PokeInBattle {
         return volatileStatusMap;
     }
 
-    public boolean addVolatileStatusTEMP(@Nonnull VolatileStatus volatileStatus) {
+    public boolean addVolatileStatus(@Nonnull VolatileStatus volatileStatus) {
         boolean inflictedStatus = false;
         int turnsLeft = volatileStatusMap.getOrDefault(volatileStatus, -1);
         if (turnsLeft == -1) {

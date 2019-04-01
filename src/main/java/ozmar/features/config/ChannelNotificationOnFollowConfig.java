@@ -8,7 +8,7 @@ import ozmar.features.ChannelNotificationOnFollow;
 public class ChannelNotificationOnFollowConfig {
 
     @Bean
-    ChannelNotificationOnFollow channelNotificationOnFollowBean() {
+    public ChannelNotificationOnFollow channelNotificationOnFollowBean() {
         return new ChannelNotificationOnFollow();
     }
 }

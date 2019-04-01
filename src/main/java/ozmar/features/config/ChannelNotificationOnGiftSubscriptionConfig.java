@@ -8,7 +8,7 @@ import ozmar.features.ChannelNotificationOnGiftSubscription;
 public class ChannelNotificationOnGiftSubscriptionConfig {
 
     @Bean
-    ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscriptionBean() {
+    public ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscriptionBean() {
         return new ChannelNotificationOnGiftSubscription();
     }
 }

@@ -16,11 +16,12 @@ public class BotConfig {
                        ChannelNotificationOnFollow channelNotificationOnFollow,
                        ChannelNotificationOnGiftSubscription channelNotificationOnGiftSubscription,
                        ChannelNotificationOnSubscription channelNotificationOnSubscription,
-                       OnChatChannelMessage onChatChannelMessage, OnCommandReceived onCommandReceived) {
+                       OnChatChannelMessage onChatChannelMessage, OnCommandReceived onCommandReceived,
+                       OnPrivateMessageReceived onPrivateMessageReceived) {
 
         return new Bot(db, channelNotificationOnCheer, channelNotificationOnDonation,
                 channelNotificationOnFollow, channelNotificationOnGiftSubscription, channelNotificationOnSubscription,
-                onChatChannelMessage, onCommandReceived);
+                onChatChannelMessage, onCommandReceived, onPrivateMessageReceived);
     }
 
 }

@@ -83,29 +83,27 @@ public class HandleCommand implements HandleCommandInterface {
             int count = -1;
 
             if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = diceRollCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = spitCommand(commandEvent, command);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = twitchCalls.uptime(commandEvent);
-                log.info("Not Sent: {}", result);
-                log.info(commandEvent.toString());
+                disabledCommands(result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = calcCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = twitchCalls.followage(commandEvent);
-                log.info("Not Sent: {}", result);
-                log.info(commandEvent.toString());
+                disabledCommands(result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
@@ -113,76 +111,84 @@ public class HandleCommand implements HandleCommandInterface {
                 result = wordCountCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                if (commandEvent.getUser().getName().equals("namedauto")) {
-                    command = commandsList.get(count);
+                command = getCommandFromList(count);
                     result = messageCountCommand(commandEvent);
-                }
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                if (commandEvent.getUser().getName().equals("namedauto")) {
-                    command = commandsList.get(count);
+                command = getCommandFromList(count);
                     result = pointsCommand(commandEvent);
-                }
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = pokeCommand.catchPokeCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = flipCoinCommand(commandEvent);
-                log.info("Not Sent: {}", result);
-                log.info(commandEvent.toString());
+                disabledCommands(result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = openLootCommand(commandEvent);
-                log.info("Not Sent: {}", result);
-                log.info(commandEvent.toString());
+                disabledCommands(result);
                 result = null;
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = newPartnerCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = myPartnerCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = twitchStockCommand.getStock(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 modifyCommandsCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = pokeCommand.myPoke(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
-                command = commandsList.get(count);
+                command = getCommandFromList(count);
                 result = pokeCommand.replacePoke(commandEvent);
             }
 
         } else if (isCommandHelper(14, commandEvent)) {
-            command = commandsList.get(14);
+            command = getCommandFromList(14);
             modifyCommandsCommand(commandEvent);
         }
 
-        if (command != null) {      // Update usage and set cooldown timer
-            command.incrementUsage();
-            db.getCommandsDao().updateCommandUsage(command);
-            cooldownMap.put(command.getId(), new Pair<>(command, System.currentTimeMillis()));
-            if (result != null) {
-                log.info(result);
-                log.info(commandEvent.toString());
-            }
+        // Log the output and the command it responded from
+        if (command != null && result != null) {
+            log.info(result);
+            log.info(commandEvent.toString());
         }
 
         return result;
+    }
+
+    private void disabledCommands(@Nonnull String result) {
+        log.info("Not Sent: {}", result);
+        log.info(this.commandEvent.toString());
+    }
+
+    @Nonnull
+    private Command getCommandFromList(int commandIndex) {
+        Command command = this.commandsList.get(commandIndex);
+        putOnCooldown(command);
+        return command;
+    }
+
+    private void putOnCooldown(@Nonnull Command command) {
+        command.incrementUsage();
+        this.db.getCommandsDao().updateCommandUsage(command);
+        this.cooldownMap.put(command.getId(), new Pair<>(command, System.currentTimeMillis()));
     }
 
     /**

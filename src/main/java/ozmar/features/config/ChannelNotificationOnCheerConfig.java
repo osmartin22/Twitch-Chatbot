@@ -8,7 +8,7 @@ import ozmar.features.ChannelNotificationOnCheer;
 public class ChannelNotificationOnCheerConfig {
 
     @Bean
-    ChannelNotificationOnCheer channelNotificationOnCheerBean() {
+    public ChannelNotificationOnCheer channelNotificationOnCheerBean() {
         return new ChannelNotificationOnCheer();
     }
 }
