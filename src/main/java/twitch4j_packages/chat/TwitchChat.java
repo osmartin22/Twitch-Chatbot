@@ -422,7 +422,7 @@ public class TwitchChat {
      */
     public void sendPrivateMessage(String targetUser, String message) {
         log.debug("Adding private message for user [{}] with content [{}] to the queue.", targetUser, message);
-        ircCommandQueue.add(String.format("PRIVMSG #%s /w %s %s", chatCredential.get().getUserName(), targetUser, message));
+        ircCommandQueue.add(String.format("PRIVMSG #%s :/w %s %s", chatCredential.get().getUserName(), targetUser, message));
     }
 
     /**

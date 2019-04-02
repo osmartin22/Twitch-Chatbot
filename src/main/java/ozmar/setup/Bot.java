@@ -76,7 +76,6 @@ public class Bot {
 
         twitchClient = clientBuilder.build();
         twitchClient.getEventManager().registerListener(this);
-
         // Let the bot see whispers that it receives
         twitchClient.getPubSub().listenForWhisperEvents(credential, 412769033L);
 

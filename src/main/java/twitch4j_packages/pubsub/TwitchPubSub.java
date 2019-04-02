@@ -234,9 +234,16 @@ public class TwitchPubSub {
                                 // todo
                             } else if (message.getData().getTopic().startsWith("whispers")) {
                                 // Whisper
-                                EventUser eventUser = new EventUser(Long.valueOf((Integer) message.getData().getMessage().getMessageData().get("from_id")), (String) message.getData().getMessage().getMessageDataTags().get("display_name"));
-                                PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(eventUser, (String) message.getData().getMessage().getMessageData().get("body"), TwitchUtils.getPermissionsFromTags(message.getData().getMessage().getMessageDataTags()));
-                                eventManager.dispatchEvent(privateMessageEvent);
+                                // Checking for "thread" is done due to Twitch sending this response as well at times
+                                // It is an internal pubsub event and not intended to be used
+                                // see below link for a Twitch Staff response about the "thread" response
+                                // https://discuss.dev.twitch.tv/t/pubsub-undocumented-whisper-message-type-thread/15583/4
+                                if (!message.getData().getMessage().getType().equals("thread")) {
+                                    System.out.println(message.toString());
+                                    EventUser eventUser = new EventUser(Long.valueOf((Integer) message.getData().getMessage().getMessageData().get("from_id")), (String) message.getData().getMessage().getMessageDataTags().get("display_name"));
+                                    PrivateMessageEvent privateMessageEvent = new PrivateMessageEvent(eventUser, (String) message.getData().getMessage().getMessageData().get("body"), TwitchUtils.getPermissionsFromTags(message.getData().getMessage().getMessageDataTags()));
+                                    eventManager.dispatchEvent(privateMessageEvent);
+                                }
                             } else {
                                 log.warn("Unparseable Message: " + message.getType() + "|" + message.getData());
                             }
