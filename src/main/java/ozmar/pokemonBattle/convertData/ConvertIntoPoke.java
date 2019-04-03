@@ -17,13 +17,27 @@ import poke_api_packages.poke_models.pokemon.PokemonType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class ConvertIntoPoke {
 
     public ConvertIntoPoke() {
 
+    }
+
+    public Poke getPoke(@Nonnull String pokemonName, @Nonnull String nature) {
+        Pokemon pokemon = Pokemon.getByName(pokemonName);
+        int id = pokemon.getId();
+        int level = 100;
+        int height = pokemon.getHeight();
+        int weight = pokemon.getWeight();
+        Pair<PokeTypeEnum, PokeTypeEnum> types = getTypes(pokemon);
+        PokeType pokeType = new PokeType(types.getKey(), types.getValue());
+        PokeNatureEnum natureEnum = PokeNatureEnum.getEnum(nature);
+        PokeAllStats pokeAllStats = getAllStats(pokemon, natureEnum);
+        List<PokeMove> moveList = new ArrayList<>();
+
+        return new Poke(id, level, pokemonName, pokemonName, height, weight, pokeType, natureEnum, pokeAllStats, moveList);
     }
 
     public Poke getPoke(@Nonnull PokemonPoke pokemonPoke) {
@@ -93,7 +107,7 @@ public class ConvertIntoPoke {
         pokemonPoke.setShiny(true);
         pokemonPoke.setGender(PokemonGender.MALE);
         pokemonPoke.setNature("adamant");
-        pokemonPoke.setPokemonMoves(new HashSet<>());
+        pokemonPoke.setPokemonMoves(new ArrayList<>());
         return getPoke(pokemonPoke);
     }
 }

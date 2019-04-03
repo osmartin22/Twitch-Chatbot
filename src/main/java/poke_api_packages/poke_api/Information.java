@@ -48,7 +48,7 @@ public class Information {
 
             if (Client.CACHE) {
                 if (Database.getInstance().insert(targetURL, str)) {
-                    log.info("Saved to db: {}, {}", targetURL);
+                    log.info("Saved to db: {}", targetURL);
                 } else {
                     log.error("Error saving to db");
                 }

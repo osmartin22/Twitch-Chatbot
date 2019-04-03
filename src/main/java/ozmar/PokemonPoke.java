@@ -3,8 +3,8 @@ package ozmar;
 import ozmar.enums.PokemonGender;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class PokemonPoke {
@@ -16,7 +16,7 @@ public class PokemonPoke {
     private boolean isShiny;
     private PokemonGender gender;
     private String nature;
-    private Set<String> pokemonMoves;
+    private List<String> pokemonMoves;
 
     public PokemonPoke() {
 
@@ -84,7 +84,7 @@ public class PokemonPoke {
     }
 
     @Nonnull
-    public Set<String> getPokemonMovesSet() {
+    public List<String> getPokemonMovesSet() {
         return pokemonMoves;
     }
 
@@ -99,12 +99,13 @@ public class PokemonPoke {
         return moves.toString();
     }
 
-    public void setPokemonMoves(@Nonnull Set<String> pokemonMoves) {
+
+    public void setPokemonMoves(@Nonnull List<String> pokemonMoves) {
         this.pokemonMoves = pokemonMoves;
     }
 
     public void setPokemonMoves(@Nonnull String moves) {
-        Set<String> pokemonMoves = new HashSet<>(4);
+        List<String> pokemonMoves = new ArrayList<>(4);
         StringTokenizer st = new StringTokenizer(moves, ",");
         while (st.hasMoreTokens()) {
             pokemonMoves.add(st.nextToken());

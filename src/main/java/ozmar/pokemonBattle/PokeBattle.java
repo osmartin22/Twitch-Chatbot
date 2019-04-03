@@ -16,12 +16,14 @@ import java.util.List;
 
 public class PokeBattle {
 
+    private final PokeBattleViewInterface view;
     private final PokeField field;
     private final List<PokeTrainerSide> sideList;
     private final PokeRules pokeRules;
     private final PokeBattleHandler pokeBattleHandler;
 
-    public PokeBattle(@Nonnull List<List<Trainer>> listList, int pokesInBattle) {
+    public PokeBattle(@Nonnull PokeBattleViewInterface view, @Nonnull List<List<Trainer>> listList, int pokesInBattle) {
+        this.view = view;
         this.field = new PokeField();
         this.sideList = new ArrayList<>(listList.size());
         this.pokeRules = new PokeRules();
@@ -76,10 +78,34 @@ public class PokeBattle {
     }
 
     public void doTrainerChoices() {
-        pokeBattleHandler.doTrainerChoices();
+        if (trainersReady()) {
+            String battleResult = pokeBattleHandler.doTrainerChoices();
+            view.sendMessageForAll(battleResult);
+            checkForFaintedPokemon();
+        } else {
+            System.out.println("TRAINERS ARE NOT READY YET");
+        }
+    }
+
+    private void checkForFaintedPokemon() {
+        for (PokeTrainerSide side : sideList) {
+            for (TrainerInBattle tb : side.getTrainerInBattleList()) {
+                for (PokeInBattle pb : tb.getPokeInBattleList()) {
+                    if (pb.getPoke().isFainted()) {
+                        System.out.println("Temp: " + pb.getPoke().getName() + " " + pb.getPoke().getPokeStats().getCurrHp());
+                        view.sendUserMessage(String.format("%s, Your Pokemon %s has fainted",
+                                tb.getTrainer().getTrainerName(), pb.getPoke().getName()));
+                    }
+                }
+            }
+        }
     }
 
     public void postAttackPhase() {
 
+    }
+
+    public long getTrainerId(int sidePosition, int TrainerPosition) {
+        return sideList.get(0).getTrainerInBattle(0).getTrainer().getId();
     }
 }

@@ -39,7 +39,7 @@ public class OnChatChannelMessage {
             } else { //SHOW ON CONSOLE THE USER
                 System.out.println("\n" + event + "\n");
 //                if (System.currentTimeMillis() - lastBadWordMessageTime > 3000) {
-//                    event.getTwitchChat().sendMessage(event.getChannel().getName(),
+//                    event.getTwitchChat().sendMessageForAll(event.getChannel().getName(),
 //                            event.getUser().getName() + " D: you can't say that");
 //                }
 //

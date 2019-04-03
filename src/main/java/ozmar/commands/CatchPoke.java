@@ -320,7 +320,7 @@ public class CatchPoke implements CatchPokeInterface {
         poke.setShiny(isShiny(pokemonSpecies.getCaptureRate()));
         poke.setNature(nature.getName());
         poke.setGender(pokemonGender);
-        poke.setPokemonMoves(new HashSet<>());
+        poke.setPokemonMoves(new ArrayList<>());
 
         return poke;
     }
@@ -610,7 +610,7 @@ public class CatchPoke implements CatchPokeInterface {
     @Nullable
     @Override
     public CaughtPokeInfo catchMissingNo() {
-        boolean caught = RandomHelper.getRandNumInRange(1, 300) == 117;
+        boolean caught = RandomHelper.getRandNumInRange(1, 500) == 117;
         if (caught) {
             Nature nature = Nature.getById(RandomHelper.getRandNumInRange(1, 25)); // Only 25 natures exist
 
@@ -619,10 +619,10 @@ public class CatchPoke implements CatchPokeInterface {
             poke.setPokemonSpecies("missingno");
             poke.setPokemonName("MissingNo");
             poke.setPokemonNickName("MissingNo");
-            poke.setShiny(RandomHelper.getRandNumInRange(1, 4) > 1);
+            poke.setShiny(RandomHelper.getRandNumInRange(1, 10) < 5);
             poke.setGender(PokemonGender.NO_GENDER);
             poke.setNature(nature.getName());
-            poke.setPokemonMoves(new HashSet<>());
+            poke.setPokemonMoves(new ArrayList<>());
 
             String output = getCaptureResult(poke, true) + " moon2POGGYWOGGY";
             return new CaughtPokeInfo(poke, true, true, output);

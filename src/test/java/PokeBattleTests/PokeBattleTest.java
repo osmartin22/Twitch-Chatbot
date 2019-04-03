@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ozmar.pokemonBattle.PokeBattle;
+import ozmar.pokemonBattle.PokeBattleView;
+import ozmar.pokemonBattle.PokeBattleViewInterface;
 import ozmar.pokemonBattle.convertData.ConvertIntoPoke;
 import ozmar.pokemonBattle.convertData.GetMovesData;
 import ozmar.pokemonBattle.pokemon.Poke;
@@ -25,12 +27,14 @@ public class PokeBattleTest {
     private static Trainer trainerRed;      // Side: 0
     private static Trainer trainerBlue;     // Side: 1
     private static PokeBattle pokeBattle;
+    private static PokeBattleViewInterface view;
 
     private static ConvertIntoPoke convertIntoPoke;
     private static GetMovesData movesData;
 
     @BeforeClass
     public static void init() {
+        view = new PokeBattleView();
         movesData = new GetMovesData();
         convertIntoPoke = new ConvertIntoPoke();
         List<Poke> redPokes = new ArrayList<>();
@@ -51,7 +55,7 @@ public class PokeBattleTest {
         List<List<Trainer>> listList = new ArrayList<>();
         listList.add(new ArrayList<>(Collections.singleton(trainerRed)));
         listList.add(new ArrayList<>(Collections.singleton(trainerBlue)));
-        pokeBattle = new PokeBattle(listList, 1);
+        pokeBattle = new PokeBattle(view, listList, 1);
     }
 
     private static void createMoves(List<Poke> pokeList) {
@@ -104,18 +108,11 @@ public class PokeBattleTest {
             PokeInBattle redPoke = pokeBattle.getPokeInBattle(0, 0, 0);
             PokeInBattle bluePoke = pokeBattle.getPokeInBattle(1, 0, 0);
 
-//            System.out.println(redPoke.getPoke().getName());
-//            System.out.println(redPoke.getPoke().getPokeStats().getCurrHp());
-//            System.out.println(bluePoke.getPoke().getName());
-//            System.out.println(bluePoke.getPoke().getPokeStats().getCurrHp());
             pokeBattle.doTrainerChoices();
-
-//            System.out.println("AFTER");
-//            System.out.println(redPoke.getPoke().getPokeStats().getCurrHp());
-//            System.out.println("Red Fainted: " + redPoke.getPoke().isFainted());
-//            System.out.println(bluePoke.getPoke().getPokeStats().getCurrHp());
-//            System.out.println("Blue Fainted: " + redPoke.getPoke().isFainted());
-            System.out.println();
+//
+//            pokeBattle.setPokeToSwitchIn(0,0,0,2);
+//            pokeBattle.setMoveToUse(1, 0, 0, 1, targetPosition);
+//            pokeBattle.doTrainerChoices();
         }
     }
 
@@ -132,4 +129,4 @@ public class PokeBattleTest {
         double dmg = calculator.calculateDamage(pokeInBattleRed, pokeInBattleBlue, move, PokeWeatherEnum.CLEAR_SKIES);
         System.out.println(dmg);
     }
-}
+}   

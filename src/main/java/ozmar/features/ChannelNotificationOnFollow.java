@@ -15,6 +15,6 @@ public class ChannelNotificationOnFollow {
         );
 
         log.info("OnFollow: {}", message);
-//        event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
+//        event.getTwitchChat().sendMessageForAll(event.getChannel().getName(), message);
     }
 }

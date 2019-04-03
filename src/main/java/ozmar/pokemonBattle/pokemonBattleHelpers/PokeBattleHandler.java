@@ -17,20 +17,32 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Create a class than can hold information on what happens in the battle
+//  i.e. Pokemon was confused, flinched, stats were changed, hp restored/damaged
+//  In the games, actions are displayed on screen as they occur
+//  But to prevent message spam, actions will be grouped into a message and be sent after all of the actions have finished
+
+// *NOTE This only supports 1 v 1 battles
 public class PokeBattleHandler {
     private final PokeField field;
     private final List<PokeTrainerSide> sideList;
     private final PokeBattleCalculator calculator;
+    private final List<PokeInBattle> switching;
+    private final List<PokeInBattle> attacking;
+    private StringBuilder sb;
 
     public PokeBattleHandler(@Nonnull PokeField field, @Nonnull List<PokeTrainerSide> sideList) {
         this.field = field;
         this.sideList = sideList;
         this.calculator = new PokeBattleCalculator();
+        this.switching = new ArrayList<>();
+        this.attacking = new ArrayList<>();
+        this.sb = new StringBuilder();
     }
 
-    public void doTrainerChoices() {
-        List<PokeInBattle> switching = new ArrayList<>();
-        List<PokeInBattle> attacking = new ArrayList<>();
+    @Nonnull
+    public String doTrainerChoices() {
+        sb.setLength(0);
         for (PokeTrainerSide pSide : sideList) {
             List<TrainerInBattle> tbList = sideList.get(pSide.getSideId()).getTrainerInBattleList();
             for (TrainerInBattle tb : tbList) {
@@ -42,12 +54,17 @@ public class PokeBattleHandler {
             }
         }
 
-        switchPokes(switching);
+        sortLists(switching, attacking);
+        switchPokeIn(switching);
         attackingPokes(attacking);
+
+        switching.clear();
+        attacking.clear();
+        return sb.toString();
     }
 
-    // Sort Pokemon switching by speed and then switch them out
-    private void switchPokes(@Nonnull List<PokeInBattle> switching) {
+    private void sortLists(@Nonnull List<PokeInBattle> switching, @Nonnull List<PokeInBattle> attacking) {
+        // Sort Pokemon switching by speed
         switching.sort((o1, o2) -> {
             int speed1 = o1.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD);
             if (o1.getPoke().getNonVolatile() == NonVolatileStatus.PARALYSIS) {
@@ -59,11 +76,8 @@ public class PokeBattleHandler {
             }
             return speed1 - speed2;
         });
-        switchPokeIn(switching);
-    }
 
-    // Sort Pokemon doing a move by move priority first followed by speed if moves have the same priority
-    private void attackingPokes(@Nonnull List<PokeInBattle> attacking) {
+        // Sort Pokemon doing a move by move priority first followed by speed if moves have the same priority
         attacking.sort((o1, o2) -> {
             int result = (o2.getMoveToUse().getPriority()) - o1.getMoveToUse().getPriority();
             if (result == 0) {
@@ -80,7 +94,9 @@ public class PokeBattleHandler {
 
             return result;
         });
+    }
 
+    private void attackingPokes(@Nonnull List<PokeInBattle> attacking) {
         // Currently ignoring status moves as they have a lot of unique effects to take into account
         for (PokeInBattle pb : attacking) {
             if (pb.getTrainerChoice() == TrainerChoice.CHOICE_MOVE &&
@@ -91,15 +107,14 @@ public class PokeBattleHandler {
                 if (!calculator.nvStatusPreventsMove(pb)) {
                     if (calculator.willMoveHit(attackAcc, targetEva, pb.getMoveToUse())) {
                         int damageDone = doMove(pb);
-                        System.out.println(pb.getPoke().getName() + " Damage Done: " + damageDone);
-                        PokeInBattle target = getPokeInBattle(pb);
-                        target.getPoke().getPokeStats().updateCurrHp(-damageDone);
+//                        PokeInBattle target = getPokeInBattle(pb);
+//                        target.getPoke().getPokeStats().updateCurrHp(-damageDone);
 
                     } else {
-                        System.out.println("Move missed");
+                        sb.append(String.format("%s missed. ", pb.getPoke().getName()));
                     }
                 } else {
-                    System.out.println("Status prevented move");
+                    sb.append(String.format("%s was prevented by a status effect. ", pb.getPoke().getName()));
                 }
 
                 pb.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
@@ -108,7 +123,6 @@ public class PokeBattleHandler {
     }
 
     private int doMove(@Nonnull PokeInBattle attacker) {
-        System.out.println("Attacker is : " + attacker.getPoke().getName());
         int damageDone = 0;
 
         PokeMove move = attacker.getMoveToUse();
@@ -127,13 +141,20 @@ public class PokeBattleHandler {
                 if (moveWillHit) {
                     attacker.setLastUsedMove(attacker.getMoveToUse());
                     damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
+                    target.getPoke().getPokeStats().updateCurrHp(-damageDone);
+                    sb.append(String.format("%s attacked %s for %s damage. ", attacker.getPoke().getName(),
+                            target.getPoke().getName(), damageDone));
+                    if (target.getPoke().isFainted()) {
+                        sb.append(String.format("%s has fainted. ", target.getPoke().getName()));
+                    }
 
-                    inflictNonVolatile(target, move);
-                    inflictFlinch(target, move);
+                    inflictStatuses(target, move);
                 } else {
+                    sb.append(String.format("%s's attack missed", attacker.getPoke().getName()));
                     // Move Missed
                 }
             } else {
+                sb.append(String.format("%s was prevented from using its move", attacker.getPoke().getName()));
                 // Pokemon prevented from attacking
             }
         }
@@ -146,6 +167,8 @@ public class PokeBattleHandler {
         for (PokeInBattle pb : pbList) {
             TrainerInBattle tb = sideList.get(pb.getSidePosition()).getTrainerInBattle(pb.getTrainerPosition());
             if (tb.getPokeInBattle(pb.getFieldPosition()).getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
+                sb.append(String.format("%s switched out for %s. ", pb.getPoke().getName(),
+                        pb.getPokeToSwitchIn().getName()));
                 tb.switchPoke(pb.getFieldPosition());
                 PokeSide side = sideList.get(pb.getSidePosition()).getSide();
                 if (side.getEntryHazard().isEntryHazardPresent()) {
@@ -164,6 +187,18 @@ public class PokeBattleHandler {
     private boolean willMoveHit(@Nonnull PokeInBattle attacker, @Nonnull PokeInBattle target, @Nonnull PokeMove move) {
         return calculator.willMoveHit(attacker.getPokeStages().getStateStage(PokeStatStage.ACC_STAGE),
                 target.getPokeStages().getStateStage(PokeStatStage.EVA_STAGE), move);
+    }
+
+    private boolean isMovePrevented(@Nonnull PokeInBattle attacker) {
+        boolean nvStatusPrevented = calculator.nvStatusPreventsMove(attacker);
+        boolean confusionPrevented = calculator.confusionActivates(attacker);
+        return nvStatusPrevented || confusionPrevented;
+    }
+
+    private void inflictStatuses(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
+        inflictNonVolatile(target, move);
+        inflictConfusion(target, move);
+        inflictFlinch(target, move);
     }
 
     private void inflictNonVolatile(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
@@ -185,7 +220,7 @@ public class PokeBattleHandler {
             boolean willFlinch = calculator.willEffectHit(move.getMetaData().getFlinchChance());
             if (willFlinch) {
                 // Target flinches and can no longer attack its turn
-                System.out.println(target.getPoke().getName() + " was flinched");
+                sb.append(String.format("%s was flinched. ", target.getPoke().getName()));
                 target.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
             }
         }
@@ -195,32 +230,10 @@ public class PokeBattleHandler {
         boolean isConfused = false;
         boolean willConfuse = RandomHelper.getRandNumInRange(1, 100) <= move.getMetaData().getConfusionChance();
         if (willConfuse) {
-            isConfused = target.addVolatileStatusTEMP(VolatileStatus.CONFUSION);
+            isConfused = target.addVolatileStatus(VolatileStatus.CONFUSION);
         }
 
         return isConfused;
     }
-
-
-    private boolean isMovePrevented(@Nonnull PokeInBattle attacker) {
-        boolean nvStatusPrevented = calculator.nvStatusPreventsMove(attacker);
-        boolean confusionPrevented = calculator.confusionActivates(attacker);
-        return nvStatusPrevented || confusionPrevented;
-    }
-
-    private void inflictStatuses(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
-
-    }
-
-    /*
-    VOLATILE STATUS
-    Binding/Bound
-    Confusion 1-4
-    Encore 3
-    Healing Block 5
-    Perish Song 3
-    Taunt 3
-    Telekinesis 3
-     */
 }
 

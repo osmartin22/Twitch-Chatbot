@@ -9,6 +9,6 @@ public class OnPrivateMessageReceived {
     public void onPrivateMessage(PrivateMessageEvent event) {
         System.out.println("HELLO: " + event.toString());
 //        System.out.println();
-//        event.getTwitchChat().sendPrivateMessage(event.getUser().getName(),"namedauto");
+//        event.getTwitchChat().sendUserMessage(event.getUser().getName(),"namedauto");
     }
 }

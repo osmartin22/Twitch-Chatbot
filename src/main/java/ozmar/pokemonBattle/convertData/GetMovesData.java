@@ -15,10 +15,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// TODO: Currently the class expects correct input(testing purposes), fix to allow incorrect input
 public class GetMovesData {
 
     public GetMovesData() {
@@ -29,21 +31,19 @@ public class GetMovesData {
 
     }
 
-    /**
-     * @param moveNames list containing the names of the desired moves
-     * @return
-     */
     public List<PokeMove> convertNamesToMoves(@Nonnull List<String> moveNames) {
+        List<PokeMove> pokeMoves = new ArrayList<>();
+        for (String name : moveNames) {
+            pokeMoves.add(getMove(name));
+        }
 
-
-        return null;
+        return pokeMoves;
     }
 
     public PokeMove getMove(@Nonnull String name) {
         PokeMove pokeMove = null;
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream is = loader.getResourceAsStream("MovesData.txt");
-
         if (is != null) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is))) {
                 boolean lineFound = false;
@@ -132,6 +132,7 @@ public class GetMovesData {
         return moveByUsages;
     }
 
+    @Nonnull // If it returns null, it is a problem with the moves file
     private Integer convertToNum(@Nonnull String num) {
         Integer newNum = null;
         try {
