@@ -3,16 +3,15 @@ package PokeBattleTests;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ozmar.PokemonPoke;
 import ozmar.database.dao.interfaces.PokemonDaoInterface;
-import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.enums.PokemonGender;
 import ozmar.pokemonBattle.PokeBattleView;
 import ozmar.pokemonBattle.pokemonBattleHelpers.PokeController;
+import twitch4j_packages.chat.TwitchChat;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -31,10 +30,10 @@ public class PokeControllerTest {
     private static List<PokemonPoke> bluePoke;
 
     @Mock
-    private static PokemonDaoInterface pokemonDaoInterface;
+    private static TwitchChat chat;
 
-    @InjectMocks
-    private static DatabaseHandlerInterface db;
+    @Mock
+    private static PokemonDaoInterface pokemonDaoInterface;
 
     private static PokeController controller;
 
@@ -42,10 +41,10 @@ public class PokeControllerTest {
     public static void initialize() {
         red = 1;
         blue = 2;
+        chat = Mockito.mock(TwitchChat.class);
         pokemonDaoInterface = Mockito.mock(PokemonDaoInterface.class);
-        db = Mockito.mock(DatabaseHandlerInterface.class);
-        controller = new PokeController(db);
-        controller.setView(new PokeBattleView());
+        controller = new PokeController(pokemonDaoInterface);
+        controller.setView(new PokeBattleView(chat, "testChannel"));
         pokemonToGetFromDb();
         initializeController();
     }
@@ -82,7 +81,6 @@ public class PokeControllerTest {
     }
 
     private static void initializeController() {
-        when(db.getPokemonDao()).thenReturn(pokemonDaoInterface);
         when(pokemonDaoInterface.getPokemon(red)).thenReturn(redPoke);
         when(pokemonDaoInterface.getPokemon(blue)).thenReturn(bluePoke);
         controller.setUsers(red, "RED", blue, "BLUE");
@@ -102,9 +100,11 @@ public class PokeControllerTest {
 
     @Test
     public void s() {
-        controller.setMoveToUse(red, 0, 0);
-        controller.setPokeToSwitchIn(red, 0, 2);
-        controller.setMoveToUse(blue, 0, 0);
+        for (int i = 0; i < 6; i++) {
+            controller.setMoveToUse(red, 0, 0);
+//            controller.setPokeToSwitchIn(red, 0, 2);
+            controller.setMoveToUse(blue, 0, 0);
+        }
     }
 
 }

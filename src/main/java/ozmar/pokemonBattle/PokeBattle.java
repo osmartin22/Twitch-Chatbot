@@ -13,8 +13,15 @@ import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class PokeBattle {
+
+    private ScheduledFuture<?> choiceTimer;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private final PokeBattleViewInterface view;
     private final PokeField field;
@@ -29,6 +36,7 @@ public class PokeBattle {
         this.pokeRules = new PokeRules();
         this.pokeBattleHandler = new PokeBattleHandler(field, sideList);
         initialize(listList, pokesInBattle);
+        startChoiceTimer();
     }
 
     private void initialize(@Nonnull List<List<Trainer>> listList, int pokesInBattle) {
@@ -79,22 +87,29 @@ public class PokeBattle {
 
     public void doTrainerChoices() {
         if (trainersReady()) {
+            stopChoiceTimer();
             String battleResult = pokeBattleHandler.doTrainerChoices();
             view.sendMessageForAll(battleResult);
             checkForFaintedPokemon();
+
+            // TODO: Send message to each user to make their choice after completing all choices
+            startChoiceTimer();
         } else {
             System.out.println("TRAINERS ARE NOT READY YET");
         }
     }
 
+    // TODO: If there are fainted Pokemon, start a timer for switching Pokemon
+    //  When the timer runs out it should switch in a the first pokemon that is not fainted
+    //  If no pokemon are available, the battle is over
     private void checkForFaintedPokemon() {
         for (PokeTrainerSide side : sideList) {
             for (TrainerInBattle tb : side.getTrainerInBattleList()) {
                 for (PokeInBattle pb : tb.getPokeInBattleList()) {
                     if (pb.getPoke().isFainted()) {
-                        System.out.println("Temp: " + pb.getPoke().getName() + " " + pb.getPoke().getPokeStats().getCurrHp());
-                        view.sendUserMessage(String.format("%s, Your Pokemon %s has fainted",
-                                tb.getTrainer().getTrainerName(), pb.getPoke().getName()));
+                        String trainerName = tb.getTrainer().getTrainerName();
+                        view.sendUserMessage(tb.getTrainer().getId(),
+                                String.format("%s, Your Pokemon %s has fainted", trainerName, pb.getPoke().getName()));
                     }
                 }
             }
@@ -107,5 +122,35 @@ public class PokeBattle {
 
     public long getTrainerId(int sidePosition, int TrainerPosition) {
         return sideList.get(0).getTrainerInBattle(0).getTrainer().getId();
+    }
+
+    public void startChoiceTimer() {
+        for (PokeTrainerSide side : sideList) {
+            for (TrainerInBattle tb : side.getTrainerInBattleList()) {
+                for (PokeInBattle pb : tb.getPokeInBattleList()) {
+                    view.sendUserMessage(tb.getTrainer().getId(), String.format("Choose action for %s", pb.getPoke().getName()));
+                }
+            }
+        }
+
+        System.out.println("Started Choice Timer");
+        this.choiceTimer = timerToDoChoice();
+    }
+
+    public void stopChoiceTimer() {
+        System.out.println("Stopping Choice Timer");
+        this.choiceTimer.cancel(false);
+    }
+
+    @Nonnull
+    private ScheduledFuture<?> timerToDoChoice() {
+        final Runnable timerFinished = () -> {
+            System.out.println("Time Ran Out");
+            // Timer only runs when a user has not done a choice yet (move or switch out)
+            // A move should be chosen for them to do here
+            doTrainerChoices();
+        };
+
+        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
     }
 }

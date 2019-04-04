@@ -5,7 +5,7 @@ import ozmar.CaughtPokeInfo;
 import ozmar.PokemonPoke;
 import ozmar.commands.interfaces.CatchPokeInterface;
 import ozmar.commands.interfaces.PokeCommandInterface;
-import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
+import ozmar.database.dao.interfaces.PokemonDaoInterface;
 import ozmar.utils.RandomHelper;
 import ozmar.utils.StringHelper;
 import twitch4j_packages.chat.events.CommandEvent;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class PokeCommand implements PokeCommandInterface {
 
-    private final DatabaseHandlerInterface db;
+    private PokemonDaoInterface pokemonDao;
     private final CatchPokeInterface catchPoke;
     private final int MAX_POKE_OWNED = 6;
     private final int MAX_POKEDEX_INDEX = 812;
@@ -32,8 +32,8 @@ public class PokeCommand implements PokeCommandInterface {
     private final ScheduledExecutorService replacePokeTimer = Executors.newScheduledThreadPool(1);
 
 
-    public PokeCommand(DatabaseHandlerInterface db, CatchPokeInterface catchPoke) {
-        this.db = db;
+    public PokeCommand(PokemonDaoInterface pokemonDao, CatchPokeInterface catchPoke) {
+        this.pokemonDao = pokemonDao;
         this.catchPoke = catchPoke;
         this.caughtPokes = new HashMap<>();
         this.replacePokes = new HashMap<>();
@@ -167,9 +167,9 @@ public class PokeCommand implements PokeCommandInterface {
     @Nonnull
     private String caughtPokeHelper(long userId, @Nonnull CaughtPokeInfo pokeInfo) {
         String output = "";
-        int pokeCount = db.getPokemonDao().getUsersPokemonCount(userId);
+        int pokeCount = pokemonDao.getUsersPokemonCount(userId);
         if (pokeCount < MAX_POKE_OWNED) {
-            db.getPokemonDao().insertPokemon(userId, pokeInfo.getPoke());
+            pokemonDao.insertPokemon(userId, pokeInfo.getPoke());
         } else {
             saveCatchToBuffer(userId, pokeInfo);
             output = ", use !replacepoke [Num], or '!replacepoke help'";
@@ -188,7 +188,7 @@ public class PokeCommand implements PokeCommandInterface {
     @Override
     public String myPoke(@Nonnull CommandEvent event) {
         String output;
-        List<PokemonPoke> pokeList = db.getPokemonDao().getPokemon(event.getUser().getId());
+        List<PokemonPoke> pokeList = pokemonDao.getPokemon(event.getUser().getId());
         if (pokeList.isEmpty()) {
             output = String.format("%s, you have 0/%s Poke, use !catchpoke to get some",
                     event.getUser().getName(), MAX_POKE_OWNED);
@@ -238,7 +238,7 @@ public class PokeCommand implements PokeCommandInterface {
                     try {
                         pokeNum = Integer.valueOf(StringHelper.getFirstWord(input));
                         if (pokeNum > 0 && pokeNum <= MAX_POKE_OWNED) {
-                            db.getPokemonDao().updatePokemon(userId, pokeInfo.getPoke(), pokeNum);
+                            pokemonDao.updatePokemon(userId, pokeInfo.getPoke(), pokeNum);
                             removeCatchFromBuffer(userId);
                             log.info("Replaced Poke for ID:{}, UserName:{}",
                                     event.getUser().getId(), event.getUser().getName());

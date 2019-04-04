@@ -1,7 +1,7 @@
 package ozmar.pokemonBattle.pokemonBattleHelpers;
 
 import ozmar.PokemonPoke;
-import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
+import ozmar.database.dao.interfaces.PokemonDaoInterface;
 import ozmar.pokemonBattle.PokeBattle;
 import ozmar.pokemonBattle.PokeBattleViewInterface;
 import ozmar.pokemonBattle.convertData.ConvertIntoPoke;
@@ -15,23 +15,24 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 // TODO: Make sure every Pokemon has at least 1 move
 public class PokeController {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> fixedRateTimer;
 
-    private final DatabaseHandlerInterface db;
+    // Objects to get information about the objects to be used in the battle
+    private final PokemonDaoInterface pokemonDao;
     private final ConvertIntoPoke convert;
     private final GetMovesData movesData;
+
     private final Map<Long, TrainerInfo> map;
     private final List<List<Trainer>> trainerList;
     private PokeBattleViewInterface view;
     private PokeBattle pokeBattle;
 
-    public PokeController(@Nonnull DatabaseHandlerInterface db) {
-        this.db = db;
+    public PokeController(@Nonnull PokemonDaoInterface pokemonDao) {
+        this.pokemonDao = pokemonDao;
         this.convert = new ConvertIntoPoke();
         this.movesData = new GetMovesData();
         this.map = new HashMap<>();
@@ -63,7 +64,7 @@ public class PokeController {
 
     @Nonnull
     private Trainer createTrainer(long userId, @Nonnull String userName) {
-        List<Poke> pokeList = convertIntoPoke(db.getPokemonDao().getPokemon(userId));
+        List<Poke> pokeList = convertIntoPoke(pokemonDao.getPokemon(userId));
         return new Trainer(userId, userName, pokeList);
     }
 
@@ -90,10 +91,10 @@ public class PokeController {
         TrainerInfo info = map.get(userId);
         boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(info.sidePosition, info.trainerPosition, fieldPosition, pokePosition);
         if (canSwitchPoke) {
-            view.sendUserMessage("Pokemon set to switch");
+            view.sendUserMessage(userId, "Pokemon set to switch");
             pokeBattle.doTrainerChoices();
         } else {
-            view.sendUserMessage("Pokemon unable to switch");
+            view.sendUserMessage(userId, "Pokemon unable to switch");
         }
 
     }
@@ -103,10 +104,10 @@ public class PokeController {
         boolean canUseMove = pokeBattle.setMoveToUse(info.sidePosition, info.trainerPosition,
                 fieldPosition, movePosition, getTargetPosition(info));
         if (canUseMove) {
-            view.sendUserMessage("Pokemon can use move");
+            view.sendUserMessage(userId, "Pokemon can use move");
             pokeBattle.doTrainerChoices();
         } else {
-            view.sendUserMessage("Pokemon unable to use move");
+            view.sendUserMessage(userId, "Pokemon unable to use move");
         }
     }
 
@@ -132,17 +133,5 @@ public class PokeController {
             this.sidePosition = sidePosition;
             this.trainerPosition = trainerPosition;
         }
-    }
-
-    private void createTimer() {
-
-    }
-
-    public ScheduledFuture<?> timerToDoChoice() {
-        final Runnable sendQueuedOutput = () -> {
-
-        };
-
-        return scheduler.scheduleAtFixedRate(sendQueuedOutput, 1000, 750, TimeUnit.MILLISECONDS);
     }
 }

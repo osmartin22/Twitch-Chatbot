@@ -3,6 +3,11 @@ package PokeBattleTests;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import ozmar.pokemonBattle.PokeBattle;
 import ozmar.pokemonBattle.PokeBattleView;
 import ozmar.pokemonBattle.PokeBattleViewInterface;
@@ -16,17 +21,24 @@ import ozmar.pokemonBattle.pokemonField.PokemonWeather.PokeWeatherEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
 import ozmar.pokemonBattle.pokemonTrainer.Trainer;
+import twitch4j_packages.chat.TwitchChat;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PokeBattleTest {
     // In 1v1 battles there are only 2 sides, 2 trainers and 2 pokemon on the field
     // Therefore trainerPosition and fieldPosition are 0 for both sides
     private static Trainer trainerRed;      // Side: 0
     private static Trainer trainerBlue;     // Side: 1
     private static PokeBattle pokeBattle;
+
+    @Mock
+    private static TwitchChat chat;
+
+    @InjectMocks
     private static PokeBattleViewInterface view;
 
     private static ConvertIntoPoke convertIntoPoke;
@@ -34,7 +46,8 @@ public class PokeBattleTest {
 
     @BeforeClass
     public static void init() {
-        view = new PokeBattleView();
+        chat = Mockito.mock(TwitchChat.class);
+        view = new PokeBattleView(chat, "testChannel");
         movesData = new GetMovesData();
         convertIntoPoke = new ConvertIntoPoke();
         List<Poke> redPokes = new ArrayList<>();

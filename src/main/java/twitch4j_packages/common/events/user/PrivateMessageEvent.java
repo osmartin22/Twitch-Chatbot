@@ -46,6 +46,6 @@ public class PrivateMessageEvent extends TwitchEvent {
     }
 
     public void sendResponse(String message) {
-        // getClient().getMessageInterface().sendPrivateMessage(user.getName(), message);
+        // getClient().getMessageInterface().sendUserMessage(user.getName(), message);
     }
 }
