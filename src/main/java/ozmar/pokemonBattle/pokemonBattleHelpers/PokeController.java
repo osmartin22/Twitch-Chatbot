@@ -88,36 +88,43 @@ public class PokeController {
     }
 
     public void setPokeToSwitchIn(long userId, int fieldPosition, int pokePosition) {
-        TrainerInfo info = map.get(userId);
-        boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(info.sidePosition, info.trainerPosition, fieldPosition, pokePosition);
-        if (canSwitchPoke) {
-            view.sendUserMessage(userId, "Pokemon set to switch");
-            pokeBattle.doTrainerChoices();
+        if (!pokeBattle.isDoingChoices()) {
+            TrainerInfo info = map.get(userId);
+            boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(info.sidePosition, info.trainerPosition, fieldPosition, pokePosition);
+            if (canSwitchPoke) {
+                view.sendUserMessage(userId, "Pokemon set to switch");
+                pokeBattle.doTrainerChoices();
+            } else {
+                view.sendUserMessage(userId, "Pokemon unable to switch");
+            }
         } else {
-            view.sendUserMessage(userId, "Pokemon unable to switch");
+            System.out.println("Currently in battle phase. Switching out is not available");
         }
-
     }
 
     public void setMoveToUse(long userId, int fieldPosition, int movePosition) {
-        TrainerInfo info = map.get(userId);
-        boolean canUseMove = pokeBattle.setMoveToUse(info.sidePosition, info.trainerPosition,
-                fieldPosition, movePosition, getTargetPosition(info));
-        if (canUseMove) {
-            view.sendUserMessage(userId, "Pokemon can use move");
-            pokeBattle.doTrainerChoices();
+        if (!pokeBattle.isDoingChoices()) {
+            TrainerInfo info = map.get(userId);
+            boolean canUseMove = pokeBattle.setMoveToUse(info.sidePosition, info.trainerPosition,
+                    fieldPosition, movePosition, getTargetPosition(info));
+            if (canUseMove) {
+                view.sendUserMessage(userId, "Pokemon can use move");
+                pokeBattle.doTrainerChoices();
+            } else {
+                view.sendUserMessage(userId, "Pokemon unable to use move");
+            }
         } else {
-            view.sendUserMessage(userId, "Pokemon unable to use move");
+            System.out.println("Currently in battle phase. Setting a move not allowed");
         }
     }
 
     @Nonnull
-    private PokeTargetPosition getTargetPosition(@Nonnull TrainerInfo info) {
-        PokeTargetPosition targetPosition;
+    private PokePosition getTargetPosition(@Nonnull TrainerInfo info) {
+        PokePosition targetPosition;
         if (info.sidePosition == 0) {
-            targetPosition = new PokeTargetPosition(1, 0, 0);
+            targetPosition = new PokePosition(1, 0, 0);
         } else {
-            targetPosition = new PokeTargetPosition(0, 0, 0);
+            targetPosition = new PokePosition(0, 0, 0);
         }
 
         return targetPosition;

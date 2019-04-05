@@ -100,9 +100,9 @@ public class PokeEntryHazard {
         Poke poke = pokeInBattle.getPoke();
         if (!poke.getType().isTypeFound(PokeTypeEnum.FLYING)) {
             double damageDealtPercent = getSpikesStackDamage(entryHazardMap.get(PokeEntryHazardEnum.SPIKES));
-            int maxHp = poke.getPokeStats().getPokeStatValue(PokeStat.HP);
+            int maxHp = poke.getPokeStat(PokeStat.HP);
             int damageDealt = (int) (maxHp * damageDealtPercent);
-            poke.getPokeStats().updateCurrHp(damageDealt);
+            poke.updateCurrHp(damageDealt);
         }
     }
 
@@ -137,9 +137,9 @@ public class PokeEntryHazard {
      */
     private void stealthRockHazard(@Nonnull Poke poke) {
         double damageDealtPercent = getStealthRockDamage(poke.getType());
-        int maxHp = poke.getPokeStats().getPokeStatValue(PokeStat.HP);
+        int maxHp = poke.getPokeStat(PokeStat.HP);
         int damageDealt = (int) (maxHp * damageDealtPercent);
-        poke.getPokeStats().updateCurrHp(damageDealt);
+        poke.updateCurrHp(damageDealt);
     }
 
     /**
@@ -171,7 +171,7 @@ public class PokeEntryHazard {
      */
     private void stickyWebHazard(@Nonnull PokeInBattle pokeInBattle) {
         if (!pokeInBattle.getPoke().getType().isTypeFound(PokeTypeEnum.FLYING)) {
-            pokeInBattle.getPokeStages().modifyStage(PokeStatStage.SPD_STAGE, -1);
+            pokeInBattle.modifyStatStage(PokeStatStage.SPD_STAGE, -1);
         }
     }
 

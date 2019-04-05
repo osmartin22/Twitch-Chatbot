@@ -20,7 +20,6 @@ public class TimeHelper {
      */
     public static String getTimeDiff(Calendar start, Calendar end) {
         long timeDiff = end.getTimeInMillis() - start.getTimeInMillis();
-        System.out.println("MILLIS " + timeDiff);
 
         long days = (timeDiff / TimeUnit.DAYS.toMillis(1)) % 24;
         long hours = (timeDiff / TimeUnit.HOURS.toMillis(1)) % 60;

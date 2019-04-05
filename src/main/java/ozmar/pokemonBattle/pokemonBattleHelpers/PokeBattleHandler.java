@@ -66,11 +66,11 @@ public class PokeBattleHandler {
     private void sortLists(@Nonnull List<PokeInBattle> switching, @Nonnull List<PokeInBattle> attacking) {
         // Sort Pokemon switching by speed
         switching.sort((o1, o2) -> {
-            int speed1 = o1.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD);
+            int speed1 = o1.getPoke().getPokeStat(PokeStat.SPD);
             if (o1.getPoke().getNonVolatile() == NonVolatileStatus.PARALYSIS) {
                 speed1 /= 2;
             }
-            int speed2 = o2.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD);
+            int speed2 = o2.getPoke().getPokeStat(PokeStat.SPD);
             if (o2.getPoke().getNonVolatile() == NonVolatileStatus.PARALYSIS) {
                 speed2 /= 2;
             }
@@ -81,11 +81,11 @@ public class PokeBattleHandler {
         attacking.sort((o1, o2) -> {
             int result = (o2.getMoveToUse().getPriority()) - o1.getMoveToUse().getPriority();
             if (result == 0) {
-                int speed1 = o1.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD);
+                int speed1 = o1.getPoke().getPokeStat(PokeStat.SPD);
                 if (o1.getPoke().getNonVolatile() == NonVolatileStatus.PARALYSIS) {
                     speed1 /= 2;
                 }
-                int speed2 = o2.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPD);
+                int speed2 = o2.getPoke().getPokeStat(PokeStat.SPD);
                 if (o2.getPoke().getNonVolatile() == NonVolatileStatus.PARALYSIS) {
                     speed2 /= 2;
                 }
@@ -102,8 +102,8 @@ public class PokeBattleHandler {
             if (pb.getTrainerChoice() == TrainerChoice.CHOICE_MOVE &&
                     pb.getMoveToUse().getDamageClass() != PokeMoveDamageClass.STATUS) {
 
-                int attackAcc = pb.getPokeStages().getStateStage(PokeStatStage.ACC_STAGE);
-                int targetEva = pb.getPokeStages().getStateStage(PokeStatStage.EVA_STAGE);
+                int attackAcc = pb.getStatStage(PokeStatStage.ACC_STAGE);
+                int targetEva = pb.getStatStage(PokeStatStage.EVA_STAGE);
                 if (!calculator.nvStatusPreventsMove(pb)) {
                     if (calculator.willMoveHit(attackAcc, targetEva, pb.getMoveToUse())) {
                         int damageDone = doMove(pb);
@@ -126,7 +126,7 @@ public class PokeBattleHandler {
         int damageDone = 0;
 
         PokeMove move = attacker.getMoveToUse();
-        PokeTargetPosition targetPosition = attacker.getTargetPosition();
+        PokePosition targetPosition = attacker.getTargetPosition();
         PokeInBattle target = sideList.get(targetPosition.getSidePosition())
                 .getTrainerInBattle(targetPosition.getTrainerPosition())
                 .getPokeInBattle(targetPosition.getFieldPosition());
@@ -141,7 +141,7 @@ public class PokeBattleHandler {
                 if (moveWillHit) {
                     attacker.setLastUsedMove(attacker.getMoveToUse());
                     damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
-                    target.getPoke().getPokeStats().updateCurrHp(-damageDone);
+                    target.getPoke().updateCurrHp(-damageDone);
                     sb.append(String.format("%s attacked %s for %s damage. ", attacker.getPoke().getName(),
                             target.getPoke().getName(), damageDone));
                     if (target.getPoke().isFainted()) {
@@ -185,8 +185,8 @@ public class PokeBattleHandler {
     }
 
     private boolean willMoveHit(@Nonnull PokeInBattle attacker, @Nonnull PokeInBattle target, @Nonnull PokeMove move) {
-        return calculator.willMoveHit(attacker.getPokeStages().getStateStage(PokeStatStage.ACC_STAGE),
-                target.getPokeStages().getStateStage(PokeStatStage.EVA_STAGE), move);
+        return calculator.willMoveHit(attacker.getStatStage(PokeStatStage.ACC_STAGE),
+                target.getStatStage(PokeStatStage.EVA_STAGE), move);
     }
 
     private boolean isMovePrevented(@Nonnull PokeInBattle attacker) {

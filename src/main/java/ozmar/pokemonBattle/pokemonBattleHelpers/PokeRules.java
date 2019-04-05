@@ -60,7 +60,7 @@ public class PokeRules {
     }
 
     public boolean setMoveToUse(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition, int movePosition,
-                                @Nonnull PokeTargetPosition targetPosition) {
+                                @Nonnull PokePosition targetPosition) {
         boolean isAbleToDoMove = canTrainersPokeUseMove(trainerInBattle, fieldPosition, movePosition, targetPosition);
         if (isAbleToDoMove) {
             trainerInBattle.setMoveToUse(fieldPosition, movePosition, targetPosition);
@@ -69,7 +69,7 @@ public class PokeRules {
     }
 
     private boolean canTrainersPokeUseMove(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition, int movePosition,
-                                           @Nonnull PokeTargetPosition targetPosition) {
+                                           @Nonnull PokePosition targetPosition) {
         boolean isAbleToDoMove = false;
         PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
         if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
@@ -79,7 +79,7 @@ public class PokeRules {
     }
 
     public boolean isAbleToDoMove(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition, int movePosition,
-                                  @Nonnull PokeTargetPosition targetPosition) {
+                                  @Nonnull PokePosition targetPosition) {
         boolean isAbleToDoMove = true;
         PokeInBattle pokeInBattle = trainerInBattle.getPokeInBattle(fieldPosition);
         PokeMove move = pokeInBattle.getPoke().getMoveList().get(movePosition);

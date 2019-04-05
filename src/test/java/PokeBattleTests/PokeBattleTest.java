@@ -16,7 +16,7 @@ import ozmar.pokemonBattle.convertData.GetMovesData;
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemon.PokeInBattle;
 import ozmar.pokemonBattle.pokemonBattleHelpers.PokeBattleCalculator;
-import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokePosition;
 import ozmar.pokemonBattle.pokemonField.PokemonWeather.PokeWeatherEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
@@ -111,11 +111,11 @@ public class PokeBattleTest {
     @Test
     public void test() {
         for (int i = 0; i < 10; i++) {
-            PokeTargetPosition targetPosition;
-            targetPosition = new PokeTargetPosition(1, 0, 0);
+            PokePosition targetPosition;
+            targetPosition = new PokePosition(1, 0, 0);
             Assert.assertTrue(pokeBattle.setMoveToUse(0, 0, 0, 1, targetPosition));
 
-            targetPosition = new PokeTargetPosition(0, 0, 0);
+            targetPosition = new PokePosition(0, 0, 0);
             Assert.assertTrue(pokeBattle.setMoveToUse(1, 0, 0, 1, targetPosition));
 
             PokeInBattle redPoke = pokeBattle.getPokeInBattle(0, 0, 0);
@@ -136,8 +136,8 @@ public class PokeBattleTest {
         PokeInBattle pokeInBattleRed = new PokeInBattle(trainerRed.getPokeList().get(0), 0, 0, 0);
         PokeInBattle pokeInBattleBlue = new PokeInBattle(trainerBlue.getPokeList().get(0), 0, 0, 0);
         PokeMove move = movesData.getMove("Pound,");
-        pokeInBattleRed.getPokeStages().modifyStage(PokeStatStage.ATK_STAGE, -2);
-        pokeInBattleBlue.getPokeStages().modifyStage(PokeStatStage.DEF_STAGE, 2);
+        pokeInBattleRed.modifyStatStage(PokeStatStage.ATK_STAGE, -2);
+        pokeInBattleBlue.modifyStatStage(PokeStatStage.DEF_STAGE, 2);
 
         double dmg = calculator.calculateDamage(pokeInBattleRed, pokeInBattleBlue, move, PokeWeatherEnum.CLEAR_SKIES);
         System.out.println(dmg);

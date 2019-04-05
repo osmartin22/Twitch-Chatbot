@@ -3,9 +3,11 @@ package ozmar.pokemonBattle.pokemon;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonNature.PokeNatureEnum;
 import ozmar.pokemonBattle.pokemonStats.PokeAllStats;
+import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeType;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class Poke {
@@ -89,8 +91,20 @@ public class Poke {
         return nature;
     }
 
-    public PokeAllStats getPokeStats() {
-        return pokeStats;
+    public boolean isFainted() {
+        return pokeStats.getCurrHp() == 0;
+    }
+
+    public int getCurrHp() {
+        return pokeStats.getCurrHp();
+    }
+
+    public void updateCurrHp(int hpChange) {
+        pokeStats.updateCurrHp(hpChange);
+    }
+
+    public int getPokeStat(@Nonnull PokeStat stat) {
+        return pokeStats.getPokeStatValue(stat);
     }
 
     public List<PokeMove> getMoveList() {
@@ -105,10 +119,6 @@ public class Poke {
         if (this.nonVolatile == NonVolatileStatus.NONE) {
             this.nonVolatile = nonVolatile;
         }
-    }
-
-    public boolean isFainted() {
-        return pokeStats.getCurrHp() == 0;
     }
 
     public int getSleepCounter() {

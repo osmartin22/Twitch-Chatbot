@@ -86,11 +86,11 @@ public class PokeBattleCalculator {
         int stat;
         int stage;
         if (isSpecial) {
-            stat = attacker.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPC_ATK);
-            stage = attacker.getPokeStages().getStateStage(PokeStatStage.SPC_ATK_STAGE);
+            stat = attacker.getPoke().getPokeStat(PokeStat.SPC_ATK);
+            stage = attacker.getStatStage(PokeStatStage.SPC_ATK_STAGE);
         } else {
-            stat = attacker.getPoke().getPokeStats().getPokeStatValue(PokeStat.ATK);
-            stage = attacker.getPokeStages().getStateStage(PokeStatStage.ATK_STAGE);
+            stat = attacker.getPoke().getPokeStat(PokeStat.ATK);
+            stage = attacker.getStatStage(PokeStatStage.ATK_STAGE);
         }
 
         stage = isCrit && stage < 0 ? 0 : stage;
@@ -101,11 +101,11 @@ public class PokeBattleCalculator {
         int stat;
         int stage;
         if (isSpecial) {
-            stat = defender.getPoke().getPokeStats().getPokeStatValue(PokeStat.SPC_DEF);
-            stage = defender.getPokeStages().getStateStage(PokeStatStage.SPC_DEF_STAGE);
+            stat = defender.getPoke().getPokeStat(PokeStat.SPC_DEF);
+            stage = defender.getStatStage(PokeStatStage.SPC_DEF_STAGE);
         } else {
-            stat = defender.getPoke().getPokeStats().getPokeStatValue(PokeStat.DEF);
-            stage = defender.getPokeStages().getStateStage(PokeStatStage.DEF_STAGE);
+            stat = defender.getPoke().getPokeStat(PokeStat.DEF);
+            stage = defender.getStatStage(PokeStatStage.DEF_STAGE);
         }
 
         stage = isCrit && stage > 0 ? 0 : stage;

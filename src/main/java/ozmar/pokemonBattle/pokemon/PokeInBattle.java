@@ -1,11 +1,12 @@
 package ozmar.pokemonBattle.pokemon;
 
-import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokePosition;
 import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBinding;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBindingEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonStats.PokeAllStages;
+import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileBattleStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
@@ -23,9 +24,6 @@ import java.util.Set;
 
 public class PokeInBattle {
 
-    private final int sidePosition;
-    private final int trainerPosition;
-    private final int fieldPosition;
     private Poke poke;
 
     // TODO: Have a isSemiInvulnerable, isCharging, and isRecharging flag
@@ -51,7 +49,8 @@ public class PokeInBattle {
 
     private boolean isFlinched;
 
-    private PokeTargetPosition targetPosition;
+    private final PokePosition userPosition;
+    private PokePosition targetPosition;
 
     /*
      Moves that copy other moves
@@ -82,9 +81,7 @@ public class PokeInBattle {
      */
 
     public PokeInBattle(@Nonnull Poke poke, int sidePosition, int trainerPosition, int fieldPosition) {
-        this.sidePosition = sidePosition;
-        this.trainerPosition = trainerPosition;
-        this.fieldPosition = fieldPosition;
+        this.userPosition = new PokePosition(sidePosition, trainerPosition, fieldPosition);
         this.poke = poke;
         this.currMove = null;
         this.moveToUse = null;
@@ -102,15 +99,15 @@ public class PokeInBattle {
     }
 
     public int getSidePosition() {
-        return sidePosition;
+        return userPosition.getSidePosition();
     }
 
     public int getTrainerPosition() {
-        return trainerPosition;
+        return userPosition.getTrainerPosition();
     }
 
     public int getFieldPosition() {
-        return fieldPosition;
+        return userPosition.getFieldPosition();
     }
 
     @Nonnull
@@ -139,14 +136,17 @@ public class PokeInBattle {
         return moveToUse;
     }
 
-    public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokeTargetPosition targetPosition) {
+    public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokePosition targetPosition) {
         this.moveToUse = moveToUse;
         this.targetPosition = targetPosition;
     }
 
-    @Nonnull
-    public PokeAllStages getPokeStages() {
-        return pokeStages;
+    public int getStatStage(@Nonnull PokeStatStage statType) {
+        return pokeStages.getStateStage(statType);
+    }
+
+    public void modifyStatStage(@Nonnull PokeStatStage statType, int stageChange) {
+        pokeStages.modifyStage(statType, stageChange);
     }
 
     @Nonnull
@@ -183,8 +183,6 @@ public class PokeInBattle {
 
         return inflictedStatus;
     }
-
-
 
 
     @Nonnull
@@ -250,11 +248,11 @@ public class PokeInBattle {
     }
 
     @Nonnull
-    public PokeTargetPosition getTargetPosition() {
+    public PokePosition getTargetPosition() {
         return targetPosition;
     }
 
-    public void setTargetPosition(@Nonnull PokeTargetPosition targetPosition) {
+    public void setTargetPosition(@Nonnull PokePosition targetPosition) {
         this.targetPosition = targetPosition;
     }
 

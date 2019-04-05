@@ -2,7 +2,7 @@ package ozmar.pokemonBattle.pokemonTrainer;
 
 import ozmar.pokemonBattle.pokemon.Poke;
 import ozmar.pokemonBattle.pokemon.PokeInBattle;
-import ozmar.pokemonBattle.pokemonBattleHelpers.PokeTargetPosition;
+import ozmar.pokemonBattle.pokemonBattleHelpers.PokePosition;
 import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
 
 import javax.annotation.Nonnull;
@@ -82,7 +82,7 @@ public class TrainerInBattle {
         pokeInBattle.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
     }
 
-    public void setMoveToUse(int fieldPosition, int movePosition, @Nonnull PokeTargetPosition targetPosition) {
+    public void setMoveToUse(int fieldPosition, int movePosition, @Nonnull PokePosition targetPosition) {
         PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
         pokeInBattle.setMoveToUse(pokeInBattle.getPoke().getMoveList().get(movePosition), targetPosition);
     }
