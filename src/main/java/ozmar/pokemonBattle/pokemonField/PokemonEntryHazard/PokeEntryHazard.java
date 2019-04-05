@@ -102,7 +102,7 @@ public class PokeEntryHazard {
             double damageDealtPercent = getSpikesStackDamage(entryHazardMap.get(PokeEntryHazardEnum.SPIKES));
             int maxHp = poke.getPokeStat(PokeStat.HP);
             int damageDealt = (int) (maxHp * damageDealtPercent);
-            poke.updateCurrHp(damageDealt);
+            poke.lowerHp(damageDealt);
         }
     }
 
@@ -139,7 +139,7 @@ public class PokeEntryHazard {
         double damageDealtPercent = getStealthRockDamage(poke.getType());
         int maxHp = poke.getPokeStat(PokeStat.HP);
         int damageDealt = (int) (maxHp * damageDealtPercent);
-        poke.updateCurrHp(damageDealt);
+        poke.lowerHp(damageDealt);
     }
 
     /**

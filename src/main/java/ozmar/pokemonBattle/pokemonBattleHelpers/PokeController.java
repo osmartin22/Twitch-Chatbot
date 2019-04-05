@@ -88,33 +88,25 @@ public class PokeController {
     }
 
     public void setPokeToSwitchIn(long userId, int fieldPosition, int pokePosition) {
-        if (!pokeBattle.isDoingChoices()) {
-            TrainerInfo info = map.get(userId);
-            boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(info.sidePosition, info.trainerPosition, fieldPosition, pokePosition);
-            if (canSwitchPoke) {
-                view.sendUserMessage(userId, "Pokemon set to switch");
-                pokeBattle.doTrainerChoices();
-            } else {
-                view.sendUserMessage(userId, "Pokemon unable to switch");
-            }
+        TrainerInfo info = map.get(userId);
+        boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(info.sidePosition, info.trainerPosition, fieldPosition, pokePosition);
+        if (canSwitchPoke) {
+            view.sendUserMessage(userId, "Pokemon set to switch");
+            pokeBattle.doTrainerChoices();
         } else {
-            System.out.println("Currently in battle phase. Switching out is not available");
+            view.sendUserMessage(userId, "Pokemon unable to switch");
         }
     }
 
     public void setMoveToUse(long userId, int fieldPosition, int movePosition) {
-        if (!pokeBattle.isDoingChoices()) {
-            TrainerInfo info = map.get(userId);
-            boolean canUseMove = pokeBattle.setMoveToUse(info.sidePosition, info.trainerPosition,
-                    fieldPosition, movePosition, getTargetPosition(info));
-            if (canUseMove) {
-                view.sendUserMessage(userId, "Pokemon can use move");
-                pokeBattle.doTrainerChoices();
-            } else {
-                view.sendUserMessage(userId, "Pokemon unable to use move");
-            }
+        TrainerInfo info = map.get(userId);
+        boolean canUseMove = pokeBattle.setMoveToUse(info.sidePosition, info.trainerPosition,
+                fieldPosition, movePosition, getTargetPosition(info));
+        if (canUseMove) {
+            view.sendUserMessage(userId, "Pokemon can use move");
+            pokeBattle.doTrainerChoices();
         } else {
-            System.out.println("Currently in battle phase. Setting a move not allowed");
+            view.sendUserMessage(userId, "Pokemon unable to use move");
         }
     }
 

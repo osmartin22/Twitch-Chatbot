@@ -141,10 +141,24 @@ public class PokeInBattle {
         this.targetPosition = targetPosition;
     }
 
+
+    /**
+     * Gets the stage of the desired stage
+     *
+     * @param statType stat to get the stage of
+     * @return int
+     */
     public int getStatStage(@Nonnull PokeStatStage statType) {
         return pokeStages.getStateStage(statType);
     }
 
+    /**
+     * Changes the desired Stat stage with the desired amount
+     * TODO: Should return a value to signify whether the stat stage could be increased/decreased
+     *
+     * @param statType    Stat affected
+     * @param stageChange change in stage
+     */
     public void modifyStatStage(@Nonnull PokeStatStage statType, int stageChange) {
         pokeStages.modifyStage(statType, stageChange);
     }
@@ -154,6 +168,13 @@ public class PokeInBattle {
         return volatileStatusMap;
     }
 
+    /**
+     * Adds Volatile Status to the PokeInBattle if not already present
+     * Some statuses last for N number of turns before disappearing
+     *
+     * @param volatileStatus volatile status to add to PokeInBattle
+     * @return boolean
+     */
     public boolean addVolatileStatus(@Nonnull VolatileStatus volatileStatus) {
         boolean inflictedStatus = false;
         int turnsLeft = volatileStatusMap.getOrDefault(volatileStatus, -1);
@@ -178,6 +199,8 @@ public class PokeInBattle {
                 case TELEKINESIS:
                     volatileStatusMap.put(volatileStatus, 3);
                     break;
+                default:
+                    volatileStatusMap.put(volatileStatus, 0);
             }
         }
 

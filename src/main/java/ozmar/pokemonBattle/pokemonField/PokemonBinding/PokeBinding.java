@@ -45,7 +45,7 @@ public class PokeBinding {
     public void doBindingDamage(@Nonnull Poke poke) {
         int maxHp = poke.getPokeStat(PokeStat.HP);
         int damageDealt = (int) (maxHp * (1 / 8.0));
-        poke.updateCurrHp(-damageDealt);
+        poke.lowerHp(damageDealt);
         bindingTurns--;
     }
 }

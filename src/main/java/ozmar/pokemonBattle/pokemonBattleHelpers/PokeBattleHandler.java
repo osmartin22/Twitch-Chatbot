@@ -141,7 +141,7 @@ public class PokeBattleHandler {
                 if (moveWillHit) {
                     attacker.setLastUsedMove(attacker.getMoveToUse());
                     damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
-                    target.getPoke().updateCurrHp(-damageDone);
+                    target.getPoke().lowerHp(damageDone);
                     sb.append(String.format("%s attacked %s for %s damage. ", attacker.getPoke().getName(),
                             target.getPoke().getName(), damageDone));
                     if (target.getPoke().isFainted()) {

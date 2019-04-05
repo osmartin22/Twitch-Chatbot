@@ -99,10 +99,30 @@ public class Poke {
         return pokeStats.getCurrHp();
     }
 
-    public void updateCurrHp(int hpChange) {
+    /**
+     * Lowers the Poke's current hp value
+     *
+     * @param hpChange amount of hp to lower
+     */
+    public void lowerHp(int hpChange) {
+        pokeStats.updateCurrHp(-hpChange);
+    }
+
+    /**
+     * Restores the Poke's current hp value
+     *
+     * @param hpChange amount of hp to restore
+     */
+    public void restoreHp(int hpChange) {
         pokeStats.updateCurrHp(hpChange);
     }
 
+    /**
+     * Gets the stat value for the desired PokeStat
+     *
+     * @param stat PokeStat
+     * @return stat value
+     */
     public int getPokeStat(@Nonnull PokeStat stat) {
         return pokeStats.getPokeStatValue(stat);
     }
@@ -115,6 +135,14 @@ public class Poke {
         return nonVolatile;
     }
 
+    /**
+     * A Pokemon can only have one Non Volatile Status
+     * The Non Volatile Status only affects the Pokemon if it does not have one already
+     * NOTE: Some moves can turn the POISON status to BADLY POISONED
+     * TODO: Should update method to handle changing POISON to BADLY POISONED
+     *
+     * @param nonVolatile NonVolatileStatus
+     */
     public void updateNonVolatile(NonVolatileStatus nonVolatile) {
         if (this.nonVolatile == NonVolatileStatus.NONE) {
             this.nonVolatile = nonVolatile;
