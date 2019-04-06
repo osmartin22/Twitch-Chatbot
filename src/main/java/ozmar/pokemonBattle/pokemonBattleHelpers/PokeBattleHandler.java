@@ -166,6 +166,7 @@ public class PokeBattleHandler {
                     sb.append(String.format("%s attacked %s for %s damage. ", attacker.getPoke().getName(),
                             target.getPoke().getName(), damageDone));
                     if (target.getPoke().isFainted()) {
+                        target.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
                         sb.append(String.format("%s has fainted. ", target.getPoke().getName()));
                     }
 

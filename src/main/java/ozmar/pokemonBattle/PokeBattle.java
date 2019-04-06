@@ -191,9 +191,12 @@ public class PokeBattle {
     private ScheduledFuture<?> timerToDoChoice() {
         final Runnable timerFinished = () -> {
             System.out.println("Time Ran Out For Choosing A Choice");
+            for (TrainerInBattle tb : tbMap.values()) {
+//                tb.getPokeInBattle(0).setMoveToUse(0, );
+            }
             // Timer only runs when a user has not done a choice yet (move or switch out)
             // A move should be chosen for them to do here
-            doTrainerChoices();
+//            doTrainerChoices();
         };
 
         return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
@@ -221,6 +224,25 @@ public class PokeBattle {
             System.out.println("Time Ran Out For Switching");
             // Timer only runs when a user/users have to switch a pokemon due to it fainting or being forced
             // A pokemon to switch should be set if the timer runs out
+            for (long id : faintedMap.keySet()) {
+                TrainerInBattle tb = tbMap.get(id);
+
+                boolean canSwitch = false;
+                int count = 0;
+                for (int position : faintedMap.get(id)) {
+                    while (!canSwitch && count < 6) {
+                        canSwitch = pokeRules.setPokeToSwitchIn(tb, position, count++);
+                    }
+
+                    faintedMap.get(id).remove(position);
+                    if (!canSwitch) {
+                        System.out.println("TRAINER HAS LOST");
+                    }
+                }
+            }
+
+            pokeBattleHandler.test();
+            phase = BattlePhase.WAITING;
         };
 
         return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
