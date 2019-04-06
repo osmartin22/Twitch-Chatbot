@@ -139,6 +139,7 @@ public class PokeInBattle {
     public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokePosition targetPosition) {
         this.moveToUse = moveToUse;
         this.targetPosition = targetPosition;
+        this.trainerChoice = TrainerChoice.CHOICE_MOVE;
     }
 
 
@@ -247,8 +248,8 @@ public class PokeInBattle {
     }
 
     public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
-        trainerChoice = TrainerChoice.CHOICE_SWITCH;
         this.pokeToSwitchIn = pokeToSwitchIn;
+        this.trainerChoice = TrainerChoice.CHOICE_SWITCH;
     }
 
     // TODO: Check if the stats should be kept when switching (Baton Pass, U-Turn)

@@ -68,17 +68,10 @@ public class TrainerInBattle {
         return pokeInBattleList.get(fieldPosition);
     }
 
-    public boolean setPokeToSwitchIn(int fieldPosition, int pokePosition) {
-        boolean canSwitchIn = false;
+    public void setPokeToSwitchIn(int fieldPosition, int pokePosition) {
         PokeInBattle pokeInBattle = pokeInBattleList.get(fieldPosition);
-        Poke currentPoke = pokeInBattle.getPoke();
         Poke pokeToSwitchIn = trainer.getPokeList().get(pokePosition);
-        if (!pokeToSwitchIn.isFainted() && (currentPoke != pokeToSwitchIn)) {
-            pokeInBattle.setPokeToSwitchIn(pokeToSwitchIn);
-            canSwitchIn = true;
-        }
-
-        return canSwitchIn;
+        pokeInBattle.setPokeToSwitchIn(pokeToSwitchIn);
     }
 
     public void switchPoke(int fieldPosition) {
