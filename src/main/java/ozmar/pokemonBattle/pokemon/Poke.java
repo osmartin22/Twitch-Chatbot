@@ -9,7 +9,9 @@ import ozmar.pokemonBattle.pokemonType.PokeType;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
+// TODO: PokeMove has not overridden equals() or hashcode()
 public class Poke {
     private final int id;
     private int level;
@@ -32,8 +34,8 @@ public class Poke {
     private boolean isDrowsy;
     // ABILITIES GO HERE WHEN IMPLEMENTED
 
-    public Poke(int id, int level, String name, String nickname, int height, int weight, PokeType type,
-                PokeNatureEnum nature, PokeAllStats pokeStats, List<PokeMove> moveList) {
+    public Poke(int id, int level, @Nonnull String name, @Nonnull String nickname, int height, int weight, PokeType type,
+                @Nonnull PokeNatureEnum nature, @Nonnull PokeAllStats pokeStats, @Nonnull List<PokeMove> moveList) {
         this.id = id;
         this.level = level;
         this.name = name;
@@ -131,6 +133,16 @@ public class Poke {
         return moveList;
     }
 
+    public String getMoves() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < moveList.size(); i++) {
+            PokeMove move = moveList.get(i);
+            sb.append(String.format("%s) %s (%s) ", i + 1, move.getName(), move.getCurrPp()));
+        }
+
+        return sb.toString();
+    }
+
     public NonVolatileStatus getNonVolatile() {
         return nonVolatile;
     }
@@ -163,5 +175,38 @@ public class Poke {
 
     public void setDrowsy(boolean drowsy) {
         isDrowsy = drowsy;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Poke)) {
+            return false;
+        }
+
+        Poke poke = (Poke) obj;
+
+        return id == poke.id &&
+                level == poke.level &&
+                Objects.equals(name, poke.name) &&
+                Objects.equals(nickname, poke.nickname) &&
+                height == poke.height &&
+                weight == poke.weight &&
+                Objects.equals(type, poke.type) &&
+                Objects.equals(nature, poke.nature) &&
+                Objects.equals(pokeStats, poke.pokeStats) &&
+                Objects.equals(moveList, poke.moveList) &&
+                Objects.equals(nonVolatile, poke.nonVolatile) &&
+                sleepCounter == poke.sleepCounter &&
+                isDrowsy == poke.isDrowsy;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, level, name, nickname, height, weight, type, nature,
+                pokeStats, moveList, nonVolatile, sleepCounter, isDrowsy);
     }
 }

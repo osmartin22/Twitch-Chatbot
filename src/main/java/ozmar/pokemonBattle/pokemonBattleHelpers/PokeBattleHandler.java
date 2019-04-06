@@ -16,6 +16,7 @@ import ozmar.utils.RandomHelper;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 // TODO: Create a class than can hold information on what happens in the battle
 //  i.e. Pokemon was confused, flinched, stats were changed, hp restored/damaged
@@ -31,30 +32,47 @@ public class PokeBattleHandler {
     private final List<PokeInBattle> attacking;
     private StringBuilder sb;
 
-    public PokeBattleHandler(@Nonnull PokeField field, @Nonnull List<PokeTrainerSide> sideList) {
+    private final Set<TrainerInBattle> tbSet;
+
+    public PokeBattleHandler(@Nonnull PokeField field, @Nonnull List<PokeTrainerSide> sideList,
+                             @Nonnull Set<TrainerInBattle> tbSet) {
         this.field = field;
         this.sideList = sideList;
         this.calculator = new PokeBattleCalculator();
         this.switching = new ArrayList<>();
         this.attacking = new ArrayList<>();
         this.sb = new StringBuilder();
+
+        this.tbSet = tbSet;
+    }
+
+    // TODO: CREATE A METHOD THAT ONLY SWITCHES POKEMON IN
+    public String test() {
+        sb.setLength(0);
+
+        for (TrainerInBattle tb : tbSet) {
+            if (tb.getPokeInBattle(0).getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
+                switching.add(tb.getPokeInBattle(0));
+            }
+        }
+
+        switchPokeIn(switching);
+        switching.clear();
+        return sb.toString();
     }
 
     @Nonnull
     public String doTrainerChoices() {
         sb.setLength(0);
-        for (PokeTrainerSide pSide : sideList) {
-            List<TrainerInBattle> tbList = sideList.get(pSide.getSideId()).getTrainerInBattleList();
-            for (TrainerInBattle tb : tbList) {
-                if (tb.getPokeInBattle(0).getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
-                    switching.add(tb.getPokeInBattle(0));
-                } else {
-                    attacking.add(tb.getPokeInBattle(0));
-                }
+
+        for (TrainerInBattle tb : tbSet) {
+            if (tb.getPokeInBattle(0).getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
+                switching.add(tb.getPokeInBattle(0));
+            } else {
+                attacking.add(tb.getPokeInBattle(0));
             }
         }
 
-        sortLists(switching, attacking);
         switchPokeIn(switching);
         attackingPokes(attacking);
 
@@ -63,8 +81,8 @@ public class PokeBattleHandler {
         return sb.toString();
     }
 
-    private void sortLists(@Nonnull List<PokeInBattle> switching, @Nonnull List<PokeInBattle> attacking) {
-        // Sort Pokemon switching by speed
+    // Sort Pokemon switching by speed
+    private void sortSwitching(@Nonnull List<PokeInBattle> switching) {
         switching.sort((o1, o2) -> {
             int speed1 = o1.getPoke().getPokeStat(PokeStat.SPD);
             if (o1.getPoke().getNonVolatile() == NonVolatileStatus.PARALYSIS) {
@@ -76,8 +94,10 @@ public class PokeBattleHandler {
             }
             return speed1 - speed2;
         });
+    }
 
-        // Sort Pokemon doing a move by move priority first followed by speed if moves have the same priority
+    // Sort Pokemon doing a move by move priority first followed by speed if moves have the same priority
+    private void sortAttacking(@Nonnull List<PokeInBattle> attacking) {
         attacking.sort((o1, o2) -> {
             int result = (o2.getMoveToUse().getPriority()) - o1.getMoveToUse().getPriority();
             if (result == 0) {
@@ -97,6 +117,7 @@ public class PokeBattleHandler {
     }
 
     private void attackingPokes(@Nonnull List<PokeInBattle> attacking) {
+        sortAttacking(attacking);
         // Currently ignoring status moves as they have a lot of unique effects to take into account
         for (PokeInBattle pb : attacking) {
             if (pb.getTrainerChoice() == TrainerChoice.CHOICE_MOVE &&
@@ -164,13 +185,15 @@ public class PokeBattleHandler {
     }
 
     private void switchPokeIn(@Nonnull List<PokeInBattle> pbList) {
+        sortSwitching(pbList);
         for (PokeInBattle pb : pbList) {
             TrainerInBattle tb = sideList.get(pb.getSidePosition()).getTrainerInBattle(pb.getTrainerPosition());
             if (tb.getPokeInBattle(pb.getFieldPosition()).getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
                 sb.append(String.format("%s switched out for %s. ", pb.getPoke().getName(),
                         pb.getPokeToSwitchIn().getName()));
                 tb.switchPoke(pb.getFieldPosition());
-                PokeSide side = sideList.get(pb.getSidePosition()).getSide();
+
+                PokeSide side = tb.getSide();
                 if (side.getEntryHazard().isEntryHazardPresent()) {
                     side.getEntryHazard().doEntryHazardEffect(pb);
                 }

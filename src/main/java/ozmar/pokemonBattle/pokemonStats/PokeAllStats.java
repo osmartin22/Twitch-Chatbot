@@ -5,6 +5,7 @@ import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PokeAllStats {
     private int currHp;
@@ -51,5 +52,26 @@ public class PokeAllStats {
      */
     public int getPokeStatValue(@Nonnull PokeStat statType) {
         return pokeStats.get(statType);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof PokeAllStats)) {
+            return false;
+        }
+
+        PokeAllStats allStats = (PokeAllStats) obj;
+
+        return currHp == allStats.currHp &&
+                Objects.equals(pokeStats, allStats.pokeStats);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currHp, pokeStats);
     }
 }

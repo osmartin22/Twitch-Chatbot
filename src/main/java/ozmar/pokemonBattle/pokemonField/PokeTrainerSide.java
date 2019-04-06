@@ -6,18 +6,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class PokeTrainerSide {
-    private final int sideId;
     private final PokeSide side;
     private final List<TrainerInBattle> trainerInBattleList;
 
-    public PokeTrainerSide(@Nonnull List<TrainerInBattle> trainerInBattleList, int sideId) {
-        this.sideId = sideId;
-        this.side = new PokeSide(sideId);
+    public PokeTrainerSide(@Nonnull PokeSide side, @Nonnull List<TrainerInBattle> trainerInBattleList) {
+        this.side = side;
         this.trainerInBattleList = trainerInBattleList;
-    }
-
-    public int getSideId() {
-        return sideId;
     }
 
     @Nonnull

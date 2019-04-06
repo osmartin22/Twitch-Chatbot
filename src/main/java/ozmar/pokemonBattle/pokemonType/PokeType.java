@@ -5,6 +5,7 @@ import ozmar.pokemonBattle.pokemonBattleHelpers.PokeInfoHelper;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PokeType {
     private final List<PokeTypeEnum> typesList;
@@ -128,4 +129,24 @@ public class PokeType {
     }
 
     // TODO: Add methods to rearrange Types after removing a type so that NONE always appears after the other types(not necessary)
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof PokeType)) {
+            return false;
+        }
+
+        PokeType type = (PokeType) obj;
+        return Objects.equals(typesList, type.typesList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(typesList);
+    }
 }

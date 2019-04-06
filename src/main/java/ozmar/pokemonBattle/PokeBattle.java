@@ -6,6 +6,7 @@ import ozmar.pokemonBattle.pokemonBattleHelpers.PokePosition;
 import ozmar.pokemonBattle.pokemonBattleHelpers.PokeRules;
 import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
 import ozmar.pokemonBattle.pokemonField.PokeField;
+import ozmar.pokemonBattle.pokemonField.PokeSide;
 import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
 import ozmar.pokemonBattle.pokemonTrainer.Trainer;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
@@ -25,80 +26,104 @@ public class PokeBattle {
 
     private final PokeBattleViewInterface view;
     private final PokeField field;
-    private final List<PokeTrainerSide> sideList;
     private final PokeRules pokeRules;
     private final PokeBattleHandler pokeBattleHandler;
 
+    private final Map<Long, TrainerInBattle> tbMap;
     private final Map<Long, Set<Integer>> faintedMap;   // Trainer Id -> Set<Position of the pokemon on the field>
+
+    /*
+    UserId points to it's TrainerInBattle object
+
+     */
 
     private BattlePhase phase;
 
     public PokeBattle(@Nonnull PokeBattleViewInterface view, @Nonnull List<List<Trainer>> listList, int pokesInBattle) {
+        this.tbMap = new HashMap<>();
+        this.faintedMap = new HashMap<>();
+
         this.phase = BattlePhase.WAITING;
         this.view = view;
         this.field = new PokeField();
-        this.sideList = new ArrayList<>(listList.size());
         this.pokeRules = new PokeRules();
-        this.pokeBattleHandler = new PokeBattleHandler(field, sideList);
-        this.faintedMap = new HashMap<>();
-        initialize(listList, pokesInBattle);
+
+        List<PokeTrainerSide> sideList = initialize(listList, pokesInBattle);
+        this.pokeBattleHandler = new PokeBattleHandler(field, sideList, new HashSet<>(tbMap.values()));
         startChoiceTimer();
     }
 
-    private void initialize(@Nonnull List<List<Trainer>> listList, int pokesInBattle) {
+    private List<PokeTrainerSide> initialize(@Nonnull List<List<Trainer>> listList, int pokesInBattle) {
+        List<PokeTrainerSide> pokeTrainerSideList = new ArrayList<>(listList.size());
         for (int i = 0; i < listList.size(); i++) {
+            PokeSide side = new PokeSide(i);
             List<Trainer> trainerList = listList.get(i);
             int trainerListSize = trainerList.size();
             List<TrainerInBattle> trainerInBattleList = new ArrayList<>(trainerListSize);
-            sideList.add(new PokeTrainerSide(trainerInBattleList, i));
+            pokeTrainerSideList.add(new PokeTrainerSide(side, trainerInBattleList));
 
             for (int j = 0; j < trainerListSize; j++) {
                 Trainer trainer = trainerList.get(j);
-                trainerInBattleList.add(new TrainerInBattle(trainer, i, j, pokesInBattle));
+                TrainerInBattle tb = new TrainerInBattle(side, trainer, j, pokesInBattle);
+                trainerInBattleList.add(tb);
                 faintedMap.put(trainer.getId(), new HashSet<>());
+                tbMap.put(trainer.getId(), tb);
             }
         }
+
+        return pokeTrainerSideList;
     }
 
-    public boolean setMoveToUse(int sidePosition, int trainerPosition, int fieldPosition, int movePosition,
-                                @Nonnull PokePosition targetPosition) {
+    public boolean setMoveToUse(long userId, int fieldPosition, int movePosition, @Nonnull PokePosition targetPosition) {
         boolean canSetMove = false;
         if (phase == BattlePhase.WAITING) {
-            TrainerInBattle trainerInBattle = sideList.get(sidePosition).getTrainerInBattle(trainerPosition);
+            TrainerInBattle trainerInBattle = tbMap.get(userId);
             canSetMove = pokeRules.setMoveToUse(trainerInBattle, fieldPosition, movePosition, targetPosition);
-        } else {
-            // Only for testing currently
-            System.out.println("Currently in battle phase. Setting a move not allowed");
         }
 
         return canSetMove;
     }
 
-    public boolean setPokeToSwitchIn(int sidePosition, int trainerPosition, int fieldPosition, int pokePosition) {
+    public boolean setPokeToSwitchIn(long userId, int fieldPosition, int pokePosition) {
         boolean canSwitch = false;
-        if (phase == BattlePhase.WAITING || phase == BattlePhase.SWITCHING) {
-            TrainerInBattle trainerInBattle = sideList.get(sidePosition).getTrainerInBattle(trainerPosition);
+
+        TrainerInBattle trainerInBattle = tbMap.get(userId);
+        if (phase == BattlePhase.WAITING) {
             canSwitch = pokeRules.setPokeToSwitchIn(trainerInBattle, fieldPosition, pokePosition);
-        } else {
-            // Only for testing currently
-            System.out.println("Currently in battle phase. Switching out is not available");
+
+        } else if (phase == BattlePhase.SWITCHING) {
+            Set<Integer> positionsSet = faintedMap.get(trainerInBattle.getTrainer().getId());
+            if (!positionsSet.isEmpty() && positionsSet.contains(fieldPosition)) {
+                canSwitch = pokeRules.setPokeToSwitchIn(trainerInBattle, fieldPosition, pokePosition);
+                if (canSwitch) {
+                    positionsSet.remove(fieldPosition);
+                }
+
+                if (!faintedPokeStillOnField()) {
+                    stopSwitchTimer();
+                    pokeBattleHandler.test();
+                    phase = BattlePhase.WAITING;
+                }
+            }
         }
 
         return canSwitch;
     }
 
     @Nonnull
-    public PokeInBattle getPokeInBattle(int sidePosition, int trainerPosition, int fieldPosition) {
-        return sideList.get(sidePosition).getTrainerInBattle(trainerPosition).getPokeInBattle(fieldPosition);
+    public PokeInBattle getPokeInBattle(long userId, int fieldPosition) {
+        return tbMap.get(userId).getPokeInBattle(fieldPosition);
+    }
+
+    @Nonnull
+    public String getMoves(long userId, int fieldPosition) {
+        return tbMap.get(userId).getPokeInBattle(fieldPosition).getPoke().getMoves();
     }
 
     public boolean trainersReady() {
-        for (PokeTrainerSide pSide : sideList) {
-            List<TrainerInBattle> tbList = pSide.getTrainerInBattleList();
-            for (TrainerInBattle tb : tbList) {
-                if (tb.getPokeInBattle(0).getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
-                    return false;
-                }
+        for (TrainerInBattle tb : tbMap.values()) {
+            if (tb.getPokeInBattle(0).getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+                return false;
             }
         }
 
@@ -111,36 +136,35 @@ public class PokeBattle {
             stopChoiceTimer();
             String battleResult = pokeBattleHandler.doTrainerChoices();
             view.sendMessageForAll(battleResult);
-            if (checkForFaintedPokemon()) {
+            if (checkForFaintedPoke()) {
+                phase = BattlePhase.SWITCHING;
                 startSwitchTimer();
+            } else {
+                startChoiceTimer();
+                phase = BattlePhase.WAITING;
             }
 
-            // If there are fainted pokemon, start Choice Timer after users switch pokes
-
-            // TODO: Send message to each user to make their choice after completing all choices
-            startChoiceTimer();
-            phase = BattlePhase.WAITING;
-        } else {
-            System.out.println("TRAINERS ARE NOT READY YET");
+//            // If there are fainted pokemon, start Choice Timer after users switch pokes
+//
+            // TODO: Send message to each user to make their choice after completing
+            //  all choices and fainted pokemon have switched in
         }
     }
 
     // TODO: If there are fainted Pokemon, start a timer for switching Pokemon
     //  When the timer runs out it should switch in a the first pokemon that is not fainted
     //  If no pokemon are available, the battle is over
-    private boolean checkForFaintedPokemon() {
+    private boolean checkForFaintedPoke() {
         boolean pokemonHasFainted = false;
-        for (PokeTrainerSide side : sideList) {
-            for (TrainerInBattle tb : side.getTrainerInBattleList()) {
-                for (PokeInBattle pb : tb.getPokeInBattleList()) {
-                    if (pb.getPoke().isFainted()) {
-                        pokemonHasFainted = true;
-                        faintedMap.get(tb.getTrainer().getId()).add(pb.getFieldPosition());
+        for (TrainerInBattle tb : tbMap.values()) {
+            for (PokeInBattle pb : tb.getPokeInBattleList()) {
+                if (pb.getPoke().isFainted()) {
+                    pokemonHasFainted = true;
+                    faintedMap.get(tb.getTrainer().getId()).add(pb.getFieldPosition());
 
-                        String trainerName = tb.getTrainer().getTrainerName();
-                        view.sendUserMessage(tb.getTrainer().getId(),
-                                String.format("%s, Your Pokemon %s has fainted", trainerName, pb.getPoke().getName()));
-                    }
+                    String trainerName = tb.getTrainer().getTrainerName();
+                    view.sendUserMessage(tb.getTrainer().getId(),
+                            String.format("%s, Your Pokemon %s has fainted", trainerName, pb.getPoke().getName()));
                 }
             }
         }
@@ -148,26 +172,19 @@ public class PokeBattle {
         return pokemonHasFainted;
     }
 
-    public void postAttackPhase() {
-
-    }
-
-    public void startChoiceTimer() {
-        for (PokeTrainerSide side : sideList) {
-            for (TrainerInBattle tb : side.getTrainerInBattleList()) {
-                for (PokeInBattle pb : tb.getPokeInBattleList()) {
-                    view.sendUserMessage(tb.getTrainer().getId(), String.format("Choose action for %s", pb.getPoke().getName()));
-                }
+    private boolean faintedPokeStillOnField() {
+        boolean stillOnField = false;
+        for (Set<Integer> positions : faintedMap.values()) {
+            if (!positions.isEmpty()) {
+                stillOnField = true;
             }
         }
 
-        System.out.println("Started Choice Timer");
-        this.choiceTimer = timerToDoChoice();
+        return stillOnField;
     }
 
-    public void stopChoiceTimer() {
-        System.out.println("Stopping Choice Timer");
-        this.choiceTimer.cancel(false);
+    public void postAttackPhase() {
+
     }
 
     @Nonnull
@@ -182,14 +199,20 @@ public class PokeBattle {
         return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
     }
 
-    public void startSwitchTimer() {
-        System.out.println("Started Switch Timer");
-        switchTimer = timerToSwitch();
+    public void startChoiceTimer() {
+        for (TrainerInBattle tb : tbMap.values()) {
+            for (PokeInBattle pb : tb.getPokeInBattleList()) {
+                view.sendUserMessage(tb.getTrainer().getId(), String.format("Choose action for %s", pb.getPoke().getName()));
+            }
+        }
+
+        System.out.println("Started Choice Timer");
+        this.choiceTimer = timerToDoChoice();
     }
 
-    public void stopSwitchTimer() {
-        System.out.println("Stopped Switch Timer");
-        switchTimer.cancel(false);
+    public void stopChoiceTimer() {
+        System.out.println("Stopping Choice Timer");
+        this.choiceTimer.cancel(false);
     }
 
     @Nonnull
@@ -203,7 +226,13 @@ public class PokeBattle {
         return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
     }
 
-    public BattlePhase getPhase() {
-        return phase;
+    public void startSwitchTimer() {
+        System.out.println("Started Switch Timer");
+        switchTimer = timerToSwitch();
+    }
+
+    public void stopSwitchTimer() {
+        System.out.println("Stopped Switch Timer");
+        switchTimer.cancel(false);
     }
 }

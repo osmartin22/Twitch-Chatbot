@@ -55,7 +55,6 @@ public class PokeRules {
             }
         }
 
-        pokeInBattle.setTrainerChoice(TrainerChoice.CHOICE_SWITCH);
         return isAbleToSwitch;
     }
 
@@ -65,6 +64,7 @@ public class PokeRules {
         if (isAbleToDoMove) {
             trainerInBattle.setMoveToUse(fieldPosition, movePosition, targetPosition);
         }
+
         return isAbleToDoMove;
     }
 

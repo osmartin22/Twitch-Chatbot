@@ -247,6 +247,7 @@ public class PokeInBattle {
     }
 
     public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
+        trainerChoice = TrainerChoice.CHOICE_SWITCH;
         this.pokeToSwitchIn = pokeToSwitchIn;
     }
 
@@ -255,6 +256,7 @@ public class PokeInBattle {
         this.poke = pokeToSwitchIn;
         this.megaForm = null;
         this.pokeToSwitchIn = null;
+        trainerChoice = TrainerChoice.CHOICE_WAITING;
         // TODO: Reset statuses, possibly change method to pass a boolean to decide if stats should be kept
     }
 

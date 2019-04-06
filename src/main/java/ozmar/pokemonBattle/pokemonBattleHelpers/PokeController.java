@@ -88,8 +88,7 @@ public class PokeController {
     }
 
     public void setPokeToSwitchIn(long userId, int fieldPosition, int pokePosition) {
-        TrainerInfo info = map.get(userId);
-        boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(info.sidePosition, info.trainerPosition, fieldPosition, pokePosition);
+        boolean canSwitchPoke = pokeBattle.setPokeToSwitchIn(userId, fieldPosition, pokePosition);
         if (canSwitchPoke) {
             view.sendUserMessage(userId, "Pokemon set to switch");
             pokeBattle.doTrainerChoices();
@@ -100,8 +99,7 @@ public class PokeController {
 
     public void setMoveToUse(long userId, int fieldPosition, int movePosition) {
         TrainerInfo info = map.get(userId);
-        boolean canUseMove = pokeBattle.setMoveToUse(info.sidePosition, info.trainerPosition,
-                fieldPosition, movePosition, getTargetPosition(info));
+        boolean canUseMove = pokeBattle.setMoveToUse(userId, fieldPosition, movePosition, getTargetPosition(info));
         if (canUseMove) {
             view.sendUserMessage(userId, "Pokemon can use move");
             pokeBattle.doTrainerChoices();
@@ -120,6 +118,10 @@ public class PokeController {
         }
 
         return targetPosition;
+    }
+
+    public String getPokeMoves(long userId, int fieldPosition) {
+        return pokeBattle.getMoves(userId, fieldPosition);
     }
 
     private class TrainerInfo {
