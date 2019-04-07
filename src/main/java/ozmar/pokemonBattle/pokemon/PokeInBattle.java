@@ -110,6 +110,14 @@ public class PokeInBattle {
         return userPosition.getFieldPosition();
     }
 
+    public boolean isMegaForm() {
+        return megaForm != null;
+    }
+
+    public Poke getBaseForm() {
+        return poke;
+    }
+
     @Nonnull
     public Poke getPoke() {
         if (megaForm != null) {

@@ -98,8 +98,7 @@ public class PokeController {
     }
 
     public void setMoveToUse(long userId, int fieldPosition, int movePosition) {
-        TrainerInfo info = map.get(userId);
-        boolean canUseMove = pokeBattle.setMoveToUse(userId, fieldPosition, movePosition, getTargetPosition(info));
+        boolean canUseMove = pokeBattle.setMoveToUse(userId, fieldPosition, movePosition);
         if (canUseMove) {
             view.sendUserMessage(userId, "Pokemon can use move");
             pokeBattle.doTrainerChoices();

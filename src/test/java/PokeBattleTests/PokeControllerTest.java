@@ -100,10 +100,19 @@ public class PokeControllerTest {
 
     @Test
     public void s() {
-        for (int i = 0; i < 6; i++) {
-            controller.setMoveToUse(red, 0, 0);
-//            controller.setPokeToSwitchIn(red, 0, 2);
+        for (int i = 0; i < 10000; i++) {
             controller.setMoveToUse(blue, 0, 0);
+            controller.setMoveToUse(red, 0, 0);
+            System.out.println();
+        }
+    }
+
+    @Test
+    public void switchingTest() {
+        for (int i = 1; i < 6; i++) {
+            controller.setPokeToSwitchIn(blue, 0, i);
+            controller.setPokeToSwitchIn(red, 0, i);
+            System.out.println();
         }
     }
 

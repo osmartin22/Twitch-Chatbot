@@ -32,9 +32,9 @@ public class PokeRules {
         PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
         if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
             if (isAbleToSwitchPoke(pb)) {
-                Poke currentPoke = pb.getPoke();
+                Poke currentPoke = (pb.isMegaForm()) ? pb.getBaseForm() : pb.getPoke();
                 Poke pokeToSwitchIn = trainerInBattle.getTrainer().getPokeList().get(pokePosition);
-                if (!pokeToSwitchIn.isFainted() && (currentPoke != pokeToSwitchIn)) {
+                if (!pokeToSwitchIn.isFainted() && currentPoke != pokeToSwitchIn) {
                     canSwitchIn = true;
                     trainerInBattle.setPokeToSwitchIn(fieldPosition, pokePosition);
                 }
@@ -77,23 +77,23 @@ public class PokeRules {
      * TODO: Check for effects that prevent the move from being used
      *
      * @param trainerInBattle trainer in battle trying to switch their Poke
-     * @param fieldPosition position on the field of the desired Poke to be switched out
-     * @param movePosition position of the move in the Poke's move set
-     * @param targetPosition position of the target
+     * @param fieldPosition   position on the field of the desired Poke to be switched out
+     * @param movePosition    position of the move in the Poke's move set
+     * @param targetPosition  position of the target
      * @return boolean
      */
     public boolean setMoveToUse(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition, int movePosition,
                                 @Nonnull PokePosition targetPosition) {
-        boolean isAbleToDoMove = false;
+        boolean canDoMove = false;
         PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
         if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
-            isAbleToDoMove = isAbleToDoMove(pb, movePosition, targetPosition);
-            if (isAbleToDoMove) {
+            if (isAbleToDoMove(pb, movePosition, targetPosition)) {
+                canDoMove = true;
                 trainerInBattle.setMoveToUse(fieldPosition, movePosition, targetPosition);
             }
         }
 
-        return isAbleToDoMove;
+        return canDoMove;
     }
 
     /**
