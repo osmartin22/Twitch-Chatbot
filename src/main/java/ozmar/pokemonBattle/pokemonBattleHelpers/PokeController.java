@@ -26,7 +26,6 @@ public class PokeController {
     private ScheduledFuture<?> actionTimer;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    // Objects to get information about the objects to be used in the battle
     private final PokemonDaoInterface pokemonDao;
     private final ConvertIntoPoke convert;
     private final GetMovesData movesData;
@@ -98,15 +97,23 @@ public class PokeController {
         }
     }
 
-    public void setPokeToSwitchIn(long userId, int fieldPosition, int pokePosition) {
-        if (map.containsKey(userId)) {
-            SwitchResult result = pokeBattle.setPokeToSwitchIn(userId, fieldPosition, pokePosition);
+    /**
+     * Attempts to set a Poke to switch in for the current Poke on the field
+     * Sends a message to the user of the resulting success
+     *
+     * @param trainerId     id of the trainer
+     * @param fieldPosition position on the field of the Poke
+     * @param pokePosition  position of the Poke in the trainer's Poke list
+     */
+    public void setPokeToSwitchIn(long trainerId, int fieldPosition, int pokePosition) {
+        if (map.containsKey(trainerId)) {
+            SwitchResult result = pokeBattle.setPokeToSwitchIn(trainerId, fieldPosition, pokePosition);
 
             if (result.canSwitch()) {
-                view.sendUserMessage(userId, "Pokemon set to switch");
+                view.sendUserMessage(trainerId, "Pokemon set to switch");
                 doBattlePhase();
             } else {
-                view.sendUserMessage(userId, "Pokemon unable to switch");
+                view.sendUserMessage(trainerId, "Pokemon unable to switch");
             }
 
             if (result.getPhase() == BattlePhase.WAITING) {
@@ -115,18 +122,29 @@ public class PokeController {
         }
     }
 
-    public void setMoveToUse(long userId, int fieldPosition, int movePosition) {
-        if (map.containsKey(userId)) {
-            boolean canUseMove = pokeBattle.setMoveToUse(userId, fieldPosition, movePosition);
+    /**
+     * Attempts to set a move for the given Poke
+     * Sends a message to the user of the resulting success
+     *
+     * @param trainerId     id of the trainer
+     * @param fieldPosition position on the field of the Poke
+     * @param movePosition  position of the move in the Poke move set
+     */
+    public void setMoveToUse(long trainerId, int fieldPosition, int movePosition) {
+        if (map.containsKey(trainerId)) {
+            boolean canUseMove = pokeBattle.setMoveToUse(trainerId, fieldPosition, movePosition);
             if (canUseMove) {
-                view.sendUserMessage(userId, "Pokemon can use move");
+                view.sendUserMessage(trainerId, "Pokemon can use move");
                 doBattlePhase();
             } else {
-                view.sendUserMessage(userId, "Pokemon unable to use move");
+                view.sendUserMessage(trainerId, "Pokemon unable to use move");
             }
         }
     }
 
+    /**
+     * Does the battle phase and calls timers depending on the state of the resulting battle phase
+     */
     private void doBattlePhase() {
         if (pokeBattle.trainersReady()) {
             stopActionTimer();
@@ -146,18 +164,6 @@ public class PokeController {
         return battleOver;
     }
 
-    @Nonnull
-    private PokePosition getTargetPosition(@Nonnull TrainerInfo info) {
-        PokePosition targetPosition;
-        if (info.sidePosition == 0) {
-            targetPosition = new PokePosition(1, 0, 0);
-        } else {
-            targetPosition = new PokePosition(0, 0, 0);
-        }
-
-        return targetPosition;
-    }
-
     public String getPokeMoves(long userId, int fieldPosition) {
         if (map.containsKey(userId)) {
             return pokeBattle.getMoves(userId, fieldPosition);
@@ -166,6 +172,9 @@ public class PokeController {
         return null;
     }
 
+    /**
+     * Contains info about the trainer and their position on the field
+     */
     private class TrainerInfo {
         private Trainer trainer;
         private int sidePosition;
@@ -178,12 +187,17 @@ public class PokeController {
         }
     }
 
-
+    /**
+     * When the timer runs out, any Poke that have not been given an action are forced
+     * to do one by the program
+     *
+     * @return ScheduledFuture
+     */
     @Nonnull
     private ScheduledFuture<?> timerToDoAction() {
         final Runnable timerFinished = () -> {
             System.out.println("Time Ran Out For Choosing An Action");
-            pokeBattle.actionTimerRanOut();
+            pokeBattle.forceActionOnPoke();
             // Timer only runs when a user has not done a choice yet (move or switch out)
             // A move should be chosen for them to do here
             doBattlePhase();
@@ -193,6 +207,10 @@ public class PokeController {
 //        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Start timer for a trainer to do an action
+     * When this timer runs out, the program will choose an action for any undecided Trainers
+     */
     public void startActionTimer() {
         if (actionTimer == null) {
             pokeBattle.tellTrainersToDoAction();
@@ -201,6 +219,10 @@ public class PokeController {
         }
     }
 
+    /**
+     * Stop the timer before the program chooses an action for the user
+     * Method should only be called after all Poke on the field have an action to do
+     */
     public void stopActionTimer() {
         System.out.println("Stopping Action Timer");
         this.actionTimer.cancel(false);
@@ -208,14 +230,15 @@ public class PokeController {
     }
 
     /**
-     * When the Switch Timer runs out, any Poke that are still fainted are forced to switch out
+     * When the timer runs out, any Poke that are still fainted are forced to switch out by the program
      *
      * @return ScheduledFuture
      */
     @Nonnull
     private ScheduledFuture<?> timerToSwitch() {
         final Runnable timerFinished = () -> {
-            pokeBattle.switchTimerRanOut();
+            System.out.println("Time Ran Out For Switching");
+            pokeBattle.forceSwitchFaintedPoke();
             startActionTimer();
         };
 
@@ -224,7 +247,9 @@ public class PokeController {
     }
 
     /**
-     * Start the timer used for switching only Poke
+     * Start the timer for a trainer to switch in a Poke
+     * When the timer runs out, the program will choose a Poke to switch in for undecided trainers
+     * This time should ONLY be used when switching out fainted Poke and not for choosing a move
      */
     public void startSwitchTimer() {
         if (actionTimer == null) {
@@ -234,7 +259,8 @@ public class PokeController {
     }
 
     /**
-     * Stop the timer used for switching only Poke
+     * Stop the timer before the program chooses a Poke to switch in
+     * Method should only be called after all fainted Poke have been given another Poke to switch with
      */
     public void stopSwitchTimer() {
         System.out.println("Stopped Switch Timer");

@@ -208,8 +208,11 @@ public class PokeBattle {
         }
     }
 
-
-    public void actionTimerRanOut() {
+    /**
+     * Forces the Poke on the field to do an action (move)
+     * TODO: In case no move can be used, the move Struggle should be used
+     */
+    public void forceActionOnPoke() {
         for (TrainerInBattle tb : tbMap.values()) {
             int moveCount = tb.getPokeInBattle(0).getPoke().getMoveList().size();
             for (int i = 0; i < moveCount; i++) {
@@ -221,6 +224,9 @@ public class PokeBattle {
         }
     }
 
+    /**
+     * Tells each trainer they can now choose an action
+     */
     public void tellTrainersToDoAction() {
         for (TrainerInBattle tb : tbMap.values()) {
             for (PokeInBattle pb : tb.getPokeInBattleList()) {
@@ -229,10 +235,11 @@ public class PokeBattle {
         }
     }
 
-    public void switchTimerRanOut() {
-        System.out.println("Time Ran Out For Switching");
-        // Timer only runs when a user/users have to switch a pokemon due to it fainting or being forced
-        // A pokemon to switch should be set if the timer runs out
+    /**
+     * Choose a Poke to switch in for the fainted Poke on the field
+     * This bypasses effects that prevent switching out
+     */
+    public void forceSwitchFaintedPoke() {
         for (long id : faintedMap.keySet()) {
             TrainerInBattle tb = tbMap.get(id);
 
@@ -255,6 +262,13 @@ public class PokeBattle {
     }
 
 
+    /**
+     * Checks if a trainer has lost == All of the trainer's Poke have fainted
+     * TODO: Currently this does not consider who fainted first
+     * Important in cases where the last Poke of each trainer faints on the same turn, i.e. Explosion
+     *
+     * @return boolean
+     */
     private boolean checkTrainerHasLost() {
         for (long id : faintedMap.keySet()) {
             TrainerInBattle tb = tbMap.get(id);

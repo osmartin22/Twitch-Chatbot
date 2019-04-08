@@ -147,7 +147,7 @@ public class PokeInBattle {
     public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokePosition targetPosition) {
         this.moveToUse = moveToUse;
         this.targetPosition = targetPosition;
-        this.trainerAction = TrainerAction._MOVE;
+        this.trainerAction = TrainerAction.ACTION_MOVE;
     }
 
 
