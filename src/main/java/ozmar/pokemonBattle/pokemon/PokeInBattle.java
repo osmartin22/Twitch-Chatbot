@@ -1,7 +1,7 @@
 package ozmar.pokemonBattle.pokemon;
 
 import ozmar.pokemonBattle.pokemonBattleHelpers.PokePosition;
-import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerChoice;
+import ozmar.pokemonBattle.pokemonBattleHelpers.TrainerAction;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBinding;
 import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBindingEnum;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
@@ -44,7 +44,7 @@ public class PokeInBattle {
     private int badlyPoisonedN;     // Used for the badly poisoned status effect
     private int critStage;
 
-    private TrainerChoice trainerChoice;
+    private TrainerAction trainerAction;
     private Poke pokeToSwitchIn;
 
     private boolean isFlinched;
@@ -93,7 +93,7 @@ public class PokeInBattle {
         this.binding = new PokeBinding();
         this.copiedMoves = new HashMap<>();
         this.critStage = 0;
-        this.trainerChoice = TrainerChoice.CHOICE_WAITING;
+        this.trainerAction = TrainerAction.ACTION_WAITING;
         this.pokeToSwitchIn = null;
         this.isFlinched = false;
     }
@@ -147,7 +147,7 @@ public class PokeInBattle {
     public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokePosition targetPosition) {
         this.moveToUse = moveToUse;
         this.targetPosition = targetPosition;
-        this.trainerChoice = TrainerChoice.CHOICE_MOVE;
+        this.trainerAction = TrainerAction._MOVE;
     }
 
 
@@ -243,12 +243,12 @@ public class PokeInBattle {
     }
 
     @Nonnull
-    public TrainerChoice getTrainerChoice() {
-        return trainerChoice;
+    public TrainerAction getTrainerAction() {
+        return trainerAction;
     }
 
-    public void setTrainerChoice(@Nonnull TrainerChoice trainerChoice) {
-        this.trainerChoice = trainerChoice;
+    public void setTrainerAction(@Nonnull TrainerAction trainerAction) {
+        this.trainerAction = trainerAction;
     }
 
     public Poke getPokeToSwitchIn() {
@@ -257,7 +257,7 @@ public class PokeInBattle {
 
     public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
         this.pokeToSwitchIn = pokeToSwitchIn;
-        this.trainerChoice = TrainerChoice.CHOICE_SWITCH;
+        this.trainerAction = TrainerAction.ACTION_SWITCH;
     }
 
     // TODO: Check if the stats should be kept when switching (Baton Pass, U-Turn)
@@ -265,7 +265,7 @@ public class PokeInBattle {
         this.poke = pokeToSwitchIn;
         this.megaForm = null;
         this.pokeToSwitchIn = null;
-        trainerChoice = TrainerChoice.CHOICE_WAITING;
+        trainerAction = TrainerAction.ACTION_WAITING;
         // TODO: Reset statuses, possibly change method to pass a boolean to decide if stats should be kept
     }
 

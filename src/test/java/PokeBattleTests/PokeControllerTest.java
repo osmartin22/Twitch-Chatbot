@@ -98,13 +98,19 @@ public class PokeControllerTest {
         }
     }
 
+    // This method not a unit test, currently it's more of an implementation test
     @Test
     public void s() {
-        for (int i = 0; i < 10000; i++) {
+        while (!controller.isBattleOver()) {
             controller.setMoveToUse(blue, 0, 0);
             controller.setMoveToUse(red, 0, 0);
             System.out.println();
         }
+//        while(true) {
+//            if(controller.isBattleOver()) {
+//                break;
+//            }
+//        }
     }
 
     @Test
@@ -115,5 +121,4 @@ public class PokeControllerTest {
             System.out.println();
         }
     }
-
 }

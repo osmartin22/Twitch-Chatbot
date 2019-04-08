@@ -57,7 +57,7 @@ public class PokeBattleHandler {
      * @param attacking list of Poke that are using a move
      * @return TurnResult. Contains a map of all fainted Poke along with a String containing the events that occurred
      */
-    public TurnResult doChoices(List<PokeInBattle> switching, List<PokeInBattle> attacking) {
+    public TurnResult doActions(List<PokeInBattle> switching, List<PokeInBattle> attacking) {
         sb.setLength(0);
         switchPokeIn(switching);
         Map<Long, Set<Integer>> faintedMap = attackingPokes(attacking);
@@ -132,7 +132,7 @@ public class PokeBattleHandler {
         sortSwitching(pbList);
         for (PokeInBattle pb : pbList) {
             TrainerInBattle tb = sideList.get(pb.getSidePosition()).getTrainerInBattle(pb.getTrainerPosition());
-            if (tb.getPokeInBattle(pb.getFieldPosition()).getTrainerChoice() == TrainerChoice.CHOICE_SWITCH) {
+            if (tb.getPokeInBattle(pb.getFieldPosition()).getTrainerAction() == TrainerAction.ACTION_SWITCH) {
                 sb.append(String.format("%s switched in for %s. ", pb.getPokeToSwitchIn().getName(), pb.getPoke().getName()));
                 tb.switchPoke(pb.getFieldPosition());
 
@@ -155,7 +155,7 @@ public class PokeBattleHandler {
         // Currently ignoring status moves as they have a lot of unique effects to take into account
         Map<Long, Set<Integer>> faintedMap = new HashMap<>();
         for (PokeInBattle pb : attacking) {
-            if (pb.getTrainerChoice() == TrainerChoice.CHOICE_MOVE &&
+            if (pb.getTrainerAction() == TrainerAction._MOVE &&
                     pb.getMoveToUse().getDamageClass() != PokeMoveDamageClass.STATUS) {
 
                 int attackAcc = pb.getStatStage(PokeStatStage.ACC_STAGE);
@@ -171,7 +171,7 @@ public class PokeBattleHandler {
                     sb.append(String.format("%s was prevented by a status effect. ", pb.getPoke().getName()));
                 }
 
-                pb.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
+                pb.setTrainerAction(TrainerAction.ACTION_WAITING);
             }
         }
 
@@ -213,7 +213,7 @@ public class PokeBattleHandler {
 
                     if (target.getPoke().isFainted()) {
                         addPokeToFaintedMap(faintedMap, target);
-                        target.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
+                        target.setTrainerAction(TrainerAction.ACTION_WAITING);
                         sb.append(String.format("%s has fainted. ", target.getPoke().getName()));
                     }
 
@@ -226,19 +226,22 @@ public class PokeBattleHandler {
             }
         }
 
-        attacker.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
+        attacker.setTrainerAction(TrainerAction.ACTION_WAITING);
         return faintedMap;
     }
 
     /**
      * Adds the Poke to the fainted Poke with their key being its trainer's id
+     * Also increments a trainers fainted Poke count
      *
      * @param faintedMap Map of all fainted Poke
      * @param pb         Poke to add the the map
      */
     private void addPokeToFaintedMap(@Nonnull Map<Long, Set<Integer>> faintedMap, @Nonnull PokeInBattle pb) {
         int position = pb.getFieldPosition();
-        long id = getTrainerInBattle(pb).getTrainer().getId();
+        TrainerInBattle tb = getTrainerInBattle(pb);
+        long id = tb.getTrainer().getId();
+        tb.getTrainer().incrementFaintedPoke();
         Set<Integer> positions = faintedMap.get(id);
 
         if (positions != null) {
@@ -253,8 +256,8 @@ public class PokeBattleHandler {
      * TODO: Probably write a method for moves that target the user (or bypass this check) i.e. Swords Dance
      *
      * @param attacker Poke using the move
-     * @param target The move's target
-     * @param move Move to use
+     * @param target   The move's target
+     * @param move     Move to use
      * @return boolean, will the move hit the target or miss
      */
     private boolean willMoveHit(@Nonnull PokeInBattle attacker, @Nonnull PokeInBattle target, @Nonnull PokeMove move) {
@@ -289,12 +292,12 @@ public class PokeBattleHandler {
 
     private void inflictFlinch(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
         // Flinch only occurs on Pokemon that have not yet attacked
-        if (target.getTrainerChoice() == TrainerChoice.CHOICE_MOVE) {
+        if (target.getTrainerAction() == TrainerAction._MOVE) {
             boolean willFlinch = calculator.willEffectHit(move.getMetaData().getFlinchChance());
             if (willFlinch) {
                 // Target flinches and can no longer attack its turn
                 sb.append(String.format("%s was flinched. ", target.getPoke().getName()));
-                target.setTrainerChoice(TrainerChoice.CHOICE_WAITING);
+                target.setTrainerAction(TrainerAction.ACTION_WAITING);
             }
         }
     }

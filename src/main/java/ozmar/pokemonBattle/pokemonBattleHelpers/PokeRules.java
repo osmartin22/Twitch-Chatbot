@@ -30,7 +30,7 @@ public class PokeRules {
     public boolean setPokeToSwitchIn(@Nonnull TrainerInBattle trainerInBattle, int fieldPosition, int pokePosition) {
         boolean canSwitchIn = false;
         PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
-        if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+        if (pb.getTrainerAction() == TrainerAction.ACTION_WAITING) {
             if (isAbleToSwitchPoke(pb)) {
                 Poke currentPoke = (pb.isMegaForm()) ? pb.getBaseForm() : pb.getPoke();
                 Poke pokeToSwitchIn = trainerInBattle.getTrainer().getPokeList().get(pokePosition);
@@ -86,7 +86,7 @@ public class PokeRules {
                                 @Nonnull PokePosition targetPosition) {
         boolean canDoMove = false;
         PokeInBattle pb = trainerInBattle.getPokeInBattle(fieldPosition);
-        if (pb.getTrainerChoice() == TrainerChoice.CHOICE_WAITING) {
+        if (pb.getTrainerAction() == TrainerAction.ACTION_WAITING) {
             if (isAbleToDoMove(pb, movePosition, targetPosition)) {
                 canDoMove = true;
                 trainerInBattle.setMoveToUse(fieldPosition, movePosition, targetPosition);
