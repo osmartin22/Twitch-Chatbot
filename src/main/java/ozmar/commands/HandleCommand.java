@@ -2,6 +2,7 @@ package ozmar.commands;
 
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import ozmar.WordFilter;
 import ozmar.buffer.interfaces.RecentChattersInterface;
 import ozmar.commands.interfaces.*;
@@ -15,10 +16,7 @@ import twitch4j_packages.common.enums.CommandPermission;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 // TODO: Write command to update command cooldowns or permissions while the bot is running
@@ -41,11 +39,17 @@ public class HandleCommand implements HandleCommandInterface {
 
     private Map<Integer, Pair<Command, Long>> cooldownMap;
 
-    public HandleCommand(DatabaseHandlerInterface db, PokeCommandInterface pokeCommand,
+    private final MessageSource source;
+    private final Locale defaultLocale;
+
+    public HandleCommand(MessageSource messageSource, DatabaseHandlerInterface db,
+                         PokeCommandInterface pokeCommand,
                          TwitchStockCommandInterface twitchStockCommand,
                          TwitchCallCommandInterface twitchCalls,
                          CalculatorInterface calculator, DiceRollerInterface diceRoller,
                          LootBoxInterface lootBox, RecentChattersInterface recentChatters) {
+        this.source = messageSource;
+        this.defaultLocale = new Locale("en");
         this.db = db;
         this.pokeCommand = pokeCommand;
         this.twitchStockCommand = twitchStockCommand;
@@ -112,11 +116,11 @@ public class HandleCommand implements HandleCommandInterface {
 
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = getCommandFromList(count);
-                    result = messageCountCommand(commandEvent);
+                result = messageCountCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = getCommandFromList(count);
-                    result = pointsCommand(commandEvent);
+                result = pointsCommand(commandEvent);
 
             } else if (isCommandHelper(++count, commandEvent)) {
                 command = getCommandFromList(count);
@@ -204,7 +208,7 @@ public class HandleCommand implements HandleCommandInterface {
         long commandLastUsed = cooldownMap.get(command.getId()).getValue();
 
         boolean hasPermission;
-        if (event.getUser().getName().equals("namedauto")) {
+        if (event.getUser().getName().equals(source.getMessage("cmd.owner", null, defaultLocale))) {
             hasPermission = true;
         } else {
             hasPermission = hasPermission(command.getPermission(), event.getPermissions());
@@ -267,7 +271,8 @@ public class HandleCommand implements HandleCommandInterface {
             return somethingWentWrong(event.getUser().getName());
         }
 
-        return String.format("%s rolled a %s", event.getUser().getName(), rollResult);
+        return source.getMessage("cmd.dice.roll",
+                new String[]{event.getUser().getName(), String.valueOf(rollResult)}, defaultLocale);
     }
 
     /**
@@ -279,12 +284,11 @@ public class HandleCommand implements HandleCommandInterface {
     private String spitCommand(@Nonnull CommandEvent event, @Nonnull Command command) {
         String randomChatter = recentChatters.getRandomRecentChatter();
         if (randomChatter == null) {
-//            randomChatter = event.getUser().getName();
-            randomChatter = "nightbot";
+            randomChatter = source.getMessage("cmd.default.spit.user", null, defaultLocale);
         }
 
-        return String.format("☄ moon2DEV %s made %s drink their spit moon2D %s people have drank spit",
-                event.getUser().getName(), randomChatter, (command.getUsage() + 1));
+        return source.getMessage("cmd.spit.message",
+                new String[]{event.getUser().getName(), randomChatter, String.valueOf(command.getUsage() + 1)}, defaultLocale);
     }
 
     /**
@@ -305,10 +309,12 @@ public class HandleCommand implements HandleCommandInterface {
             Double value = bigDecimal.doubleValue();
             String numOutput = (result % 1 == 0) ? String.valueOf(value.longValue()) : String.valueOf(value);
 
-            return String.format("%s, %s", event.getUser().getName(), numOutput);
+            return source.getMessage("cmd.calc.message",
+                    new String[]{event.getUser().getName(), numOutput}, defaultLocale);
 
         } catch (Exception e) {
-            return String.format("%s, %s", event.getUser().getName(), e.getMessage());
+            return source.getMessage("cmd.calc.message",
+                    new String[]{event.getUser().getName(), e.getMessage()}, defaultLocale);
         }
     }
 
@@ -323,7 +329,7 @@ public class HandleCommand implements HandleCommandInterface {
         String word = event.getCommand().trim();
 
         if (word.isEmpty()) {
-            result = String.format("%s, try again using !wordcount <word>", event.getUser().getName());
+            result = source.getMessage("cmd.word.count.error", new String[]{event.getUser().getName()}, defaultLocale);
         } else {
             List<String> badWordsFound = WordFilter.badWordsFound(word);
             if (badWordsFound.isEmpty()) {
@@ -351,11 +357,13 @@ public class HandleCommand implements HandleCommandInterface {
                 }
 
                 word = WordFilter.timeoutWordFound(word);
-                result = String.format("%s, %s has been used %s times in my lifetime",
-                        event.getUser().getName(), word, count);
+                result = source.getMessage("cmd.word.count",
+                        new String[]{event.getUser().getName(), word, String.valueOf(count)}, defaultLocale);
 
             } else {
-                result = String.format("%s, D: you can't say that", event.getUser().getName());
+                // SHOULD PROBABLY REMOVE THIS WHEN THE METHOD IS MADE PUBLIC
+                result = source.getMessage("cmd.word.count.filter",
+                        new String[]{event.getUser().getName()}, defaultLocale);
             }
         }
 
@@ -376,13 +384,16 @@ public class HandleCommand implements HandleCommandInterface {
 
         if (message.isEmpty()) {
             count = db.getChatDao().getMessageCount(event.getUser().getId()) + 1;
-            result = (count != -1) ? String.format("%s, you have sent %s messages", event.getUser().getName(), count) :
+            result = (count != -1) ? source.getMessage("cmd.msg.user",
+                    new String[]{event.getUser().getName(), String.valueOf(count)}, defaultLocale) :
                     somethingWentWrong(event.getUser().getName());
         } else {
             message = StringHelper.getFirstWord(message);
             count = db.getChatDao().getMessageCount(message);
-            result = (count != -1) ? String.format("%s has sent %s messages ", message, count) :
-                    String.format("%s, %s does not exist in my database", event.getUser().getName(), message);
+
+            result = (count != -1) ?
+                    source.getMessage("cmd.msg.other", new String[]{message, String.valueOf(count)}, defaultLocale) :
+                    source.getMessage("cmd.user.not.found", new String[]{event.getUser().getName(), message}, defaultLocale);
         }
 
         return result;
@@ -402,13 +413,15 @@ public class HandleCommand implements HandleCommandInterface {
 
         if (message.isEmpty()) {
             points = db.getChatDao().getPoints(event.getUser().getId());
-            result = (points != -1) ? String.format("%s, you have %s points", event.getUser().getName(), points) :
+            result = (points != -1) ? source.getMessage("cmd.points.user",
+                    new String[]{event.getUser().getName(), String.valueOf(points)}, defaultLocale) :
                     somethingWentWrong(event.getUser().getName());
         } else {
             message = StringHelper.getFirstWord(message);
             points = db.getChatDao().getPoints(message);
-            result = (points != -1) ? String.format("%s has %s points  ", message, points) :
-                    String.format("%s, %s does not exist in my database", event.getUser().getName(), message);
+            result = (points != -1) ?
+                    source.getMessage("cmd.points.other", new String[]{message, String.valueOf(points)}, defaultLocale) :
+                    source.getMessage("cmd.user.not.found", new String[]{event.getUser().getName(), message}, defaultLocale);
         }
 
         return result;
@@ -423,8 +436,8 @@ public class HandleCommand implements HandleCommandInterface {
     @Nonnull
     private String flipCoinCommand(@Nonnull CommandEvent event) {
         boolean heads = RandomHelper.getRandNumInRange(0, 1) == 1;
-        return (heads) ? String.format("%s flipped heads", event.getUser().getName()) :
-                String.format("%s flipped tails", event.getUser().getName());
+        return (heads) ? source.getMessage("cmd.flip.heads", new String[]{event.getUser().getName()}, defaultLocale) :
+                source.getMessage("cmd.flip.tails", new String[]{event.getUser().getName()}, defaultLocale);
     }
 
     /**
@@ -460,18 +473,18 @@ public class HandleCommand implements HandleCommandInterface {
         String user = event.getUser().getName();
         String oldPartner = db.getChatDao().getPartnerById(event.getUser().getId());
         if (newPartner.equals(user)) {
-            output = String.format("%s could only get themselves moon2PH", user);
+            output = source.getMessage("cmd.partner.self", new String[]{user}, defaultLocale);
 
         } else if (oldPartner == null) {
             db.getChatDao().updatePartner(event.getUser().getId(), newPartner);
-            output = String.format("%s, your partner is %s billyReady", user, newPartner);
+            output = source.getMessage("cmd.partner.new", new String[]{user, newPartner}, defaultLocale);
 
         } else if (!newPartner.equals(oldPartner)) {
             db.getChatDao().updatePartner(event.getUser().getId(), newPartner);
-            output = String.format("%s left %s for %s PEPELEPSY", user, oldPartner, newPartner);
+            output = source.getMessage("cmd.partner.old", new String[]{user, oldPartner, newPartner}, defaultLocale);
 
         } else {
-            output = String.format("%s got the same partner, %s moon2N", user, newPartner);
+            output = source.getMessage("cmd.partner.same", new String[]{user, newPartner}, defaultLocale);
         }
 
         return output;
@@ -487,9 +500,9 @@ public class HandleCommand implements HandleCommandInterface {
     private String myPartnerCommand(@Nonnull CommandEvent event) {
         String user = event.getUser().getName();
         String currPartner = db.getChatDao().getPartnerById(event.getUser().getId());
-
-        return (currPartner != null) ? String.format("%s, your current partner is %s pepeBASS", user, currPartner) :
-                String.format("%s, you do not have a partner, try !newpartner to get one", user);
+        return (currPartner != null) ?
+                source.getMessage("cmd.partner.curr", new String[]{user, currPartner}, defaultLocale) :
+                source.getMessage("cmd.partner.none", new String[]{user}, defaultLocale);
     }
 
     /**
@@ -500,20 +513,20 @@ public class HandleCommand implements HandleCommandInterface {
      */
     @Nonnull
     private String somethingWentWrong(@Nonnull String userName) {
-        return String.format("%s, something went wrong moon2WAH", userName);
+        return source.getMessage("cmd.error", new String[]{userName}, defaultLocale);
     }
 
     // TODO: possibly make it it's own class
     private void modifyCommandsCommand(@Nonnull CommandEvent event) {
         String[] info = event.getCommand().trim().split("\\s+");
         String commandAction = info[0];
-        if (commandAction.equals("disable")) {
+        if (commandAction.equals(source.getMessage("cmd.mcs.disable", null, defaultLocale))) {
             disableCommands();
 
-        } else if (commandAction.equals("enable")) {
+        } else if (commandAction.equals(source.getMessage("cmd.mcs.enable", null, defaultLocale))) {
             enableCommands();
 
-        } else if (commandAction.equals("cd") && info.length > 2) {
+        } else if (commandAction.equals(source.getMessage("cmd.mcs.cd", null, defaultLocale)) && info.length > 2) {
             updateCommandCooldown(info[1], info[2]);
         }
 
@@ -530,14 +543,14 @@ public class HandleCommand implements HandleCommandInterface {
                     tempMap.put(command.getId(), new Pair<>(command, 0L));
                 }
                 cooldownMap = tempMap;
-                result = String.format("Update successful for %s", commandName);
+                result = source.getMessage("cmd.mcs.update.success", new String[]{commandName}, defaultLocale);
 
             } else {
-                result = String.format("Failed to update command %s", commandName);
+                result = source.getMessage("cmd.mcs.update.failed", new String[]{commandName}, defaultLocale);
             }
         } catch (NumberFormatException e) {
             log.error("New cooldown was not a number: {}", e.getMessage());
-            result = String.format("Failed to update command %s", commandName);
+            result = source.getMessage("cmd.mcs.update.failed", new String[]{commandName}, defaultLocale);
         }
 
         log.info("Not Sent: {}", result);

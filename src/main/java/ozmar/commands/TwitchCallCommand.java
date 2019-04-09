@@ -1,5 +1,6 @@
 package ozmar.commands;
 
+import org.springframework.context.MessageSource;
 import ozmar.commands.interfaces.TwitchCallCommandInterface;
 import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 import ozmar.setup.Bot;
@@ -11,17 +12,18 @@ import twitch4j_packages.helix.domain.StreamList;
 import twitch4j_packages.helix.domain.UserList;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TwitchCallCommand implements TwitchCallCommandInterface {
 
     private final DatabaseHandlerInterface db;
+    private final MessageSource source;
+    private final Locale defaultLocale;
 
-    public TwitchCallCommand(DatabaseHandlerInterface db) {
+    public TwitchCallCommand(MessageSource messageSource, DatabaseHandlerInterface db) {
+        this.source = messageSource;
         this.db = db;
+        this.defaultLocale = new Locale("en");
     }
 
     @Nonnull
@@ -43,9 +45,12 @@ public class TwitchCallCommand implements TwitchCallCommandInterface {
         if (!streamList.getStreams().isEmpty()) {
             Calendar startTime = streamList.getStreams().get(0).getStartedAt();
             Calendar currentTime = Calendar.getInstance();
-            return String.format("%s has been live for %s", channelName, TimeHelper.getTimeDiff(startTime, currentTime));
+
+            return source.getMessage("cmd.live.status.on",
+                    new String[]{channelName, TimeHelper.getTimeDiff(startTime, currentTime)}, defaultLocale);
         }
-        return String.format("%s is currently offline", channelName);
+
+        return source.getMessage("cmd.live.status.off", new String[]{channelName}, defaultLocale);
     }
 
     @Nonnull
@@ -86,25 +91,27 @@ public class TwitchCallCommand implements TwitchCallCommandInterface {
 
         // Not a real user name
         if (userToCheckId == -1) {
-            return String.format("%s, %s does not exist", event.getUser().getName(), userToCheckName);
+            return source.getMessage("cmd.followage.dne",
+                    new String[]{event.getUser().getName(), userToCheckName}, defaultLocale);
         }
 
         FollowList followList = Bot.helixCommands.getFollowers(userToCheckId, channelId, null, 1);
         if (followList == null) {
-            return String.format("%s, %s does not exist", event.getUser().getName(), userToCheckName);
+            return source.getMessage("cmd.followage.dne",
+                    new String[]{event.getUser().getName(), userToCheckName}, defaultLocale);
         }
 
         if (!followList.getFollows().isEmpty()) {
-            return String.format("%s has been following %s since %s",
-                    userToCheckName, channelName, followList.getFollows().get(0).getFollowedAt());
+            return source.getMessage("cmd.followage.since",
+                    new String[]{userToCheckName, channelName, followList.getFollows().get(0).getFollowedAt().toString()}, defaultLocale);
         }
 
-        return String.format("%s is not following %s", userToCheckName, channelName);
+        return source.getMessage("cmd.followage.not", new String[]{userToCheckName, channelName}, defaultLocale);
     }
 
 
     @Nonnull
     private String somethingWentWrong(@Nonnull String userName) {
-        return String.format("%s, something went wrong :(", userName);
+        return source.getMessage("cmd.error", new String[]{userName}, defaultLocale);
     }
 }

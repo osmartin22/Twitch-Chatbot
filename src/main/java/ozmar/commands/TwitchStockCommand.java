@@ -7,22 +7,30 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.context.MessageSource;
 import ozmar.commands.interfaces.TwitchStockCommandInterface;
 import ozmar.utils.StringHelper;
 import twitch4j_packages.chat.events.CommandEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Locale;
 
 public class TwitchStockCommand implements TwitchStockCommandInterface {
 
     private final WebDriver driver;
+    private final MessageSource source;
+    private final Locale defaultLocale;
 
-    public TwitchStockCommand() {
+    public TwitchStockCommand(MessageSource messageSource) {
+        this.source = messageSource;
+        this.defaultLocale = new Locale("en");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setHeadless(true);
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\chromedriver.exe");
-        driver = new ChromeDriver(chromeOptions);
+        String webdriver = source.getMessage("cmd.webdriver", null, defaultLocale);
+        String webdriverLocation = source.getMessage("cmd.webdriver.location", null, defaultLocale);
+        System.setProperty(webdriver, webdriverLocation);
+        this.driver = new ChromeDriver(chromeOptions);
     }
 
     /**
@@ -36,21 +44,24 @@ public class TwitchStockCommand implements TwitchStockCommandInterface {
     @Override
     public String getStock(@Nonnull CommandEvent event) {
         String stockSymbol = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
-        String url = "https://twitchstocks.com/stock/";
+        String url = source.getMessage("cmd.base.url", null, defaultLocale);
         String result;
         if (stockSymbol.isEmpty()) {
-            result = "Try again using !checkstocks <StockSymbol>";
+            result = source.getMessage("cmd.stock.error", null, defaultLocale);
         } else {
             try {
                 driver.get(url + stockSymbol);
-                String xPath = "/html/body/app-root/app-nav/mat-sidenav-container/mat-sidenav-content/app-stock-home/div/mat-grid-list/div/mat-grid-tile[1]/figure/mat-card";
+                String xPath = source.getMessage("cmd.stock.xpath", null, defaultLocale);
 
                 WebDriverWait wait = new WebDriverWait(driver, 10);
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPath)));
 
-                WebElement price = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[1]");
-                WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-header[1]/div/mat-card-title");
-                WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath + "/mat-card-content[1]/mat-card-title/div[2]");
+                WebElement price = ((ChromeDriver) driver).findElementByXPath(xPath +
+                        source.getMessage("cmd.stock.xpath.price", null, defaultLocale));
+                WebElement name = ((ChromeDriver) driver).findElementByXPath(xPath +
+                        source.getMessage("cmd.stock.xpath.name", null, defaultLocale));
+                WebElement diff = ((ChromeDriver) driver).findElementByXPath(xPath +
+                        source.getMessage("cmd.stock.xpath.diff", null, defaultLocale));
                 result = price.getText() + " " + name.getText() + " " + diff.getText();
             } catch (Exception e) {
                 result = null;

@@ -1,5 +1,6 @@
 package ozmar.commands.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.commands.PokeCommand;
@@ -11,8 +12,10 @@ import ozmar.database.dao.interfaces.PokemonDaoInterface;
 public class PokeCommandInterfaceConfig {
 
     @Bean
-    public PokeCommandInterface pokeCommandInterfaceBean(PokemonDaoInterface pokemonDaoInterface,
-                                                         CatchPokeInterface catchPokeInterface) {
-        return new PokeCommand(pokemonDaoInterface, catchPokeInterface);
+    public PokeCommandInterface pokeCommandInterfaceBean(MessageSource messageSource,
+                                                         PokemonDaoInterface pokemonDaoInterface,
+                                                         CatchPokeInterface catchPokeInterface
+    ) {
+        return new PokeCommand(messageSource, pokemonDaoInterface, catchPokeInterface);
     }
 }

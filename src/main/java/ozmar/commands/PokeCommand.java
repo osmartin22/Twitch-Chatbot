@@ -1,6 +1,7 @@
 package ozmar.commands;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import ozmar.CaughtPokeInfo;
 import ozmar.PokemonPoke;
 import ozmar.commands.interfaces.CatchPokeInterface;
@@ -14,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,8 +33,12 @@ public class PokeCommand implements PokeCommandInterface {
     private final Map<Long, Long> replacePokes;
     private final ScheduledExecutorService replacePokeTimer = Executors.newScheduledThreadPool(1);
 
+    private final MessageSource source;
+    private final Locale defaultLocale;
 
-    public PokeCommand(PokemonDaoInterface pokemonDao, CatchPokeInterface catchPoke) {
+    public PokeCommand(MessageSource messageSource, PokemonDaoInterface pokemonDao, CatchPokeInterface catchPoke) {
+        this.defaultLocale = new Locale("en");
+        this.source = messageSource;
         this.pokemonDao = pokemonDao;
         this.catchPoke = catchPoke;
         this.caughtPokes = new HashMap<>();
@@ -53,9 +59,9 @@ public class PokeCommand implements PokeCommandInterface {
         String pokeInput = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
 
         String output;
-        if (pokeInput.equals("missingno")) {
-            output = String.format("%s, use '!catchpoke' or '!catchpoke <region>' for that one moon2WUT",
-                    event.getUser().getName());
+        if (pokeInput.equals(source.getMessage("cmd.missingno", null, defaultLocale))) {
+            output = source.getMessage("cmd.missingno.attempt", new String[]{event.getUser().getName()}, defaultLocale);
+
         } else {
             CaughtPokeInfo caughtPokeInfo = null;
             Integer pokedexIndex = getPokedexIndex(pokeInput);
@@ -128,10 +134,9 @@ public class PokeCommand implements PokeCommandInterface {
     private String getCatchPokeErrorOutput(@Nullable Integer pokedexIndex, @Nonnull String username) {
         String output;
         if (pokedexIndex != null) {
-            output = String.format("%s, Id not found in the national Pokedex. Try 1-810, 813, or 816", username);
+            output = source.getMessage("cmd.wrong.id", new String[]{username}, defaultLocale);
         } else {
-            output = String.format("%s, Poke Species not found, replace spaces/punctuation in a name with" +
-                    " '-' if it's not working", username);
+            output = source.getMessage("cmd.wrong.species", new String[]{username}, defaultLocale);
         }
         return output;
     }
@@ -172,7 +177,7 @@ public class PokeCommand implements PokeCommandInterface {
             pokemonDao.insertPokemon(userId, pokeInfo.getPoke());
         } else {
             saveCatchToBuffer(userId, pokeInfo);
-            output = ", use !replacepoke [Num], or '!replacepoke help'";
+            output = source.getMessage("cmd.replace.caught", null, defaultLocale);
         }
 
         return output;
@@ -190,16 +195,17 @@ public class PokeCommand implements PokeCommandInterface {
         String output;
         List<PokemonPoke> pokeList = pokemonDao.getPokemon(event.getUser().getId());
         if (pokeList.isEmpty()) {
-            output = String.format("%s, you have 0/%s Poke, use !catchpoke to get some",
-                    event.getUser().getName(), MAX_POKE_OWNED);
+            output = source.getMessage("cmd.no.poke",
+                    new String[]{event.getUser().getName(), String.valueOf(MAX_POKE_OWNED)}, defaultLocale);
         } else {
             int count = 1;
-            output = String.format("%s, you have %s/%s Poke,", event.getUser().getName(),
-                    pokeList.size(), MAX_POKE_OWNED);
+            output = source.getMessage("cmd.poke.count", new String[]{event.getUser().getName(),
+                    String.valueOf(pokeList.size()), String.valueOf(MAX_POKE_OWNED)}, defaultLocale);
 
             StringBuilder pokeString = new StringBuilder();
             for (PokemonPoke poke : pokeList) {
-                pokeString.append(String.format(" %s) %s,", count++, poke.getPokeString()));
+                pokeString.append(source.getMessage("cmd.poke.separator",
+                        new String[]{String.valueOf(count++), poke.getPokeString()}, defaultLocale));
             }
 
             pokeString.setLength(pokeString.length() - 1);
@@ -227,11 +233,11 @@ public class PokeCommand implements PokeCommandInterface {
             String input = StringHelper.getFirstWord(event.getCommand().trim().toLowerCase());
 
             if (!input.isEmpty()) {
-                if (input.equals("help")) {
+                if (input.equals(source.getMessage("cmd.help", null, defaultLocale))) {
                     if (!replacePokes.containsKey(userId)) {
                         replacePokes.put(userId, System.currentTimeMillis());
-                        output = String.format("%s, !replacepoke [Num] replaces a Poke you have with the one you just caught." +
-                                " [Num] must be from 1-%s and can be found using !mypoke", userName, MAX_POKE_OWNED);
+                        output = source.getMessage("cmd.replace.help",
+                                new String[]{userName, String.valueOf(MAX_POKE_OWNED)}, defaultLocale);
                     }
                 } else {
                     int pokeNum;

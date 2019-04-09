@@ -1,6 +1,7 @@
 package ozmar.commands;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import ozmar.commands.interfaces.LootBoxInterface;
 import ozmar.enums.Rarity;
 import ozmar.utils.RandomHelper;
@@ -9,6 +10,7 @@ import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Locale;
 
 @Slf4j
 public class LootBox implements LootBoxInterface {
@@ -17,8 +19,13 @@ public class LootBox implements LootBoxInterface {
     // Epic         10%     6-15
     // Rare         25%     16-40
     // Common       60%     41-100
-    public LootBox() {
 
+    private final MessageSource source;
+    private final Locale defaultLocale;
+
+    public LootBox(MessageSource messageSource) {
+        this.source = messageSource;
+        this.defaultLocale = new Locale("en");
     }
 
     /**
@@ -32,13 +39,13 @@ public class LootBox implements LootBoxInterface {
         String result = "";
         Rarity rarity = getRarity();
         if (rarity == Rarity.COMMON) {
-            result = readFile("commonLoot.txt");
+            result = readFile(source.getMessage("cmd.file.common", null, defaultLocale));
         } else if (rarity == Rarity.RARE) {
-            result = readFile("rareLoot.txt");
+            result = readFile(source.getMessage("cmd.file.rare", null, defaultLocale));
         } else if (rarity == Rarity.EPIC) {
-            result = readFile("epicLoot.txt");
+            result = readFile(source.getMessage("cmd.file.epic", null, defaultLocale));
         } else if (rarity == Rarity.LEGENDARY) {
-            result = readFile("legendaryLoot.txt");
+            result = readFile(source.getMessage("cmd.file.legendary", null, defaultLocale));
         }
         return result;
     }
@@ -53,7 +60,7 @@ public class LootBox implements LootBoxInterface {
     @Nonnull
     private String readFile(@Nonnull String file) {
         String line;
-        String path = "C:\\TwitchBotFiles\\Lootbox\\" + file;
+        String path = source.getMessage("cmd.base.path.loot", null, defaultLocale) + file;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             // First line contains file info, skip
             // Second line contains the number of loot

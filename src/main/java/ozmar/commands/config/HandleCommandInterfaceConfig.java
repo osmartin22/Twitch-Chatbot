@@ -1,5 +1,6 @@
 package ozmar.commands.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.buffer.interfaces.RecentChattersInterface;
@@ -11,7 +12,8 @@ import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 public class HandleCommandInterfaceConfig {
 
     @Bean
-    public HandleCommandInterface HandleCommandInterfaceBean(DatabaseHandlerInterface databaseHandlerInterface,
+    public HandleCommandInterface HandleCommandInterfaceBean(MessageSource messageSource,
+                                                             DatabaseHandlerInterface databaseHandlerInterface,
                                                              PokeCommandInterface pokeCommandInterface,
                                                              TwitchStockCommandInterface twitchStockCommandInterface,
                                                              TwitchCallCommandInterface twitchCallCommandInterface,
@@ -20,7 +22,7 @@ public class HandleCommandInterfaceConfig {
                                                              LootBoxInterface lootBoxInterface,
                                                              RecentChattersInterface recentChattersInterface) {
 
-        return new HandleCommand(databaseHandlerInterface, pokeCommandInterface,
+        return new HandleCommand(messageSource, databaseHandlerInterface, pokeCommandInterface,
                 twitchStockCommandInterface, twitchCallCommandInterface, calculatorInterface,
                 diceRollerInterface, lootBoxInterface, recentChattersInterface);
     }

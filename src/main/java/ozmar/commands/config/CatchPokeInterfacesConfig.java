@@ -1,5 +1,6 @@
 package ozmar.commands.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.commands.CatchPoke;
@@ -9,7 +10,7 @@ import ozmar.commands.interfaces.CatchPokeInterface;
 public class CatchPokeInterfacesConfig {
 
     @Bean
-    CatchPokeInterface catchPokeInterfaceBean() {
-        return new CatchPoke();
+    CatchPokeInterface catchPokeInterfaceBean(MessageSource messageSource) {
+        return new CatchPoke(messageSource);
     }
 }

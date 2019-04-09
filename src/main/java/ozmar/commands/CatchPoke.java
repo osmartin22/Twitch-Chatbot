@@ -1,5 +1,6 @@
 package ozmar.commands;
 
+import org.springframework.context.MessageSource;
 import org.springframework.util.StringUtils;
 import ozmar.CaughtPokeInfo;
 import ozmar.PokemonPoke;
@@ -45,22 +46,27 @@ public class CatchPoke implements CatchPokeInterface {
     private final List<Integer> pokemonWithAlolaForm;
     private final Map<String, PokemonRegion> regionMap;
 
+    private final MessageSource source;
+    private final Locale defaultLocale;
+
     private int pokeShake;
     private boolean isUnreleased;
     private boolean isRegionChoice;
 
-    public CatchPoke() {
-        specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
-        legendaryMythicalPokemon = new HashSet<>(Arrays.asList(384, 716, 717, 789, 790, 791, 792, 800, 151, 251, 489, 492));
-        pokemonWithMegaForm = new HashSet<>(Arrays.asList(3, 6, 9, 65, 94, 115, 127, 130, 142, 150, 181, 212, 214, 229,
+    public CatchPoke(MessageSource messageSource) {
+        this.source = messageSource;
+        this.defaultLocale = new Locale("en");
+        this.specialFormPokemonSet = new HashSet<>(Arrays.asList(201, 412, 422, 423, 585, 586, 666, 669, 670, 671, 676));
+        this.legendaryMythicalPokemon = new HashSet<>(Arrays.asList(384, 716, 717, 789, 790, 791, 792, 800, 151, 251, 489, 492));
+        this.pokemonWithMegaForm = new HashSet<>(Arrays.asList(3, 6, 9, 65, 94, 115, 127, 130, 142, 150, 181, 212, 214, 229,
                 248, 257, 282, 306, 310, 354, 359, 445, 448, 15, 18, 80, 208, 260, 302, 319, 323, 334, 362, 373, 376,
                 380, 381, 384, 428, 475, 531, 719));
-        pokemonWithAlolaForm = new ArrayList<>(Arrays.asList(19, 20, 26, 27, 37, 38, 50, 51, 52, 53, 74, 75, 76,
+        this.pokemonWithAlolaForm = new ArrayList<>(Arrays.asList(19, 20, 26, 27, 37, 38, 50, 51, 52, 53, 74, 75, 76,
                 88, 89, 103, 105));
-        unreleasedPokemon = initializeUnreleasedPoke();
-        regionMap = initializeRegionalList();
-        isUnreleased = false;
-        isRegionChoice = false;
+        this.unreleasedPokemon = initializeUnreleasedPoke();
+        this.regionMap = initializeRegionalList();
+        this.isUnreleased = false;
+        this.isRegionChoice = false;
     }
 
     private Map<Integer, String> initializeUnreleasedPoke() {
@@ -80,14 +86,22 @@ public class CatchPoke implements CatchPokeInterface {
      */
     private Map<String, PokemonRegion> initializeRegionalList() {
         Map<String, PokemonRegion> regionMap = new HashMap<>();
-        regionMap.put("kanto", new PokemonRegion("kanto", 1, 151));
-        regionMap.put("johto", new PokemonRegion("johto", 152, 251));
-        regionMap.put("hoenn", new PokemonRegion("hoenn", 252, 386));
-        regionMap.put("sinnoh", new PokemonRegion("sinnoh", 387, 493));
-        regionMap.put("unova", new PokemonRegion("unova", 494, 649));
-        regionMap.put("kalos", new PokemonRegion("kalos", 650, 721));
-        regionMap.put("alola", new PokemonRegion("alola", 722, 809));
-        regionMap.put("galar", new PokemonRegion("galar", 810, 816));   // Unreleased region
+        String regionName = source.getMessage("poke.kanto", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 1, 151));
+        regionName = source.getMessage("poke.johto", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 152, 251));
+        regionName = source.getMessage("poke.hoenn", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 252, 386));
+        regionName = source.getMessage("poke.sinnoh", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 387, 493));
+        regionName = source.getMessage("poke.unova", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 494, 649));
+        regionName = source.getMessage("poke.kalos", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 650, 721));
+        regionName = source.getMessage("poke.alola", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 722, 809));
+        regionName = source.getMessage("poke.galar", null, defaultLocale);
+        regionMap.put(regionName, new PokemonRegion(regionName, 810, 816));   // Unreleased region
         return regionMap;
     }
 
@@ -197,53 +211,35 @@ public class CatchPoke implements CatchPokeInterface {
     private int getPokedexNumber(@Nonnull String regionName) {
         int pokeDexNum = 1;
         PokemonRegion region = regionMap.get(regionName);
-        switch (region.regionName) {
-            case "kanto":
-                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                break;
-            case "johto":
-                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                break;
-            case "hoenn":
-                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                break;
-            case "sinnoh":
-                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                break;
-            case "unova":
-                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                break;
-            case "kalos":
-                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                break;
-            case "alola":
-                // Alola region is the only region that has unique variants of some Pokemon
-                int indexEnd = region.indexEnd + pokemonWithAlolaForm.size();
-                int randomIndex = RandomHelper.getRandNumInRange(region.indexStart, indexEnd);
-                if (randomIndex > region.indexEnd) {
-                    randomIndex -= region.indexEnd;
-                    pokeDexNum = pokemonWithAlolaForm.get(randomIndex - 1);
-                    isRegionChoice = true;
-                } else {
-                    pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
-                }
-                break;
-            case "galar":
-                int index = RandomHelper.getRandNumInRange(1, 3);
-                switch (index) {
-                    case 1:
-                        pokeDexNum = 810;
-                        break;
-                    case 2:
-                        pokeDexNum = 813;
-                        break;
-                    case 3:
-                    default:
-                        pokeDexNum = 816;
-                }
-                break;
-        }
 
+        if (region.regionName.equals(source.getMessage("poke.alola", null, defaultLocale))) {
+            int indexEnd = region.indexEnd + pokemonWithAlolaForm.size();
+            int randomIndex = RandomHelper.getRandNumInRange(region.indexStart, indexEnd);
+            if (randomIndex > region.indexEnd) {
+                randomIndex -= region.indexEnd;
+                pokeDexNum = pokemonWithAlolaForm.get(randomIndex - 1);
+                isRegionChoice = true;
+            } else {
+                pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+            }
+
+        } else if (region.regionName.equals(source.getMessage("poke.galar", null, defaultLocale))) {
+            int index = RandomHelper.getRandNumInRange(1, 3);
+            switch (index) {
+                case 1:
+                    pokeDexNum = 810;
+                    break;
+                case 2:
+                    pokeDexNum = 813;
+                    break;
+                case 3:
+                default:
+                    pokeDexNum = 816;
+            }
+
+        } else {
+            pokeDexNum = RandomHelper.getRandNumInRange(region.indexStart, region.indexEnd);
+        }
         return pokeDexNum;
     }
 
@@ -335,11 +331,13 @@ public class CatchPoke implements CatchPokeInterface {
     private String getCaptureResult(@Nonnull PokemonPoke poke, boolean isCaptured) {
         String output = poke.getPokeString();
         if (isCaptured) {
-            output = (StringHelper.startsWithVowel(output)) ? String.format(" caught an %s", output) :
-                    String.format(" caught a %s", output);
+            output = (StringHelper.startsWithVowel(output)) ?
+                    source.getMessage("poke.caught.vowel", new String[]{output}, defaultLocale) :
+                    source.getMessage("poke.caught.no.vowel", new String[]{output}, defaultLocale);
         } else {
-            output = (StringHelper.startsWithVowel(output)) ? String.format(" let an %s get away. ", output) :
-                    String.format(" let a %s get away. ", output);
+            output = (StringHelper.startsWithVowel(output)) ?
+                    source.getMessage("poke.lost.vowel", new String[]{output}, defaultLocale) :
+                    source.getMessage("poke.lost.no.vowel", new String[]{output}, defaultLocale);
             output += getShakeOutput();
         }
 
@@ -357,17 +355,17 @@ public class CatchPoke implements CatchPokeInterface {
         switch (pokeShake) {
             case 0:
             default:
-                output = "Oh no! It broke free!";
+                output = source.getMessage("poke.shake1", null, defaultLocale);
                 break;
             case 1:
-                output = "Aww! It appeared to be caught!";
+                output = source.getMessage("poke.shake2", null, defaultLocale);
                 break;
 
             case 2:
-                output = "Aargh! Almost had it!";
+                output = source.getMessage("poke.shake3", null, defaultLocale);
                 break;
             case 3:
-                output = "Gah! It was so close, too!";
+                output = source.getMessage("poke.shake4", null, defaultLocale);
                 break;
         }
 
@@ -616,7 +614,7 @@ public class CatchPoke implements CatchPokeInterface {
 
             PokemonPoke poke = new PokemonPoke();
             poke.setId(-117);
-            poke.setPokemonSpecies("missingno");
+            poke.setPokemonSpecies("cmd.missingno");
             poke.setPokemonName("MissingNo");
             poke.setPokemonNickName("MissingNo");
             poke.setShiny(RandomHelper.getRandNumInRange(1, 10) < 5);

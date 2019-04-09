@@ -1,5 +1,6 @@
 package ozmar.commands.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ozmar.commands.TwitchCallCommand;
@@ -10,7 +11,9 @@ import ozmar.database.tables.interfaces.DatabaseHandlerInterface;
 public class TwitchCallCommandInterfaceConfig {
 
     @Bean
-    TwitchCallCommandInterface twitchCallCommandInterfaceBean(DatabaseHandlerInterface databaseHandlerInterface) {
-        return new TwitchCallCommand(databaseHandlerInterface);
+    TwitchCallCommandInterface twitchCallCommandInterfaceBean(MessageSource messageSource,
+                                                              DatabaseHandlerInterface databaseHandlerInterface
+    ) {
+        return new TwitchCallCommand(messageSource, databaseHandlerInterface);
     }
 }

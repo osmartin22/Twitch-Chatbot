@@ -3,6 +3,7 @@ package commandsTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import ozmar.commands.CatchPoke;
 import ozmar.commands.interfaces.CatchPokeInterface;
 
@@ -19,7 +20,14 @@ public class CatchPokeTest {
 
     @BeforeClass
     public static void setup() {
-        catchPoke = new CatchPoke();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasenames("i18/command", "i18/poke");
+        messageSource.setDefaultEncoding("UTF-8");
+
+//        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+//        ctx.registerShutdownHook();
+//        catchPoke = ctx.getBean(CatchPoke.class);
+        catchPoke = new CatchPoke(messageSource);
         pokemonNames = new ArrayList<>(Arrays.asList("bulbasaur", "charmander", "squirtle", "pikachu", "meowth"));
     }
 
@@ -57,5 +65,11 @@ public class CatchPokeTest {
         // return String should not be empty if the pokemon exists
         String catchResult = catchPoke.attemptCatch().getCatchResultString();
         Assert.assertNotEquals("", catchResult);
+    }
+
+    @Test
+    public void test() {
+        catchPoke.initialize(2);
+        System.out.println(catchPoke.attemptCatch().getCatchResultString());
     }
 }
