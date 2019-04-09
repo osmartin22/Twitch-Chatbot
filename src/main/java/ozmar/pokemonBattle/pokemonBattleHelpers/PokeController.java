@@ -196,6 +196,7 @@ public class PokeController {
     @Nonnull
     private ScheduledFuture<?> timerToDoAction() {
         final Runnable timerFinished = () -> {
+            stopActionTimer();
             System.out.println("Time Ran Out For Choosing An Action");
             pokeBattle.forceActionOnPoke();
             // Timer only runs when a user has not done a choice yet (move or switch out)
@@ -203,8 +204,8 @@ public class PokeController {
             doBattlePhase();
         };
 
-        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
-//        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
+//        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
+        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -215,18 +216,20 @@ public class PokeController {
         if (actionTimer == null) {
             pokeBattle.tellTrainersToDoAction();
             System.out.println("Started Action Timer");
-            this.actionTimer = timerToDoAction();
+            actionTimer = timerToDoAction();
         }
     }
 
     /**
      * Stop the timer before the program chooses an action for the user
-     * Method should only be called after all Poke on the field have an action to do
+     * Sets the Scheduler to null and cancels it if it is still running
      */
     public void stopActionTimer() {
-        System.out.println("Stopping Action Timer");
-        this.actionTimer.cancel(false);
-        this.actionTimer = null;
+        if (actionTimer != null) {
+            System.out.println("Stopping Action Timer");
+            actionTimer.cancel(false);
+            actionTimer = null;
+        }
     }
 
     /**
@@ -237,13 +240,14 @@ public class PokeController {
     @Nonnull
     private ScheduledFuture<?> timerToSwitch() {
         final Runnable timerFinished = () -> {
+            stopSwitchTimer();
             System.out.println("Time Ran Out For Switching");
             pokeBattle.forceSwitchFaintedPoke();
             startActionTimer();
         };
 
-        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
-//        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
+//        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
+        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -252,7 +256,7 @@ public class PokeController {
      * This time should ONLY be used when switching out fainted Poke and not for choosing a move
      */
     public void startSwitchTimer() {
-        if (actionTimer == null) {
+        if (switchTimer == null) {
             System.out.println("Started Switch Timer");
             switchTimer = timerToSwitch();
         }
@@ -260,11 +264,13 @@ public class PokeController {
 
     /**
      * Stop the timer before the program chooses a Poke to switch in
-     * Method should only be called after all fainted Poke have been given another Poke to switch with
+     * Sets the Scheduler to null and cancels it if it is still running
      */
     public void stopSwitchTimer() {
-        System.out.println("Stopped Switch Timer");
-        this.switchTimer.cancel(false);
-        this.switchTimer = null;
+        if (switchTimer != null) {
+            System.out.println("Stopped Switch Timer");
+            switchTimer.cancel(false);
+            switchTimer = null;
+        }
     }
 }

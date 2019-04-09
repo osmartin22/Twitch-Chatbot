@@ -22,6 +22,12 @@ import java.util.*;
 //  In the games, actions are displayed on screen as they occur
 //  But to prevent message spam, actions will be grouped into a message and be sent after all of the actions have finished
 
+// TODO: Doing a move should create an object with all of the information the move did
+//  i.e. it missed/did X amount of damage, inflicted a status effect, critical
+//  This object should then be taken and turned into a string to be displayed to users
+//  Currently move effects are appended to a string builder as they occur
+//  Moves that can hit multiple Poke should be handled differently
+
 // *NOTE This only supports 1 v 1 battles
 public class PokeBattleHandler {
     private final PokeField field;
@@ -155,7 +161,7 @@ public class PokeBattleHandler {
         // Currently ignoring status moves as they have a lot of unique effects to take into account
         Map<Long, Set<Integer>> faintedMap = new HashMap<>();
         for (PokeInBattle pb : attacking) {
-            if (pb.getTrainerAction() == TrainerAction._MOVE &&
+            if (pb.getTrainerAction() == TrainerAction.ACTION_MOVE &&
                     pb.getMoveToUse().getDamageClass() != PokeMoveDamageClass.STATUS) {
 
                 int attackAcc = pb.getStatStage(PokeStatStage.ACC_STAGE);
@@ -208,8 +214,8 @@ public class PokeBattleHandler {
                     attacker.setLastUsedMove(attacker.getMoveToUse());
                     int damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
                     target.getPoke().lowerHp(damageDone);
-                    sb.append(String.format("%s attacked %s for %s damage. ", attacker.getPoke().getName(),
-                            target.getPoke().getName(), damageDone));
+                    sb.append(String.format("%s attacked %s for %s damage with %s. ", attacker.getPoke().getName(),
+                            target.getPoke().getName(), damageDone, move.getName()));
 
                     if (target.getPoke().isFainted()) {
                         addPokeToFaintedMap(faintedMap, target);
@@ -292,7 +298,7 @@ public class PokeBattleHandler {
 
     private void inflictFlinch(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
         // Flinch only occurs on Pokemon that have not yet attacked
-        if (target.getTrainerAction() == TrainerAction._MOVE) {
+        if (target.getTrainerAction() == TrainerAction.ACTION_MOVE) {
             boolean willFlinch = calculator.willEffectHit(move.getMetaData().getFlinchChance());
             if (willFlinch) {
                 // Target flinches and can no longer attack its turn

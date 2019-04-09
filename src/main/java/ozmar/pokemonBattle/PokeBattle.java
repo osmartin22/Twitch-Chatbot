@@ -143,7 +143,6 @@ public class PokeBattle {
                 sendFaintedMessage();
 
                 boolean trainerLost = checkTrainerHasLost();
-                System.out.println("Trainer Lost: " + trainerLost);
                 if (trainerLost) {
                     phase = BattlePhase.FINISHED;
                     return BattlePhase.FINISHED;
