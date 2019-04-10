@@ -3,7 +3,7 @@ package commandsTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import ozmar.commands.CatchPoke;
 import ozmar.commands.interfaces.CatchPokeInterface;
 
@@ -20,9 +20,10 @@ public class CatchPokeTest {
 
     @BeforeClass
     public static void setup() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("i18/command", "i18/poke");
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasenames("file:/TwitchBotFiles/WEB-INF/cmd", "file:/TwitchBotFiles/WEB-INF/poke");
         messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setConcurrentRefresh(true);
 
 //        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 //        ctx.registerShutdownHook();
