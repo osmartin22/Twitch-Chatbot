@@ -52,8 +52,8 @@ public class PokeMove {
         return currPp;
     }
 
-    public void setCurrPp(int currPp) {
-        this.currPp = currPp;
+    public void decrementPp() {
+        currPp--;
     }
 
     public int getPower() {

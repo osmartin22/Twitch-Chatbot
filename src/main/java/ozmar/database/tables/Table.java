@@ -11,7 +11,7 @@ public abstract class Table {
     public Connection openConnection() {
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Databases\\TwitchBot.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\TwitchBotFiles\\Databases\\TwitchBot.db");
 
         } catch (SQLException e) {
             System.out.println("Couldn't connect to database " + e.getMessage());

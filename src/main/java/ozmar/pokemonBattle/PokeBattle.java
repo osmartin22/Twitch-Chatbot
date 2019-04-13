@@ -189,7 +189,14 @@ public class PokeBattle {
     }
 
     public void postAttackPhase() {
-
+        StringBuilder sb = new StringBuilder();
+        for (TrainerInBattle tb : tbMap.values()) {
+            for (PokeInBattle pb : tb.getPokeInBattleList()) {
+                // Should afflict status damage
+                // Should afflict binding damage
+                // Should afflict any other damaging effects (i.e. leech seed)
+            }
+        }
     }
 
     /**
@@ -209,7 +216,6 @@ public class PokeBattle {
 
     /**
      * Forces the Poke on the field to do an action (move)
-     * TODO: In case no move can be used, the move Struggle should be used
      */
     public void forceActionOnPoke() {
         for (TrainerInBattle tb : tbMap.values()) {
@@ -220,6 +226,8 @@ public class PokeBattle {
                     break;
                 }
             }
+
+            // TODO: If no move is selected at this point, need to use Struggle
         }
     }
 

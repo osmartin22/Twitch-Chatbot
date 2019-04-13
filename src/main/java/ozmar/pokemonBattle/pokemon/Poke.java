@@ -6,6 +6,7 @@ import ozmar.pokemonBattle.pokemonStats.PokeAllStats;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
 import ozmar.pokemonBattle.pokemonType.PokeType;
+import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -61,10 +62,12 @@ public class Poke {
         this.level = level;
     }
 
+    @Nonnull
     public String getName() {
         return name;
     }
 
+    @Nonnull
     public String getNickname() {
         return nickname;
     }
@@ -85,10 +88,12 @@ public class Poke {
         this.weight = weight;
     }
 
+    @Nonnull
     public PokeType getType() {
         return type;
     }
 
+    @Nonnull
     public PokeNatureEnum getNature() {
         return nature;
     }
@@ -129,20 +134,26 @@ public class Poke {
         return pokeStats.getPokeStatValue(stat);
     }
 
+    @Nonnull
     public List<PokeMove> getMoveList() {
         return moveList;
     }
 
+    // TODO: Make a method that returns info about the Poke
+    //  i.e. pokeName, pokeType, nonVolStatus, moves, moveType, movePP, currHP/HP
+
+    @Nonnull
     public String getMoves() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < moveList.size(); i++) {
             PokeMove move = moveList.get(i);
-            sb.append(String.format("%s) %s (%s) ", i + 1, move.getName(), move.getCurrPp()));
+            sb.append(String.format("%s) %s (%s pp) ", i + 1, move.getName(), move.getCurrPp()));
         }
 
         return sb.toString();
     }
 
+    @Nonnull
     public NonVolatileStatus getNonVolatile() {
         return nonVolatile;
     }
@@ -175,6 +186,10 @@ public class Poke {
 
     public void setDrowsy(boolean drowsy) {
         isDrowsy = drowsy;
+    }
+
+    public boolean isTypeFound(@Nonnull PokeTypeEnum typeEnum) {
+        return type.isTypeFound(typeEnum);
     }
 
     @Override

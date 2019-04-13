@@ -17,7 +17,7 @@ class Database {
         return db;
     }
 
-    private final String DB_NAME = "jdbc:sqlite:C:\\Databases\\PokeApiCache.db";
+    private final String DB_NAME = "jdbc:sqlite:C:\\TwitchBotFiles\\Databases\\PokeApiCache.db";
     private final String TABLE_NAME = "information";
 
     public Database() {

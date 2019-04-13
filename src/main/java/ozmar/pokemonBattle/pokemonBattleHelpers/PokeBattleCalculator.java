@@ -215,7 +215,6 @@ public class PokeBattleCalculator {
         boolean confusionActivates = false;
         if (pokeInBattle.getVolatileStatusMap().containsKey(VolatileStatus.CONFUSION)) {
             confusionActivates = RandomHelper.getRandNumInRange(1, 3) == 1;
-            // TODO: Inflict pokemon with a 40 power typeless physical attack
         }
 
         return confusionActivates;

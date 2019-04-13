@@ -12,6 +12,7 @@ import ozmar.pokemonBattle.pokemonStats.enums.PokeStatStage;
 import ozmar.pokemonBattle.pokemonStatusConditions.NonVolatileStatus;
 import ozmar.pokemonBattle.pokemonStatusConditions.VolatileStatus;
 import ozmar.pokemonBattle.pokemonTrainer.TrainerInBattle;
+import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
@@ -72,10 +73,10 @@ public class PokeBattleHandler {
     }
 
     @Nonnull
-    private PokeInBattle getPokeInBattle(@Nonnull PokeInBattle pb) {
-        return sideList.get(pb.getSidePosition())
-                .getTrainerInBattle(pb.getTrainerPosition())
-                .getPokeInBattle(pb.getFieldPosition());
+    public PokeInBattle getPokeFromPosition(@Nonnull PokePosition pokePosition) {
+        return sideList.get(pokePosition.getSidePosition())
+                .getTrainerInBattle(pokePosition.getTrainerPosition())
+                .getPokeInBattle(pokePosition.getFieldPosition());
     }
 
     @Nonnull
@@ -150,89 +151,62 @@ public class PokeBattleHandler {
         }
     }
 
+
     /**
      * For every Poke in the list, the Poke attempts to use its move
      *
      * @param attacking list of Poke using a move
      * @return Map. Contains all Poke that have fainted with the trainer's id as the key
      */
+    // TODO: This method should do more checks on the types of moves, since some should be handled differently
+    //  i.e. semi-invulnerable/charging moves are only prevented by status effects on the turn first used
+    //  Accuracy and damage are done on the next turn
+    //  NOTE: Some moves target the user but damage an opponent (Thrash)
     public Map<Long, Set<Integer>> attackingPokes(@Nonnull List<PokeInBattle> attacking) {
         sortAttacking(attacking);
-        // Currently ignoring status moves as they have a lot of unique effects to take into account
         Map<Long, Set<Integer>> faintedMap = new HashMap<>();
-        for (PokeInBattle pb : attacking) {
-            if (pb.getTrainerAction() == TrainerAction.ACTION_MOVE &&
-                    pb.getMoveToUse().getDamageClass() != PokeMoveDamageClass.STATUS) {
 
-                int attackAcc = pb.getStatStage(PokeStatStage.ACC_STAGE);
-                int targetEva = pb.getStatStage(PokeStatStage.EVA_STAGE);
-                if (!calculator.nvStatusPreventsMove(pb)) {
-                    if (calculator.willMoveHit(attackAcc, targetEva, pb.getMoveToUse())) {
-                        faintedMap = doMove(pb);
+        for (PokeInBattle attacker : attacking) {
+            if (attacker.getTrainerAction() == TrainerAction.ACTION_MOVE) {
+                PokeMoveDamageClass damageClass = attacker.getMoveToUse().getDamageClass();
+                if (damageClass == PokeMoveDamageClass.STATUS) {
+                    // Status moves
+                } else {
+                    if (!willStatusPreventMove(attacker)) {
+                        // TODO: Not sure when a move uses a PP point for a move, set here for now
+                        //  I know that even if a move misses, PP is used
+                        attacker.getMoveToUse().decrementPp();
+                        if (accuracyCheck(attacker)) {
+                            PokeMove move = attacker.getMoveToUse();
+                            PokeInBattle target = getPokeFromPosition(attacker.getTargetPosition());
+                            attacker.setLastUsedMove(move);
+                            int damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
+                            target.getPoke().lowerHp(damageDone);
 
+                            sb.append(String.format("%s hit %s with %s for %s HP -> %s HP. ", attacker.getPoke().getName(),
+                                    target.getPoke().getName(), move.getName(), damageDone, target.getPoke().getCurrHp()));
+
+                            if (target.getPoke().isFainted()) {
+                                addPokeToFaintedMap(faintedMap, target);
+                                target.setTrainerAction(TrainerAction.ACTION_WAITING);
+                                sb.append(String.format("%s has fainted. ", target.getPoke().getName()));
+                            }
+
+                            inflictStatuses(target, move);
+
+                        } else {
+                            sb.append(String.format("%s's attack missed. ", attacker.getPoke().getName()));
+                            // Poke turn now over (Need to handle recoil damage on miss)
+                        }
                     } else {
-                        sb.append(String.format("%s missed. ", pb.getPoke().getName()));
+                        sb.append(String.format("%s was prevented from using its move. ", attacker.getPoke().getName()));
                     }
-                } else {
-                    sb.append(String.format("%s was prevented by a status effect. ", pb.getPoke().getName()));
                 }
 
-                pb.setTrainerAction(TrainerAction.ACTION_WAITING);
+                attacker.setTrainerAction(TrainerAction.ACTION_WAITING);
             }
         }
 
-        return faintedMap;
-    }
-
-    /**
-     * Poke attempts to do the move and damages the target
-     * The move will affect statuses that it can affect
-     * TODO: Currently status moves are ignored (they have a lot of unique effects)
-     * Most move effects are not considered
-     * Need to test inflicting statuses and move prevented more
-     *
-     * @param attacker Poke using a move
-     * @return Map. Contains all Poke that have fainted with the trainer's id as the key
-     */
-    private Map<Long, Set<Integer>> doMove(@Nonnull PokeInBattle attacker) {
-        Map<Long, Set<Integer>> faintedMap = new HashMap<>();
-
-        PokeMove move = attacker.getMoveToUse();
-        PokePosition targetPosition = attacker.getTargetPosition();
-        PokeInBattle target = sideList.get(targetPosition.getSidePosition())
-                .getTrainerInBattle(targetPosition.getTrainerPosition())
-                .getPokeInBattle(targetPosition.getFieldPosition());
-
-        if (attacker.getMoveToUse().getDamageClass() == PokeMoveDamageClass.STATUS) {
-            // TODO: Do status moves later, first finish Physical and Special moves
-        } else {
-
-            boolean isMovePrevented = isMovePrevented(attacker);
-            if (!isMovePrevented) {
-                boolean moveWillHit = willMoveHit(attacker, target, move);
-                if (moveWillHit) {
-                    attacker.setLastUsedMove(attacker.getMoveToUse());
-                    int damageDone = calculator.calculateDamage(attacker, target, field.getWeather().getWeather());
-                    target.getPoke().lowerHp(damageDone);
-                    sb.append(String.format("%s attacked %s for %s damage with %s. ", attacker.getPoke().getName(),
-                            target.getPoke().getName(), damageDone, move.getName()));
-
-                    if (target.getPoke().isFainted()) {
-                        addPokeToFaintedMap(faintedMap, target);
-                        target.setTrainerAction(TrainerAction.ACTION_WAITING);
-                        sb.append(String.format("%s has fainted. ", target.getPoke().getName()));
-                    }
-
-                    inflictStatuses(target, move);
-                } else {
-                    sb.append(String.format("%s's attack missed", attacker.getPoke().getName()));
-                }
-            } else {
-                sb.append(String.format("%s was prevented from using its move", attacker.getPoke().getName()));
-            }
-        }
-
-        attacker.setTrainerAction(TrainerAction.ACTION_WAITING);
         return faintedMap;
     }
 
@@ -257,23 +231,29 @@ public class PokeBattleHandler {
         }
     }
 
-    /**
-     * Cheks if the move will hit the target or miss
-     * TODO: Probably write a method for moves that target the user (or bypass this check) i.e. Swords Dance
-     *
-     * @param attacker Poke using the move
-     * @param target   The move's target
-     * @param move     Move to use
-     * @return boolean, will the move hit the target or miss
-     */
-    private boolean willMoveHit(@Nonnull PokeInBattle attacker, @Nonnull PokeInBattle target, @Nonnull PokeMove move) {
-        return calculator.willMoveHit(attacker.getStatStage(PokeStatStage.ACC_STAGE),
-                target.getStatStage(PokeStatStage.EVA_STAGE), move);
+    public boolean accuracyCheck(@Nonnull PokeInBattle attacker) {
+        boolean moveWillHit;
+
+        if (attacker.getPokePosition().equals(attacker.getTargetPosition())) {
+            moveWillHit = true;
+        } else {
+            PokeMove move = attacker.getMoveToUse();
+            PokeInBattle target = getPokeFromPosition(attacker.getTargetPosition());
+            int attackerAcc = attacker.getStatStage(PokeStatStage.ACC_STAGE);
+            int targetEva = target.getStatStage(PokeStatStage.EVA_STAGE);
+            moveWillHit = calculator.willMoveHit(attackerAcc, targetEva, move);
+        }
+
+        return moveWillHit;
     }
 
-    private boolean isMovePrevented(@Nonnull PokeInBattle attacker) {
+    public boolean willStatusPreventMove(@Nonnull PokeInBattle attacker) {
         boolean nvStatusPrevented = calculator.nvStatusPreventsMove(attacker);
         boolean confusionPrevented = calculator.confusionActivates(attacker);
+        if (confusionPrevented) {
+            // TODO: Inflict Poke with a 40 power typeless physical attack
+        }
+
         return nvStatusPrevented || confusionPrevented;
     }
 
@@ -283,14 +263,53 @@ public class PokeBattleHandler {
         inflictFlinch(target, move);
     }
 
+    // TODO: Some poison moves can turn Poison to Badly Poisoned, currently no taken into account
     private void inflictNonVolatile(@Nonnull PokeInBattle target, @Nonnull PokeMove move) {
         NonVolatileStatus status = move.getMetaData().getNonVolatileStatus();
         if (status != NonVolatileStatus.NONE) {
             if (status == NonVolatileStatus.MULTIPLE) {
                 // Only a handful of moves go here
+                // Need to be handled separately
             } else {
-                if (calculator.willEffectHit(move.getMetaData().getNonVolatileChance())) {
-                    target.getPoke().updateNonVolatile(status);
+                NonVolatileStatus nvStatus = target.getPoke().getNonVolatile();
+                if (nvStatus == NonVolatileStatus.NONE && calculator.willEffectHit(move.getMetaData().getNonVolatileChance())) {
+                    switch (status) {
+                        case BURN:
+                            if (!target.isTypeFound(PokeTypeEnum.FIRE)) {
+                                target.getPoke().updateNonVolatile(status);
+                                sb.append(String.format("%s was burnt.", target.getPoke().getName()));
+                            }
+                            break;
+                        case FREEZE:
+                            if (!target.isTypeFound(PokeTypeEnum.ICE)) {
+                                target.getPoke().updateNonVolatile(status);
+                                sb.append(String.format("%s was frozen.", target.getPoke().getName()));
+                            }
+                            break;
+                        case PARALYSIS:
+                            if (!target.isTypeFound(PokeTypeEnum.ELECTRIC)) {
+                                target.getPoke().updateNonVolatile(status);
+                                sb.append(String.format("%s was paralyzed.", target.getPoke().getName()));
+                            }
+                            break;
+                        case POISON:
+                            if (!target.isTypeFound(PokeTypeEnum.POISON) && !target.isTypeFound(PokeTypeEnum.STEEL)) {
+                                target.getPoke().updateNonVolatile(status);
+                                sb.append(String.format("%s was poisoned.", target.getPoke().getName()));
+                            }
+                            break;
+                        case BADLY_POISONED:
+                            if (!target.isTypeFound(PokeTypeEnum.POISON) && !target.isTypeFound(PokeTypeEnum.STEEL)) {
+                                target.getPoke().updateNonVolatile(status);
+                                sb.append(String.format("%s was badly poisoned.", target.getPoke().getName()));
+                            }
+                            break;
+                        case SLEEP:
+                            target.getPoke().updateNonVolatile(status);
+                            sb.append(String.format("%s fell asleep.", target.getPoke().getName()));
+                            break;
+                        default:
+                    }
                 }
             }
         }
@@ -317,5 +336,27 @@ public class PokeBattleHandler {
 
         return isConfused;
     }
+
+    /*
+    Can Possibly create a Class that hold the information of a move used
+    i.e. damaged Poke, stat stage changes, statuses inflicted
+    then convert this into a string to output and append it to the string builder
+
+    if(statusPrevented) {
+        Status Prevented Move, return
+    } else {
+        if(willMiss) {
+            Poke missed/Target evaded, return
+        } else {
+                doMove();
+            damageTarget();
+            if(moveHeals) {
+                restoreHp();
+            }
+
+            afflictStatusEffects();
+        }
+    }
+     */
 }
 

@@ -15,20 +15,21 @@ public class PokeBattleView implements PokeBattleViewInterface {
     //  Need to save user id and username and be able to update the username if it changes
     private Map<Long, String> userMap;
 
-    public PokeBattleView(@Nonnull TwitchChat twitchChat, @Nonnull String channelName) {
+    public PokeBattleView(@Nonnull TwitchChat twitchChat, @Nonnull String channelName, @Nonnull Map<Long, String> map) {
         this.twitchChat = twitchChat;
         this.channelName = channelName;
+        this.userMap = map;
     }
 
     @Override
     public void sendUserMessage(long userId, @Nonnull String message) {
-//        twitchChat.sendUserMessage();
+//        twitchChat.sendPrivateMessage(userMap.get(userId), message);
         System.out.println(String.format("User message: %s - %s", userId, message));
     }
 
     @Override
     public void sendMessageForAll(@Nonnull String message) {
-//        twitchChat.sendMessageForAll();
+//        twitchChat.sendMessage(channelName, message);
         System.out.println("Normal Message: " + message);
     }
 }

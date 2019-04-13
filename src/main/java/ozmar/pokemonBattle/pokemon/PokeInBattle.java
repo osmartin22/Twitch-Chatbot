@@ -13,6 +13,7 @@ import ozmar.pokemonBattle.pokemonType.PokeTypeEnum;
 import ozmar.utils.RandomHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class PokeInBattle {
 
     private boolean isFlinched;
 
-    private final PokePosition userPosition;
+    private final PokePosition pokePosition;
     private PokePosition targetPosition;
 
     /*
@@ -81,7 +82,7 @@ public class PokeInBattle {
      */
 
     public PokeInBattle(@Nonnull Poke poke, int sidePosition, int trainerPosition, int fieldPosition) {
-        this.userPosition = new PokePosition(sidePosition, trainerPosition, fieldPosition);
+        this.pokePosition = new PokePosition(sidePosition, trainerPosition, fieldPosition);
         this.poke = poke;
         this.currMove = null;
         this.moveToUse = null;
@@ -98,26 +99,67 @@ public class PokeInBattle {
         this.isFlinched = false;
     }
 
+    /**
+     * Gets the position of the Poke on the field
+     *
+     * @return PokePosition
+     */
+    @Nonnull
+    public PokePosition getPokePosition() {
+        return pokePosition;
+    }
+
+    /**
+     * Get which side of the field the Poke is on
+     *
+     * @return int
+     */
     public int getSidePosition() {
-        return userPosition.getSidePosition();
+        return pokePosition.getSidePosition();
     }
 
+    /**
+     * Get which side of the field the Poke is on
+     *
+     * @return int
+     */
     public int getTrainerPosition() {
-        return userPosition.getTrainerPosition();
+        return pokePosition.getTrainerPosition();
     }
 
+    /**
+     * Get which position the Poke is on the Trainer's field
+     *
+     * @return int
+     */
     public int getFieldPosition() {
-        return userPosition.getFieldPosition();
+        return pokePosition.getFieldPosition();
     }
 
+    /**
+     * Checks if the Poke is currently in its mega form
+     *
+     * @return boolean
+     */
     public boolean isMegaForm() {
         return megaForm != null;
     }
 
+    /**
+     * Gets the base form of a Poke even if it is currently Mega Evolved
+     *
+     * @return Poke
+     */
+    @Nonnull
     public Poke getBaseForm() {
         return poke;
     }
 
+    /**
+     * Gets the Poke, can return the mega form
+     *
+     * @return Poke
+     */
     @Nonnull
     public Poke getPoke() {
         if (megaForm != null) {
@@ -126,6 +168,12 @@ public class PokeInBattle {
         return poke;
     }
 
+    /**
+     * Sets the Poke in battle
+     *
+     * @param poke Poke to set in the field
+     *             TODO: Should probably remove since Poke are swapped when switching only which is accessed in this class
+     */
     public void setPoke(@Nonnull Poke poke) {
         this.poke = poke;
     }
@@ -139,11 +187,22 @@ public class PokeInBattle {
         this.currMove = currMove;
     }
 
+    /**
+     * Gets the move currently set to be used during the battle phase
+     *
+     * @return PokeMove
+     */
     @Nonnull
     public PokeMove getMoveToUse() {
         return moveToUse;
     }
 
+    /**
+     * Sets the move to use in the next battle phase along with the targeted Poke
+     *
+     * @param moveToUse      Move to use during the next battle phase
+     * @param targetPosition Position of the Poke to be affected by the move
+     */
     public void setMoveToUse(@Nonnull PokeMove moveToUse, @Nonnull PokePosition targetPosition) {
         this.moveToUse = moveToUse;
         this.targetPosition = targetPosition;
@@ -152,7 +211,7 @@ public class PokeInBattle {
 
 
     /**
-     * Gets the stage of the desired stage
+     * Gets the stage of the desired stat
      *
      * @param statType stat to get the stage of
      * @return int
@@ -163,15 +222,23 @@ public class PokeInBattle {
 
     /**
      * Changes the desired Stat stage with the desired amount
+     * False if the stage could no longer be increased or decreased further
      * TODO: Should return a value to signify whether the stat stage could be increased/decreased
+     *  Might not be necessary since the check for the stage should be checked before using the method
      *
      * @param statType    Stat affected
      * @param stageChange change in stage
+     * @return boolean success of the stage change
      */
-    public void modifyStatStage(@Nonnull PokeStatStage statType, int stageChange) {
-        pokeStages.modifyStage(statType, stageChange);
+    public boolean modifyStatStage(@Nonnull PokeStatStage statType, int stageChange) {
+        return pokeStages.modifyStage(statType, stageChange);
     }
 
+    /**
+     * Gets all of the volatile statuses that are effecting the Poke in battle
+     *
+     * @return Map
+     */
     @Nonnull
     public Map<VolatileStatus, Integer> getVolatileStatusMap() {
         return volatileStatusMap;
@@ -217,23 +284,49 @@ public class PokeInBattle {
     }
 
 
+    /**
+     * Gets all of the Volatile Battle Statuses that are effecting the Poke in battle
+     *
+     * @return Set
+     */
     @Nonnull
     public Set<VolatileBattleStatus> getVolatileBattleStatusList() {
         return volatileBattleStatusList;
     }
 
+    /**
+     * Adds the VolatileBattleStatus
+     *
+     * @param status VolatileBattleStatus
+     */
     public void addVolatileBattleStatus(@Nonnull VolatileBattleStatus status) {
         volatileBattleStatusList.add(status);
     }
 
+    /**
+     * Gets the current crit stage
+     *
+     * @return int
+     */
     public int getCritStage() {
         return critStage;
     }
 
-    public void updateCritHitStage(int critHitStage) {
+    /**
+     * Increase the crit hit stage
+     *
+     * @param critHitStage amount to increase crit stage
+     */
+    public void incrementCritHitStage(int critHitStage) {
         this.critStage += critHitStage;
     }
 
+    /**
+     * Attempts to bind the Poke with the given Binding
+     *
+     * @param bindingEnum Binding to set
+     * @return boolean
+     */
     public boolean bindPoke(@Nonnull PokeBindingEnum bindingEnum) {
         return binding.setBinding(bindingEnum);
     }
@@ -242,24 +335,49 @@ public class PokeInBattle {
         copiedMoves.put(movePosition, moveToCopy);
     }
 
+    /**
+     * Get the action the Poke will do
+     *
+     * @return TrainerAction
+     */
     @Nonnull
     public TrainerAction getTrainerAction() {
         return trainerAction;
     }
 
+    /**
+     * Set the action the Poke will do
+     *
+     * @param trainerAction action to do
+     */
     public void setTrainerAction(@Nonnull TrainerAction trainerAction) {
         this.trainerAction = trainerAction;
     }
 
+    /**
+     * Gets the Poke that is set to switch in
+     *
+     * @return Poke
+     */
+    @Nullable
     public Poke getPokeToSwitchIn() {
         return pokeToSwitchIn;
     }
 
+    /**
+     * Sets the Poke to switch in and also sets the TrainerAction to Switch
+     *
+     * @param pokeToSwitchIn Poke
+     */
     public void setPokeToSwitchIn(@Nonnull Poke pokeToSwitchIn) {
         this.pokeToSwitchIn = pokeToSwitchIn;
         this.trainerAction = TrainerAction.ACTION_SWITCH;
     }
 
+    /**
+     * Switches the Poke on the field out with the Poke that is set to switch in
+     * Mega forms are reset and the TrainerAction is set to Waiting
+     */
     // TODO: Check if the stats should be kept when switching (Baton Pass, U-Turn)
     public void switchPoke() {
         this.poke = pokeToSwitchIn;
@@ -269,8 +387,14 @@ public class PokeInBattle {
         // TODO: Reset statuses, possibly change method to pass a boolean to decide if stats should be kept
     }
 
+    /**
+     * Checks if the Poke has the given type
+     *
+     * @param type Type to search for
+     * @return boolean
+     */
     public boolean isTypeFound(@Nonnull PokeTypeEnum type) {
-        return poke.getType().isTypeFound(type);
+        return poke.isTypeFound(type);
     }
 
     public boolean isFlinched() {
@@ -281,11 +405,21 @@ public class PokeInBattle {
         isFlinched = flinched;
     }
 
+    /**
+     * Gets the position the target takes on the field
+     *
+     * @return PokePosition
+     */
     @Nonnull
     public PokePosition getTargetPosition() {
         return targetPosition;
     }
 
+    /**
+     * Sets the position a move will target
+     *
+     * @param targetPosition PokePosition
+     */
     public void setTargetPosition(@Nonnull PokePosition targetPosition) {
         this.targetPosition = targetPosition;
     }

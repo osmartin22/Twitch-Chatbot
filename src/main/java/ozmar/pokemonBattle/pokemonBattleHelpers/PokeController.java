@@ -2,10 +2,7 @@ package ozmar.pokemonBattle.pokemonBattleHelpers;
 
 import ozmar.PokemonPoke;
 import ozmar.database.dao.interfaces.PokemonDaoInterface;
-import ozmar.pokemonBattle.BattlePhase;
-import ozmar.pokemonBattle.PokeBattle;
-import ozmar.pokemonBattle.PokeBattleViewInterface;
-import ozmar.pokemonBattle.SwitchResult;
+import ozmar.pokemonBattle.*;
 import ozmar.pokemonBattle.convertData.ConvertIntoPoke;
 import ozmar.pokemonBattle.convertData.GetMovesData;
 import ozmar.pokemonBattle.pokemon.Poke;
@@ -30,35 +27,56 @@ public class PokeController {
     private final ConvertIntoPoke convert;
     private final GetMovesData movesData;
 
-    private final Map<Long, TrainerInfo> map;
+    private final Map<Long, TrainerInfo> trainerMap;
     private final List<List<Trainer>> trainerList;
     private PokeBattleViewInterface view;
     private PokeBattle pokeBattle;
 
     private boolean battleOver;
 
+    // REMOVE LATER ON
+    private DefaultTrainer defaultTrainer;
+
     public PokeController(@Nonnull PokemonDaoInterface pokemonDao) {
         this.pokemonDao = pokemonDao;
         this.convert = new ConvertIntoPoke();
         this.movesData = new GetMovesData();
-        this.map = new HashMap<>();
+        this.trainerMap = new HashMap<>();
         this.trainerList = new ArrayList<>();
         this.battleOver = false;
+
+        defaultTrainer = new DefaultTrainer();
     }
 
     public void setView(@Nonnull PokeBattleViewInterface view) {
         this.view = view;
     }
 
+    // Used to create default trainers
+    // Currently only used to test in Twitch Chat with others wile the rest
+    // of the code for initializing correctly is incomplete
+    public void setUsers(long userId1, long userId2) {
+        Trainer red = defaultTrainer.redTrainer(userId1);
+        this.trainerMap.put(userId1, new TrainerInfo(red, 0, 0));
+        this.trainerList.add(new ArrayList<>(Collections.singleton(red)));
+
+        Trainer blue = defaultTrainer.blueTrainer(userId2);
+        this.trainerMap.put(userId2, new TrainerInfo(blue, 0, 0));
+        this.trainerList.add(new ArrayList<>(Collections.singleton(blue)));
+
+        this.pokeBattle = new PokeBattle(view, trainerList, 1);
+        startActionTimer();
+    }
+
     // Only set users once there are two users ready to battle
     public void setUsers(long userId1, @Nonnull String userName1, long userId2, @Nonnull String userName2) {
         Trainer trainer;
         trainer = createTrainer(userId1, userName1);
-        this.map.put(userId1, new TrainerInfo(trainer, 0, 0));
+        this.trainerMap.put(userId1, new TrainerInfo(trainer, 0, 0));
         this.trainerList.add(new ArrayList<>(Collections.singleton(trainer)));
 
         trainer = createTrainer(userId2, userName2);
-        this.map.put(userId2, new TrainerInfo(trainer, 1, 0));
+        this.trainerMap.put(userId2, new TrainerInfo(trainer, 1, 0));
         this.trainerList.add(new ArrayList<>(Collections.singleton(trainer)));
 
         this.pokeBattle = new PokeBattle(view, trainerList, 1);
@@ -88,9 +106,9 @@ public class PokeController {
 
     // Check if the pokemon can use the moves else send a message to the user saying what is wrong
     public void setPokeMoves(long userId, int pokePosition, @Nonnull List<String> moveList) {
-        if (map.containsKey(userId)) {
+        if (trainerMap.containsKey(userId)) {
             List<PokeMove> pokeMoves = movesData.convertNamesToMoves(moveList);
-            TrainerInfo info = map.get(userId);
+            TrainerInfo info = trainerMap.get(userId);
             List<PokeMove> currMoves = info.trainer.getPokeList().get(pokePosition).getMoveList();
             currMoves.clear();
             currMoves.addAll(pokeMoves);
@@ -106,7 +124,7 @@ public class PokeController {
      * @param pokePosition  position of the Poke in the trainer's Poke list
      */
     public void setPokeToSwitchIn(long trainerId, int fieldPosition, int pokePosition) {
-        if (map.containsKey(trainerId)) {
+        if (trainerMap.containsKey(trainerId)) {
             SwitchResult result = pokeBattle.setPokeToSwitchIn(trainerId, fieldPosition, pokePosition);
 
             if (result.canSwitch()) {
@@ -118,6 +136,7 @@ public class PokeController {
 
             if (result.getPhase() == BattlePhase.WAITING) {
                 stopSwitchTimer();
+                startActionTimer();
             }
         }
     }
@@ -131,7 +150,7 @@ public class PokeController {
      * @param movePosition  position of the move in the Poke move set
      */
     public void setMoveToUse(long trainerId, int fieldPosition, int movePosition) {
-        if (map.containsKey(trainerId)) {
+        if (trainerMap.containsKey(trainerId)) {
             boolean canUseMove = pokeBattle.setMoveToUse(trainerId, fieldPosition, movePosition);
             if (canUseMove) {
                 view.sendUserMessage(trainerId, "Pokemon can use move");
@@ -164,12 +183,11 @@ public class PokeController {
         return battleOver;
     }
 
-    public String getPokeMoves(long userId, int fieldPosition) {
-        if (map.containsKey(userId)) {
-            return pokeBattle.getMoves(userId, fieldPosition);
+    public void getPokeMoves(long userId, int fieldPosition) {
+        if (trainerMap.containsKey(userId)) {
+            String moveNames = pokeBattle.getMoves(userId, fieldPosition);
+            System.out.println(moveNames);
         }
-
-        return null;
     }
 
     /**
@@ -204,8 +222,8 @@ public class PokeController {
             doBattlePhase();
         };
 
-//        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
-        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
+        return scheduler.schedule(timerFinished, 10, TimeUnit.SECONDS);
+//        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -246,8 +264,8 @@ public class PokeController {
             startActionTimer();
         };
 
-//        return scheduler.schedule(timerFinished, 5, TimeUnit.SECONDS);
-        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
+        return scheduler.schedule(timerFinished, 10, TimeUnit.SECONDS);
+//        return scheduler.schedule(timerFinished, 50, TimeUnit.MILLISECONDS);
     }
 
     /**

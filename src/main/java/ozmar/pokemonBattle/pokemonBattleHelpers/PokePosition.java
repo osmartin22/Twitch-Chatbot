@@ -1,5 +1,7 @@
 package ozmar.pokemonBattle.pokemonBattleHelpers;
 
+import java.util.Objects;
+
 public class PokePosition {
 
     private final int sidePosition;
@@ -22,5 +24,27 @@ public class PokePosition {
 
     public int getFieldPosition() {
         return fieldPosition;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof PokePosition)) {
+            return false;
+        }
+
+        PokePosition pokePosition = (PokePosition) obj;
+
+        return sidePosition == pokePosition.sidePosition &&
+                trainerPosition == pokePosition.trainerPosition &&
+                fieldPosition == pokePosition.fieldPosition;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sidePosition, trainerPosition, fieldPosition);
     }
 }
