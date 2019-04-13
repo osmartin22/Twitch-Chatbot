@@ -5,6 +5,7 @@ import ozmar.pokemonBattle.pokemon.PokeInBattle;
 import ozmar.pokemonBattle.pokemonField.PokeField;
 import ozmar.pokemonBattle.pokemonField.PokeSide;
 import ozmar.pokemonBattle.pokemonField.PokeTrainerSide;
+import ozmar.pokemonBattle.pokemonField.PokemonBinding.PokeBinding;
 import ozmar.pokemonBattle.pokemonMoves.PokeMove;
 import ozmar.pokemonBattle.pokemonMoves.enums.PokeMoveDamageClass;
 import ozmar.pokemonBattle.pokemonStats.enums.PokeStat;
@@ -335,6 +336,11 @@ public class PokeBattleHandler {
         }
 
         return isConfused;
+    }
+
+    public void doBindingDamage(@Nonnull PokeInBattle pokeInBattle) {
+        PokeBinding binding = pokeInBattle.getBinding();
+        binding.doBindingDamage(pokeInBattle.getPoke());
     }
 
     /*

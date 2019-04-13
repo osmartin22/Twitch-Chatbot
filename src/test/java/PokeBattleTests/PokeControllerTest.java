@@ -11,12 +11,11 @@ import ozmar.database.dao.interfaces.PokemonDaoInterface;
 import ozmar.enums.PokemonGender;
 import ozmar.pokemonBattle.PokeBattleView;
 import ozmar.pokemonBattle.pokemonBattleHelpers.PokeController;
+import ozmar.utils.RandomHelper;
 import twitch4j_packages.chat.TwitchChat;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Mockito.when;
 
@@ -44,7 +43,10 @@ public class PokeControllerTest {
         chat = Mockito.mock(TwitchChat.class);
         pokemonDaoInterface = Mockito.mock(PokemonDaoInterface.class);
         controller = new PokeController(pokemonDaoInterface);
-        controller.setView(new PokeBattleView(chat, "testChannel"));
+        Map<Long, String> userMap = new HashMap<>();
+        userMap.put(1L, "RED");
+        userMap.put(2L, "BLUE");
+        controller.setView(new PokeBattleView(chat, "testChannel", userMap));
         pokemonToGetFromDb();
         initializeController();
     }
@@ -102,12 +104,14 @@ public class PokeControllerTest {
     @Test
     public void s() {
         while (!controller.isBattleOver()) {
-            controller.setMoveToUse(blue, 0, 0);
-            controller.setMoveToUse(red, 0, 0);
+            controller.setMoveToUse(blue, 0, RandomHelper.getRandNumInRange(0, 3));
+            controller.setMoveToUse(red, 0, RandomHelper.getRandNumInRange(0, 3));
+            controller.getPokeMoves(blue, 0);
+            controller.getPokeMoves(red, 0);
             System.out.println();
         }
-//        while(true) {
-//            if(controller.isBattleOver()) {
+//        while (true) {
+//            if (controller.isBattleOver()) {
 //                break;
 //            }
 //        }

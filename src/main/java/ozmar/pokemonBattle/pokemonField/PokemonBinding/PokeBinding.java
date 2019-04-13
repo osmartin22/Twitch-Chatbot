@@ -43,9 +43,15 @@ public class PokeBinding {
      * @param poke Poke to damage
      */
     public void doBindingDamage(@Nonnull Poke poke) {
-        int maxHp = poke.getPokeStat(PokeStat.HP);
-        int damageDealt = (int) (maxHp * (1 / 8.0));
-        poke.lowerHp(damageDealt);
-        bindingTurns--;
+        if (!poke.isFainted()) {
+            int maxHp = poke.getPokeStat(PokeStat.HP);
+            int damageDealt = (int) (maxHp * (1 / 8.0));
+            poke.lowerHp(damageDealt);
+            bindingTurns--;
+        }
+    }
+
+    public void clearBinding() {
+        binding = PokeBindingEnum.NONE;
     }
 }

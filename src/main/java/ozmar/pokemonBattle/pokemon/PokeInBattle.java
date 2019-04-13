@@ -224,7 +224,7 @@ public class PokeInBattle {
      * Changes the desired Stat stage with the desired amount
      * False if the stage could no longer be increased or decreased further
      * TODO: Should return a value to signify whether the stat stage could be increased/decreased
-     *  Might not be necessary since the check for the stage should be checked before using the method
+     * Might not be necessary since the check for the stage should be checked before using the method
      *
      * @param statType    Stat affected
      * @param stageChange change in stage
@@ -329,6 +329,10 @@ public class PokeInBattle {
      */
     public boolean bindPoke(@Nonnull PokeBindingEnum bindingEnum) {
         return binding.setBinding(bindingEnum);
+    }
+
+    public PokeBinding getBinding() {
+        return binding;
     }
 
     public void copyMove(int movePosition, @Nonnull PokeMove moveToCopy) {
