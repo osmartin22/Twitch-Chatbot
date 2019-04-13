@@ -8,7 +8,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
         </encoder>
 
-        <file>logs/botCommands.log</file>
+        <file>C:/TwitchBotFiles/logs/botCommands.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>botCommands.%i.log</fileNamePattern>
         </rollingPolicy>
@@ -23,7 +23,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
         </encoder>
 
-        <file>logs/chatList.log</file>
+        <file>C:/TwitchBotFiles/logs/chatList.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>chatList.%i.log</fileNamePattern>
         </rollingPolicy>
@@ -38,7 +38,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
         </encoder>
 
-        <file>logs/onEvent.log</file>
+        <file>C:/TwitchBotFiles/logs/onEvent.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>onEvent.%i.log</fileNamePattern>
         </rollingPolicy>
@@ -53,7 +53,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
         </encoder>
 
-        <file>logs/libError.log</file>
+        <file>C:/TwitchBotFiles/logs/libError.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>libError.%i.log</fileNamePattern>
         </rollingPolicy>
@@ -68,7 +68,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} - %msg%n</pattern>
         </encoder>
 
-        <file>logs/pokeAPI.log</file>
+        <file>C:/TwitchBotFiles/logs/pokeAPI.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>pokeAPI.%i.log</fileNamePattern>
         </rollingPolicy>

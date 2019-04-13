@@ -12,13 +12,19 @@ version '1.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = 'ozmar.Launcher'
+mainClassName = 'ozmar.setup.Launcher'
 
 repositories {
     jcenter()
     mavenCentral()
     maven { url "https://oss.jfrog.org/artifactory/libs-release" }
     maven { url "https://dl.bintray.com/philippheuer/maven" }
+}
+
+jar {
+    manifest {
+        from 'MANIFEST.MF'
+    }
 }
 
 lombok {
